@@ -1,13 +1,28 @@
 import {createFileRoute, Link, Outlet} from '@tanstack/react-router'
 import GoBackButton from "@/components/go-back-button";
-import {UserIcon} from "lucide-react";
+import {BugIcon, LayoutTemplateIcon, UserIcon} from "lucide-react";
 import {buttonVariants} from "@/components/ui/button";
 
 const routes = [
     {
-        label: "Profil Ayarları",
-        to: "/settings/profile",
-        icon: UserIcon
+        label: "Genel",
+        items: [
+            {
+                label: "Profil Ayarları",
+                to: "/settings/profile",
+                icon: UserIcon
+            }
+        ]
+    },
+    {
+        label: 'Değişkenler',
+        items: [
+            {
+                label: "Ticket Türleri",
+                to: "/settings/issue-types",
+                icon: BugIcon
+            }
+        ]
     }
 ]
 
@@ -28,25 +43,30 @@ function RouteComponent() {
 
         <div className="flex items-start h-full gap-x-4">
             <ul className="max-w-48 border-r pr-4 overflow-y-auto w-full h-full flex flex-col gap-y-2">
-                {routes.map((route) => (
-                    <li key={route.to}>
-                        <Link
-                            to={route.to}
-                            activeProps={{
-                                className: buttonVariants({
-                                    size: "lg",
-                                    className: "w-full justify-start"
-                                })
-                            }}
-                            className={buttonVariants({
-                                variant: "ghost",
-                                size: "lg",
-                                className: "w-full justify-start"
-                            })}
-                        >
-                            <route.icon className="size-5"/>
-                            {route.label}
-                        </Link>
+                {routes.map((route, index) => (
+                    <li key={index} className="w-full">
+                        <p className="text-sm font-medium text-muted-foreground px-2 mb-2">{route.label}</p>
+                        {route.items.map(route => (
+                            <li key={route.to}>
+                                <Link
+                                    to={route.to}
+                                    activeProps={{
+                                        className: buttonVariants({
+                                            size: "lg",
+                                            className: "w-full justify-start"
+                                        })
+                                    }}
+                                    className={buttonVariants({
+                                        variant: "ghost",
+                                        size: "lg",
+                                        className: "w-full justify-start"
+                                    })}
+                                >
+                                    <route.icon className="size-5"/>
+                                    {route.label}
+                                </Link>
+                            </li>
+                        ))}
                     </li>
                 ))}
             </ul>

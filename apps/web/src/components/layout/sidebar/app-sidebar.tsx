@@ -11,7 +11,6 @@ import {LayoutDashboardIcon, SidebarCloseIcon, SidebarOpenIcon} from "lucide-rea
 import UserMenu from "@/features/auth/ui/components/user-menu";
 import AdminMenu from "@/components/layout/sidebar/admin-menu";
 import {useAuthenticatedUser} from "@/lib/auth-client";
-import {Button} from "@/components/ui/button";
 
 const links = [
     {to: "/dashboard", label: "Dashboard", icon: LayoutDashboardIcon},
