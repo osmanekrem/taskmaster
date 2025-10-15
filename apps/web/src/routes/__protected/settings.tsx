@@ -1,6 +1,15 @@
-import {createFileRoute} from '@tanstack/react-router'
+import {createFileRoute, Link, Outlet} from '@tanstack/react-router'
 import GoBackButton from "@/components/go-back-button";
-import ChangePasswordForm from "@/features/auth/ui/views/change-password-form";
+import {UserIcon} from "lucide-react";
+import {buttonVariants} from "@/components/ui/button";
+
+const routes = [
+    {
+        label: "Profil Ayarları",
+        to: "/settings/profile",
+        icon: UserIcon
+    }
+]
 
 export const Route = createFileRoute('/__protected/settings')({
     component: RouteComponent,
@@ -17,12 +26,31 @@ function RouteComponent() {
             </div>
         </div>
 
-        <div className="flex flex-col w-full space-y-4">
-
-            <h2 className="text-xl font-bold leading-tight truncate">
-                Şifre Değiştir
-            </h2>
-            <ChangePasswordForm/>
+        <div className="flex items-start h-full gap-x-4">
+            <ul className="max-w-48 border-r pr-4 overflow-y-auto w-full h-full flex flex-col gap-y-2">
+                {routes.map((route) => (
+                    <li key={route.to}>
+                        <Link
+                            to={route.to}
+                            activeProps={{
+                                className: buttonVariants({
+                                    size: "lg",
+                                    className: "w-full justify-start"
+                                })
+                            }}
+                            className={buttonVariants({
+                                variant: "ghost",
+                                size: "lg",
+                                className: "w-full justify-start"
+                            })}
+                        >
+                            <route.icon className="size-5"/>
+                            {route.label}
+                        </Link>
+                    </li>
+                ))}
+            </ul>
+            <Outlet/>
         </div>
 
     </div>

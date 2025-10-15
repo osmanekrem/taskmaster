@@ -18,9 +18,13 @@ import { Route as _protected_adminRouteImport } from './routes/__protected/__adm
 import { Route as _authResetPasswordRouteImport } from './routes/__auth/reset-password'
 import { Route as _authLoginRouteImport } from './routes/__auth/login'
 import { Route as _authForgotPasswordRouteImport } from './routes/__auth/forgot-password'
-import { Route as _protected_adminUserManagementIndexRouteImport } from './routes/__protected/__admin/user-management.index'
-import { Route as _protected_adminUserManagementCreateUserRouteImport } from './routes/__protected/__admin/user-management.create-user'
-import { Route as _protected_adminUserManagementEditUserIdRouteImport } from './routes/__protected/__admin/user-management.edit-user.$id'
+import { Route as _protectedSettingsIndexRouteImport } from './routes/__protected/settings/index'
+import { Route as _protectedSettingsProfileRouteImport } from './routes/__protected/settings/profile'
+import { Route as _protected_adminUserManagementIndexRouteImport } from './routes/__protected/__admin/user-management/index'
+import { Route as _protected_adminTemplateManagementIndexRouteImport } from './routes/__protected/__admin/template-management/index'
+import { Route as _protected_adminUserManagementCreateUserRouteImport } from './routes/__protected/__admin/user-management/create-user'
+import { Route as _protected_adminTemplateManagementCreateTemplateRouteImport } from './routes/__protected/__admin/template-management/create-template'
+import { Route as _protected_adminUserManagementEditUserIdRouteImport } from './routes/__protected/__admin/user-management/edit-user.$id'
 
 const _protectedRoute = _protectedRouteImport.update({
   id: '/__protected',
@@ -64,16 +68,39 @@ const _authForgotPasswordRoute = _authForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => _authRoute,
 } as any)
+const _protectedSettingsIndexRoute = _protectedSettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => _protectedSettingsRoute,
+} as any)
+const _protectedSettingsProfileRoute =
+  _protectedSettingsProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => _protectedSettingsRoute,
+  } as any)
 const _protected_adminUserManagementIndexRoute =
   _protected_adminUserManagementIndexRouteImport.update({
     id: '/user-management/',
     path: '/user-management/',
     getParentRoute: () => _protected_adminRoute,
   } as any)
+const _protected_adminTemplateManagementIndexRoute =
+  _protected_adminTemplateManagementIndexRouteImport.update({
+    id: '/template-management/',
+    path: '/template-management/',
+    getParentRoute: () => _protected_adminRoute,
+  } as any)
 const _protected_adminUserManagementCreateUserRoute =
   _protected_adminUserManagementCreateUserRouteImport.update({
     id: '/user-management/create-user',
     path: '/user-management/create-user',
+    getParentRoute: () => _protected_adminRoute,
+  } as any)
+const _protected_adminTemplateManagementCreateTemplateRoute =
+  _protected_adminTemplateManagementCreateTemplateRouteImport.update({
+    id: '/template-management/create-template',
+    path: '/template-management/create-template',
     getParentRoute: () => _protected_adminRoute,
   } as any)
 const _protected_adminUserManagementEditUserIdRoute =
@@ -88,9 +115,13 @@ export interface FileRoutesByFullPath {
   '/login': typeof _authLoginRoute
   '/reset-password': typeof _authResetPasswordRoute
   '/dashboard': typeof _protectedDashboardRoute
-  '/settings': typeof _protectedSettingsRoute
+  '/settings': typeof _protectedSettingsRouteWithChildren
   '/': typeof _protectedIndexRoute
+  '/settings/profile': typeof _protectedSettingsProfileRoute
+  '/settings/': typeof _protectedSettingsIndexRoute
+  '/template-management/create-template': typeof _protected_adminTemplateManagementCreateTemplateRoute
   '/user-management/create-user': typeof _protected_adminUserManagementCreateUserRoute
+  '/template-management': typeof _protected_adminTemplateManagementIndexRoute
   '/user-management': typeof _protected_adminUserManagementIndexRoute
   '/user-management/edit-user/$id': typeof _protected_adminUserManagementEditUserIdRoute
 }
@@ -99,9 +130,12 @@ export interface FileRoutesByTo {
   '/login': typeof _authLoginRoute
   '/reset-password': typeof _authResetPasswordRoute
   '/dashboard': typeof _protectedDashboardRoute
-  '/settings': typeof _protectedSettingsRoute
   '/': typeof _protectedIndexRoute
+  '/settings/profile': typeof _protectedSettingsProfileRoute
+  '/settings': typeof _protectedSettingsIndexRoute
+  '/template-management/create-template': typeof _protected_adminTemplateManagementCreateTemplateRoute
   '/user-management/create-user': typeof _protected_adminUserManagementCreateUserRoute
+  '/template-management': typeof _protected_adminTemplateManagementIndexRoute
   '/user-management': typeof _protected_adminUserManagementIndexRoute
   '/user-management/edit-user/$id': typeof _protected_adminUserManagementEditUserIdRoute
 }
@@ -114,9 +148,13 @@ export interface FileRoutesById {
   '/__auth/reset-password': typeof _authResetPasswordRoute
   '/__protected/__admin': typeof _protected_adminRouteWithChildren
   '/__protected/dashboard': typeof _protectedDashboardRoute
-  '/__protected/settings': typeof _protectedSettingsRoute
+  '/__protected/settings': typeof _protectedSettingsRouteWithChildren
   '/__protected/': typeof _protectedIndexRoute
+  '/__protected/settings/profile': typeof _protectedSettingsProfileRoute
+  '/__protected/settings/': typeof _protectedSettingsIndexRoute
+  '/__protected/__admin/template-management/create-template': typeof _protected_adminTemplateManagementCreateTemplateRoute
   '/__protected/__admin/user-management/create-user': typeof _protected_adminUserManagementCreateUserRoute
+  '/__protected/__admin/template-management/': typeof _protected_adminTemplateManagementIndexRoute
   '/__protected/__admin/user-management/': typeof _protected_adminUserManagementIndexRoute
   '/__protected/__admin/user-management/edit-user/$id': typeof _protected_adminUserManagementEditUserIdRoute
 }
@@ -129,7 +167,11 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/settings'
     | '/'
+    | '/settings/profile'
+    | '/settings/'
+    | '/template-management/create-template'
     | '/user-management/create-user'
+    | '/template-management'
     | '/user-management'
     | '/user-management/edit-user/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -138,9 +180,12 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/dashboard'
-    | '/settings'
     | '/'
+    | '/settings/profile'
+    | '/settings'
+    | '/template-management/create-template'
     | '/user-management/create-user'
+    | '/template-management'
     | '/user-management'
     | '/user-management/edit-user/$id'
   id:
@@ -154,7 +199,11 @@ export interface FileRouteTypes {
     | '/__protected/dashboard'
     | '/__protected/settings'
     | '/__protected/'
+    | '/__protected/settings/profile'
+    | '/__protected/settings/'
+    | '/__protected/__admin/template-management/create-template'
     | '/__protected/__admin/user-management/create-user'
+    | '/__protected/__admin/template-management/'
     | '/__protected/__admin/user-management/'
     | '/__protected/__admin/user-management/edit-user/$id'
   fileRoutesById: FileRoutesById
@@ -229,6 +278,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof _authForgotPasswordRouteImport
       parentRoute: typeof _authRoute
     }
+    '/__protected/settings/': {
+      id: '/__protected/settings/'
+      path: '/'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof _protectedSettingsIndexRouteImport
+      parentRoute: typeof _protectedSettingsRoute
+    }
+    '/__protected/settings/profile': {
+      id: '/__protected/settings/profile'
+      path: '/profile'
+      fullPath: '/settings/profile'
+      preLoaderRoute: typeof _protectedSettingsProfileRouteImport
+      parentRoute: typeof _protectedSettingsRoute
+    }
     '/__protected/__admin/user-management/': {
       id: '/__protected/__admin/user-management/'
       path: '/user-management'
@@ -236,11 +299,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof _protected_adminUserManagementIndexRouteImport
       parentRoute: typeof _protected_adminRoute
     }
+    '/__protected/__admin/template-management/': {
+      id: '/__protected/__admin/template-management/'
+      path: '/template-management'
+      fullPath: '/template-management'
+      preLoaderRoute: typeof _protected_adminTemplateManagementIndexRouteImport
+      parentRoute: typeof _protected_adminRoute
+    }
     '/__protected/__admin/user-management/create-user': {
       id: '/__protected/__admin/user-management/create-user'
       path: '/user-management/create-user'
       fullPath: '/user-management/create-user'
       preLoaderRoute: typeof _protected_adminUserManagementCreateUserRouteImport
+      parentRoute: typeof _protected_adminRoute
+    }
+    '/__protected/__admin/template-management/create-template': {
+      id: '/__protected/__admin/template-management/create-template'
+      path: '/template-management/create-template'
+      fullPath: '/template-management/create-template'
+      preLoaderRoute: typeof _protected_adminTemplateManagementCreateTemplateRouteImport
       parentRoute: typeof _protected_adminRoute
     }
     '/__protected/__admin/user-management/edit-user/$id': {
@@ -268,14 +345,20 @@ const _authRouteChildren: _authRouteChildren = {
 const _authRouteWithChildren = _authRoute._addFileChildren(_authRouteChildren)
 
 interface _protected_adminRouteChildren {
+  _protected_adminTemplateManagementCreateTemplateRoute: typeof _protected_adminTemplateManagementCreateTemplateRoute
   _protected_adminUserManagementCreateUserRoute: typeof _protected_adminUserManagementCreateUserRoute
+  _protected_adminTemplateManagementIndexRoute: typeof _protected_adminTemplateManagementIndexRoute
   _protected_adminUserManagementIndexRoute: typeof _protected_adminUserManagementIndexRoute
   _protected_adminUserManagementEditUserIdRoute: typeof _protected_adminUserManagementEditUserIdRoute
 }
 
 const _protected_adminRouteChildren: _protected_adminRouteChildren = {
+  _protected_adminTemplateManagementCreateTemplateRoute:
+    _protected_adminTemplateManagementCreateTemplateRoute,
   _protected_adminUserManagementCreateUserRoute:
     _protected_adminUserManagementCreateUserRoute,
+  _protected_adminTemplateManagementIndexRoute:
+    _protected_adminTemplateManagementIndexRoute,
   _protected_adminUserManagementIndexRoute:
     _protected_adminUserManagementIndexRoute,
   _protected_adminUserManagementEditUserIdRoute:
@@ -285,17 +368,30 @@ const _protected_adminRouteChildren: _protected_adminRouteChildren = {
 const _protected_adminRouteWithChildren =
   _protected_adminRoute._addFileChildren(_protected_adminRouteChildren)
 
+interface _protectedSettingsRouteChildren {
+  _protectedSettingsProfileRoute: typeof _protectedSettingsProfileRoute
+  _protectedSettingsIndexRoute: typeof _protectedSettingsIndexRoute
+}
+
+const _protectedSettingsRouteChildren: _protectedSettingsRouteChildren = {
+  _protectedSettingsProfileRoute: _protectedSettingsProfileRoute,
+  _protectedSettingsIndexRoute: _protectedSettingsIndexRoute,
+}
+
+const _protectedSettingsRouteWithChildren =
+  _protectedSettingsRoute._addFileChildren(_protectedSettingsRouteChildren)
+
 interface _protectedRouteChildren {
   _protected_adminRoute: typeof _protected_adminRouteWithChildren
   _protectedDashboardRoute: typeof _protectedDashboardRoute
-  _protectedSettingsRoute: typeof _protectedSettingsRoute
+  _protectedSettingsRoute: typeof _protectedSettingsRouteWithChildren
   _protectedIndexRoute: typeof _protectedIndexRoute
 }
 
 const _protectedRouteChildren: _protectedRouteChildren = {
   _protected_adminRoute: _protected_adminRouteWithChildren,
   _protectedDashboardRoute: _protectedDashboardRoute,
-  _protectedSettingsRoute: _protectedSettingsRoute,
+  _protectedSettingsRoute: _protectedSettingsRouteWithChildren,
   _protectedIndexRoute: _protectedIndexRoute,
 }
 
