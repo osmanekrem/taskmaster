@@ -21,6 +21,7 @@ import { Route as _authForgotPasswordRouteImport } from './routes/__auth/forgot-
 import { Route as _protectedSettingsIndexRouteImport } from './routes/__protected/settings/index'
 import { Route as _protectedSettingsTicketTypesRouteImport } from './routes/__protected/settings/ticket-types'
 import { Route as _protectedSettingsProfileRouteImport } from './routes/__protected/settings/profile'
+import { Route as _protectedSettingsFieldsRouteImport } from './routes/__protected/settings/fields'
 import { Route as _protected_adminUserManagementIndexRouteImport } from './routes/__protected/__admin/user-management/index'
 import { Route as _protected_adminTemplateManagementIndexRouteImport } from './routes/__protected/__admin/template-management/index'
 import { Route as _protectedSettingsTicketTypesIdRouteImport } from './routes/__protected/settings/ticket-types/$id'
@@ -87,6 +88,12 @@ const _protectedSettingsProfileRoute =
     path: '/profile',
     getParentRoute: () => _protectedSettingsRoute,
   } as any)
+const _protectedSettingsFieldsRoute =
+  _protectedSettingsFieldsRouteImport.update({
+    id: '/fields',
+    path: '/fields',
+    getParentRoute: () => _protectedSettingsRoute,
+  } as any)
 const _protected_adminUserManagementIndexRoute =
   _protected_adminUserManagementIndexRouteImport.update({
     id: '/user-management/',
@@ -131,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof _protectedDashboardRoute
   '/settings': typeof _protectedSettingsRouteWithChildren
   '/': typeof _protectedIndexRoute
+  '/settings/fields': typeof _protectedSettingsFieldsRoute
   '/settings/profile': typeof _protectedSettingsProfileRoute
   '/settings/ticket-types': typeof _protectedSettingsTicketTypesRouteWithChildren
   '/settings/': typeof _protectedSettingsIndexRoute
@@ -147,6 +155,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof _authResetPasswordRoute
   '/dashboard': typeof _protectedDashboardRoute
   '/': typeof _protectedIndexRoute
+  '/settings/fields': typeof _protectedSettingsFieldsRoute
   '/settings/profile': typeof _protectedSettingsProfileRoute
   '/settings/ticket-types': typeof _protectedSettingsTicketTypesRouteWithChildren
   '/settings': typeof _protectedSettingsIndexRoute
@@ -168,6 +177,7 @@ export interface FileRoutesById {
   '/__protected/dashboard': typeof _protectedDashboardRoute
   '/__protected/settings': typeof _protectedSettingsRouteWithChildren
   '/__protected/': typeof _protectedIndexRoute
+  '/__protected/settings/fields': typeof _protectedSettingsFieldsRoute
   '/__protected/settings/profile': typeof _protectedSettingsProfileRoute
   '/__protected/settings/ticket-types': typeof _protectedSettingsTicketTypesRouteWithChildren
   '/__protected/settings/': typeof _protectedSettingsIndexRoute
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/settings'
     | '/'
+    | '/settings/fields'
     | '/settings/profile'
     | '/settings/ticket-types'
     | '/settings/'
@@ -203,6 +214,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/dashboard'
     | '/'
+    | '/settings/fields'
     | '/settings/profile'
     | '/settings/ticket-types'
     | '/settings'
@@ -223,6 +235,7 @@ export interface FileRouteTypes {
     | '/__protected/dashboard'
     | '/__protected/settings'
     | '/__protected/'
+    | '/__protected/settings/fields'
     | '/__protected/settings/profile'
     | '/__protected/settings/ticket-types'
     | '/__protected/settings/'
@@ -325,6 +338,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof _protectedSettingsProfileRouteImport
       parentRoute: typeof _protectedSettingsRoute
     }
+    '/__protected/settings/fields': {
+      id: '/__protected/settings/fields'
+      path: '/fields'
+      fullPath: '/settings/fields'
+      preLoaderRoute: typeof _protectedSettingsFieldsRouteImport
+      parentRoute: typeof _protectedSettingsRoute
+    }
     '/__protected/__admin/user-management/': {
       id: '/__protected/__admin/user-management/'
       path: '/user-management'
@@ -423,12 +443,14 @@ const _protectedSettingsTicketTypesRouteWithChildren =
   )
 
 interface _protectedSettingsRouteChildren {
+  _protectedSettingsFieldsRoute: typeof _protectedSettingsFieldsRoute
   _protectedSettingsProfileRoute: typeof _protectedSettingsProfileRoute
   _protectedSettingsTicketTypesRoute: typeof _protectedSettingsTicketTypesRouteWithChildren
   _protectedSettingsIndexRoute: typeof _protectedSettingsIndexRoute
 }
 
 const _protectedSettingsRouteChildren: _protectedSettingsRouteChildren = {
+  _protectedSettingsFieldsRoute: _protectedSettingsFieldsRoute,
   _protectedSettingsProfileRoute: _protectedSettingsProfileRoute,
   _protectedSettingsTicketTypesRoute:
     _protectedSettingsTicketTypesRouteWithChildren,
