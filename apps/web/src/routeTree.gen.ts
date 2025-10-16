@@ -21,9 +21,11 @@ import { Route as _authForgotPasswordRouteImport } from './routes/__auth/forgot-
 import { Route as _protectedSettingsIndexRouteImport } from './routes/__protected/settings/index'
 import { Route as _protectedSettingsTicketTypesRouteImport } from './routes/__protected/settings/ticket-types'
 import { Route as _protectedSettingsProfileRouteImport } from './routes/__protected/settings/profile'
+import { Route as _protectedSettingsFieldsRouteImport } from './routes/__protected/settings/fields'
 import { Route as _protected_adminUserManagementIndexRouteImport } from './routes/__protected/__admin/user-management/index'
 import { Route as _protected_adminTemplateManagementIndexRouteImport } from './routes/__protected/__admin/template-management/index'
 import { Route as _protectedSettingsTicketTypesIdRouteImport } from './routes/__protected/settings/ticket-types/$id'
+import { Route as _protectedSettingsFieldsIdRouteImport } from './routes/__protected/settings/fields/$id'
 import { Route as _protected_adminUserManagementCreateUserRouteImport } from './routes/__protected/__admin/user-management/create-user'
 import { Route as _protected_adminTemplateManagementCreateTemplateRouteImport } from './routes/__protected/__admin/template-management/create-template'
 import { Route as _protected_adminUserManagementEditUserIdRouteImport } from './routes/__protected/__admin/user-management/edit-user.$id'
@@ -87,6 +89,12 @@ const _protectedSettingsProfileRoute =
     path: '/profile',
     getParentRoute: () => _protectedSettingsRoute,
   } as any)
+const _protectedSettingsFieldsRoute =
+  _protectedSettingsFieldsRouteImport.update({
+    id: '/fields',
+    path: '/fields',
+    getParentRoute: () => _protectedSettingsRoute,
+  } as any)
 const _protected_adminUserManagementIndexRoute =
   _protected_adminUserManagementIndexRouteImport.update({
     id: '/user-management/',
@@ -104,6 +112,12 @@ const _protectedSettingsTicketTypesIdRoute =
     id: '/$id',
     path: '/$id',
     getParentRoute: () => _protectedSettingsTicketTypesRoute,
+  } as any)
+const _protectedSettingsFieldsIdRoute =
+  _protectedSettingsFieldsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => _protectedSettingsFieldsRoute,
   } as any)
 const _protected_adminUserManagementCreateUserRoute =
   _protected_adminUserManagementCreateUserRouteImport.update({
@@ -131,11 +145,13 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof _protectedDashboardRoute
   '/settings': typeof _protectedSettingsRouteWithChildren
   '/': typeof _protectedIndexRoute
+  '/settings/fields': typeof _protectedSettingsFieldsRouteWithChildren
   '/settings/profile': typeof _protectedSettingsProfileRoute
   '/settings/ticket-types': typeof _protectedSettingsTicketTypesRouteWithChildren
   '/settings/': typeof _protectedSettingsIndexRoute
   '/template-management/create-template': typeof _protected_adminTemplateManagementCreateTemplateRoute
   '/user-management/create-user': typeof _protected_adminUserManagementCreateUserRoute
+  '/settings/fields/$id': typeof _protectedSettingsFieldsIdRoute
   '/settings/ticket-types/$id': typeof _protectedSettingsTicketTypesIdRoute
   '/template-management': typeof _protected_adminTemplateManagementIndexRoute
   '/user-management': typeof _protected_adminUserManagementIndexRoute
@@ -147,11 +163,13 @@ export interface FileRoutesByTo {
   '/reset-password': typeof _authResetPasswordRoute
   '/dashboard': typeof _protectedDashboardRoute
   '/': typeof _protectedIndexRoute
+  '/settings/fields': typeof _protectedSettingsFieldsRouteWithChildren
   '/settings/profile': typeof _protectedSettingsProfileRoute
   '/settings/ticket-types': typeof _protectedSettingsTicketTypesRouteWithChildren
   '/settings': typeof _protectedSettingsIndexRoute
   '/template-management/create-template': typeof _protected_adminTemplateManagementCreateTemplateRoute
   '/user-management/create-user': typeof _protected_adminUserManagementCreateUserRoute
+  '/settings/fields/$id': typeof _protectedSettingsFieldsIdRoute
   '/settings/ticket-types/$id': typeof _protectedSettingsTicketTypesIdRoute
   '/template-management': typeof _protected_adminTemplateManagementIndexRoute
   '/user-management': typeof _protected_adminUserManagementIndexRoute
@@ -168,11 +186,13 @@ export interface FileRoutesById {
   '/__protected/dashboard': typeof _protectedDashboardRoute
   '/__protected/settings': typeof _protectedSettingsRouteWithChildren
   '/__protected/': typeof _protectedIndexRoute
+  '/__protected/settings/fields': typeof _protectedSettingsFieldsRouteWithChildren
   '/__protected/settings/profile': typeof _protectedSettingsProfileRoute
   '/__protected/settings/ticket-types': typeof _protectedSettingsTicketTypesRouteWithChildren
   '/__protected/settings/': typeof _protectedSettingsIndexRoute
   '/__protected/__admin/template-management/create-template': typeof _protected_adminTemplateManagementCreateTemplateRoute
   '/__protected/__admin/user-management/create-user': typeof _protected_adminUserManagementCreateUserRoute
+  '/__protected/settings/fields/$id': typeof _protectedSettingsFieldsIdRoute
   '/__protected/settings/ticket-types/$id': typeof _protectedSettingsTicketTypesIdRoute
   '/__protected/__admin/template-management/': typeof _protected_adminTemplateManagementIndexRoute
   '/__protected/__admin/user-management/': typeof _protected_adminUserManagementIndexRoute
@@ -187,11 +207,13 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/settings'
     | '/'
+    | '/settings/fields'
     | '/settings/profile'
     | '/settings/ticket-types'
     | '/settings/'
     | '/template-management/create-template'
     | '/user-management/create-user'
+    | '/settings/fields/$id'
     | '/settings/ticket-types/$id'
     | '/template-management'
     | '/user-management'
@@ -203,11 +225,13 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/dashboard'
     | '/'
+    | '/settings/fields'
     | '/settings/profile'
     | '/settings/ticket-types'
     | '/settings'
     | '/template-management/create-template'
     | '/user-management/create-user'
+    | '/settings/fields/$id'
     | '/settings/ticket-types/$id'
     | '/template-management'
     | '/user-management'
@@ -223,11 +247,13 @@ export interface FileRouteTypes {
     | '/__protected/dashboard'
     | '/__protected/settings'
     | '/__protected/'
+    | '/__protected/settings/fields'
     | '/__protected/settings/profile'
     | '/__protected/settings/ticket-types'
     | '/__protected/settings/'
     | '/__protected/__admin/template-management/create-template'
     | '/__protected/__admin/user-management/create-user'
+    | '/__protected/settings/fields/$id'
     | '/__protected/settings/ticket-types/$id'
     | '/__protected/__admin/template-management/'
     | '/__protected/__admin/user-management/'
@@ -325,6 +351,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof _protectedSettingsProfileRouteImport
       parentRoute: typeof _protectedSettingsRoute
     }
+    '/__protected/settings/fields': {
+      id: '/__protected/settings/fields'
+      path: '/fields'
+      fullPath: '/settings/fields'
+      preLoaderRoute: typeof _protectedSettingsFieldsRouteImport
+      parentRoute: typeof _protectedSettingsRoute
+    }
     '/__protected/__admin/user-management/': {
       id: '/__protected/__admin/user-management/'
       path: '/user-management'
@@ -345,6 +378,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/ticket-types/$id'
       preLoaderRoute: typeof _protectedSettingsTicketTypesIdRouteImport
       parentRoute: typeof _protectedSettingsTicketTypesRoute
+    }
+    '/__protected/settings/fields/$id': {
+      id: '/__protected/settings/fields/$id'
+      path: '/$id'
+      fullPath: '/settings/fields/$id'
+      preLoaderRoute: typeof _protectedSettingsFieldsIdRouteImport
+      parentRoute: typeof _protectedSettingsFieldsRoute
     }
     '/__protected/__admin/user-management/create-user': {
       id: '/__protected/__admin/user-management/create-user'
@@ -408,6 +448,20 @@ const _protected_adminRouteChildren: _protected_adminRouteChildren = {
 const _protected_adminRouteWithChildren =
   _protected_adminRoute._addFileChildren(_protected_adminRouteChildren)
 
+interface _protectedSettingsFieldsRouteChildren {
+  _protectedSettingsFieldsIdRoute: typeof _protectedSettingsFieldsIdRoute
+}
+
+const _protectedSettingsFieldsRouteChildren: _protectedSettingsFieldsRouteChildren =
+  {
+    _protectedSettingsFieldsIdRoute: _protectedSettingsFieldsIdRoute,
+  }
+
+const _protectedSettingsFieldsRouteWithChildren =
+  _protectedSettingsFieldsRoute._addFileChildren(
+    _protectedSettingsFieldsRouteChildren,
+  )
+
 interface _protectedSettingsTicketTypesRouteChildren {
   _protectedSettingsTicketTypesIdRoute: typeof _protectedSettingsTicketTypesIdRoute
 }
@@ -423,12 +477,14 @@ const _protectedSettingsTicketTypesRouteWithChildren =
   )
 
 interface _protectedSettingsRouteChildren {
+  _protectedSettingsFieldsRoute: typeof _protectedSettingsFieldsRouteWithChildren
   _protectedSettingsProfileRoute: typeof _protectedSettingsProfileRoute
   _protectedSettingsTicketTypesRoute: typeof _protectedSettingsTicketTypesRouteWithChildren
   _protectedSettingsIndexRoute: typeof _protectedSettingsIndexRoute
 }
 
 const _protectedSettingsRouteChildren: _protectedSettingsRouteChildren = {
+  _protectedSettingsFieldsRoute: _protectedSettingsFieldsRouteWithChildren,
   _protectedSettingsProfileRoute: _protectedSettingsProfileRoute,
   _protectedSettingsTicketTypesRoute:
     _protectedSettingsTicketTypesRouteWithChildren,

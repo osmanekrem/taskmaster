@@ -1,15 +1,14 @@
 import {createFileRoute, notFound} from "@tanstack/react-router";
-import TicketTypeDetail from "@/features/ticket-types/ui/views/ticket-type-detail";
-import {getTicketTypeQuery} from "@/features/ticket-types/lib/queries";
-import {redirect} from "@tanstack/react-router";
 import NotFound from "@/components/not-found";
+import {getFieldWithDetailsQuery} from "@/features/fields/lib/queries";
+import FieldDetail from "@/features/fields/ui/views/field-detail";
 
-export const Route = createFileRoute("/__protected/settings/ticket-types/$id")({
-    component: TicketTypeDetail,
+export const Route = createFileRoute("/__protected/settings/fields/$id")({
+    component: FieldDetail,
     loader: async ({context, params}) => {
         const {id} = params;
         const {data} = await context.queryClient.fetchQuery(
-            getTicketTypeQuery(id ?? "")
+            getFieldWithDetailsQuery(id ?? "")
         );
         if (!data) {
             throw notFound();
