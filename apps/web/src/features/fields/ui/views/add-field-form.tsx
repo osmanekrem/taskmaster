@@ -1,5 +1,5 @@
 import {useForm} from "@tanstack/react-form";
-import {useMutation} from "@tanstack/react-query";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import {toast} from "sonner";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
@@ -8,13 +8,19 @@ import {addFieldSchema} from "@/features/fields/schemas";
 import FieldTypeSelect from "@/features/fields/ui/components/field-type-select";
 import {createFieldMutation} from "@/features/fields/lib/mutations";
 import useAddFieldModal from "@/features/fields/hooks/use-add-field-modal";
+import FieldTypeIconSelect from "@/features/fields/ui/components/field-type-icon-select";
+import {Textarea} from "@/components/ui/textarea";
+import {getFieldTypesQuery} from "@/features/fields/lib/queries";
 
 export default function AddFieldForm() {
     const createField = useMutation(createFieldMutation);
+    const {data: fieldTypes} = useQuery(getFieldTypesQuery);
     const {close} = useAddFieldModal();
     const form = useForm({
         defaultValues: {
             name: "",
+            description: "",
+            icon: "",
             fieldTypeId: "",
         },
         onSubmit: async ({value}) => {
@@ -48,7 +54,7 @@ export default function AddFieldForm() {
                 <form.Field name="name">
                     {(field) => (
                         <div className="space-y-2">
-                            <Label htmlFor={field.name}>Alan Adı</Label>
+                            <Label htmlFor={field.name}>Alan Adı *</Label>
                             <Input
                                 id={field.name}
                                 name={field.name}
@@ -71,11 +77,61 @@ export default function AddFieldForm() {
                     {(field) => (
                         <div className="space-y-2">
                             <Label htmlFor={field.name}>
-                                Alan Türü
+                                Alan Türü *
                             </Label>
                             <FieldTypeSelect
                                 value={field.state.value}
+                                onChange={(value) => {
+                                    field.handleChange(value)
+                                    const selectedFieldType = fieldTypes?.data.find(ft => ft.id === value);
+                                    form.setFieldValue("icon", selectedFieldType?.icon || "")
+
+                                }}
+                            />
+                            {field.state.meta.errors.map((error) => (
+                                <p key={error?.message} className="text-destructive">
+                                    {error?.message}
+                                </p>
+                            ))}
+                        </div>
+                    )}
+                </form.Field>
+            </div>
+
+            <div>
+                <form.Field name="icon">
+                    {(field) => (
+                        <div className="space-y-2">
+                            <Label htmlFor={field.name}>
+                                Alan İkonu
+                            </Label>
+                            <FieldTypeIconSelect
+                                value={field.state.value}
                                 onChange={(value) => field.handleChange(value)}
+                            />
+                            {field.state.meta.errors.map((error) => (
+                                <p key={error?.message} className="text-destructive">
+                                    {error?.message}
+                                </p>
+                            ))}
+                        </div>
+                    )}
+                </form.Field>
+            </div>
+
+            <div>
+                <form.Field name="description">
+                    {(field) => (
+                        <div className="space-y-2">
+                            <Label htmlFor={field.name}>
+                                Alan Açıklaması
+                            </Label>
+                            <Textarea
+                                id={field.name}
+                                name={field.name}
+                                value={field.state.value}
+                                onBlur={field.handleBlur}
+                                onChange={(e) => field.handleChange(e.target.value)}
                             />
                             {field.state.meta.errors.map((error) => (
                                 <p key={error?.message} className="text-destructive">

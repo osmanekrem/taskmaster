@@ -1,0 +1,1 @@
+ALTER TABLE "field-type-options" ADD COLUMN "value" text NOT NULL;

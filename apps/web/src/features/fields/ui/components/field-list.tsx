@@ -10,11 +10,11 @@ import {
     ItemTitle,
 } from "@/components/ui/item";
 import {Link} from "@tanstack/react-router";
-import {getFieldsWithFieldTypeQuery} from "@/features/fields/lib/queries";
+import {getFieldsQuery} from "@/features/fields/lib/queries";
 import useAddFieldModal from "@/features/fields/hooks/use-add-field-modal";
 
 export default function FieldList() {
-    const {data} = useQuery(getFieldsWithFieldTypeQuery);
+    const {data} = useQuery(getFieldsQuery);
     const {open} = useAddFieldModal();
     return (
         <div className="flex flex-col w-full max-w-64 space-y-4">
@@ -39,7 +39,7 @@ export default function FieldList() {
                             className="w-full"
                         >
                             <ItemMedia>
-                                <FieldTypeIcon name={field.fieldType?.icon ?? ""}/>
+                                <FieldTypeIcon name={field?.icon ?? ""}/>
                             </ItemMedia>
                             <ItemContent>
                                 <ItemTitle>{field.name}</ItemTitle>

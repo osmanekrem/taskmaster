@@ -1,0 +1,1 @@
+ALTER TABLE "field-type-options" ALTER COLUMN "value" DROP NOT NULL;
