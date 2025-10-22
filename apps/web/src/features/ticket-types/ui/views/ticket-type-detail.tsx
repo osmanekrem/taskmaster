@@ -13,6 +13,7 @@ import {PencilIcon} from "lucide-react";
 import useEditTicketTypeModal from "@/features/ticket-types/hooks/use-edit-ticket-type-modal";
 import EditTicketTypeModal from "../components/edit-ticket-type-modal";
 import DeleteTicketTypeButton from "../components/delete-ticket-type-button";
+import TicketTypeFields from "@/features/ticket-types/ui/components/ticket-type-fields";
 
 export default function TicketTypeDetail() {
     const {id} = useParams({from: Route.id});
@@ -41,6 +42,7 @@ export default function TicketTypeDetail() {
                     {data.description}
                 </p>
             )}
+            <TicketTypeFields id={id}/>
         </div>
     );
 }
