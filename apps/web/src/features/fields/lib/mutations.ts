@@ -48,3 +48,32 @@ export const deleteFieldMutation = mutationOptions<DeleteFieldResponseType, Erro
         queryClient.invalidateQueries({queryKey: ["field-with-field-type", res?.data?.id]});
     },
 })
+
+type UpdateFieldOptionValueRequest = RouterInput["fields"]["updateFieldOptionValue"];
+type UpdateFieldOptionValueResponse = RouterOutput["fields"]["updateFieldOptionValue"];
+
+export const updateFieldOptionValueMutation = mutationOptions<UpdateFieldOptionValueResponse, Error, UpdateFieldOptionValueRequest>({
+    mutationFn: (data) => {
+        return trpcClient.fields.updateFieldOptionValue.mutate(data);
+    },
+    onSuccess: (res) => {
+        queryClient.invalidateQueries({queryKey: ["field-options", res?.data?.fieldId]});
+        queryClient.invalidateQueries({queryKey: ["field-with-details", res?.data?.fieldId]});
+        queryClient.invalidateQueries({queryKey: ["field-with-field-type", res?.data?.fieldId]});
+    },
+});
+
+type SaveSelectOptionsRequest = RouterInput["fields"]["saveSelectOptions"];
+type SaveSelectOptionsResponse = RouterOutput["fields"]["saveSelectOptions"];
+
+export const saveSelectOptionsMutation = mutationOptions<SaveSelectOptionsResponse, Error, SaveSelectOptionsRequest>({
+    mutationFn: (data) => {
+        return trpcClient.fields.saveSelectOptions.mutate(data);
+    },
+    onSuccess: (res) => {
+        queryClient.invalidateQueries({queryKey: ["select-options-by-field-option", res?.data?.fieldOptionId]});
+        queryClient.invalidateQueries({queryKey: ["field-options", res?.data?.fieldId]});
+        queryClient.invalidateQueries({queryKey: ["field-with-details", res?.data?.fieldId]});
+        queryClient.invalidateQueries({queryKey: ["field-with-field-type", res?.data?.fieldId]});
+    },
+});
