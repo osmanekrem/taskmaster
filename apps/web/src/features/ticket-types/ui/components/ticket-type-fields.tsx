@@ -1,98 +1,25 @@
-import { useQuery } from "@tanstack/react-query";
-import { getFieldsForTicketTypeQuery } from "@/features/ticket-types/lib/queries";
-import { useEffect, useState } from "react";
-import { getFieldsQuery } from "@/features/fields/lib/queries";
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemMedia,
-  ItemTitle,
-} from "@/components/ui/item";
-import { Icon } from "@/components/ui/icon-picker";
-import {
-  KanbanBoard,
-  KanbanCard,
-  KanbanCards,
-  KanbanHeader,
-  KanbanProvider,
-} from "@/components/ui/shadcn-io/kanban";
-import { useNavigate } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
+import {useState} from "react";
+import FieldSelector from "@/features/fields/ui/components/field-selector";
+import TicketTypePreview from "@/features/ticket-types/ui/components/ticket-type-preview";
 
 interface TicketTypeFields {
-  id: string;
+    id: string;
 }
 
-const columns = [
-  { id: "0", name: "Atanmış" },
-  { id: "1", name: "Atanmadı" },
-];
+export default function TicketTypeFields({id}: TicketTypeFields) {
+    const [fields, setFields] = useState<any[]>([]);
 
-export default function TicketTypeFields({ id }: TicketTypeFields) {
-  const { data } = useQuery(getFieldsForTicketTypeQuery(id));
-  const { data: fieldsData } = useQuery(getFieldsQuery);
-
-  const [fields, setFields] = useState<any[]>([]);
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    setFields(
-      fieldsData?.data.map((field) => ({
-        ...field,
-        column: data?.some((item) => item.field.id === field.id)
-          ? columns[0].id
-          : columns[1].id,
-      })) || []
-    );
-  }, [fieldsData]);
-
-  return (
-    <KanbanProvider columns={columns} data={fields} onDataChange={setFields}>
-      {(column) => (
-        <KanbanBoard id={column.id} key={column.id}>
-          <KanbanHeader>
-            <div className="flex items-center gap-2">
-              <span>{column.name}</span>
+    return (
+        <div className="flex w-full flex-1 min-h-0 gap-2.5 border-t pt-4">
+            <div className="flex flex-col flex-1 min-w-0 space-y-4">
+                <TicketTypePreview fields={fields} setFields={setFields} id={id}/>
             </div>
-          </KanbanHeader>
-          <KanbanCards id={column.id}>
-            {(field: (typeof fields)[number]) => (
-              <KanbanCard
-                column={column.id}
-                id={field.id}
-                key={field.id}
-                name={field.name}
-              >
-                <ItemMedia>
-                  <Icon className="size-4" name={field.icon} />
-                </ItemMedia>
-                <ItemContent>
-                  <ItemTitle>{field.name}</ItemTitle>
-                </ItemContent>
-                <ItemActions>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-
-                      navigate({
-                        to: "/settings/fields/$id",
-                        params: { id: field.id },
-                      });
-                    }}
-                  >
-                    <Icon className="size-4" name="eye" />
-                  </Button>
-                </ItemActions>
-              </KanbanCard>
-            )}
-          </KanbanCards>
-        </KanbanBoard>
-      )}
-    </KanbanProvider>
-  );
+            <div className="flex flex-col min-w-0 w-full max-w-xs space-y-4">
+                <h2 className="text-xl font-bold leading-tight truncate">
+                    Alanlar
+                </h2>
+                <FieldSelector fields={fields} setFields={setFields}/>
+            </div>
+        </div>
+    );
 }

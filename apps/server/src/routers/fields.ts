@@ -1,7 +1,7 @@
 import {protectedProcedure, router} from "@/lib/trpc";
 import {fieldOptions, fields, selectOptions} from "@/db/schema/field";
 import {successResponse} from "@/utils/response";
-import {and, eq, exists, sql} from "drizzle-orm";
+import {and, eq, exists, notInArray, sql} from "drizzle-orm";
 import {z} from "zod";
 import {fieldTypeOptions, fieldTypes} from "@/db/schema/field-types";
 import {createFieldSchema, editFieldSchema} from "@/schemas/fields";
@@ -35,18 +35,18 @@ export const fieldsRouter = router({
                 },
                 options: sql<
                     Array<{
-                        id: string; // fieldOptions.id
-                        value: string; // fieldOptions.value
-                        name: string; // fieldTypeOptions.name
-                        type: string; // fieldTypeOptions.type
-                        fieldTypeId: string; // fieldTypeOptions.id
-                        key: string; // fieldTypeOptions.key
+                        id: string;
+                        value: string;
+                        name: string;
+                        type: string;
+                        fieldTypeId: string;
+                        key: string;
                     }>
                 >`
                     COALESCE(
-                json_agg(
-                    json_build_object(
-                        'id',
+                    json_agg(
+                        DISTINCT CAST(json_build_object(
+                            'id',
                     ${fieldOptions.id},
                     'value',
                     ${fieldOptions.value},
@@ -59,11 +59,51 @@ export const fieldsRouter = router({
                     'key',
                     ${fieldTypeOptions.key}
                     )
+                    AS
+                    jsonb
+                    )
                     )
                     FILTER
                     (
                     WHERE
                     ${fieldOptions.id}
+                    IS
+                    NOT
+                    NULL
+                    ),
+                    CAST
+                    (
+                    '[]'
+                    AS
+                    json
+                    )
+                    )
+                `,
+                selectOptions: sql<
+                    Array<{
+                        id: string;
+                        name: string;
+                        icon: string;
+                        fieldOptionId: string;
+                    }>
+                >`
+                    COALESCE(
+                    json_agg(
+                        json_build_object(
+                            'id',
+                    ${selectOptions.id},
+                    'name',
+                    ${selectOptions.name},
+                    'icon',
+                    ${selectOptions.icon},
+                    'fieldOptionId',
+                    ${selectOptions.fieldOptionId}
+                    )
+                    )
+                    FILTER
+                    (
+                    WHERE
+                    ${selectOptions.id}
                     IS
                     NOT
                     NULL
@@ -84,7 +124,12 @@ export const fieldsRouter = router({
                 fieldTypeOptions,
                 eq(fieldOptions.fieldTypeOptionId, fieldTypeOptions.id)
             )
+            .leftJoin(
+                selectOptions,
+                eq(fieldOptions.id, selectOptions.fieldOptionId)
+            )
             .groupBy(fields.id, fieldTypes.id);
+
         return successResponse(data, "Alanlar başarıyla getirildi");
     }),
     getFieldWithDetailsById: protectedProcedure
@@ -104,18 +149,19 @@ export const fieldsRouter = router({
                     },
                     options: sql<
                         Array<{
-                            id: string; // fieldOptions.id
-                            value: string; // fieldOptions.value
-                            name: string; // fieldTypeOptions.name
-                            type: string; // fieldTypeOptions.type
-                            fieldTypeId: string; // fieldTypeOptions.id
-                            key: string; // fieldTypeOptions.key
+                            id: string;
+                            value: string;
+                            name: string;
+                            type: string;
+                            fieldTypeId: string;
+                            key: string;
                         }>
                     >`
                         COALESCE(
-                json_agg(
-                    json_build_object(
-                        'id',
+                    json_agg(
+                        -- The fix is to CAST the object to jsonb right here
+                        DISTINCT CAST(json_build_object(
+                            'id',
                         ${fieldOptions.id},
                         'value',
                         ${fieldOptions.value},
@@ -128,11 +174,51 @@ export const fieldsRouter = router({
                         'key',
                         ${fieldTypeOptions.key}
                         )
+                        AS
+                        jsonb
+                        )
                         )
                         FILTER
                         (
                         WHERE
                         ${fieldOptions.id}
+                        IS
+                        NOT
+                        NULL
+                        ),
+                        CAST
+                        (
+                        '[]'
+                        AS
+                        json
+                        )
+                        )
+                    `,
+                    selectOptions: sql<
+                        Array<{
+                            id: string;
+                            name: string;
+                            icon: string;
+                            fieldOptionId: string;
+                        }>
+                    >`
+                        COALESCE(
+                    json_agg(
+                        json_build_object(
+                            'id',
+                        ${selectOptions.id},
+                        'name',
+                        ${selectOptions.name},
+                        'icon',
+                        ${selectOptions.icon},
+                        'fieldOptionId',
+                        ${selectOptions.fieldOptionId}
+                        )
+                        )
+                        FILTER
+                        (
+                        WHERE
+                        ${selectOptions.id}
                         IS
                         NOT
                         NULL
@@ -152,6 +238,10 @@ export const fieldsRouter = router({
                 .leftJoin(
                     fieldTypeOptions,
                     eq(fieldOptions.fieldTypeOptionId, fieldTypeOptions.id)
+                )
+                .leftJoin(
+                    selectOptions,
+                    eq(fieldOptions.id, selectOptions.fieldOptionId)
                 )
                 .where(eq(fields.id, input.fieldId))
                 .groupBy(fields.id, fieldTypes.id);
@@ -297,33 +387,28 @@ export const fieldsRouter = router({
         .mutation(async ({ctx, input}) => {
             const {fieldOptionId, options} = input;
 
-            // Delete options that are not in the new list
-            await ctx.db.delete(selectOptions).where(
-                and(
-                    eq(selectOptions.fieldOptionId, fieldOptionId),
-                    exists(
-                        ctx.db
-                            .select()
-                            .from(selectOptions)
-                            .where(
-                                and(
-                                    eq(selectOptions.fieldOptionId, fieldOptionId),
-                                    sql`${selectOptions.id}
-                                    NOT IN (
-                                    ${sql.join(
-                                            options
-                                                    .filter((opt) => opt.id)
-                                                    .map((opt) => sql`${opt.id}`),
-                                            sql`, `
-                                    )}
-                                    )`
-                                )
-                            )
-                    )
-                )
-            );
+            // 1. Get the IDs of incoming options that already exist.
+            const incomingOptionIds = options
+                .map((opt) => opt.id)
+                .filter((id): id is string => !!id);
 
-            // Upsert new and existing options
+            // 2. Delete options from the database that are not in the incoming list.
+            if (incomingOptionIds.length > 0) {
+                // If we have existing option IDs, delete any DB records that are NOT in this list.
+                await ctx.db.delete(selectOptions).where(
+                    and(
+                        eq(selectOptions.fieldOptionId, fieldOptionId),
+                        notInArray(selectOptions.id, incomingOptionIds)
+                    )
+                );
+            } else {
+                // If no existing option IDs are passed, it means all options for this field should be deleted.
+                await ctx.db.delete(selectOptions)
+                    .where(eq(selectOptions.fieldOptionId, fieldOptionId));
+            }
+
+
+            // 3. Upsert new and existing options (this part of your logic was correct).
             for (const option of options) {
                 if (option.id) {
                     // Update existing option
@@ -344,10 +429,18 @@ export const fieldsRouter = router({
                 }
             }
 
+            // ... (rest of your function)
             const updatedOptions = await ctx.db
-                .select()
+                .select({
+                    id: selectOptions.id,
+                    name: selectOptions.name,
+                    icon: selectOptions.icon,
+                    fieldOptionId: selectOptions.fieldOptionId,
+                    fieldId: fieldOptions.fieldId,
+                })
                 .from(selectOptions)
-                .where(eq(selectOptions.fieldOptionId, fieldOptionId));
+                .where(eq(selectOptions.fieldOptionId, fieldOptionId))
+                .leftJoin(fieldOptions, eq(selectOptions.fieldOptionId, fieldOptions.id));
 
             return successResponse(
                 updatedOptions,

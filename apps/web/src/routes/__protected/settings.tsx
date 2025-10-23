@@ -45,7 +45,7 @@ function RouteComponent() {
                 </div>
             </div>
 
-            <div className="flex items-start h-full gap-x-4">
+            <div className="flex items-start flex-1 min-h-0 gap-x-4">
                 <ul className="max-w-48 border-r pr-4 overflow-y-auto w-full h-full flex flex-col gap-y-2">
                     {routes.map((route, index) => (
                         <li key={index} className="w-full">

@@ -71,9 +71,9 @@ export const saveSelectOptionsMutation = mutationOptions<SaveSelectOptionsRespon
         return trpcClient.fields.saveSelectOptions.mutate(data);
     },
     onSuccess: (res) => {
-        queryClient.invalidateQueries({queryKey: ["select-options-by-field-option", res?.data?.fieldOptionId]});
-        queryClient.invalidateQueries({queryKey: ["field-options", res?.data?.fieldId]});
-        queryClient.invalidateQueries({queryKey: ["field-with-details", res?.data?.fieldId]});
-        queryClient.invalidateQueries({queryKey: ["field-with-field-type", res?.data?.fieldId]});
+        queryClient.invalidateQueries({queryKey: ["select-options-by-field-option", res?.data[0]?.fieldOptionId]});
+        queryClient.invalidateQueries({queryKey: ["field-options", res?.data[0]?.fieldId]});
+        queryClient.invalidateQueries({queryKey: ["field-with-details", res?.data[0]?.fieldId]});
+        queryClient.invalidateQueries({queryKey: ["field-with-field-type", res?.data[0]?.fieldId]});
     },
 });
