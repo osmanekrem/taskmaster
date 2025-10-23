@@ -1,56 +1,61 @@
 import {
-    ArrowUpDownIcon,
-    BinaryIcon,
-    Calendar1Icon,
-    CaseSensitiveIcon, ClockIcon, Link2Icon, LinkIcon, TagsIcon,
-    TextCursorIcon,
-    TextCursorInputIcon,
-    TextIcon, User2Icon
+  ArrowUpDownIcon,
+  BinaryIcon,
+  Calendar1Icon,
+  CaseSensitiveIcon,
+  ClockIcon,
+  Link2Icon,
+  LinkIcon,
+  TagsIcon,
+  TextCursorIcon,
+  TextCursorInputIcon,
+  TextIcon,
+  User2Icon,
 } from "lucide-react";
 
 export const fieldTypeIcons = [
-    {
-        name: 'text',
-        icon: CaseSensitiveIcon,
-    },
-    {
-        name: 'textarea',
-        icon: TextIcon,
-    },
-    {
-        name: 'date',
-        icon: Calendar1Icon,
-    },
-    {
-        name: 'number',
-        icon: BinaryIcon,
-    },
-    {
-        name: 'single-select',
-        icon: TextCursorIcon,
-    },
-    {
-        name: 'multi-select',
-        icon: TextCursorInputIcon,
-    },
-    {
-        name: 'datetime',
-        icon: ClockIcon,
-    },
-    {
-        name: 'url',
-        icon: LinkIcon,
-    },
-    {
-        name: 'user',
-        icon: User2Icon,
-    },
-    {
-        name: 'tags',
-        icon: TagsIcon,
-    },
-    {
-        name: 'priority',
-        icon: ArrowUpDownIcon,
-    }
-]
+  {
+    name: "case-sensitive",
+    icon: CaseSensitiveIcon,
+  },
+  {
+    name: "text",
+    icon: TextIcon,
+  },
+  {
+    name: "calendar-1",
+    icon: Calendar1Icon,
+  },
+  {
+    name: "binary",
+    icon: BinaryIcon,
+  },
+  {
+    name: "text-cursor",
+    icon: TextCursorIcon,
+  },
+  {
+    name: "text-cursor-input",
+    icon: TextCursorInputIcon,
+  },
+  {
+    name: "clock",
+    icon: ClockIcon,
+  },
+  {
+    name: "link",
+    icon: LinkIcon,
+  },
+  {
+    name: "user-2",
+    icon: User2Icon,
+  },
+  {
+    name: "tags",
+    icon: TagsIcon,
+  },
+  {
+    name: "arrow-up-down",
+    icon: ArrowUpDownIcon,
+  },
+];

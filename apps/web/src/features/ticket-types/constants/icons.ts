@@ -23,55 +23,55 @@ export const ticketTypeIcons: { name: string; icon: LucideIcon }[] = [
     icon: BugIcon,
   },
   {
-    name: "feature",
+    name: "square-plus",
     icon: SquarePlusIcon,
   },
   {
-    name: "task",
+    name: "square-check-big",
     icon: SquareCheckBigIcon,
   },
   {
-    name: "improvement",
+    name: "circle-fading-arrow-up",
     icon: CircleFadingArrowUpIcon,
   },
   {
-    name: "documentation",
+    name: "book-open",
     icon: BookOpenIcon,
   },
   {
-    name: "question",
+    name: "help-circle",
     icon: HelpCircleIcon,
   },
   {
-    name: "maintenance",
+    name: "wrench",
     icon: WrenchIcon,
   },
   {
-    name: "support",
+    name: "headset",
     icon: HeadsetIcon,
   },
   {
-    name: "development",
+    name: "code",
     icon: CodeIcon,
   },
   {
-    name: "design",
+    name: "pencil",
     icon: PencilIcon,
   },
   {
-    name: "testing",
+    name: "test-tube",
     icon: TestTubeIcon,
   },
   {
-    name: "deployment",
+    name: "cloud-upload",
     icon: CloudUploadIcon,
   },
   {
-    name: "performance",
+    name: "chart-line",
     icon: ChartLineIcon,
   },
   {
-    name: "security",
+    name: "shield",
     icon: ShieldIcon,
   },
 ];

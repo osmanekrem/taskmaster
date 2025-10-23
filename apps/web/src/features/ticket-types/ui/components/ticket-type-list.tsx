@@ -3,7 +3,6 @@ import { getTicketTypesQuery } from "@/features/ticket-types/lib/queries";
 import { Button } from "@/components/ui/button";
 import { ChevronRightIcon, PlusIcon } from "lucide-react";
 import useAddTicketTypeModal from "@/features/ticket-types/hooks/use-add-ticket-type-modal";
-import TicketTypeIcon from "./ticket-type-icon";
 import {
   Item,
   ItemActions,
@@ -12,6 +11,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Link } from "@tanstack/react-router";
+import { Icon } from "@/components/ui/icon-picker";
 
 export default function TicketTypeList() {
   const { data } = useQuery(getTicketTypesQuery);
@@ -39,7 +39,7 @@ export default function TicketTypeList() {
               className="w-full"
             >
               <ItemMedia>
-                <TicketTypeIcon name={ticketType.icon ?? ""} />
+                <Icon name={ticketType.icon ?? ""} />
               </ItemMedia>
               <ItemContent>
                 <ItemTitle>{ticketType.name}</ItemTitle>
