@@ -122,7 +122,7 @@ export const KanbanCard = <T extends KanbanItemProps = KanbanItemProps>({
             <div style={style} {...attributes} ref={setNodeRef}>
                 <Card
                     className={cn(
-                        "gap-4 rounded-md p-2 shadow-sm flex flex-row flex-nowrap items-center",
+                        "gap-4 rounded-md p-2 shadow-sm flex flex-row flex-nowrap items-start",
                         isDragging && "pointer-events-none cursor-grabbing opacity-30",
                         className
                     )}

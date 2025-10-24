@@ -7,12 +7,14 @@ import DeleteFieldButton from "@/features/fields/ui/components/delete-field-butt
 import {Route} from "@/routes/__protected/settings/fields/$id";
 import {
     BooleanFormElement,
+    SelectFormElement,
     StaticSelectOptionsFormElement,
+    TextFormElement,
 } from "@/components/type-form-element";
 import {useEffect, useState} from "react";
 import {queryClient} from "@/utils/trpc";
-import {getSelectOptionsByFieldOptionIdsQuery} from "@/features/fields/lib/queries";
-import {useMutation} from "@tanstack/react-query";
+import {getFieldWithDetailsQuery, getSelectOptionsByFieldOptionIdsQuery} from "@/features/fields/lib/queries";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import {
     saveSelectOptionsMutation,
     updateFieldOptionValueMutation,
@@ -22,7 +24,7 @@ import type {IconName} from "lucide-react/dynamic";
 
 export default function FieldDetail() {
     const {id} = useParams({from: Route.id});
-    const data = Route.useLoaderData();
+    const {data: {data}} = useQuery(getFieldWithDetailsQuery(id))
     const {open} = useEditFieldModal();
     const saveSelectOptions = useMutation(saveSelectOptionsMutation);
     const updateFieldOptionValue = useMutation(updateFieldOptionValueMutation);
@@ -88,7 +90,7 @@ export default function FieldDetail() {
     useEffect(() => {
         if (!data) return;
         setOptionsData(data.options || []);
-        if (data.options.some((option) => option.key === "is-dynamic-options")) {
+        if (data.options?.some((option) => option.key === "is-dynamic-options")) {
             fetchSelectOptions(
                 data.options
                     .filter((opt) => opt.key === "is-dynamic-options")
@@ -195,7 +197,19 @@ export default function FieldDetail() {
                                     ))}
                             </>
                         );
-                    case "string":
+                    case "text":
+                        return <div
+                        key={option.id}
+                        className="p-4 border rounded-md flex items-center justify-between"
+                    ><TextFormElement name={option.name} id={option.id} value={option.value} onChange={(value: any) => onChangeOption(option.id, value)}/></div>;
+                    case "select":
+                        const isDefaultOption = option.key === "default-option";
+                            return <div
+                            key={option.id}
+                            className="p-4 border rounded-md flex items-center justify-between"
+                    ><SelectFormElement options={data.selectOptions} name={option.name} id={option.id} value={option.value} onChange={(value: any) => onChangeOption(option.id, value)}/></div>
+                        
+                    
                     case "number":
                     case "select":
                         break;

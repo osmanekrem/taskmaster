@@ -1,4 +1,4 @@
-import { pgTable, text } from "drizzle-orm/pg-core";
+import { pgTable, smallint, text } from "drizzle-orm/pg-core";
 import { fieldTypeOptions, fieldTypes } from "@/db/schema/field-types";
 
 export const fields = pgTable("fields", {
@@ -38,4 +38,5 @@ export const selectOptions = pgTable("select-options", {
     .references(() => fieldOptions.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   icon: text("icon"),
+  order: smallint("order").notNull(),
 });

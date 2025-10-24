@@ -46,22 +46,9 @@ export default function TicketTypePreview({
                                 id={field.id}
                                 key={field.id}
                                 name={field.name}
+                                className="pt-4 pr-4"
                             >
-                                <Item className="pl-0 p-2 w-full">
-
-                                    <ItemMedia>
-                                        <Icon name={field.icon} className="size-4"/>
-                                    </ItemMedia>
-                                    <ItemContent>
-                                        <ItemTitle className="px-1">
-                                            {field.name}
-                                        </ItemTitle>
-                                        <ItemDescription className="p-1">
                                             <FieldRendererPreview field={field}/>
-                                        </ItemDescription>
-                                    </ItemContent>
-
-                                </Item>
                             </KanbanCard>
                         )}
                     </KanbanCards>

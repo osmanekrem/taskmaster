@@ -36,7 +36,11 @@ export const fieldTypesRouter = router({
                 'name',
                 ${fieldTypeOptions.name},
                 'type',
-                ${fieldTypeOptions.type}
+                ${fieldTypeOptions.type},
+                'key',
+                ${fieldTypeOptions.key}
+                'order',
+                ${fieldTypeOptions.order}
                 )
                 )
                 FILTER
@@ -83,7 +87,11 @@ export const fieldTypesRouter = router({
                 'name',
                 ${fieldTypeOptions.name},
                 'type',
-                ${fieldTypeOptions.type}
+                ${fieldTypeOptions.type},
+                'key',
+                ${fieldTypeOptions.key}
+                'order',
+                ${fieldTypeOptions.order}
                 )
                 )
                 FILTER

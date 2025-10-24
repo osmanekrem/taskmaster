@@ -41,6 +41,7 @@ export const fieldsRouter = router({
                         type: string;
                         fieldTypeId: string;
                         key: string;
+                        order: number
                     }>
                 >`
                     COALESCE(
@@ -57,7 +58,9 @@ export const fieldsRouter = router({
                     'fieldTypeId',
                     ${fieldTypeOptions.id},
                     'key',
-                    ${fieldTypeOptions.key}
+                    ${fieldTypeOptions.key},
+                'order',
+                ${fieldTypeOptions.order}
                     )
                     AS
                     jsonb
@@ -85,6 +88,7 @@ export const fieldsRouter = router({
                         name: string;
                         icon: string;
                         fieldOptionId: string;
+                        order: number;
                     }>
                 >`
                     COALESCE(
@@ -97,7 +101,9 @@ export const fieldsRouter = router({
                     'icon',
                     ${selectOptions.icon},
                     'fieldOptionId',
-                    ${selectOptions.fieldOptionId}
+                    ${selectOptions.fieldOptionId},
+                'order',
+                ${selectOptions.order}
                     )
                     )
                     FILTER
@@ -155,6 +161,7 @@ export const fieldsRouter = router({
                             type: string;
                             fieldTypeId: string;
                             key: string;
+                            order: number
                         }>
                     >`
                         COALESCE(
@@ -172,7 +179,9 @@ export const fieldsRouter = router({
                         'fieldTypeId',
                         ${fieldTypeOptions.id},
                         'key',
-                        ${fieldTypeOptions.key}
+                        ${fieldTypeOptions.key},
+                        'order',
+                        ${fieldTypeOptions.order}
                         )
                         AS
                         jsonb
@@ -200,6 +209,7 @@ export const fieldsRouter = router({
                             name: string;
                             icon: string;
                             fieldOptionId: string;
+                            order: number;
                         }>
                     >`
                         COALESCE(
@@ -212,7 +222,9 @@ export const fieldsRouter = router({
                         'icon',
                         ${selectOptions.icon},
                         'fieldOptionId',
-                        ${selectOptions.fieldOptionId}
+                        ${selectOptions.fieldOptionId},
+                'order',
+                ${selectOptions.order}
                         )
                         )
                         FILTER
@@ -380,6 +392,7 @@ export const fieldsRouter = router({
                         name: z.string(),
                         icon: z.string(),
                         fieldOptionId: z.string(),
+                        order: z.number(),
                     })
                 ),
             })
@@ -425,6 +438,7 @@ export const fieldsRouter = router({
                         name: option.name,
                         icon: option.icon,
                         fieldOptionId: fieldOptionId,
+                        order: option.order,
                     });
                 }
             }
@@ -436,6 +450,7 @@ export const fieldsRouter = router({
                     name: selectOptions.name,
                     icon: selectOptions.icon,
                     fieldOptionId: selectOptions.fieldOptionId,
+                    order: selectOptions.order,
                     fieldId: fieldOptions.fieldId,
                 })
                 .from(selectOptions)

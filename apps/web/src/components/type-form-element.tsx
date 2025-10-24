@@ -21,10 +21,14 @@ import {IconPicker, Icon, type IconName} from "./ui/icon-picker";
 import {iconsData} from "./ui/icons-data";
 import {useQuery} from "@tanstack/react-query";
 import {getSelectOptionsByFieldOptionIdQuery} from "@/features/fields/lib/queries";
+import { Input } from "./ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 const types: Record<string, any> = {
     boolean: BooleanFormElement,
     static_select_options: StaticSelectOptionsFormElement,
+    text: TextFormElement,
+    default_option: SelectFormElement,
 };
 
 export default function TypeFormElement({
@@ -178,6 +182,76 @@ export function StaticSelectOptionsFormElement({
                 <PlusIcon className="size-3"/>
                 Seçenek Ekle
             </Button>
+        </div>
+    );
+}
+
+export interface TextFormElementProps {
+    value: string;
+    onChange: (value: string) => void;
+    name: string;
+    id: string;
+}
+
+export function TextFormElement({
+                                    value,
+                                    onChange,
+                                    name,
+                                    id,
+                                }: TextFormElementProps) {
+    return (
+        <div className="flex flex-col items-start space-y-2 w-full">
+            <Label htmlFor={id}>{name}</Label>
+
+        <Input
+                id={id}
+                type="text"
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                />
+                </div>
+    );
+}
+
+export interface SelectFormElementProps {  
+    value: string;
+    onChange: (value: string) => void;
+    options: SelectOption[];
+    name: string;
+    id: string;
+}
+
+export function SelectFormElement({
+                                            value,
+                                            onChange,
+                                            name,
+                                            options,
+                                            id,
+                                        }: SelectFormElementProps) {
+    return (
+        <div className="flex flex-col items-start space-y-2 w-full">
+            <Label htmlFor={id}>{name}</Label>
+
+            <Select value={value} onValueChange={onChange}>
+                <SelectTrigger className="w-full">
+                    <SelectValue 
+placeholder="Varsayılan seçenek seçin"
+                     />
+                </SelectTrigger>
+                <SelectContent>
+                    {options?.map((option) => (
+                        <SelectItem key={option.id} value={option.id!}>
+                            <div className="flex items-center gap-2">
+                                <Icon
+                                    name={option.icon as IconName ?? ''}
+                                    className="size-4"
+                                />
+                                {option.name}
+                            </div>
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+                </Select>
         </div>
     );
 }

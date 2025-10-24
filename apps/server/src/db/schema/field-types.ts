@@ -1,4 +1,4 @@
-import { pgTable, text } from "drizzle-orm/pg-core";
+import { pgTable, smallint, text } from "drizzle-orm/pg-core";
 
 export const fieldTypes = pgTable("field-types", {
   id: text("id")
@@ -19,4 +19,5 @@ export const fieldTypeOptions = pgTable("field-type-options", {
   name: text("name").notNull(),
   type: text("type").notNull(),
   key: text("key").notNull(),
+  order: smallint("order").notNull()
 });
