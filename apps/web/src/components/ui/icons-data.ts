@@ -1,3 +1,5 @@
+import {AArrowDown, AArrowUp, ALargeSmall, Accessibility, Activity, AirVent, Airplay, AlarmClockCheck, AlarmClockMinus, AlarmClockOff, AlarmClockPlus, AlarmClock, AlarmSmoke, Album, AlignCenterHorizontal, AlignCenterVertical, AlignCenter, AlignEndHorizontal, AlignEndVertical, AlignHorizontalDistributeCenter, AlignHorizontalDistributeEnd, AlignHorizontalDistributeStart, AlignHorizontalJustifyCenter, AlignHorizontalJustifyEnd, AlignHorizontalJustifyStart, AlignHorizontalSpaceAround, AlignHorizontalSpaceBetween, AlignJustify, AlignLeft, AlignRight, AlignStartHorizontal, AlignStartVertical, AlignVerticalDistributeCenter, AlignVerticalDistributeEnd, AlignVerticalDistributeStart, AlignVerticalJustifyCenter, AlignVerticalJustifyEnd, AlignVerticalJustifyStart, AlignVerticalSpaceAround, AlignVerticalSpaceBetween, Ambulance, Ampersand, Ampersands, Amphora, Anchor, Angry, Annoyed, Antenna, Anvil, Aperture, AppWindowMac, AppWindow, Apple, ArchiveRestore, ArchiveX, Archive, Armchair, ArrowBigDownDash, ArrowBigDown, ArrowBigLeftDash, ArrowBigLeft, ArrowBigRightDash, ArrowBigRight, ArrowBigUpDash, ArrowBigUp, ArrowDown01, ArrowDown10, ArrowDownAZ, ArrowDownFromLine, ArrowDownLeft, ArrowDownNarrowWide, ArrowDownRight, ArrowDownToDot, ArrowDownToLine, ArrowDownUp, ArrowDownWideNarrow, ArrowDownZA, ArrowDown, ArrowLeftFromLine, ArrowLeftRight, ArrowLeftToLine, ArrowLeft, ArrowRightFromLine, ArrowRightLeft, ArrowRightToLine, ArrowRight, ArrowUp01, ArrowUp10, ArrowUpAZ, ArrowUpDown, ArrowUpFromDot, ArrowUpFromLine, ArrowUpLeft, ArrowUpNarrowWide, ArrowUpRight, ArrowUpToLine, ArrowUpWideNarrow, ArrowUpZA, ArrowUp, ArrowsUpFromLine, Asterisk, AtSign, Atom, AudioLines, AudioWaveform, Award, Axe, Axis3d, Baby, Backpack, BadgeAlert, BadgeCent, BadgeCheck, BadgeDollarSign, BadgeEuro, BadgeHelp, BadgeIndianRupee, BadgeInfo, BadgeJapaneseYen, BadgeMinus, BadgePercent, BadgePlus, BadgePoundSterling, BadgeRussianRuble, BadgeSwissFranc, BadgeX, Badge, BaggageClaim, Ban, Banana, Bandage, Banknote, Barcode, Baseline, Bath, BatteryCharging, BatteryFull, BatteryLow, BatteryMedium, BatteryWarning, Battery, Beaker, BeanOff, Bean, BedDouble, BedSingle, Bed, Beef, BeerOff, Beer, BellDot, BellElectric, BellMinus, BellOff, BellPlus, BellRing, Bell, BetweenHorizontalEnd, BetweenHorizontalStart, BetweenVerticalEnd, BetweenVerticalStart, BicepsFlexed, Bike, Binary, Binoculars, Biohazard, Bird, Bitcoin, Blend, Blinds, Blocks, BluetoothConnected, BluetoothOff, BluetoothSearching, Bluetooth, Bold, Bolt, Bomb, Bone, BookA, BookAudio, BookCheck, BookCopy, BookDashed, BookDown, BookHeadphones, BookHeart, BookImage, BookKey, BookLock, BookMarked, BookMinus, BookOpenCheck, BookOpenText, BookOpen, BookPlus, BookText, BookType, BookUp2, BookUp, BookUser, BookX, Book, BookmarkCheck, BookmarkMinus, BookmarkPlus, BookmarkX, Bookmark, BoomBox, BotMessageSquare, BotOff, Bot, Box, Boxes, Braces, Brackets, BrainCircuit, BrainCog, Brain, BrickWall, BriefcaseBusiness, BriefcaseConveyorBelt, BriefcaseMedical, Briefcase, BringToFront, Brush, BugOff, BugPlay, Bug, Building2, Building, BusFront, Bus, CableCar, Cable, CakeSlice, Cake, Calculator, Calendar1, CalendarArrowDown, CalendarArrowUp, CalendarCheck2, CalendarCheck, CalendarClock, CalendarCog, CalendarDays, CalendarFold, CalendarHeart, CalendarMinus2, CalendarMinus, CalendarOff, CalendarPlus2, CalendarPlus, CalendarRange, CalendarSearch, CalendarSync, CalendarX2, CalendarX, Calendar, CameraOff, Camera, CandyCane, CandyOff, Candy, Cannabis, CaptionsOff, Captions, CarFront, CarTaxiFront, Car, Caravan, Carrot, CaseLower, CaseSensitive, CaseUpper, CassetteTape, Cast, Castle, Cat, Cctv, ChartArea, ChartBarBig, ChartBarDecreasing, ChartBarIncreasing, ChartBarStacked, ChartBar, ChartCandlestick, ChartColumnBig, ChartColumnDecreasing, ChartColumnIncreasing, ChartColumnStacked, ChartColumn, ChartGantt, ChartLine, ChartNetwork, ChartNoAxesColumnDecreasing, ChartNoAxesColumnIncreasing, ChartNoAxesColumn, ChartNoAxesCombined, ChartNoAxesGantt, ChartPie, ChartScatter, ChartSpline, CheckCheck, Check, ChefHat, Cherry, ChevronDown, ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, ChevronUp, ChevronsDownUp, ChevronsDown, ChevronsLeftRightEllipsis, ChevronsLeftRight, ChevronsLeft, ChevronsRightLeft, ChevronsRight, ChevronsUpDown, ChevronsUp, Chrome, Church, CigaretteOff, Cigarette, CircleAlert, CircleArrowDown, CircleArrowLeft, CircleArrowOutDownLeft, CircleArrowOutDownRight, CircleArrowOutUpLeft, CircleArrowOutUpRight, CircleArrowRight, CircleArrowUp, CircleCheckBig, CircleCheck, CircleChevronDown, CircleChevronLeft, CircleChevronRight, CircleChevronUp, CircleDashed, CircleDivide, CircleDollarSign, CircleDotDashed, CircleDot, CircleEllipsis, CircleEqual, CircleFadingArrowUp, CircleFadingPlus, CircleGauge, CircleHelp, CircleMinus, CircleOff, CircleParkingOff, CircleParking, CirclePause, CirclePercent, CirclePlay, CirclePlus, CirclePower, CircleSlash2, CircleSlash, CircleStop, CircleUserRound, CircleUser, CircleX, Circle, CircuitBoard, Citrus, Clapperboard, ClipboardCheck, ClipboardCopy, ClipboardList, ClipboardMinus, ClipboardPaste, ClipboardPenLine, ClipboardPen, ClipboardPlus, ClipboardType, ClipboardX, Clipboard, Clock1, Clock10, Clock11, Clock12, Clock2, Clock3, Clock4, Clock5, Clock6, Clock7, Clock8, Clock9, ClockAlert, ClockArrowDown, ClockArrowUp, Clock, CloudAlert, CloudCog, CloudDownload, CloudDrizzle, CloudFog, CloudHail, CloudLightning, CloudMoonRain, CloudMoon, CloudOff, CloudRainWind, CloudRain, CloudSnow, CloudSunRain, CloudSun, CloudUpload, Cloud, Cloudy, Clover, Club, CodeXml, Code, Codepen, Codesandbox, Coffee, Cog, Coins, Columns2, Columns3, Columns4, Combine, Command, Compass, Component, Computer, ConciergeBell, Cone, Construction, ContactRound, Contact, Container, Contrast, Cookie, CookingPot, CopyCheck, CopyMinus, CopyPlus, CopySlash, CopyX, Copy, Copyleft, Copyright, CornerDownLeft, CornerDownRight, CornerLeftDown, CornerLeftUp, CornerRightDown, CornerRightUp, CornerUpLeft, CornerUpRight, Cpu, CreativeCommons, CreditCard, Croissant, Crop, Cross, Crosshair, Crown, Cuboid, CupSoda, Currency, Cylinder, Dam, DatabaseBackup, DatabaseZap, Database, Delete, Dessert, Diameter, DiamondMinus, DiamondPercent, DiamondPlus, Diamond, Dice1, Dice2, Dice3, Dice4, Dice5, Dice6, Dices, Diff, Disc2, Disc3, DiscAlbum, Disc, Divide, DnaOff, Dna, Dock, Dog, DollarSign, Donut, DoorClosed, DoorOpen, Dot, Download, DraftingCompass, Drama, Dribbble, Drill, DropletOff, Droplet, Droplets, Drum, Drumstick, Dumbbell, EarOff, Ear, EarthLock, Earth, Eclipse, EggFried, EggOff, Egg, EllipsisVertical, Ellipsis, EqualApproximately, EqualNot, Equal, Eraser, EthernetPort, Euro, Expand, ExternalLink, EyeClosed, EyeOff, Eye, Facebook, Factory, Fan, FastForward, Feather, Fence, FerrisWheel, Figma, FileArchive, FileAudio2, FileAudio, FileAxis3d, FileBadge2, FileBadge, FileBox, FileChartColumnIncreasing, FileChartColumn, FileChartLine, FileChartPie, FileCheck2, FileCheck, FileClock, FileCode2, FileCode, FileCog, FileDiff, FileDigit, FileDown, FileHeart, FileImage, FileInput, FileJson2, FileJson, FileKey2, FileKey, FileLock2, FileLock, FileMinus2, FileMinus, FileMusic, FileOutput, FilePenLine, FilePen, FilePlus2, FilePlus, FileQuestion, FileScan, FileSearch2, FileSearch, FileSliders, FileSpreadsheet, FileStack, FileSymlink, FileTerminal, FileText, FileType2, FileType, FileUp, FileUser, FileVideo2, FileVideo, FileVolume2, FileVolume, FileWarning, FileX2, FileX, File, Files, Film, FilterX, Filter, Fingerprint, FireExtinguisher, FishOff, FishSymbol, Fish, FlagOff, FlagTriangleLeft, FlagTriangleRight, Flag, FlameKindling, Flame, FlashlightOff, Flashlight, FlaskConicalOff, FlaskConical, FlaskRound, FlipHorizontal2, FlipHorizontal, FlipVertical2, FlipVertical, Flower2, Flower, Focus, FoldHorizontal, FoldVertical, FolderArchive, FolderCheck, FolderClock, FolderClosed, FolderCode, FolderCog, FolderDot, FolderDown, FolderGit2, FolderGit, FolderHeart, FolderInput, FolderKanban, FolderKey, FolderLock, FolderMinus, FolderOpenDot, FolderOpen, FolderOutput, FolderPen, FolderPlus, FolderRoot, FolderSearch2, FolderSearch, FolderSymlink, FolderSync, FolderTree, FolderUp, FolderX, Folder, Folders, Footprints, Forklift, Forward, Frame, Framer, Frown, Fuel, Fullscreen, GalleryHorizontalEnd, GalleryHorizontal, GalleryThumbnails, GalleryVerticalEnd, GalleryVertical, Gamepad2, Gamepad, Gauge, Gavel, Gem, Ghost, Gift, GitBranchPlus, GitBranch, GitCommitHorizontal, GitCommitVertical, GitCompareArrows, GitCompare, GitFork, GitGraph, GitMerge, GitPullRequestArrow, GitPullRequestClosed, GitPullRequestCreateArrow, GitPullRequestCreate, GitPullRequestDraft, GitPullRequest, Github, Gitlab, GlassWater, Glasses, GlobeLock, Globe, Goal, Grab, GraduationCap, Grape, Grid2x2Check, Grid2x2Plus, Grid2x2X, Grid2x2, Grid3x3, GripHorizontal, GripVertical, Grip, Group, Guitar, Ham, Hammer, HandCoins, HandHeart, HandHelping, HandMetal, HandPlatter, Hand, Handshake, HardDriveDownload, HardDriveUpload, HardDrive, HardHat, Hash, Haze, HdmiPort, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Heading, HeadphoneOff, Headphones, Headset, HeartCrack, HeartHandshake, HeartOff, HeartPulse, Heart, Heater, Hexagon, Highlighter, History, HopOff, Hop, Hospital, Hotel, Hourglass, HousePlug, HousePlus, HouseWifi, House, IceCreamBowl, IceCreamCone, IdCard, ImageDown, ImageMinus, ImageOff, ImagePlay, ImagePlus, ImageUp, ImageUpscale, Image, Images, Import, Inbox, IndentDecrease, IndentIncrease, IndianRupee, Infinity, Info, InspectionPanel, Instagram, Italic, IterationCcw, IterationCw, JapaneseYen, Joystick, Kanban, KeyRound, KeySquare, Key, KeyboardMusic, KeyboardOff, Keyboard, LampCeiling, LampDesk, LampFloor, LampWallDown, LampWallUp, Lamp, LandPlot, Landmark, Languages, LaptopMinimalCheck, LaptopMinimal, Laptop, LassoSelect, Lasso, Laugh, Layers2, Layers, LayoutDashboard, LayoutGrid, LayoutList, LayoutPanelLeft, LayoutPanelTop, LayoutTemplate, Leaf, LeafyGreen, Lectern, LetterText, LibraryBig, Library, LifeBuoy, Ligature, LightbulbOff, Lightbulb, Link2Off, Link2, Link, Linkedin, ListCheck, ListChecks, ListCollapse, ListEnd, ListFilterPlus, ListFilter, ListMinus, ListMusic, ListOrdered, ListPlus, ListRestart, ListStart, ListTodo, ListTree, ListVideo, ListX, List, LoaderCircle, LoaderPinwheel, Loader, LocateFixed, LocateOff, Locate, LockKeyholeOpen, LockKeyhole, LockOpen, Lock, LogIn, LogOut, Logs, Lollipop, Luggage, Magnet, MailCheck, MailMinus, MailOpen, MailPlus, MailQuestion, MailSearch, MailWarning, MailX, Mail, Mailbox, Mails, MapPinCheckInside, MapPinCheck, MapPinHouse, MapPinMinusInside, MapPinMinus, MapPinOff, MapPinPlusInside, MapPinPlus, MapPinXInside, MapPinX, MapPin, MapPinned, Map, Martini, Maximize2, Maximize, Medal, MegaphoneOff, Megaphone, Meh, MemoryStick, Menu, Merge, MessageCircleCode, MessageCircleDashed, MessageCircleHeart, MessageCircleMore, MessageCircleOff, MessageCirclePlus, MessageCircleQuestion, MessageCircleReply, MessageCircleWarning, MessageCircleX, MessageCircle, MessageSquareCode, MessageSquareDashed, MessageSquareDiff, MessageSquareDot, MessageSquareHeart, MessageSquareLock, MessageSquareMore, MessageSquareOff, MessageSquarePlus, MessageSquareQuote, MessageSquareReply, MessageSquareShare, MessageSquareText, MessageSquareWarning, MessageSquareX, MessageSquare, MessagesSquare, MicOff, MicVocal, Mic, Microchip, Microscope, Microwave, Milestone, MilkOff, Milk, Minimize2, Minimize, Minus, MonitorCheck, MonitorCog, MonitorDot, MonitorDown, MonitorOff, MonitorPause, MonitorPlay, MonitorSmartphone, MonitorSpeaker, MonitorStop, MonitorUp, MonitorX, Monitor, MoonStar, Moon, MountainSnow, Mountain, MouseOff, MousePointer2, MousePointerBan, MousePointerClick, MousePointer, Mouse, Move3d, MoveDiagonal2, MoveDiagonal, MoveDownLeft, MoveDownRight, MoveDown, MoveHorizontal, MoveLeft, MoveRight, MoveUpLeft, MoveUpRight, MoveUp, MoveVertical, Move, Music2, Music3, Music4, Music, Navigation2Off, Navigation2, NavigationOff, Navigation, Network, Newspaper, Nfc, NotebookPen, NotebookTabs, NotebookText, Notebook, NotepadTextDashed, NotepadText, NutOff, Nut, OctagonAlert, OctagonMinus, OctagonPause, OctagonX, Octagon, Omega, Option, Orbit, Origami, Package2, PackageCheck, PackageMinus, PackageOpen, PackagePlus, PackageSearch, PackageX, Package, PaintBucket, PaintRoller, PaintbrushVertical, Paintbrush, Palette, PanelBottomClose, PanelBottomDashed, PanelBottomOpen, PanelBottom, PanelLeftClose, PanelLeftDashed, PanelLeftOpen, PanelLeft, PanelRightClose, PanelRightDashed, PanelRightOpen, PanelRight, PanelTopClose, PanelTopDashed, PanelTopOpen, PanelTop, PanelsLeftBottom, PanelsRightBottom, PanelsTopLeft, Paperclip, Parentheses, ParkingMeter, PartyPopper, Pause, PawPrint, PcCase, PenLine, PenOff, PenTool, Pen, PencilLine, PencilOff, PencilRuler, Pencil, Pentagon, Percent, PersonStanding, PhilippinePeso, PhoneCall, PhoneForwarded, PhoneIncoming, PhoneMissed, PhoneOff, PhoneOutgoing, Phone, Pi, Piano, Pickaxe, PictureInPicture2, PictureInPicture, PiggyBank, PilcrowLeft, PilcrowRight, Pilcrow, PillBottle, Pill, PinOff, Pin, Pipette, Pizza, PlaneLanding, PlaneTakeoff, Plane, Play, Plug2, PlugZap, Plug, Plus, PocketKnife, Pocket, Podcast, PointerOff, Pointer, Popcorn, Popsicle, PoundSterling, PowerOff, Power, Presentation, PrinterCheck, Printer, Projector, Proportions, Puzzle, Pyramid, QrCode, Quote, Rabbit, Radar, Radiation, Radical, RadioReceiver, RadioTower, Radio, Radius, RailSymbol, Rainbow, Rat, Ratio, ReceiptCent, ReceiptEuro, ReceiptIndianRupee, ReceiptJapaneseYen, ReceiptPoundSterling, ReceiptRussianRuble, ReceiptSwissFranc, ReceiptText, Receipt, RectangleEllipsis, RectangleHorizontal, RectangleVertical, Recycle, Redo2, RedoDot, Redo, RefreshCcwDot, RefreshCcw, RefreshCwOff, RefreshCw, Refrigerator, Regex, RemoveFormatting, Repeat1, Repeat2, Repeat, ReplaceAll, Replace, ReplyAll, Reply, Rewind, Ribbon, Rocket, RockingChair, RollerCoaster, Rotate3d, RotateCcwSquare, RotateCcw, RotateCwSquare, RotateCw, RouteOff, Route, Router, Rows2, Rows3, Rows4, Rss, Ruler, RussianRuble, Sailboat, Salad, Sandwich, SatelliteDish, Satellite, SaveAll, SaveOff, Save, Scale3d, Scale, Scaling, ScanBarcode, ScanEye, ScanFace, ScanHeart, ScanLine, ScanQrCode, ScanSearch, ScanText, Scan, School, ScissorsLineDashed, Scissors, ScreenShareOff, ScreenShare, ScrollText, Scroll, SearchCheck, SearchCode, SearchSlash, SearchX, Search, Section, SendHorizontal, SendToBack, Send, SeparatorHorizontal, SeparatorVertical, ServerCog, ServerCrash, ServerOff, Server, Settings2, Settings, Shapes, Share2, Share, Sheet, Shell, ShieldAlert, ShieldBan, ShieldCheck, ShieldEllipsis, ShieldHalf, ShieldMinus, ShieldOff, ShieldPlus, ShieldQuestion, ShieldX, Shield, ShipWheel, Ship, Shirt, ShoppingBag, ShoppingBasket, ShoppingCart, Shovel, ShowerHead, Shrink, Shrub, Shuffle, Sigma, SignalHigh, SignalLow, SignalMedium, SignalZero, Signal, Signature, SignpostBig, Signpost, Siren, SkipBack, SkipForward, Skull, Slack, Slash, Slice, SlidersHorizontal, SlidersVertical, SmartphoneCharging, SmartphoneNfc, Smartphone, SmilePlus, Smile, Snail, Snowflake, Sofa, Soup, Space, Spade, Sparkle, Sparkles, Speaker, Speech, SpellCheck2, SpellCheck, Spline, Split, SprayCan, Sprout, SquareActivity, SquareArrowDownLeft, SquareArrowDownRight, SquareArrowDown, SquareArrowLeft, SquareArrowOutDownLeft, SquareArrowOutDownRight, SquareArrowOutUpLeft, SquareArrowOutUpRight, SquareArrowRight, SquareArrowUpLeft, SquareArrowUpRight, SquareArrowUp, SquareAsterisk, SquareBottomDashedScissors, SquareChartGantt, SquareCheckBig, SquareCheck, SquareChevronDown, SquareChevronLeft, SquareChevronRight, SquareChevronUp, SquareCode, SquareDashedBottomCode, SquareDashedBottom, SquareDashedKanban, SquareDashedMousePointer, SquareDashed, SquareDivide, SquareDot, SquareEqual, SquareFunction, SquareKanban, SquareLibrary, SquareM, SquareMenu, SquareMinus, SquareMousePointer, SquareParkingOff, SquareParking, SquarePen, SquarePercent, SquarePi, SquarePilcrow, SquarePlay, SquarePlus, SquarePower, SquareRadical, SquareScissors, SquareSigma, SquareSlash, SquareSplitHorizontal, SquareSplitVertical, SquareSquare, SquareStack, SquareTerminal, SquareUserRound, SquareUser, SquareX, Square, Squircle, Squirrel, Stamp, StarHalf, StarOff, Star, StepBack, StepForward, Stethoscope, Sticker, StickyNote, Store, StretchHorizontal, StretchVertical, Strikethrough, Subscript, SunDim, SunMedium, SunMoon, SunSnow, Sun, Sunrise, Sunset, Superscript, SwatchBook, SwissFranc, SwitchCamera, Sword, Swords, Syringe, Table2, TableCellsMerge, TableCellsSplit, TableColumnsSplit, TableOfContents, TableProperties, TableRowsSplit, Table, TabletSmartphone, Tablet, Tablets, Tag, Tags, Tally1, Tally2, Tally3, Tally4, Tally5, Tangent, Target, Telescope, TentTree, Tent, Terminal, TestTubeDiagonal, TestTube, TestTubes, TextCursorInput, TextCursor, TextQuote, TextSearch, TextSelect, Text, Theater, ThermometerSnowflake, ThermometerSun, Thermometer, ThumbsDown, ThumbsUp, TicketCheck, TicketMinus, TicketPercent, TicketPlus, TicketSlash, TicketX, Ticket, TicketsPlane, Tickets, TimerOff, TimerReset, Timer, ToggleLeft, ToggleRight, Toilet, Tornado, Torus, TouchpadOff, Touchpad, TowerControl, ToyBrick, Tractor, TrafficCone, TrainFrontTunnel, TrainFront, TrainTrack, TramFront, Trash2, Trash, TreeDeciduous, TreePalm, TreePine, Trees, Trello, TrendingDown, TrendingUpDown, TrendingUp, TriangleAlert, TriangleDashed, TriangleRight, Triangle, Trophy, Truck, Turtle, TvMinimalPlay, TvMinimal, Tv, Twitch, Twitter, TypeOutline, Type, UmbrellaOff, Umbrella, Underline, Undo2, UndoDot, Undo, UnfoldHorizontal, UnfoldVertical, Ungroup, University, Unlink2, Unlink, Unplug, Upload, Usb, UserCheck, UserCog, UserMinus, UserPen, UserPlus, UserRoundCheck, UserRoundCog, UserRoundMinus, UserRoundPen, UserRoundPlus, UserRoundSearch, UserRoundX, UserRound, UserSearch, UserX, User, UsersRound, Users, UtensilsCrossed, Utensils, UtilityPole, Variable, Vault, Vegan, VenetianMask, VibrateOff, Vibrate, VideoOff, Video, Videotape, View, Voicemail, Volleyball, Volume1, Volume2, VolumeOff, VolumeX, Volume, Vote, WalletCards, WalletMinimal, Wallet, Wallpaper, WandSparkles, Wand, Warehouse, WashingMachine, Watch, WavesLadder, Waves, Waypoints, Webcam, WebhookOff, Webhook, Weight, WheatOff, Wheat, WholeWord, WifiHigh, WifiLow, WifiOff, WifiZero, Wifi, WindArrowDown, Wind, WineOff, Wine, Workflow, Worm, WrapText, Wrench, X, Youtube, ZapOff, Zap, ZoomIn, ZoomOut, type LucideIcon} from "lucide-react";
+
 export enum IconCategory {
     Text = "text",
     Design = "design",
@@ -5,26 +7,30 @@ export enum IconCategory {
     Navigation = "navigation",
     Social = "social"
 }
+
 export const iconsData: Array<{
     name: string;
     categories: string[];
+    component?: LucideIcon
     tags: string[];
 }> = [{
-        "name": "a-arrow-down",
-        "categories": [
-            "text",
-            "design"
-        ],
-        "tags": [
-            "letter",
-            "font size",
-            "text",
-            "formatting",
-            "smaller"
-        ]
-    },
+    "name": "a-arrow-down",
+    "component": AArrowDown,
+    "categories": [
+        "text",
+        "design"
+    ],
+    "tags": [
+        "letter",
+        "font size",
+        "text",
+        "formatting",
+        "smaller"
+    ]
+},
     {
         "name": "a-arrow-up",
+        "component": AArrowUp,
         "categories": [
             "text",
             "design"
@@ -40,6 +46,7 @@ export const iconsData: Array<{
     },
     {
         "name": "a-large-small",
+        "component": ALargeSmall,
         "categories": [
             "text",
             "design"
@@ -53,6 +60,7 @@ export const iconsData: Array<{
     },
     {
         "name": "accessibility",
+        "component": Accessibility,
         "categories": [
             "accessibility",
             "medical"
@@ -66,6 +74,7 @@ export const iconsData: Array<{
     },
     {
         "name": "activity",
+        "component": Activity,
         "categories": [
             "medical",
             "account",
@@ -105,6 +114,7 @@ export const iconsData: Array<{
     },
     {
         "name": "air-vent",
+        "component": AirVent,
         "categories": [
             "home"
         ],
@@ -118,6 +128,7 @@ export const iconsData: Array<{
     },
     {
         "name": "airplay",
+        "component": Airplay,
         "categories": [
             "multimedia",
             "connectivity",
@@ -136,6 +147,7 @@ export const iconsData: Array<{
     },
     {
         "name": "alarm-clock-check",
+        "component": AlarmClockCheck,
         "categories": [
             "devices",
             "notifications",
@@ -151,7 +163,8 @@ export const iconsData: Array<{
     },
     {
         "name": "alarm-clock-minus",
-        "categories": [
+        "component": AlarmClockMinus,
+            "categories": [
             "devices",
             "notifications",
             "time"
@@ -162,6 +175,7 @@ export const iconsData: Array<{
     },
     {
         "name": "alarm-clock-off",
+        "component": AlarmClockOff,
         "categories": [
             "devices",
             "notifications",
@@ -174,6 +188,7 @@ export const iconsData: Array<{
     },
     {
         "name": "alarm-clock-plus",
+        "component": AlarmClockPlus,
         "categories": [
             "devices",
             "notifications",
@@ -185,6 +200,7 @@ export const iconsData: Array<{
     },
     {
         "name": "alarm-clock",
+        "component": AlarmClock,
         "categories": [
             "devices",
             "notifications",
@@ -196,6 +212,7 @@ export const iconsData: Array<{
     },
     {
         "name": "alarm-smoke",
+        "component": AlarmSmoke,
         "categories": [
             "home",
             "devices",
@@ -214,6 +231,7 @@ export const iconsData: Array<{
     },
     {
         "name": "album",
+        "component": Album,
         "categories": [
             "photography",
             "multimedia"
@@ -225,6 +243,7 @@ export const iconsData: Array<{
     },
     {
         "name": "align-center-horizontal",
+        "component": AlignCenterHorizontal,
         "categories": [
             "layout"
         ],
@@ -236,6 +255,7 @@ export const iconsData: Array<{
     },
     {
         "name": "align-center-vertical",
+        "component": AlignCenterVertical,
         "categories": [
             "layout"
         ],
@@ -247,6 +267,7 @@ export const iconsData: Array<{
     },
     {
         "name": "align-center",
+        "component": AlignCenter,
         "categories": [
             "text"
         ],
@@ -258,6 +279,7 @@ export const iconsData: Array<{
     },
     {
         "name": "align-end-horizontal",
+        "component": AlignEndHorizontal,
         "categories": [
             "layout"
         ],
@@ -270,6 +292,7 @@ export const iconsData: Array<{
     },
     {
         "name": "align-end-vertical",
+        "component": AlignEndVertical,
         "categories": [
             "layout"
         ],
@@ -282,6 +305,7 @@ export const iconsData: Array<{
     },
     {
         "name": "align-horizontal-distribute-center",
+        "component": AlignHorizontalDistributeCenter,
         "categories": [
             "layout"
         ],
@@ -296,7 +320,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-horizontal-distribute-end",
-        "categories": [
+        "component": AlignHorizontalDistributeEnd,
+                "categories": [
             "layout"
         ],
         "tags": [
@@ -308,7 +333,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-horizontal-distribute-start",
-        "categories": [
+        "component": AlignHorizontalDistributeStart,
+            "categories": [
             "layout"
         ],
         "tags": [
@@ -320,7 +346,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-horizontal-justify-center",
-        "categories": [
+        "component": AlignHorizontalJustifyCenter,
+            "categories": [
             "layout"
         ],
         "tags": [
@@ -332,7 +359,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-horizontal-justify-end",
-        "categories": [
+        "component": AlignHorizontalJustifyEnd,
+            "categories": [
             "layout"
         ],
         "tags": [
@@ -344,7 +372,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-horizontal-justify-start",
-        "categories": [
+        "component": AlignHorizontalJustifyStart,
+            "categories": [
             "layout"
         ],
         "tags": [
@@ -356,7 +385,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-horizontal-space-around",
-        "categories": [
+        "component": AlignHorizontalSpaceAround,
+            "categories": [
             "layout"
         ],
         "tags": [
@@ -370,7 +400,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-horizontal-space-between",
-        "categories": [
+        "component": AlignHorizontalSpaceBetween,
+            "categories": [
             "layout"
         ],
         "tags": [
@@ -383,7 +414,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-justify",
-        "categories": [
+        "component": AlignJustify,
+            "categories": [
             "text"
         ],
         "tags": [
@@ -396,7 +428,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-left",
-        "categories": [
+        "component": AlignLeft,
+            "categories": [
             "text"
         ],
         "tags": [
@@ -408,7 +441,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-right",
-        "categories": [
+        "component": AlignRight,
+            "categories": [
             "text"
         ],
         "tags": [
@@ -419,7 +453,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-start-horizontal",
-        "categories": [
+        "component": AlignStartHorizontal,
+            "categories": [
             "layout"
         ],
         "tags": [
@@ -431,7 +466,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-start-vertical",
-        "categories": [
+        "component": AlignStartVertical,
+            "categories": [
             "layout"
         ],
         "tags": [
@@ -443,7 +479,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-vertical-distribute-center",
-        "categories": [
+                    "component": AlignVerticalDistributeCenter,
+            "categories": [
             "layout"
         ],
         "tags": [
@@ -457,7 +494,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-vertical-distribute-end",
-        "categories": [
+        "component": AlignVerticalDistributeEnd,
+            "categories": [
             "layout"
         ],
         "tags": [
@@ -469,7 +507,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-vertical-distribute-start",
-        "categories": [
+        "component": AlignVerticalDistributeStart,
+            "categories": [
             "layout"
         ],
         "tags": [
@@ -481,7 +520,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-vertical-justify-center",
-        "categories": [
+        "component": AlignVerticalJustifyCenter,
+            "categories": [
             "layout"
         ],
         "tags": [
@@ -495,7 +535,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-vertical-justify-end",
-        "categories": [
+        "component": AlignVerticalJustifyEnd,
+            "categories": [
             "layout"
         ],
         "tags": [
@@ -509,7 +550,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-vertical-justify-start",
-        "categories": [
+        "component": AlignVerticalJustifyStart,
+            "categories": [
             "layout"
         ],
         "tags": [
@@ -523,7 +565,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-vertical-space-around",
-        "categories": [
+        "component": AlignVerticalSpaceAround,
+            "categories": [
             "layout"
         ],
         "tags": [
@@ -537,7 +580,8 @@ export const iconsData: Array<{
     },
     {
         "name": "align-vertical-space-between",
-        "categories": [
+        "component": AlignVerticalSpaceBetween,
+            "categories": [
             "layout"
         ],
         "tags": [
@@ -551,7 +595,8 @@ export const iconsData: Array<{
     },
     {
         "name": "ambulance",
-        "categories": [
+        "component": Ambulance,
+            "categories": [
             "medical",
             "transportation"
         ],
@@ -570,7 +615,8 @@ export const iconsData: Array<{
     },
     {
         "name": "ampersand",
-        "categories": [
+        "component": Ampersand,
+            "categories": [
             "text",
             "development"
         ],
@@ -586,7 +632,8 @@ export const iconsData: Array<{
     },
     {
         "name": "ampersands",
-        "categories": [
+        "component": Ampersands,
+            "categories": [
             "text",
             "development"
         ],
@@ -600,7 +647,8 @@ export const iconsData: Array<{
     },
     {
         "name": "amphora",
-        "categories": [
+        "component": Amphora,
+            "categories": [
             "food-beverage",
             "gaming"
         ],
@@ -619,7 +667,8 @@ export const iconsData: Array<{
     },
     {
         "name": "anchor",
-        "categories": [
+                "component": Anchor,
+            "categories": [
             "transportation",
             "text"
         ],
@@ -629,7 +678,8 @@ export const iconsData: Array<{
     },
     {
         "name": "angry",
-        "categories": [
+        "component": Angry,
+            "categories": [
             "emoji"
         ],
         "tags": [
@@ -641,7 +691,8 @@ export const iconsData: Array<{
     },
     {
         "name": "annoyed",
-        "categories": [
+        "component": Annoyed,
+            "categories": [
             "emoji"
         ],
         "tags": [
@@ -653,7 +704,8 @@ export const iconsData: Array<{
     },
     {
         "name": "antenna",
-        "categories": [
+        "component": Antenna,
+            "categories": [
             "devices",
             "multimedia",
             "communication"
@@ -681,7 +733,8 @@ export const iconsData: Array<{
     },
     {
         "name": "anvil",
-        "categories": [
+        "component": Anvil,
+            "categories": [
             "buildings",
             "tools",
             "gaming"
@@ -700,7 +753,8 @@ export const iconsData: Array<{
     },
     {
         "name": "aperture",
-        "categories": [
+        "component": Aperture,
+            "categories": [
             "photography"
         ],
         "tags": [
@@ -713,7 +767,8 @@ export const iconsData: Array<{
     },
     {
         "name": "app-window-mac",
-        "categories": [
+        "component": AppWindowMac,
+            "categories": [
             "layout",
             "design",
             "development",
@@ -731,7 +786,8 @@ export const iconsData: Array<{
     },
     {
         "name": "app-window",
-        "categories": [
+        "component": AppWindow,
+            "categories": [
             "layout",
             "design",
             "development",
@@ -746,7 +802,8 @@ export const iconsData: Array<{
     },
     {
         "name": "apple",
-        "categories": [
+        "component": Apple,
+            "categories": [
             "food-beverage"
         ],
         "tags": [
@@ -756,7 +813,8 @@ export const iconsData: Array<{
     },
     {
         "name": "archive-restore",
-        "categories": [
+        "component": ArchiveRestore,
+            "categories": [
             "files",
             "mail"
         ],
@@ -771,7 +829,8 @@ export const iconsData: Array<{
     },
     {
         "name": "archive-x",
-        "categories": [
+        "component": ArchiveX,
+            "categories": [
             "files",
             "mail"
         ],
@@ -786,7 +845,8 @@ export const iconsData: Array<{
     },
     {
         "name": "archive",
-        "categories": [
+        "component": Archive,
+            "categories": [
             "files",
             "mail"
         ],
@@ -800,7 +860,8 @@ export const iconsData: Array<{
     },
     {
         "name": "armchair",
-        "categories": [
+                "component": Armchair,
+            "categories": [
             "home"
         ],
         "tags": [
@@ -814,7 +875,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-big-down-dash",
-        "categories": [
+        "component": ArrowBigDownDash,
+            "categories": [
             "arrows",
             "navigation",
             "gaming",
@@ -831,7 +893,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-big-down",
-        "categories": [
+        "component": ArrowBigDown,
+            "categories": [
             "arrows",
             "navigation",
             "gaming"
@@ -845,7 +908,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-big-left-dash",
-        "categories": [
+        "component": ArrowBigLeftDash,
+            "categories": [
             "arrows",
             "navigation",
             "gaming"
@@ -861,7 +925,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-big-left",
-        "categories": [
+        "component": ArrowBigLeft,
+            "categories": [
             "arrows",
             "navigation",
             "gaming"
@@ -876,7 +941,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-big-right-dash",
-        "categories": [
+        "component": ArrowBigRightDash,
+            "categories": [
             "arrows",
             "navigation",
             "gaming"
@@ -892,7 +958,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-big-right",
-        "categories": [
+        "component": ArrowBigRight,
+            "categories": [
             "arrows",
             "navigation",
             "gaming"
@@ -907,7 +974,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-big-up-dash",
-        "categories": [
+        "component": ArrowBigUpDash,
+            "categories": [
             "arrows",
             "navigation",
             "text",
@@ -930,7 +998,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-big-up",
-        "categories": [
+        "component": ArrowBigUp,
+            "categories": [
             "arrows",
             "navigation",
             "text",
@@ -951,7 +1020,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-down-0-1",
-        "categories": [
+        "component": ArrowDown01,
+            "categories": [
             "text",
             "layout",
             "arrows"
@@ -970,7 +1040,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-down-1-0",
-        "categories": [
+        "component": ArrowDown10,
+            "categories": [
             "text",
             "layout",
             "arrows"
@@ -989,7 +1060,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-down-a-z",
-        "categories": [
+        "component": ArrowDownAZ,
+            "categories": [
             "text",
             "layout",
             "arrows"
@@ -1008,7 +1080,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-down-from-line",
-        "categories": [
+            "component": ArrowDownFromLine,
+            "categories": [
             "arrows",
             "navigation",
             "files"
@@ -1026,7 +1099,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-down-left",
-        "categories": [
+        "component": ArrowDownLeft,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -1038,7 +1112,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-down-narrow-wide",
-        "categories": [
+        "component": ArrowDownNarrowWide,
+            "categories": [
             "text",
             "layout",
             "arrows"
@@ -1056,7 +1131,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-down-right",
-        "categories": [
+        "component": ArrowDownRight,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -1068,7 +1144,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-down-to-dot",
-        "categories": [
+        "component": ArrowDownToDot,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -1083,7 +1160,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-down-to-line",
-        "categories": [
+        "component": ArrowDownToLine,
+            "categories": [
             "arrows",
             "navigation",
             "files",
@@ -1105,7 +1183,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-down-up",
-        "categories": [
+        "component": ArrowDownUp,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -1127,7 +1206,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-down-wide-narrow",
-        "categories": [
+        "component": ArrowDownWideNarrow,
+            "categories": [
             "text",
             "layout",
             "arrows"
@@ -1145,7 +1225,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-down-z-a",
-        "categories": [
+        "component": ArrowDownZA,
+            "categories": [
             "text",
             "layout",
             "arrows"
@@ -1165,7 +1246,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-down",
-        "categories": [
+        "component": ArrowDown,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -1178,7 +1260,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-left-from-line",
-        "categories": [
+        "component": ArrowLeftFromLine,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -1195,7 +1278,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-left-right",
-        "categories": [
+        "component": ArrowLeftRight,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -1214,7 +1298,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-left-to-line",
-        "categories": [
+            "component": ArrowLeftToLine,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -1231,7 +1316,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-left",
-        "categories": [
+        "component": ArrowLeft,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -1245,7 +1331,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-right-from-line",
-        "categories": [
+        "component": ArrowRightFromLine,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -1263,7 +1350,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-right-left",
-        "categories": [
+        "component": ArrowRightLeft,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -1282,7 +1370,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-right-to-line",
-        "categories": [
+        "component": ArrowRightToLine,
+            "categories": [
             "arrows",
             "navigation",
             "development"
@@ -1304,7 +1393,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-right",
-        "categories": [
+        "component": ArrowRight,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -1318,7 +1408,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-up-0-1",
-        "categories": [
+        "component": ArrowUp01,
+            "categories": [
             "text",
             "layout",
             "arrows"
@@ -1337,7 +1428,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-up-1-0",
-        "categories": [
+        "component": ArrowUp10,
+            "categories": [
             "text",
             "layout",
             "arrows"
@@ -1356,7 +1448,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-up-a-z",
-        "categories": [
+        "component": ArrowUpAZ,
+            "categories": [
             "text",
             "layout",
             "arrows"
@@ -1375,7 +1468,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-up-down",
-        "categories": [
+        "component": ArrowUpDown,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -1395,7 +1489,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-up-from-dot",
-        "categories": [
+        "component": ArrowUpFromDot,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -1408,7 +1503,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-up-from-line",
-        "categories": [
+        "component": ArrowUpFromLine,
+            "categories": [
             "arrows",
             "navigation",
             "files",
@@ -1429,7 +1525,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-up-left",
-        "categories": [
+            "component": ArrowUpLeft,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -1441,7 +1538,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-up-narrow-wide",
-        "categories": [
+        "component": ArrowUpNarrowWide,
+            "categories": [
             "text",
             "layout",
             "arrows"
@@ -1459,7 +1557,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-up-right",
-        "categories": [
+        "component": ArrowUpRight,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -1471,7 +1570,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-up-to-line",
-        "categories": [
+        "component": ArrowUpToLine,
+            "categories": [
             "arrows",
             "navigation",
             "files"
@@ -1488,7 +1588,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-up-wide-narrow",
-        "categories": [
+        "component": ArrowUpWideNarrow,
+            "categories": [
             "text",
             "layout",
             "arrows"
@@ -1506,7 +1607,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-up-z-a",
-        "categories": [
+        "component": ArrowUpZA,
+            "categories": [
             "text",
             "layout",
             "arrows"
@@ -1526,7 +1628,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrow-up",
-        "categories": [
+        "component": ArrowUp,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -1538,7 +1641,8 @@ export const iconsData: Array<{
     },
     {
         "name": "arrows-up-from-line",
-        "categories": [
+        "component": ArrowsUpFromLine,
+            "categories": [
             "arrows",
             "transportation",
             "mail"
@@ -1557,7 +1661,8 @@ export const iconsData: Array<{
     },
     {
         "name": "asterisk",
-        "categories": [
+        "component": Asterisk,
+            "categories": [
             "text",
             "math",
             "development"
@@ -1576,7 +1681,8 @@ export const iconsData: Array<{
     },
     {
         "name": "at-sign",
-        "categories": [
+        "component": AtSign,
+            "categories": [
             "text",
             "account"
         ],
@@ -1590,7 +1696,8 @@ export const iconsData: Array<{
     },
     {
         "name": "atom",
-        "categories": [
+        "component": Atom,
+            "categories": [
             "science"
         ],
         "tags": [
@@ -1607,7 +1714,8 @@ export const iconsData: Array<{
     },
     {
         "name": "audio-lines",
-        "categories": [
+        "component": AudioLines,
+            "categories": [
             "multimedia",
             "communication"
         ],
@@ -1639,7 +1747,8 @@ export const iconsData: Array<{
     },
     {
         "name": "audio-waveform",
-        "categories": [
+            "component": AudioWaveform,
+            "categories": [
             "multimedia",
             "communication"
         ],
@@ -1670,7 +1779,8 @@ export const iconsData: Array<{
     },
     {
         "name": "award",
-        "categories": [
+        "component": Award,
+            "categories": [
             "account",
             "sports",
             "gaming"
@@ -1685,7 +1795,8 @@ export const iconsData: Array<{
     },
     {
         "name": "axe",
-        "categories": [
+        "component": Axe,
+            "categories": [
             "tools",
             "gaming"
         ],
@@ -1706,7 +1817,8 @@ export const iconsData: Array<{
     },
     {
         "name": "axis-3d",
-        "categories": [
+        "component": Axis3d,
+            "categories": [
             "design"
         ],
         "tags": [
@@ -1716,7 +1828,8 @@ export const iconsData: Array<{
     },
     {
         "name": "baby",
-        "categories": [
+        "component": Baby,
+            "categories": [
             "accessibility",
             "people"
         ],
@@ -1728,7 +1841,8 @@ export const iconsData: Array<{
     },
     {
         "name": "backpack",
-        "categories": [
+        "component": Backpack,
+            "categories": [
             "gaming",
             "photography",
             "travel"
@@ -1744,7 +1858,8 @@ export const iconsData: Array<{
     },
     {
         "name": "badge-alert",
-        "categories": [
+        "component": BadgeAlert,
+            "categories": [
             "account",
             "social"
         ],
@@ -1759,7 +1874,8 @@ export const iconsData: Array<{
     },
     {
         "name": "badge-cent",
-        "categories": [
+        "component": BadgeCent,
+            "categories": [
             "shopping",
             "finance"
         ],
@@ -1785,7 +1901,8 @@ export const iconsData: Array<{
     },
     {
         "name": "badge-check",
-        "categories": [
+        "component": BadgeCheck,
+            "categories": [
             "social"
         ],
         "tags": [
@@ -1795,7 +1912,8 @@ export const iconsData: Array<{
     },
     {
         "name": "badge-dollar-sign",
-        "categories": [
+        "component": BadgeDollarSign,
+            "categories": [
             "shopping",
             "finance"
         ],
@@ -1818,7 +1936,8 @@ export const iconsData: Array<{
     },
     {
         "name": "badge-euro",
-        "categories": [
+        "component": BadgeEuro,
+            "categories": [
             "shopping",
             "finance"
         ],
@@ -1840,7 +1959,8 @@ export const iconsData: Array<{
     },
     {
         "name": "badge-help",
-        "categories": [
+        "component": BadgeHelp,
+            "categories": [
             "accessibility",
             "social"
         ],
@@ -1852,7 +1972,8 @@ export const iconsData: Array<{
     },
     {
         "name": "badge-indian-rupee",
-        "categories": [
+            "component": BadgeIndianRupee,
+            "categories": [
             "shopping",
             "finance"
         ],
@@ -1875,7 +1996,8 @@ export const iconsData: Array<{
     },
     {
         "name": "badge-info",
-        "categories": [
+        "component": BadgeInfo,
+            "categories": [
             "account",
             "accessibility",
             "social"
@@ -1888,7 +2010,8 @@ export const iconsData: Array<{
     },
     {
         "name": "badge-japanese-yen",
-        "categories": [
+        "component": BadgeJapaneseYen,
+            "categories": [
             "shopping",
             "finance"
         ],
@@ -1911,7 +2034,8 @@ export const iconsData: Array<{
     },
     {
         "name": "badge-minus",
-        "categories": [
+        "component": BadgeMinus,
+            "categories": [
             "social"
         ],
         "tags": [
@@ -1924,7 +2048,8 @@ export const iconsData: Array<{
     },
     {
         "name": "badge-percent",
-        "categories": [
+        "component": BadgePercent,
+            "categories": [
             "social",
             "finance",
             "shopping",
@@ -1943,7 +2068,8 @@ export const iconsData: Array<{
     },
     {
         "name": "badge-plus",
-        "categories": [
+        "component": BadgePlus,
+            "categories": [
             "social"
         ],
         "tags": [
@@ -1956,7 +2082,8 @@ export const iconsData: Array<{
     },
     {
         "name": "badge-pound-sterling",
-        "categories": [
+        "component": BadgePoundSterling,
+            "categories": [
             "shopping",
             "finance"
         ],
@@ -1980,7 +2107,8 @@ export const iconsData: Array<{
     },
     {
         "name": "badge-russian-ruble",
-        "categories": [
+        "component": BadgeRussianRuble,
+            "categories": [
             "shopping",
             "finance"
         ],
@@ -2003,7 +2131,8 @@ export const iconsData: Array<{
     },
     {
         "name": "badge-swiss-franc",
-        "categories": [
+        "component": BadgeSwissFranc,
+            "categories": [
             "shopping",
             "finance"
         ],
@@ -2026,7 +2155,8 @@ export const iconsData: Array<{
     },
     {
         "name": "badge-x",
-        "categories": [
+        "component": BadgeX,
+            "categories": [
             "social"
         ],
         "tags": [
@@ -2039,7 +2169,8 @@ export const iconsData: Array<{
     },
     {
         "name": "badge",
-        "categories": [
+        "component": Badge,
+            "categories": [
             "account",
             "social",
             "shapes"
@@ -2052,7 +2183,8 @@ export const iconsData: Array<{
     },
     {
         "name": "baggage-claim",
-        "categories": [
+        "component": BaggageClaim,
+            "categories": [
             "transportation",
             "travel"
         ],
@@ -2067,7 +2199,8 @@ export const iconsData: Array<{
     },
     {
         "name": "ban",
-        "categories": [
+            "component": Ban,
+            "categories": [
             "account"
         ],
         "tags": [
@@ -2089,7 +2222,8 @@ export const iconsData: Array<{
     },
     {
         "name": "banana",
-        "categories": [
+        "component": Banana,
+            "categories": [
             "food-beverage"
         ],
         "tags": [
@@ -2099,7 +2233,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bandage",
-        "categories": [
+        "component": Bandage,
+            "categories": [
             "medical"
         ],
         "tags": [
@@ -2121,7 +2256,8 @@ export const iconsData: Array<{
     },
     {
         "name": "banknote",
-        "categories": [
+        "component": Banknote,
+            "categories": [
             "finance"
         ],
         "tags": [
@@ -2132,7 +2268,8 @@ export const iconsData: Array<{
     },
     {
         "name": "barcode",
-        "categories": [
+        "component": Barcode,
+            "categories": [
             "shopping"
         ],
         "tags": [
@@ -2151,7 +2288,8 @@ export const iconsData: Array<{
     },
     {
         "name": "baseline",
-        "categories": [
+        "component": Baseline,
+            "categories": [
             "text"
         ],
         "tags": [
@@ -2162,7 +2300,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bath",
-        "categories": [
+        "component": Bath,
+            "categories": [
             "travel"
         ],
         "tags": [
@@ -2174,7 +2313,8 @@ export const iconsData: Array<{
     },
     {
         "name": "battery-charging",
-        "categories": [
+        "component": BatteryCharging,
+            "categories": [
             "connectivity",
             "devices"
         ],
@@ -2188,7 +2328,8 @@ export const iconsData: Array<{
     },
     {
         "name": "battery-full",
-        "categories": [
+        "component": BatteryFull,
+            "categories": [
             "connectivity",
             "devices"
         ],
@@ -2202,7 +2343,8 @@ export const iconsData: Array<{
     },
     {
         "name": "battery-low",
-        "categories": [
+        "component": BatteryLow,
+            "categories": [
             "connectivity",
             "devices"
         ],
@@ -2216,7 +2358,8 @@ export const iconsData: Array<{
     },
     {
         "name": "battery-medium",
-        "categories": [
+        "component": BatteryMedium,
+            "categories": [
             "connectivity",
             "devices"
         ],
@@ -2230,7 +2373,8 @@ export const iconsData: Array<{
     },
     {
         "name": "battery-warning",
-        "categories": [
+        "component": BatteryWarning,
+            "categories": [
             "connectivity",
             "devices"
         ],
@@ -2245,7 +2389,8 @@ export const iconsData: Array<{
     },
     {
         "name": "battery",
-        "categories": [
+                "component": Battery,
+            "categories": [
             "connectivity",
             "devices"
         ],
@@ -2259,7 +2404,8 @@ export const iconsData: Array<{
     },
     {
         "name": "beaker",
-        "categories": [
+        "component": Beaker,
+            "categories": [
             "science",
             "gaming"
         ],
@@ -2273,7 +2419,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bean-off",
-        "categories": [
+        "component": BeanOff,
+            "categories": [
             "food-beverage"
         ],
         "tags": [
@@ -2289,7 +2436,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bean",
-        "categories": [
+        "component": Bean,
+            "categories": [
             "food-beverage"
         ],
         "tags": [
@@ -2301,7 +2449,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bed-double",
-        "categories": [
+        "component": BedDouble,
+            "categories": [
             "home"
         ],
         "tags": [
@@ -2312,7 +2461,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bed-single",
-        "categories": [
+        "component": BedSingle,
+            "categories": [
             "home"
         ],
         "tags": [
@@ -2323,7 +2473,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bed",
-        "categories": [
+        "component": Bed,
+            "categories": [
             "home"
         ],
         "tags": [
@@ -2334,7 +2485,8 @@ export const iconsData: Array<{
     },
     {
         "name": "beef",
-        "categories": [
+        "component": Beef,
+            "categories": [
             "food-beverage"
         ],
         "tags": [
@@ -2350,7 +2502,8 @@ export const iconsData: Array<{
     },
     {
         "name": "beer-off",
-        "categories": [
+        "component": BeerOff,
+            "categories": [
             "food-beverage"
         ],
         "tags": [
@@ -2363,7 +2516,8 @@ export const iconsData: Array<{
     },
     {
         "name": "beer",
-        "categories": [
+        "component": Beer,
+            "categories": [
             "food-beverage"
         ],
         "tags": [
@@ -2376,7 +2530,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bell-dot",
-        "categories": [
+        "component": BellDot,
+            "categories": [
             "account",
             "notifications"
         ],
@@ -2390,7 +2545,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bell-electric",
-        "categories": [
+        "component": BellElectric,
+            "categories": [
             "devices",
             "notifications",
             "home"
@@ -2419,7 +2575,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bell-minus",
-        "categories": [
+                "component": BellMinus,
+            "categories": [
             "notifications"
         ],
         "tags": [
@@ -2434,7 +2591,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bell-off",
-        "categories": [
+        "component": BellOff,
+            "categories": [
             "notifications"
         ],
         "tags": [
@@ -2446,7 +2604,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bell-plus",
-        "categories": [
+        "component": BellPlus,
+            "categories": [
             "notifications"
         ],
         "tags": [
@@ -2460,7 +2619,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bell-ring",
-        "categories": [
+        "component": BellRing,
+            "categories": [
             "notifications"
         ],
         "tags": [
@@ -2472,7 +2632,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bell",
-        "categories": [
+        "component": Bell,
+            "categories": [
             "account",
             "notifications"
         ],
@@ -2485,7 +2646,8 @@ export const iconsData: Array<{
     },
     {
         "name": "between-horizontal-end",
-        "categories": [
+        "component": BetweenHorizontalEnd,
+            "categories": [
             "layout",
             "design",
             "tools"
@@ -2516,7 +2678,8 @@ export const iconsData: Array<{
     },
     {
         "name": "between-horizontal-start",
-        "categories": [
+        "component": BetweenHorizontalStart,
+            "categories": [
             "layout",
             "design",
             "tools"
@@ -2547,7 +2710,8 @@ export const iconsData: Array<{
     },
     {
         "name": "between-vertical-end",
-        "categories": [
+        "component": BetweenVerticalEnd,
+            "categories": [
             "layout",
             "design",
             "tools"
@@ -2575,7 +2739,8 @@ export const iconsData: Array<{
     },
     {
         "name": "between-vertical-start",
-        "categories": [
+        "component": BetweenVerticalStart,
+            "categories": [
             "layout",
             "design",
             "tools"
@@ -2603,7 +2768,8 @@ export const iconsData: Array<{
     },
     {
         "name": "biceps-flexed",
-        "categories": [
+        "component": BicepsFlexed,
+            "categories": [
             "emoji"
         ],
         "tags": [
@@ -2620,7 +2786,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bike",
-        "categories": [
+        "component": Bike,
+            "categories": [
             "transportation"
         ],
         "tags": [
@@ -2631,7 +2798,8 @@ export const iconsData: Array<{
     },
     {
         "name": "binary",
-        "categories": [
+        "component": Binary,
+            "categories": [
             "text",
             "development"
         ],
@@ -2646,7 +2814,8 @@ export const iconsData: Array<{
     },
     {
         "name": "binoculars",
-        "categories": [
+                "component": Binoculars,
+            "categories": [
             "navigation",
             "nature",
             "photography",
@@ -2677,7 +2846,8 @@ export const iconsData: Array<{
     },
     {
         "name": "biohazard",
-        "categories": [
+        "component": Biohazard,
+            "categories": [
             "science"
         ],
         "tags": [
@@ -2691,7 +2861,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bird",
-        "categories": [
+        "component": Bird,
+            "categories": [
             "animals"
         ],
         "tags": [
@@ -2704,7 +2875,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bitcoin",
-        "categories": [
+        "component": Bitcoin,
+            "categories": [
             "brands",
             "development",
             "finance"
@@ -2717,7 +2889,8 @@ export const iconsData: Array<{
     },
     {
         "name": "blend",
-        "categories": [
+        "component": Blend,
+            "categories": [
             "design",
             "photography",
             "tools",
@@ -2746,7 +2919,8 @@ export const iconsData: Array<{
     },
     {
         "name": "blinds",
-        "categories": [
+        "component": Blinds,
+            "categories": [
             "home"
         ],
         "tags": [
@@ -2763,7 +2937,8 @@ export const iconsData: Array<{
     },
     {
         "name": "blocks",
-        "categories": [
+        "component": Blocks,
+            "categories": [
             "development",
             "shapes"
         ],
@@ -2783,7 +2958,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bluetooth-connected",
-        "categories": [
+        "component": BluetoothConnected,
+            "categories": [
             "connectivity",
             "devices"
         ],
@@ -2793,7 +2969,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bluetooth-off",
-        "categories": [
+        "component": BluetoothOff,
+            "categories": [
             "connectivity",
             "devices"
         ],
@@ -2803,7 +2980,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bluetooth-searching",
-        "categories": [
+        "component": BluetoothSearching,
+            "categories": [
             "connectivity",
             "devices"
         ],
@@ -2813,7 +2991,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bluetooth",
-        "categories": [
+        "component": Bluetooth,
+            "categories": [
             "connectivity",
             "devices"
         ],
@@ -2823,7 +3002,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bold",
-        "categories": [
+        "component": Bold,
+            "categories": [
             "text"
         ],
         "tags": [
@@ -2834,7 +3014,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bolt",
-        "categories": [
+        "component": Bolt,
+            "categories": [
             "tools",
             "home"
         ],
@@ -2855,7 +3036,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bomb",
-        "categories": [],
+        "component": Bomb,
+            "categories": [],
         "tags": [
             "fatal",
             "error",
@@ -2869,7 +3051,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bone",
-        "categories": [
+        "component": Bone,
+            "categories": [
             "animals",
             "medical",
             "gaming"
@@ -2885,7 +3068,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-a",
-        "categories": [
+        "component": BookAudio,
+            "categories": [
             "text",
             "gaming"
         ],
@@ -2932,7 +3116,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-audio",
-        "categories": [
+        "component": BookAudio,
+            "categories": [
             "multimedia",
             "text"
         ],
@@ -2955,7 +3140,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-check",
-        "categories": [
+        "component": BookCheck,
+            "categories": [
             "text",
             "development",
             "gaming"
@@ -3002,7 +3188,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-copy",
-        "categories": [
+        "component": BookCopy,
+            "categories": [
             "development",
             "text",
             "gaming"
@@ -3046,7 +3233,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-dashed",
-        "categories": [
+        "component": BookDashed,
+            "categories": [
             "development"
         ],
         "tags": [
@@ -3069,7 +3257,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-down",
-        "categories": [
+        "component": BookDown,
+            "categories": [
             "development"
         ],
         "tags": [
@@ -3083,7 +3272,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-headphones",
-        "categories": [
+        "component": BookHeadphones,
+            "categories": [
             "multimedia",
             "text"
         ],
@@ -3106,7 +3296,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-heart",
-        "categories": [
+        "component": BookHeart,
+            "categories": [
             "social",
             "text",
             "gaming"
@@ -3149,7 +3340,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-image",
-        "categories": [
+        "component": BookImage,
+            "categories": [
             "photography",
             "text",
             "multimedia",
@@ -3175,7 +3367,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-key",
-        "categories": [
+        "component": BookKey,
+            "categories": [
             "development",
             "security",
             "gaming"
@@ -3198,7 +3391,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-lock",
-        "categories": [
+            "component": BookLock,
+            "categories": [
             "development",
             "security",
             "gaming"
@@ -3217,7 +3411,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-marked",
-        "categories": [
+        "component": BookMarked,
+            "categories": [
             "text",
             "development",
             "gaming"
@@ -3266,7 +3461,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-minus",
-        "categories": [
+        "component": BookMinus,
+            "categories": [
             "development",
             "text",
             "gaming"
@@ -3292,7 +3488,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-open-check",
-        "categories": [
+        "component": BookOpenCheck,
+            "categories": [
             "text",
             "development",
             "gaming"
@@ -3340,7 +3537,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-open-text",
-        "categories": [
+        "component": BookOpenText,
+            "categories": [
             "text",
             "development"
         ],
@@ -3378,7 +3576,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-open",
-        "categories": [
+        "component": BookOpen,
+            "categories": [
             "text",
             "development",
             "gaming"
@@ -3420,7 +3619,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-plus",
-        "categories": [
+        "component": BookPlus,
+            "categories": [
             "development",
             "text",
             "gaming"
@@ -3451,7 +3651,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-text",
-        "categories": [
+        "component": BookText,
+            "categories": [
             "text",
             "gaming"
         ],
@@ -3488,7 +3689,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-type",
-        "categories": [
+                "component": BookType,
+            "categories": [
             "text",
             "design",
             "gaming"
@@ -3532,7 +3734,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-up-2",
-        "categories": [
+        "component": BookUp2,
+            "categories": [
             "development"
         ],
         "tags": [
@@ -3547,7 +3750,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-up",
-        "categories": [
+        "component": BookUp,
+            "categories": [
             "development"
         ],
         "tags": [
@@ -3561,7 +3765,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-user",
-        "categories": [
+        "component": BookUser,
+            "categories": [
             "account",
             "connectivity",
             "communication",
@@ -3584,7 +3789,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book-x",
-        "categories": [
+        "component": BookX,
+            "categories": [
             "text",
             "gaming"
         ],
@@ -3618,7 +3824,8 @@ export const iconsData: Array<{
     },
     {
         "name": "book",
-        "categories": [
+        "component": Book,
+            "categories": [
             "text",
             "development",
             "gaming"
@@ -3657,7 +3864,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bookmark-check",
-        "categories": [
+        "component": BookmarkCheck,
+            "categories": [
             "account"
         ],
         "tags": [
@@ -3673,7 +3881,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bookmark-minus",
-        "categories": [
+        "component": BookmarkMinus,
+            "categories": [
             "account"
         ],
         "tags": [
@@ -3683,7 +3892,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bookmark-plus",
-        "categories": [
+        "component": BookmarkPlus,
+            "categories": [
             "account"
         ],
         "tags": [
@@ -3692,7 +3902,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bookmark-x",
-        "categories": [
+        "component": BookmarkX,
+            "categories": [
             "account"
         ],
         "tags": [
@@ -3709,7 +3920,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bookmark",
-        "categories": [
+        "component": Bookmark,
+            "categories": [
             "account"
         ],
         "tags": [
@@ -3721,7 +3933,8 @@ export const iconsData: Array<{
     },
     {
         "name": "boom-box",
-        "categories": [
+        "component": BoomBox,
+            "categories": [
             "devices",
             "multimedia",
             "social"
@@ -3739,7 +3952,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bot-message-square",
-        "categories": [
+        "component": BotMessageSquare,
+            "categories": [
             "development",
             "social"
         ],
@@ -3752,7 +3966,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bot-off",
-        "categories": [
+        "component": BotOff,
+            "categories": [
             "development",
             "social"
         ],
@@ -3765,7 +3980,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bot",
-        "categories": [
+        "component": Bot,
+            "categories": [
             "development",
             "social"
         ],
@@ -3778,7 +3994,8 @@ export const iconsData: Array<{
     },
     {
         "name": "box",
-        "categories": [
+        "component": Box,
+            "categories": [
             "shapes",
             "gaming",
             "development",
@@ -3796,7 +4013,8 @@ export const iconsData: Array<{
     },
     {
         "name": "boxes",
-        "categories": [
+        "component": Boxes,
+            "categories": [
             "shapes",
             "gaming",
             "development"
@@ -3814,7 +4032,8 @@ export const iconsData: Array<{
     },
     {
         "name": "braces",
-        "categories": [
+        "component": Braces,
+            "categories": [
             "development",
             "files"
         ],
@@ -3830,7 +4049,8 @@ export const iconsData: Array<{
     },
     {
         "name": "brackets",
-        "categories": [
+        "component": Brackets,
+            "categories": [
             "development",
             "files"
         ],
@@ -3846,7 +4066,8 @@ export const iconsData: Array<{
     },
     {
         "name": "brain-circuit",
-        "categories": [
+                "component": BrainCircuit,
+            "categories": [
             "science",
             "development"
         ],
@@ -3862,7 +4083,8 @@ export const iconsData: Array<{
     },
     {
         "name": "brain-cog",
-        "categories": [
+        "component": BrainCog,
+            "categories": [
             "science",
             "development"
         ],
@@ -3878,7 +4100,8 @@ export const iconsData: Array<{
     },
     {
         "name": "brain",
-        "categories": [
+        "component": Brain,
+            "categories": [
             "medical",
             "science"
         ],
@@ -3895,7 +4118,8 @@ export const iconsData: Array<{
     },
     {
         "name": "brick-wall",
-        "categories": [
+        "component": BrickWall,
+            "categories": [
             "buildings",
             "home"
         ],
@@ -3914,7 +4138,8 @@ export const iconsData: Array<{
     },
     {
         "name": "briefcase-business",
-        "categories": [
+        "component": BriefcaseBusiness,
+            "categories": [
             "transportation"
         ],
         "tags": [
@@ -3927,7 +4152,8 @@ export const iconsData: Array<{
     },
     {
         "name": "briefcase-conveyor-belt",
-        "categories": [
+        "component": BriefcaseConveyorBelt,
+            "categories": [
             "travel",
             "transportation"
         ],
@@ -3942,7 +4168,8 @@ export const iconsData: Array<{
     },
     {
         "name": "briefcase-medical",
-        "categories": [
+        "component": BriefcaseMedical,
+            "categories": [
             "medical",
             "transportation"
         ],
@@ -3954,7 +4181,8 @@ export const iconsData: Array<{
     },
     {
         "name": "briefcase",
-        "categories": [
+        "component": Briefcase,
+            "categories": [
             "transportation"
         ],
         "tags": [
@@ -3966,7 +4194,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bring-to-front",
-        "categories": [
+        "component": BringToFront,
+            "categories": [
             "design",
             "layout"
         ],
@@ -3984,7 +4213,8 @@ export const iconsData: Array<{
     },
     {
         "name": "brush",
-        "categories": [
+        "component": Brush,
+            "categories": [
             "text",
             "design",
             "tools"
@@ -3998,7 +4228,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bug-off",
-        "categories": [
+        "component": BugOff,
+            "categories": [
             "development",
             "animals"
         ],
@@ -4013,7 +4244,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bug-play",
-        "categories": [
+        "component": BugPlay,
+            "categories": [
             "development",
             "animals"
         ],
@@ -4025,7 +4257,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bug",
-        "categories": [
+                "component": Bug,
+            "categories": [
             "development",
             "animals"
         ],
@@ -4039,7 +4272,8 @@ export const iconsData: Array<{
     },
     {
         "name": "building-2",
-        "categories": [
+        "component": Building2,
+            "categories": [
             "account",
             "buildings"
         ],
@@ -4055,7 +4289,8 @@ export const iconsData: Array<{
     },
     {
         "name": "building",
-        "categories": [
+        "component": Building,
+            "categories": [
             "account",
             "buildings"
         ],
@@ -4066,7 +4301,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bus-front",
-        "categories": [
+        "component": BusFront,
+            "categories": [
             "transportation"
         ],
         "tags": [
@@ -4078,7 +4314,8 @@ export const iconsData: Array<{
     },
     {
         "name": "bus",
-        "categories": [
+        "component": Bus,
+            "categories": [
             "transportation"
         ],
         "tags": [
@@ -4090,7 +4327,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cable-car",
-        "categories": [
+        "component": CableCar,
+            "categories": [
             "transportation",
             "travel"
         ],
@@ -4104,7 +4342,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cable",
-        "categories": [
+        "component": Cable,
+            "categories": [
             "connectivity",
             "devices",
             "multimedia"
@@ -4143,7 +4382,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cake-slice",
-        "categories": [
+        "component": CakeSlice,
+            "categories": [
             "food-beverage",
             "social"
         ],
@@ -4165,7 +4405,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cake",
-        "categories": [
+        "component": Cake,
+            "categories": [
             "food-beverage",
             "social",
             "account"
@@ -4186,7 +4427,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calculator",
-        "categories": [
+        "component": Calculator,
+            "categories": [
             "math",
             "devices"
         ],
@@ -4197,7 +4439,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-1",
-        "categories": [
+        "component": Calendar1,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4214,7 +4457,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-arrow-down",
-        "categories": [
+        "component": CalendarArrowDown,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4234,7 +4478,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-arrow-up",
-        "categories": [
+                "component": CalendarArrowUp,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4254,7 +4499,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-check-2",
-        "categories": [
+        "component": CalendarCheck2,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4275,7 +4521,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-check",
-        "categories": [
+        "component": CalendarCheck,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4296,7 +4543,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-clock",
-        "categories": [
+        "component": CalendarClock,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4311,7 +4559,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-cog",
-        "categories": [
+        "component": CalendarCog,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4327,7 +4576,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-days",
-        "categories": [
+        "component": CalendarDays,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4339,7 +4589,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-fold",
-        "categories": [
+        "component": CalendarFold,
+            "categories": [
             "time",
             "files"
         ],
@@ -4355,7 +4606,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-heart",
-        "categories": [
+        "component": CalendarHeart,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4371,7 +4623,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-minus-2",
-        "categories": [
+        "component": CalendarMinus2,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4386,7 +4639,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-minus",
-        "categories": [
+        "component": CalendarMinus,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4401,7 +4655,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-off",
-        "categories": [
+        "component": CalendarOff,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4416,7 +4671,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-plus-2",
-        "categories": [
+        "component": CalendarPlus2,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4433,7 +4689,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-plus",
-        "categories": [
+                "component": CalendarPlus,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4450,7 +4707,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-range",
-        "categories": [
+        "component": CalendarRange,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4465,7 +4723,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-search",
-        "categories": [
+        "component": CalendarSearch,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4479,7 +4738,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-sync",
-        "categories": [
+        "component": CalendarSync,
+            "categories": [
             "arrows",
             "time"
         ],
@@ -4503,7 +4763,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-x-2",
-        "categories": [
+        "component": CalendarX2,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4517,7 +4778,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar-x",
-        "categories": [
+        "component": CalendarX,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4532,7 +4794,8 @@ export const iconsData: Array<{
     },
     {
         "name": "calendar",
-        "categories": [
+        "component": Calendar,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -4546,7 +4809,8 @@ export const iconsData: Array<{
     },
     {
         "name": "camera-off",
-        "categories": [
+        "component": CameraOff,
+            "categories": [
             "photography",
             "devices",
             "communication"
@@ -4559,7 +4823,8 @@ export const iconsData: Array<{
     },
     {
         "name": "camera",
-        "categories": [
+        "component": Camera,
+            "categories": [
             "photography",
             "devices",
             "communication"
@@ -4572,7 +4837,8 @@ export const iconsData: Array<{
     },
     {
         "name": "candy-cane",
-        "categories": [
+        "component": CandyCane,
+            "categories": [
             "food-beverage"
         ],
         "tags": [
@@ -4585,7 +4851,8 @@ export const iconsData: Array<{
     },
     {
         "name": "candy-off",
-        "categories": [
+        "component": CandyOff,
+            "categories": [
             "food-beverage"
         ],
         "tags": [
@@ -4599,7 +4866,8 @@ export const iconsData: Array<{
     },
     {
         "name": "candy",
-        "categories": [
+        "component": Candy,
+            "categories": [
             "food-beverage"
         ],
         "tags": [
@@ -4610,7 +4878,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cannabis",
-        "categories": [
+                "component": Cannabis,
+            "categories": [
             "nature"
         ],
         "tags": [
@@ -4621,7 +4890,8 @@ export const iconsData: Array<{
     },
     {
         "name": "captions-off",
-        "categories": [
+        "component": CaptionsOff,
+            "categories": [
             "multimedia"
         ],
         "tags": [
@@ -4636,7 +4906,8 @@ export const iconsData: Array<{
     },
     {
         "name": "captions",
-        "categories": [
+        "component": Captions,
+            "categories": [
             "multimedia"
         ],
         "tags": [
@@ -4651,7 +4922,8 @@ export const iconsData: Array<{
     },
     {
         "name": "car-front",
-        "categories": [
+        "component": CarFront,
+            "categories": [
             "transportation"
         ],
         "tags": [
@@ -4663,7 +4935,8 @@ export const iconsData: Array<{
     },
     {
         "name": "car-taxi-front",
-        "categories": [
+        "component": CarTaxiFront,
+            "categories": [
             "transportation"
         ],
         "tags": [
@@ -4676,7 +4949,8 @@ export const iconsData: Array<{
     },
     {
         "name": "car",
-        "categories": [
+        "component": Car,
+            "categories": [
             "transportation"
         ],
         "tags": [
@@ -4688,7 +4962,8 @@ export const iconsData: Array<{
     },
     {
         "name": "caravan",
-        "categories": [
+        "component": Caravan,
+            "categories": [
             "transportation",
             "travel",
             "nature"
@@ -4707,7 +4982,8 @@ export const iconsData: Array<{
     },
     {
         "name": "carrot",
-        "categories": [
+        "component": Carrot,
+            "categories": [
             "food-beverage"
         ],
         "tags": [
@@ -4718,7 +4994,8 @@ export const iconsData: Array<{
     },
     {
         "name": "case-lower",
-        "categories": [
+        "component": CaseLower,
+            "categories": [
             "text"
         ],
         "tags": [
@@ -4731,7 +5008,8 @@ export const iconsData: Array<{
     },
     {
         "name": "case-sensitive",
-        "categories": [
+        "component": CaseSensitive,
+            "categories": [
             "text"
         ],
         "tags": [
@@ -4744,7 +5022,8 @@ export const iconsData: Array<{
     },
     {
         "name": "case-upper",
-        "categories": [
+        "component": CaseUpper,
+            "categories": [
             "text"
         ],
         "tags": [
@@ -4757,7 +5036,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cassette-tape",
-        "categories": [
+        "component": CassetteTape,
+            "categories": [
             "connectivity",
             "devices",
             "multimedia",
@@ -4773,7 +5053,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cast",
-        "categories": [
+                "component": Cast,
+            "categories": [
             "devices",
             "connectivity"
         ],
@@ -4785,7 +5066,8 @@ export const iconsData: Array<{
     },
     {
         "name": "castle",
-        "categories": [
+        "component": Castle,
+            "categories": [
             "buildings",
             "gaming"
         ],
@@ -4799,7 +5081,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cat",
-        "categories": [
+        "component": Cat,
+            "categories": [
             "animals"
         ],
         "tags": [
@@ -4811,7 +5094,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cctv",
-        "categories": [
+        "component": Cctv,
+            "categories": [
             "security",
             "devices",
             "communication",
@@ -4830,7 +5114,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-area",
-        "categories": [
+        "component": ChartArea,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -4843,7 +5128,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-bar-big",
-        "categories": [
+        "component": ChartBarBig,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -4855,7 +5141,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-bar-decreasing",
-        "categories": [
+        "component": ChartBarDecreasing,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -4868,7 +5155,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-bar-increasing",
-        "categories": [
+        "component": ChartBarIncreasing,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -4881,7 +5169,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-bar-stacked",
-        "categories": [
+        "component": ChartBarStacked,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -4896,7 +5185,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-bar",
-        "categories": [
+        "component": ChartBar,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -4908,7 +5198,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-candlestick",
-        "categories": [
+        "component": ChartCandlestick,
+            "categories": [
             "charts",
             "finance"
         ],
@@ -4936,7 +5227,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-column-big",
-        "categories": [
+        "component": ChartColumnBig,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -4948,7 +5240,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-column-decreasing",
-        "categories": [
+                "component": ChartColumnDecreasing,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -4961,7 +5254,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-column-increasing",
-        "categories": [
+        "component": ChartColumnIncreasing,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -4974,7 +5268,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-column-stacked",
-        "categories": [
+        "component": ChartColumnStacked,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -4989,7 +5284,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-column",
-        "categories": [
+        "component": ChartColumn,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -5001,7 +5297,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-gantt",
-        "categories": [
+        "component": ChartGantt,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -5013,7 +5310,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-line",
-        "categories": [
+        "component": ChartLine,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -5025,7 +5323,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-network",
-        "categories": [
+        "component": ChartNetwork,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -5043,7 +5342,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-no-axes-column-decreasing",
-        "categories": [
+        "component": ChartNoAxesColumnDecreasing,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -5056,7 +5356,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-no-axes-column-increasing",
-        "categories": [
+        "component": ChartNoAxesColumnIncreasing,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -5069,7 +5370,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-no-axes-column",
-        "categories": [
+        "component": ChartNoAxesColumn,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -5081,7 +5383,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-no-axes-combined",
-        "categories": [
+        "component": ChartNoAxesCombined,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -5094,7 +5397,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-no-axes-gantt",
-        "categories": [
+        "component": ChartNoAxesGantt,
+            "categories": [
             "charts",
             "time",
             "development",
@@ -5122,7 +5426,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-pie",
-        "categories": [
+                "component": ChartPie,
+            "categories": [
             "charts",
             "files"
         ],
@@ -5135,7 +5440,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-scatter",
-        "categories": [
+        "component": ChartScatter,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -5147,7 +5453,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chart-spline",
-        "categories": [
+        "component": ChartSpline,
+            "categories": [
             "charts"
         ],
         "tags": [
@@ -5166,7 +5473,8 @@ export const iconsData: Array<{
     },
     {
         "name": "check-check",
-        "categories": [
+        "component": CheckCheck,
+            "categories": [
             "notifications"
         ],
         "tags": [
@@ -5181,7 +5489,8 @@ export const iconsData: Array<{
     },
     {
         "name": "check",
-        "categories": [
+        "component": Check,
+            "categories": [
             "notifications"
         ],
         "tags": [
@@ -5194,7 +5503,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chef-hat",
-        "categories": [
+        "component": ChefHat,
+            "categories": [
             "food-beverage"
         ],
         "tags": [
@@ -5206,7 +5516,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cherry",
-        "categories": [
+        "component": Cherry,
+            "categories": [
             "food-beverage"
         ],
         "tags": [
@@ -5216,7 +5527,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chevron-down",
-        "categories": [
+        "component": ChevronDown,
+            "categories": [
             "arrows",
             "navigation",
             "gaming"
@@ -5230,7 +5542,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chevron-first",
-        "categories": [
+        "component": ChevronFirst,
+            "categories": [
             "arrows",
             "multimedia"
         ],
@@ -5241,7 +5554,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chevron-last",
-        "categories": [
+        "component": ChevronLast,
+            "categories": [
             "arrows",
             "multimedia"
         ],
@@ -5253,7 +5567,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chevron-left",
-        "categories": [
+        "component": ChevronLeft,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -5268,7 +5583,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chevron-right",
-        "categories": [
+        "component": ChevronRight,
+            "categories": [
             "arrows",
             "navigation",
             "math",
@@ -5291,7 +5607,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chevron-up",
-        "categories": [
+                "component": ChevronUp,
+            "categories": [
             "arrows",
             "navigation",
             "math",
@@ -5314,7 +5631,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chevrons-down-up",
-        "categories": [
+        "component": ChevronsDownUp,
+            "categories": [
             "arrows"
         ],
         "tags": [
@@ -5325,7 +5643,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chevrons-down",
-        "categories": [
+        "component": ChevronsDown,
+            "categories": [
             "arrows",
             "navigation",
             "gaming"
@@ -5338,7 +5657,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chevrons-left-right-ellipsis",
-        "categories": [
+        "component": ChevronsLeftRightEllipsis,
+            "categories": [
             "communication",
             "devices",
             "multimedia",
@@ -5374,7 +5694,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chevrons-left-right",
-        "categories": [
+        "component": ChevronsLeftRight,
+            "categories": [
             "arrows"
         ],
         "tags": [
@@ -5385,7 +5706,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chevrons-left",
-        "categories": [
+        "component": ChevronsLeft,
+            "categories": [
             "arrows",
             "navigation",
             "gaming"
@@ -5397,7 +5719,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chevrons-right-left",
-        "categories": [
+        "component": ChevronsRightLeft,
+            "categories": [
             "arrows"
         ],
         "tags": [
@@ -5408,7 +5731,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chevrons-right",
-        "categories": [
+        "component": ChevronsRight,
+            "categories": [
             "arrows",
             "navigation",
             "gaming"
@@ -5420,7 +5744,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chevrons-up-down",
-        "categories": [
+        "component": ChevronsUpDown,
+            "categories": [
             "arrows"
         ],
         "tags": [
@@ -5431,7 +5756,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chevrons-up",
-        "categories": [
+        "component": ChevronsUp,
+            "categories": [
             "arrows",
             "navigation",
             "gaming"
@@ -5446,7 +5772,8 @@ export const iconsData: Array<{
     },
     {
         "name": "chrome",
-        "categories": [
+        "component": Chrome,
+            "categories": [
             "brands"
         ],
         "tags": [
@@ -5456,7 +5783,8 @@ export const iconsData: Array<{
     },
     {
         "name": "church",
-        "categories": [
+        "component": Church,
+            "categories": [
             "buildings",
             "navigation"
         ],
@@ -5467,7 +5795,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cigarette-off",
-        "categories": [
+                "component": CigaretteOff,
+            "categories": [
             "travel",
             "transportation",
             "medical"
@@ -5479,7 +5808,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cigarette",
-        "categories": [
+        "component": Cigarette,
+            "categories": [
             "travel",
             "transportation",
             "medical"
@@ -5490,7 +5820,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-alert",
-        "categories": [
+        "component": CircleAlert,
+            "categories": [
             "notifications"
         ],
         "tags": [
@@ -5502,7 +5833,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-arrow-down",
-        "categories": [
+        "component": CircleArrowDown,
+            "categories": [
             "arrows",
             "navigation",
             "gaming"
@@ -5518,7 +5850,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-arrow-left",
-        "categories": [
+        "component": CircleArrowLeft,
+            "categories": [
             "arrows",
             "navigation",
             "gaming"
@@ -5536,7 +5869,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-arrow-out-down-left",
-        "categories": [
+        "component": CircleArrowOutDownLeft,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -5549,7 +5883,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-arrow-out-down-right",
-        "categories": [
+        "component": CircleArrowOutDownRight,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -5562,7 +5897,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-arrow-out-up-left",
-        "categories": [
+        "component": CircleArrowOutUpLeft,
+            "categories": [
             "arrows",
             "navigation",
             "development"
@@ -5579,7 +5915,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-arrow-out-up-right",
-        "categories": [
+        "component": CircleArrowOutUpRight,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -5592,7 +5929,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-arrow-right",
-        "categories": [
+        "component": CircleArrowRight,
+            "categories": [
             "arrows",
             "navigation",
             "gaming"
@@ -5610,7 +5948,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-arrow-up",
-        "categories": [
+        "component": CircleArrowUp,
+            "categories": [
             "arrows",
             "navigation",
             "gaming"
@@ -5625,7 +5964,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-check-big",
-        "categories": [
+        "component": CircleCheckBig,
+            "categories": [
             "notifications"
         ],
         "tags": [
@@ -5638,7 +5978,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-check",
-        "categories": [
+                        "component": CircleCheck,
+            "categories": [
             "notifications"
         ],
         "tags": [
@@ -5651,7 +5992,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-chevron-down",
-        "categories": [
+        "component": CircleChevronDown,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -5662,7 +6004,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-chevron-left",
-        "categories": [
+        "component": CircleChevronLeft,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -5677,7 +6020,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-chevron-right",
-        "categories": [
+        "component": CircleChevronRight,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -5691,7 +6035,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-chevron-up",
-        "categories": [
+        "component": CircleChevronUp,
+            "categories": [
             "arrows",
             "navigation"
         ],
@@ -5704,7 +6049,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-dashed",
-        "categories": [
+        "component": CircleDashed,
+            "categories": [
             "development",
             "shapes"
         ],
@@ -5721,7 +6067,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-divide",
-        "categories": [
+        "component": CircleDivide,
+            "categories": [
             "math"
         ],
         "tags": [
@@ -5733,7 +6080,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-dollar-sign",
-        "categories": [
+        "component": CircleDollarSign,
+            "categories": [
             "finance"
         ],
         "tags": [
@@ -5746,7 +6094,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-dot-dashed",
-        "categories": [
+        "component": CircleDotDashed,
+            "categories": [
             "development",
             "shapes"
         ],
@@ -5763,7 +6112,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-dot",
-        "categories": [
+        "component": CircleDot,
+            "categories": [
             "development",
             "shapes"
         ],
@@ -5782,7 +6132,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-ellipsis",
-        "categories": [
+        "component": CircleEllipsis,
+            "categories": [
             "layout",
             "development"
         ],
@@ -5812,7 +6163,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-equal",
-        "categories": [
+        "component": CircleEqual,
+            "categories": [
             "math"
         ],
         "tags": [
@@ -5823,7 +6175,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-fading-arrow-up",
-        "categories": [
+                "component": CircleFadingArrowUp,
+            "categories": [
             "arrows",
             "development"
         ],
@@ -5838,7 +6191,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-fading-plus",
-        "categories": [
+        "component": CircleFadingPlus,
+            "categories": [
             "communication",
             "social"
         ],
@@ -5855,7 +6209,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-gauge",
-        "categories": [
+        "component": CircleGauge,
+            "categories": [
             "transportation",
             "sports",
             "science"
@@ -5872,7 +6227,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-help",
-        "categories": [
+        "component": CircleHelp,
+            "categories": [
             "accessibility",
             "text",
             "notifications"
@@ -5883,7 +6239,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-minus",
-        "categories": [
+        "component": CircleMinus,
+            "categories": [
             "math"
         ],
         "tags": [
@@ -5903,7 +6260,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-off",
-        "categories": [
+        "component": CircleOff,
+            "categories": [
             "shapes"
         ],
         "tags": [
@@ -5928,7 +6286,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-parking-off",
-        "categories": [
+        "component": CircleParkingOff,
+            "categories": [
             "transportation",
             "navigation"
         ],
@@ -5940,7 +6299,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-parking",
-        "categories": [
+        "component": CircleParking,
+            "categories": [
             "transportation",
             "navigation"
         ],
@@ -5951,7 +6311,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-pause",
-        "categories": [
+        "component": CirclePause,
+            "categories": [
             "multimedia"
         ],
         "tags": [
@@ -5962,7 +6323,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-percent",
-        "categories": [
+        "component": CirclePercent,
+            "categories": [
             "social",
             "finance",
             "shopping",
@@ -5981,7 +6343,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-play",
-        "categories": [
+        "component": CirclePlay,
+            "categories": [
             "multimedia"
         ],
         "tags": [
@@ -5992,7 +6355,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-plus",
-        "categories": [
+        "component": CirclePlus,
+            "categories": [
             "math",
             "development",
             "cursors",
@@ -6024,7 +6388,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-power",
-        "categories": [
+                "component": CirclePower,
+            "categories": [
             "connectivity"
         ],
         "tags": [
@@ -6044,7 +6409,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-slash-2",
-        "categories": [
+        "component": CircleSlash2,
+            "categories": [
             "shapes",
             "math",
             "development"
@@ -6067,7 +6433,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-slash",
-        "categories": [
+        "component": CircleSlash,
+            "categories": [
             "development",
             "math"
         ],
@@ -6097,7 +6464,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-stop",
-        "categories": [
+        "component": CircleStop,
+            "categories": [
             "multimedia"
         ],
         "tags": [
@@ -6107,7 +6475,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-user-round",
-        "categories": [
+        "component": CircleUserRound,
+            "categories": [
             "account"
         ],
         "tags": [
@@ -6118,7 +6487,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-user",
-        "categories": [
+        "component": CircleUser,
+            "categories": [
             "account"
         ],
         "tags": [
@@ -6129,7 +6499,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle-x",
-        "categories": [
+        "component": CircleX,
+            "categories": [
             "math",
             "development"
         ],
@@ -6152,7 +6523,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circle",
-        "categories": [
+        "component": Circle,
+            "categories": [
             "shapes"
         ],
         "tags": [
@@ -6164,7 +6536,8 @@ export const iconsData: Array<{
     },
     {
         "name": "circuit-board",
-        "categories": [
+        "component": CircuitBoard,
+            "categories": [
             "science",
             "development"
         ],
@@ -6176,7 +6549,8 @@ export const iconsData: Array<{
     },
     {
         "name": "citrus",
-        "categories": [
+        "component": Citrus,
+            "categories": [
             "food-beverage"
         ],
         "tags": [
@@ -6188,7 +6562,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clapperboard",
-        "categories": [
+        "component": Clapperboard,
+            "categories": [
             "multimedia"
         ],
         "tags": [
@@ -6207,7 +6582,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clipboard-check",
-        "categories": [
+        "component": ClipboardCheck,
+            "categories": [
             "text"
         ],
         "tags": [
@@ -6222,7 +6598,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clipboard-copy",
-        "categories": [
+                "component": ClipboardCopy,
+            "categories": [
             "text",
             "arrows"
         ],
@@ -6233,7 +6610,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clipboard-list",
-        "categories": [
+        "component": ClipboardList,
+            "categories": [
             "text"
         ],
         "tags": [
@@ -6244,7 +6622,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clipboard-minus",
-        "categories": [
+        "component": ClipboardMinus,
+            "categories": [
             "text",
             "medical"
         ],
@@ -6261,7 +6640,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clipboard-paste",
-        "categories": [
+        "component": ClipboardPaste,
+            "categories": [
             "text",
             "arrows"
         ],
@@ -6272,7 +6652,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clipboard-pen-line",
-        "categories": [
+        "component": ClipboardPenLine,
+            "categories": [
             "text"
         ],
         "tags": [
@@ -6281,7 +6662,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clipboard-pen",
-        "categories": [
+        "component": ClipboardPen,
+            "categories": [
             "text"
         ],
         "tags": [
@@ -6291,7 +6673,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clipboard-plus",
-        "categories": [
+        "component": ClipboardPlus,
+            "categories": [
             "text",
             "medical"
         ],
@@ -6309,7 +6692,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clipboard-type",
-        "categories": [
+        "component": ClipboardType,
+            "categories": [
             "text"
         ],
         "tags": [
@@ -6320,7 +6704,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clipboard-x",
-        "categories": [
+        "component": ClipboardX,
+            "categories": [
             "text"
         ],
         "tags": [
@@ -6332,7 +6717,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clipboard",
-        "categories": [
+        "component": Clipboard,
+            "categories": [
             "text"
         ],
         "tags": [
@@ -6342,7 +6728,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clock-1",
-        "categories": [
+        "component": Clock1,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -6353,7 +6740,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clock-10",
-        "categories": [
+        "component": Clock10,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -6364,7 +6752,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clock-11",
-        "categories": [
+                "component": Clock11,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -6375,7 +6764,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clock-12",
-        "categories": [
+        "component": Clock12,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -6388,7 +6778,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clock-2",
-        "categories": [
+        "component": Clock2,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -6399,7 +6790,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clock-3",
-        "categories": [
+        "component": Clock3,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -6410,7 +6802,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clock-4",
-        "categories": [
+        "component": Clock4,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -6421,7 +6814,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clock-5",
-        "categories": [
+        "component": Clock5,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -6432,7 +6826,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clock-6",
-        "categories": [
+        "component": Clock6,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -6443,7 +6838,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clock-7",
-        "categories": [
+        "component": Clock7,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -6454,7 +6850,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clock-8",
-        "categories": [
+        "component": Clock8,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -6465,7 +6862,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clock-9",
-        "categories": [
+        "component": Clock9,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -6476,7 +6874,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clock-alert",
-        "categories": [
+        "component": ClockAlert,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -6489,7 +6888,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clock-arrow-down",
-        "categories": [
+        "component": ClockArrowDown,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -6508,7 +6908,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clock-arrow-up",
-        "categories": [
+                "component": ClockArrowUp,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -6527,7 +6928,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clock",
-        "categories": [
+        "component": Clock,
+            "categories": [
             "time"
         ],
         "tags": [
@@ -6538,7 +6940,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cloud-alert",
-        "categories": [
+        "component": CloudAlert,
+            "categories": [
             "development"
         ],
         "tags": [
@@ -6554,7 +6957,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cloud-cog",
-        "categories": [
+        "component": CloudCog,
+            "categories": [
             "development"
         ],
         "tags": [
@@ -6566,7 +6970,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cloud-download",
-        "categories": [
+        "component": CloudDownload,
+            "categories": [
             "arrows",
             "files"
         ],
@@ -6576,7 +6981,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cloud-drizzle",
-        "categories": [
+        "component": CloudDrizzle,
+            "categories": [
             "weather"
         ],
         "tags": [
@@ -6586,7 +6992,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cloud-fog",
-        "categories": [
+        "component": CloudFog,
+            "categories": [
             "weather"
         ],
         "tags": [
@@ -6596,7 +7003,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cloud-hail",
-        "categories": [
+        "component": CloudHail,
+            "categories": [
             "weather"
         ],
         "tags": [
@@ -6606,7 +7014,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cloud-lightning",
-        "categories": [
+        "component": CloudLightning,
+            "categories": [
             "weather"
         ],
         "tags": [
@@ -6616,7 +7025,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cloud-moon-rain",
-        "categories": [
+        "component": CloudMoonRain,
+            "categories": [
             "weather"
         ],
         "tags": [
@@ -6628,7 +7038,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cloud-moon",
-        "categories": [
+        "component": CloudMoon,
+            "categories": [
             "weather"
         ],
         "tags": [
@@ -6638,7 +7049,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cloud-off",
-        "categories": [
+        "component": CloudOff,
+            "categories": [
             "connectivity",
             "weather"
         ],
@@ -6648,7 +7060,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cloud-rain-wind",
-        "categories": [
+                "component": CloudRainWind,
+            "categories": [
             "weather"
         ],
         "tags": [
@@ -6658,7 +7071,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cloud-rain",
-        "categories": [
+        "component": CloudRain,
+            "categories": [
             "weather"
         ],
         "tags": [
@@ -6668,7 +7082,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cloud-snow",
-        "categories": [
+        "component": CloudSnow,
+            "categories": [
             "weather"
         ],
         "tags": [
@@ -6678,7 +7093,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cloud-sun-rain",
-        "categories": [
+        "component": CloudSunRain,
+            "categories": [
             "weather"
         ],
         "tags": [
@@ -6689,7 +7105,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cloud-sun",
-        "categories": [
+        "component": CloudSun,
+            "categories": [
             "weather"
         ],
         "tags": [
@@ -6699,7 +7116,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cloud-upload",
-        "categories": [
+        "component": CloudUpload,
+            "categories": [
             "arrows",
             "files"
         ],
@@ -6709,7 +7127,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cloud",
-        "categories": [
+        "component": Cloud,
+            "categories": [
             "weather"
         ],
         "tags": [
@@ -6718,7 +7137,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cloudy",
-        "categories": [
+        "component": Cloudy,
+            "categories": [
             "weather"
         ],
         "tags": [
@@ -6728,7 +7148,8 @@ export const iconsData: Array<{
     },
     {
         "name": "clover",
-        "categories": [
+        "component": Clover,
+            "categories": [
             "gaming"
         ],
         "tags": [
@@ -6739,7 +7160,8 @@ export const iconsData: Array<{
     },
     {
         "name": "club",
-        "categories": [
+        "component": Club,
+            "categories": [
             "shapes",
             "gaming"
         ],
@@ -6752,7 +7174,8 @@ export const iconsData: Array<{
     },
     {
         "name": "code-xml",
-        "categories": [
+        "component": CodeXml,
+            "categories": [
             "text",
             "development"
         ],
@@ -6765,7 +7188,8 @@ export const iconsData: Array<{
     },
     {
         "name": "code",
-        "categories": [
+        "component": Code,
+            "categories": [
             "text",
             "development"
         ],
@@ -6778,7 +7202,8 @@ export const iconsData: Array<{
     },
     {
         "name": "codepen",
-        "categories": [
+                "component": Codepen,
+            "categories": [
             "brands",
             "development"
         ],
@@ -6788,7 +7213,8 @@ export const iconsData: Array<{
     },
     {
         "name": "codesandbox",
-        "categories": [
+        "component": Codesandbox,
+            "categories": [
             "brands",
             "development"
         ],
@@ -6798,7 +7224,8 @@ export const iconsData: Array<{
     },
     {
         "name": "coffee",
-        "categories": [
+        "component": Coffee,
+            "categories": [
             "food-beverage"
         ],
         "tags": [
@@ -6813,7 +7240,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cog",
-        "categories": [
+        "component": Cog,
+            "categories": [
             "account"
         ],
         "tags": [
@@ -6833,7 +7261,8 @@ export const iconsData: Array<{
     },
     {
         "name": "coins",
-        "categories": [
+        "component": Coins,
+            "categories": [
             "gaming"
         ],
         "tags": [
@@ -6845,7 +7274,8 @@ export const iconsData: Array<{
     },
     {
         "name": "columns-2",
-        "categories": [
+        "component": Columns2,
+            "categories": [
             "layout",
             "design",
             "text"
@@ -6877,7 +7307,8 @@ export const iconsData: Array<{
     },
     {
         "name": "columns-3",
-        "categories": [
+        "component": Columns3,
+            "categories": [
             "layout",
             "design",
             "text"
@@ -6910,7 +7341,8 @@ export const iconsData: Array<{
     },
     {
         "name": "columns-4",
-        "categories": [
+        "component": Columns4,
+            "categories": [
             "layout",
             "design",
             "text",
@@ -6957,7 +7389,8 @@ export const iconsData: Array<{
     },
     {
         "name": "combine",
-        "categories": [
+        "component": Combine,
+            "categories": [
             "development",
             "files"
         ],
@@ -6975,7 +7408,8 @@ export const iconsData: Array<{
     },
     {
         "name": "command",
-        "categories": [
+        "component": Command,
+            "categories": [
             "development"
         ],
         "tags": [
@@ -6988,7 +7422,8 @@ export const iconsData: Array<{
     },
     {
         "name": "compass",
-        "categories": [
+        "component": Compass,
+            "categories": [
             "navigation",
             "travel"
         ],
@@ -7004,7 +7439,8 @@ export const iconsData: Array<{
     },
     {
         "name": "component",
-        "categories": [
+        "component": Component,
+            "categories": [
             "design",
             "development"
         ],
@@ -7019,7 +7455,8 @@ export const iconsData: Array<{
     },
     {
         "name": "computer",
-        "categories": [
+                "component": Computer,
+            "categories": [
             "devices",
             "development",
             "gaming"
@@ -7033,7 +7470,8 @@ export const iconsData: Array<{
     },
     {
         "name": "concierge-bell",
-        "categories": [
+        "component": ConciergeBell,
+            "categories": [
             "travel"
         ],
         "tags": [
@@ -7044,6 +7482,7 @@ export const iconsData: Array<{
     },
     {
         "name": "cone",
+        "component": Cone,
         "categories": [
             "shapes",
             "math"
@@ -7062,7 +7501,8 @@ export const iconsData: Array<{
     },
     {
         "name": "construction",
-        "categories": [
+        "component": Construction,
+            "categories": [
             "development"
         ],
         "tags": [
@@ -7074,7 +7514,8 @@ export const iconsData: Array<{
     },
     {
         "name": "contact-round",
-        "categories": [
+        "component": ContactRound,
+            "categories": [
             "account",
             "connectivity",
             "communication",
@@ -7092,7 +7533,8 @@ export const iconsData: Array<{
     },
     {
         "name": "contact",
-        "categories": [
+        "component": Contact,
+            "categories": [
             "account",
             "connectivity",
             "communication",
@@ -7110,7 +7552,8 @@ export const iconsData: Array<{
     },
     {
         "name": "container",
-        "categories": [
+        "component": Container,
+            "categories": [
             "development",
             "transportation",
             "mail"
@@ -7129,7 +7572,8 @@ export const iconsData: Array<{
     },
     {
         "name": "contrast",
-        "categories": [
+        "component": Contrast,
+            "categories": [
             "photography",
             "accessibility",
             "design"
@@ -7141,7 +7585,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cookie",
-        "categories": [
+        "component": Cookie,
+            "categories": [
             "account",
             "food-beverage"
         ],
@@ -7154,7 +7599,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cooking-pot",
-        "categories": [
+        "component": CookingPot,
+            "categories": [
             "food-beverage",
             "home"
         ],
@@ -7175,7 +7621,8 @@ export const iconsData: Array<{
     },
     {
         "name": "copy-check",
-        "categories": [
+        "component": CopyCheck,
+            "categories": [
             "text",
             "notifications"
         ],
@@ -7188,7 +7635,8 @@ export const iconsData: Array<{
     },
     {
         "name": "copy-minus",
-        "categories": [
+        "component": CopyMinus,
+            "categories": [
             "text",
             "math"
         ],
@@ -7205,7 +7653,8 @@ export const iconsData: Array<{
     },
     {
         "name": "copy-plus",
-        "categories": [
+        "component": CopyPlus,
+            "categories": [
             "text",
             "math"
         ],
@@ -7220,7 +7669,8 @@ export const iconsData: Array<{
     },
     {
         "name": "copy-slash",
-        "categories": [
+                            "component": CopySlash,
+            "categories": [
             "text",
             "development",
             "math"
@@ -7245,7 +7695,8 @@ export const iconsData: Array<{
     },
     {
         "name": "copy-x",
-        "categories": [
+        "component": CopyX,
+            "categories": [
             "notifications",
             "math"
         ],
@@ -7263,7 +7714,8 @@ export const iconsData: Array<{
     },
     {
         "name": "copy",
-        "categories": [
+        "component": Copy,
+            "categories": [
             "text"
         ],
         "tags": [
@@ -7274,14 +7726,16 @@ export const iconsData: Array<{
     },
     {
         "name": "copyleft",
-        "categories": [],
+        "component": Copyleft,
+            "categories": [],
         "tags": [
             "licence"
         ]
     },
     {
         "name": "copyright",
-        "categories": [],
+        "component": Copyright,
+            "categories": [],
         "tags": [
             "licence",
             "license"
@@ -7289,7 +7743,8 @@ export const iconsData: Array<{
     },
     {
         "name": "corner-down-left",
-        "categories": [
+        "component": CornerDownLeft,
+            "categories": [
             "arrows"
         ],
         "tags": [
@@ -7299,7 +7754,8 @@ export const iconsData: Array<{
     },
     {
         "name": "corner-down-right",
-        "categories": [
+        "component": CornerDownRight,
+            "categories": [
             "arrows",
             "text",
             "development"
@@ -7312,7 +7768,8 @@ export const iconsData: Array<{
     },
     {
         "name": "corner-left-down",
-        "categories": [
+        "component": CornerLeftDown,
+            "categories": [
             "arrows"
         ],
         "tags": [
@@ -7321,7 +7778,8 @@ export const iconsData: Array<{
     },
     {
         "name": "corner-left-up",
-        "categories": [
+        "component": CornerLeftUp,
+            "categories": [
             "arrows"
         ],
         "tags": [
@@ -7330,7 +7788,8 @@ export const iconsData: Array<{
     },
     {
         "name": "corner-right-down",
-        "categories": [
+        "component": CornerRightDown,
+            "categories": [
             "arrows"
         ],
         "tags": [
@@ -7339,7 +7798,8 @@ export const iconsData: Array<{
     },
     {
         "name": "corner-right-up",
-        "categories": [
+        "component": CornerRightUp,
+            "categories": [
             "arrows"
         ],
         "tags": [
@@ -7348,7 +7808,8 @@ export const iconsData: Array<{
     },
     {
         "name": "corner-up-left",
-        "categories": [
+        "component": CornerUpLeft,
+            "categories": [
             "arrows"
         ],
         "tags": [
@@ -7357,7 +7818,8 @@ export const iconsData: Array<{
     },
     {
         "name": "corner-up-right",
-        "categories": [
+                                "component": CornerUpRight,
+            "categories": [
             "arrows"
         ],
         "tags": [
@@ -7366,7 +7828,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cpu",
-        "categories": [
+        "component": Cpu,
+            "categories": [
             "devices"
         ],
         "tags": [
@@ -7385,7 +7848,8 @@ export const iconsData: Array<{
     },
     {
         "name": "creative-commons",
-        "categories": [],
+        "component": CreativeCommons,
+            "categories": [],
         "tags": [
             "licence",
             "license"
@@ -7393,7 +7857,8 @@ export const iconsData: Array<{
     },
     {
         "name": "credit-card",
-        "categories": [
+        "component": CreditCard,
+            "categories": [
             "account",
             "finance"
         ],
@@ -7406,7 +7871,8 @@ export const iconsData: Array<{
     },
     {
         "name": "croissant",
-        "categories": [
+        "component": Croissant,
+            "categories": [
             "food-beverage"
         ],
         "tags": [
@@ -7418,7 +7884,8 @@ export const iconsData: Array<{
     },
     {
         "name": "crop",
-        "categories": [
+        "component": Crop,
+            "categories": [
             "photography",
             "design"
         ],
@@ -7429,7 +7896,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cross",
-        "categories": [
+        "component": Cross,
+            "categories": [
             "shapes"
         ],
         "tags": [
@@ -7439,7 +7907,8 @@ export const iconsData: Array<{
     },
     {
         "name": "crosshair",
-        "categories": [
+        "component": Crosshair,
+            "categories": [
             "photography"
         ],
         "tags": [
@@ -7449,7 +7918,8 @@ export const iconsData: Array<{
     },
     {
         "name": "crown",
-        "categories": [
+        "component": Crown,
+            "categories": [
             "gaming"
         ],
         "tags": [
@@ -7465,7 +7935,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cuboid",
-        "categories": [
+        "component": Cuboid,
+            "categories": [
             "shapes",
             "math",
             "buildings"
@@ -7482,7 +7953,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cup-soda",
-        "categories": [
+        "component": CupSoda,
+            "categories": [
             "food-beverage"
         ],
         "tags": [
@@ -7496,7 +7968,8 @@ export const iconsData: Array<{
     },
     {
         "name": "currency",
-        "categories": [
+        "component": Currency,
+            "categories": [
             "finance"
         ],
         "tags": [
@@ -7506,7 +7979,8 @@ export const iconsData: Array<{
     },
     {
         "name": "cylinder",
-        "categories": [
+        "component": Cylinder,
+            "categories": [
             "shapes",
             "design",
             "math"
@@ -7523,6 +7997,7 @@ export const iconsData: Array<{
     },
     {
         "name": "dam",
+        "component": Dam,
         "categories": [
             "buildings",
             "sustainability"
@@ -7534,8 +8009,9 @@ export const iconsData: Array<{
         ]
     },
     {
-        "name": "database-backup",
-        "categories": [
+        "name": "database-backup",  
+        "component": DatabaseBackup,
+            "categories": [
             "devices",
             "arrows",
             "design",
@@ -7556,7 +8032,8 @@ export const iconsData: Array<{
     },
     {
         "name": "database-zap",
-        "categories": [
+        "component": DatabaseZap,
+            "categories": [
             "devices",
             "development"
         ],
@@ -7572,7 +8049,8 @@ export const iconsData: Array<{
     },
     {
         "name": "database",
-        "categories": [
+        "component": Database,
+            "categories": [
             "devices",
             "development"
         ],
@@ -7588,7 +8066,8 @@ export const iconsData: Array<{
     },
     {
         "name": "delete",
-        "categories": [
+        "component": Delete,
+            "categories": [
             "text",
             "arrows"
         ],
@@ -7599,7 +8078,8 @@ export const iconsData: Array<{
     },
     {
         "name": "dessert",
-        "categories": [
+        "component": Dessert,
+            "categories": [
             "food-beverage"
         ],
         "tags": [
@@ -7623,7 +8103,8 @@ export const iconsData: Array<{
     },
     {
         "name": "diameter",
-        "categories": [
+        "component": Diameter,
+            "categories": [
             "shapes",
             "math",
             "design",
@@ -7643,7 +8124,8 @@ export const iconsData: Array<{
     },
     {
         "name": "diamond-minus",
-        "categories": [
+        "component": DiamondMinus,
+            "categories": [
             "multimedia",
             "photography",
             "tools",
@@ -7677,7 +8159,8 @@ export const iconsData: Array<{
     },
     {
         "name": "diamond-percent",
-        "categories": [
+        "component": DiamondPercent,
+            "categories": [
             "social",
             "finance",
             "shopping",
@@ -7696,7 +8179,8 @@ export const iconsData: Array<{
     },
     {
         "name": "diamond-plus",
-        "categories": [
+        "component": DiamondPlus,
+            "categories": [
             "multimedia",
             "photography",
             "tools",
@@ -7725,7 +8209,8 @@ export const iconsData: Array<{
     },
     {
         "name": "diamond",
-        "categories": [
+        "component": Diamond,
+            "categories": [
             "shapes",
             "gaming"
         ],
@@ -7742,6 +8227,7 @@ export const iconsData: Array<{
     },
     {
         "name": "dice-1",
+        "component": Dice1,
         "categories": [
             "gaming"
         ],
@@ -7756,6 +8242,7 @@ export const iconsData: Array<{
     },
     {
         "name": "dice-2",
+        "component": Dice2,
         "categories": [
             "gaming"
         ],
@@ -7770,6 +8257,7 @@ export const iconsData: Array<{
     },
     {
         "name": "dice-3",
+        "component": Dice3,
         "categories": [
             "gaming"
         ],
@@ -7784,6 +8272,7 @@ export const iconsData: Array<{
     },
     {
         "name": "dice-4",
+        "component": Dice4,
         "categories": [
             "gaming"
         ],
@@ -7798,6 +8287,7 @@ export const iconsData: Array<{
     },
     {
         "name": "dice-5",
+        "component": Dice5,
         "categories": [
             "gaming"
         ],
@@ -7812,6 +8302,7 @@ export const iconsData: Array<{
     },
     {
         "name": "dice-6",
+        "component": Dice6,
         "categories": [
             "gaming"
         ],
@@ -7826,6 +8317,7 @@ export const iconsData: Array<{
     },
     {
         "name": "dices",
+        "component": Dices,
         "categories": [
             "gaming"
         ],
@@ -7839,6 +8331,7 @@ export const iconsData: Array<{
     },
     {
         "name": "diff",
+        "component": Diff,
         "categories": [
             "development",
             "files"
@@ -7855,6 +8348,7 @@ export const iconsData: Array<{
     },
     {
         "name": "disc-2",
+        "component": Disc2,
         "categories": [
             "devices",
             "multimedia"
@@ -7875,6 +8369,7 @@ export const iconsData: Array<{
     },
     {
         "name": "disc-3",
+        "component": Disc3,
         "categories": [
             "devices",
             "multimedia"
@@ -7895,6 +8390,7 @@ export const iconsData: Array<{
     },
     {
         "name": "disc-album",
+        "component": DiscAlbum,
         "categories": [
             "devices",
             "multimedia"
@@ -7922,6 +8418,7 @@ export const iconsData: Array<{
     },
     {
         "name": "disc",
+        "component": Disc,
         "categories": [
             "devices",
             "multimedia"
@@ -7949,6 +8446,7 @@ export const iconsData: Array<{
     },
     {
         "name": "divide",
+        "component": Divide,
         "categories": [
             "math",
             "development"
@@ -7965,6 +8463,7 @@ export const iconsData: Array<{
     },
     {
         "name": "dna-off",
+        "component": DnaOff,
         "categories": [
             "medical",
             "food-beverage"
@@ -7980,6 +8479,7 @@ export const iconsData: Array<{
     },
     {
         "name": "dna",
+        "component": Dna,
         "categories": [
             "medical"
         ],
@@ -7994,6 +8494,7 @@ export const iconsData: Array<{
     },
     {
         "name": "dock",
+        "component": Dock,
         "categories": [
             "layout",
             "design",
@@ -8014,6 +8515,7 @@ export const iconsData: Array<{
     },
     {
         "name": "dog",
+        "component": Dog,
         "categories": [
             "animals"
         ],
@@ -8027,6 +8529,7 @@ export const iconsData: Array<{
     },
     {
         "name": "dollar-sign",
+        "component": DollarSign,
         "categories": [
             "finance"
         ],
@@ -8038,6 +8541,7 @@ export const iconsData: Array<{
     },
     {
         "name": "donut",
+        "component": Donut,
         "categories": [
             "food-beverage"
         ],
@@ -8058,6 +8562,7 @@ export const iconsData: Array<{
     },
     {
         "name": "door-closed",
+        "component": DoorClosed,
         "categories": [
             "home",
             "travel",
@@ -8076,6 +8581,7 @@ export const iconsData: Array<{
     },
     {
         "name": "door-open",
+        "component": DoorOpen,
         "categories": [
             "home",
             "travel",
@@ -8094,6 +8600,7 @@ export const iconsData: Array<{
     },
     {
         "name": "dot",
+        "component": Dot,
         "categories": [
             "shapes",
             "text"
@@ -8119,6 +8626,7 @@ export const iconsData: Array<{
     },
     {
         "name": "download",
+        "component": Download,
         "categories": [
             "arrows",
             "files"
@@ -8131,6 +8639,7 @@ export const iconsData: Array<{
     },
     {
         "name": "drafting-compass",
+        "component": DraftingCompass,
         "categories": [
             "math",
             "design",
@@ -8152,6 +8661,7 @@ export const iconsData: Array<{
     },
     {
         "name": "drama",
+        "component": Drama,
         "categories": [
             "multimedia"
         ],
@@ -8166,6 +8676,7 @@ export const iconsData: Array<{
     },
     {
         "name": "dribbble",
+        "component": Dribbble,
         "categories": [
             "brands",
             "social",
@@ -8178,6 +8689,7 @@ export const iconsData: Array<{
     },
     {
         "name": "drill",
+        "component": Drill,
         "categories": [
             "tools",
             "home",
@@ -8196,6 +8708,7 @@ export const iconsData: Array<{
     },
     {
         "name": "droplet-off",
+        "component": DropletOff,
         "categories": [
             "weather",
             "gaming"
@@ -8214,6 +8727,7 @@ export const iconsData: Array<{
     },
     {
         "name": "droplet",
+        "component": Droplet,
         "categories": [
             "weather",
             "gaming"
@@ -8232,6 +8746,7 @@ export const iconsData: Array<{
     },
     {
         "name": "droplets",
+        "component": Droplets,
         "categories": [
             "weather"
         ],
@@ -8249,6 +8764,7 @@ export const iconsData: Array<{
     },
     {
         "name": "drum",
+        "component": Drum,
         "categories": [
             "multimedia",
             "devices"
@@ -8276,6 +8792,7 @@ export const iconsData: Array<{
     },
     {
         "name": "drumstick",
+        "component": Drumstick,
         "categories": [
             "food-beverage"
         ],
@@ -8287,6 +8804,7 @@ export const iconsData: Array<{
     },
     {
         "name": "dumbbell",
+        "component": Dumbbell,
         "categories": [
             "navigation",
             "sports"
@@ -8300,6 +8818,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ear-off",
+        "component": EarOff,
         "categories": [
             "medical",
             "accessibility"
@@ -8317,6 +8836,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ear",
+        "component": Ear,
         "categories": [
             "medical",
             "accessibility"
@@ -8330,6 +8850,7 @@ export const iconsData: Array<{
     },
     {
         "name": "earth-lock",
+        "component": EarthLock,
         "categories": [
             "security",
             "development",
@@ -8350,6 +8871,7 @@ export const iconsData: Array<{
     },
     {
         "name": "earth",
+        "component": Earth,
         "categories": [
             "navigation"
         ],
@@ -8363,6 +8885,7 @@ export const iconsData: Array<{
     },
     {
         "name": "eclipse",
+        "component": Eclipse,
         "categories": [
             "science",
             "design",
@@ -8398,6 +8921,7 @@ export const iconsData: Array<{
     },
     {
         "name": "egg-fried",
+        "component": EggFried,
         "categories": [
             "food-beverage"
         ],
@@ -8408,6 +8932,7 @@ export const iconsData: Array<{
     },
     {
         "name": "egg-off",
+        "component": EggOff,
         "categories": [
             "food-beverage"
         ],
@@ -8420,6 +8945,7 @@ export const iconsData: Array<{
     },
     {
         "name": "egg",
+        "component": Egg,
         "categories": [
             "food-beverage",
             "animals"
@@ -8441,6 +8967,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ellipsis-vertical",
+        "component": EllipsisVertical,
         "categories": [
             "layout"
         ],
@@ -8459,6 +8986,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ellipsis",
+        "component": Ellipsis,
         "categories": [
             "layout",
             "development"
@@ -8489,6 +9017,7 @@ export const iconsData: Array<{
     },
     {
         "name": "equal-approximately",
+        "component": EqualApproximately,
         "categories": [
             "math"
         ],
@@ -8501,6 +9030,7 @@ export const iconsData: Array<{
     },
     {
         "name": "equal-not",
+        "component": EqualNot,
         "categories": [
             "math",
             "development"
@@ -8516,6 +9046,7 @@ export const iconsData: Array<{
     },
     {
         "name": "equal",
+        "component": Equal,
         "categories": [
             "math",
             "development"
@@ -8531,6 +9062,7 @@ export const iconsData: Array<{
     },
     {
         "name": "eraser",
+        "component": Eraser,
         "categories": [
             "text"
         ],
@@ -8544,6 +9076,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ethernet-port",
+        "component": EthernetPort,
         "categories": [
             "communication",
             "devices",
@@ -8580,6 +9113,7 @@ export const iconsData: Array<{
     },
     {
         "name": "euro",
+        "component": Euro,
         "categories": [
             "finance"
         ],
@@ -8591,6 +9125,7 @@ export const iconsData: Array<{
     },
     {
         "name": "expand",
+        "component": Expand,
         "categories": [
             "text",
             "arrows"
@@ -8605,6 +9140,7 @@ export const iconsData: Array<{
     },
     {
         "name": "external-link",
+        "component": ExternalLink,
         "categories": [
             "arrows",
             "text",
@@ -8618,6 +9154,7 @@ export const iconsData: Array<{
     },
     {
         "name": "eye-closed",
+        "component": EyeClosed,
         "categories": [
             "accessibility",
             "photography",
@@ -8638,6 +9175,7 @@ export const iconsData: Array<{
     },
     {
         "name": "eye-off",
+        "component": EyeOff,
         "categories": [
             "accessibility",
             "photography",
@@ -8658,6 +9196,7 @@ export const iconsData: Array<{
     },
     {
         "name": "eye",
+        "component": Eye,
         "categories": [
             "accessibility",
             "photography",
@@ -8681,6 +9220,7 @@ export const iconsData: Array<{
     },
     {
         "name": "facebook",
+        "component": Facebook,
         "categories": [
             "social",
             "brands"
@@ -8692,6 +9232,7 @@ export const iconsData: Array<{
     },
     {
         "name": "factory",
+        "component": Factory,
         "categories": [
             "buildings"
         ],
@@ -8706,6 +9247,7 @@ export const iconsData: Array<{
     },
     {
         "name": "fan",
+        "component": Fan,
         "categories": [
             "home"
         ],
@@ -8719,6 +9261,7 @@ export const iconsData: Array<{
     },
     {
         "name": "fast-forward",
+        "component": FastForward,
         "categories": [
             "multimedia",
             "arrows"
@@ -8729,6 +9272,7 @@ export const iconsData: Array<{
     },
     {
         "name": "feather",
+        "component": Feather,
         "categories": [
             "gaming"
         ],
@@ -8738,6 +9282,7 @@ export const iconsData: Array<{
     },
     {
         "name": "fence",
+        "component": Fence,
         "categories": [
             "home",
             "buildings"
@@ -8756,6 +9301,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ferris-wheel",
+        "component": FerrisWheel,
         "categories": [
             "navigation"
         ],
@@ -8772,6 +9318,7 @@ export const iconsData: Array<{
     },
     {
         "name": "figma",
+        "component": Figma,
         "categories": [
             "brands",
             "design"
@@ -8784,6 +9331,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-archive",
+        "component": FileArchive,
         "categories": [
             "files"
         ],
@@ -8795,6 +9343,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-audio-2",
+        "component": FileAudio2,
         "categories": [
             "files"
         ],
@@ -8807,6 +9356,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-audio",
+        "component": FileAudio,
         "categories": [
             "files"
         ],
@@ -8819,6 +9369,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-axis-3d",
+        "component": FileAxis3d,
         "categories": [
             "design",
             "files"
@@ -8832,6 +9383,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-badge-2",
+        "component": FileBadge2,
         "categories": [
             "files"
         ],
@@ -8846,6 +9398,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-badge",
+        "component": FileBadge,
         "categories": [
             "files"
         ],
@@ -8860,6 +9413,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-box",
+        "component": FileBox,
         "categories": [
             "files"
         ],
@@ -8871,6 +9425,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-chart-column-increasing",
+        "component": FileChartColumnIncreasing,
         "categories": [
             "files"
         ],
@@ -8885,6 +9440,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-chart-column",
+        "component": FileChartColumn,
         "categories": [
             "files"
         ],
@@ -8898,6 +9454,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-chart-line",
+        "component": FileChartLine,
         "categories": [
             "files"
         ],
@@ -8911,6 +9468,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-chart-pie",
+        "component": FileChartPie,
         "categories": [
             "files"
         ],
@@ -8924,6 +9482,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-check-2",
+        "component": FileCheck2,
         "categories": [
             "files"
         ],
@@ -8938,6 +9497,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-check",
+        "component": FileCheck,
         "categories": [
             "files"
         ],
@@ -8952,6 +9512,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-clock",
+        "component": FileClock,
         "categories": [
             "files",
             "time"
@@ -8964,6 +9525,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-code-2",
+        "component": FileCode2,
         "categories": [
             "files",
             "development"
@@ -8979,6 +9541,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-code",
+        "component": FileCode,
         "categories": [
             "files",
             "development"
@@ -8995,6 +9558,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-cog",
+        "component": FileCog,
         "categories": [
             "files"
         ],
@@ -9008,6 +9572,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-diff",
+        "component": FileDiff,
         "categories": [
             "files",
             "development"
@@ -9019,6 +9584,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-digit",
+        "component": FileDigit,
         "categories": [
             "files",
             "development"
@@ -9030,6 +9596,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-down",
+        "component": FileDown,
         "categories": [
             "files",
             "arrows"
@@ -9042,6 +9609,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-heart",
+        "component": FileHeart,
         "categories": [
             "files"
         ],
@@ -9054,6 +9622,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-image",
+        "component": FileImage,
         "categories": [
             "files"
         ],
@@ -9066,6 +9635,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-input",
+        "component": FileInput,
         "categories": [
             "files",
             "arrows"
@@ -9076,6 +9646,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-json-2",
+        "component": FileJson2,
         "categories": [
             "files",
             "development"
@@ -9089,6 +9660,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-json",
+        "component": FileJson,
         "categories": [
             "files",
             "development"
@@ -9102,6 +9674,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-key-2",
+        "component": FileKey2,
         "categories": [
             "files",
             "security"
@@ -9115,6 +9688,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-key",
+        "component": FileKey,
         "categories": [
             "files",
             "security"
@@ -9128,6 +9702,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-lock-2",
+        "component": FileLock2,
         "categories": [
             "files",
             "security"
@@ -9140,6 +9715,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-lock",
+        "component": FileLock,
         "categories": [
             "files",
             "security"
@@ -9152,6 +9728,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-minus-2",
+        "component": FileMinus2,
         "categories": [
             "files"
         ],
@@ -9161,6 +9738,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-minus",
+        "component": FileMinus,
         "categories": [
             "files"
         ],
@@ -9173,6 +9751,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-music",
+        "component": FileMusic,
         "categories": [
             "files",
             "multimedia"
@@ -9196,6 +9775,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-output",
+        "component": FileOutput,
         "categories": [
             "files",
             "arrows"
@@ -9206,6 +9786,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-pen-line",
+        "component": FilePenLine,
         "categories": [
             "files"
         ],
@@ -9215,6 +9796,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-pen",
+        "component": FilePen,
         "categories": [
             "files"
         ],
@@ -9224,6 +9806,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-plus-2",
+        "component": FilePlus2,
         "categories": [
             "files"
         ],
@@ -9236,6 +9819,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-plus",
+        "component": FilePlus,
         "categories": [
             "files"
         ],
@@ -9248,6 +9832,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-question",
+        "component": FileQuestion,
         "categories": [
             "files"
         ],
@@ -9259,6 +9844,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-scan",
+        "component": FileScan,
         "categories": [
             "files"
         ],
@@ -9270,6 +9856,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-search-2",
+        "component": FileSearch2,
         "categories": [
             "files"
         ],
@@ -9282,6 +9869,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-search",
+        "component": FileSearch,
         "categories": [
             "files"
         ],
@@ -9294,6 +9882,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-sliders",
+        "component": FileSliders,
         "categories": [
             "files",
             "development"
@@ -9315,6 +9904,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-spreadsheet",
+        "component": FileSpreadsheet,
         "categories": [
             "files"
         ],
@@ -9326,6 +9916,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-stack",
+        "component": FileStack,
         "categories": [
             "files",
             "development"
@@ -9342,6 +9933,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-symlink",
+        "component": FileSymlink,
         "categories": [
             "files"
         ],
@@ -9353,6 +9945,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-terminal",
+        "component": FileTerminal,
         "categories": [
             "files",
             "development"
@@ -9366,6 +9959,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-text",
+        "component": FileText,
         "categories": [
             "files",
             "text"
@@ -9379,6 +9973,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-type-2",
+        "component": FileType2,
         "categories": [
             "files",
             "text"
@@ -9392,6 +9987,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-type",
+        "component": FileType,
         "categories": [
             "files",
             "text"
@@ -9405,6 +10001,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-up",
+        "component": FileUp,
         "categories": [
             "files",
             "arrows"
@@ -9417,6 +10014,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-user",
+        "component": FileUser,
         "categories": [
             "account",
             "files"
@@ -9438,6 +10036,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-video-2",
+        "component": FileVideo2,
         "categories": [
             "files"
         ],
@@ -9449,6 +10048,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-video",
+        "component": FileVideo,
         "categories": [
             "files"
         ],
@@ -9460,6 +10060,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-volume-2",
+        "component": FileVolume2,
         "categories": [
             "files"
         ],
@@ -9471,6 +10072,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-volume",
+        "component": FileVolume,
         "categories": [
             "files"
         ],
@@ -9482,6 +10084,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-warning",
+        "component": FileWarning,
         "categories": [
             "files",
             "notifications"
@@ -9497,6 +10100,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-x-2",
+        "component": FileX2,
         "categories": [
             "files"
         ],
@@ -9509,6 +10113,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file-x",
+        "component": FileX,
         "categories": [
             "files"
         ],
@@ -9521,6 +10126,7 @@ export const iconsData: Array<{
     },
     {
         "name": "file",
+        "component": File,
         "categories": [
             "files"
         ],
@@ -9530,6 +10136,7 @@ export const iconsData: Array<{
     },
     {
         "name": "files",
+        "component": Files,
         "categories": [
             "files"
         ],
@@ -9541,6 +10148,7 @@ export const iconsData: Array<{
     },
     {
         "name": "film",
+        "component": Film,
         "categories": [
             "photography",
             "multimedia"
@@ -9556,6 +10164,7 @@ export const iconsData: Array<{
     },
     {
         "name": "filter-x",
+        "component": FilterX,
         "categories": [
             "layout"
         ],
@@ -9566,6 +10175,7 @@ export const iconsData: Array<{
     },
     {
         "name": "filter",
+        "component": Filter,
         "categories": [
             "layout"
         ],
@@ -9576,6 +10186,7 @@ export const iconsData: Array<{
     },
     {
         "name": "fingerprint",
+        "component": Fingerprint,
         "categories": [
             "account",
             "security",
@@ -9592,6 +10203,7 @@ export const iconsData: Array<{
     },
     {
         "name": "fire-extinguisher",
+        "component": FireExtinguisher,
         "categories": [
             "home",
             "tools",
@@ -9621,6 +10233,7 @@ export const iconsData: Array<{
     },
     {
         "name": "fish-off",
+        "component": FishOff,
         "categories": [
             "food-beverage",
             "animals"
@@ -9643,6 +10256,7 @@ export const iconsData: Array<{
     },
     {
         "name": "fish-symbol",
+        "component": FishSymbol,
         "categories": [
             "food-beverage",
             "animals"
@@ -9660,6 +10274,7 @@ export const iconsData: Array<{
     },
     {
         "name": "fish",
+        "component": Fish,
         "categories": [
             "food-beverage",
             "animals"
@@ -9677,6 +10292,7 @@ export const iconsData: Array<{
     },
     {
         "name": "flag-off",
+        "component": FlagOff,
         "categories": [
             "account",
             "social"
@@ -9687,6 +10303,7 @@ export const iconsData: Array<{
     },
     {
         "name": "flag-triangle-left",
+        "component": FlagTriangleLeft,
         "categories": [
             "development"
         ],
@@ -9697,6 +10314,7 @@ export const iconsData: Array<{
     },
     {
         "name": "flag-triangle-right",
+        "component": FlagTriangleRight,
         "categories": [
             "development"
         ],
@@ -9707,6 +10325,7 @@ export const iconsData: Array<{
     },
     {
         "name": "flag",
+        "component": Flag,
         "categories": [
             "account",
             "social"
@@ -9717,6 +10336,7 @@ export const iconsData: Array<{
     },
     {
         "name": "flame-kindling",
+        "component": FlameKindling,
         "categories": [
             "nature",
             "social",
@@ -9736,6 +10356,7 @@ export const iconsData: Array<{
     },
     {
         "name": "flame",
+        "component": Flame,
         "categories": [
             "weather",
             "social",
@@ -9758,6 +10379,7 @@ export const iconsData: Array<{
     },
     {
         "name": "flashlight-off",
+        "component": FlashlightOff,
         "categories": [
             "photography",
             "devices"
@@ -9768,6 +10390,7 @@ export const iconsData: Array<{
     },
     {
         "name": "flashlight",
+        "component": Flashlight,
         "categories": [
             "photography",
             "devices"
@@ -9778,6 +10401,7 @@ export const iconsData: Array<{
     },
     {
         "name": "flask-conical-off",
+        "component": FlaskConicalOff,
         "categories": [
             "science",
             "gaming"
@@ -9794,6 +10418,7 @@ export const iconsData: Array<{
     },
     {
         "name": "flask-conical",
+        "component": FlaskConical,
         "categories": [
             "science",
             "gaming"
@@ -9809,6 +10434,7 @@ export const iconsData: Array<{
     },
     {
         "name": "flask-round",
+        "component": FlaskRound,
         "categories": [
             "science",
             "gaming"
@@ -9823,6 +10449,7 @@ export const iconsData: Array<{
     },
     {
         "name": "flip-horizontal-2",
+        "component": FlipHorizontal2,
         "categories": [
             "design",
             "photography"
@@ -9836,6 +10463,7 @@ export const iconsData: Array<{
     },
     {
         "name": "flip-horizontal",
+        "component": FlipHorizontal,
         "categories": [
             "design",
             "photography"
@@ -9849,6 +10477,7 @@ export const iconsData: Array<{
     },
     {
         "name": "flip-vertical-2",
+        "component": FlipVertical2,
         "categories": [
             "design",
             "photography"
@@ -9862,6 +10491,7 @@ export const iconsData: Array<{
     },
     {
         "name": "flip-vertical",
+        "component": FlipVertical,
         "categories": [
             "design",
             "photography"
@@ -9875,6 +10505,7 @@ export const iconsData: Array<{
     },
     {
         "name": "flower-2",
+        "component": Flower2,
         "categories": [
             "nature",
             "sustainability",
@@ -9888,6 +10519,7 @@ export const iconsData: Array<{
     },
     {
         "name": "flower",
+        "component": Flower,
         "categories": [
             "nature",
             "gaming",
@@ -9902,6 +10534,7 @@ export const iconsData: Array<{
     },
     {
         "name": "focus",
+        "component": Focus,
         "categories": [
             "photography"
         ],
@@ -9914,6 +10547,7 @@ export const iconsData: Array<{
     },
     {
         "name": "fold-horizontal",
+        "component": FoldHorizontal,
         "categories": [
             "arrows",
             "layout"
@@ -9928,6 +10562,7 @@ export const iconsData: Array<{
     },
     {
         "name": "fold-vertical",
+        "component": FoldVertical,
         "categories": [
             "arrows",
             "layout"
@@ -9942,6 +10577,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-archive",
+        "component": FolderArchive,
         "categories": [
             "files"
         ],
@@ -9953,6 +10589,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-check",
+        "component": FolderCheck,
         "categories": [
             "files"
         ],
@@ -9967,6 +10604,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-clock",
+        "component": FolderClock,
         "categories": [
             "files",
             "time"
@@ -9979,6 +10617,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-closed",
+        "component": FolderClosed,
         "categories": [
             "files"
         ],
@@ -9989,6 +10628,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-code",
+        "component": FolderCode,
         "categories": [
             "files",
             "development"
@@ -10002,6 +10642,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-cog",
+        "component": FolderCog,
         "categories": [
             "files"
         ],
@@ -10017,6 +10658,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-dot",
+        "component": FolderDot,
         "categories": [
             "files",
             "development"
@@ -10043,6 +10685,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-down",
+        "component": FolderDown,
         "categories": [
             "files",
             "arrows"
@@ -10056,6 +10699,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-git-2",
+        "component": FolderGit2,
         "categories": [
             "files"
         ],
@@ -10069,6 +10713,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-git",
+        "component": FolderGit,
         "categories": [
             "files"
         ],
@@ -10082,6 +10727,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-heart",
+        "component": FolderHeart,
         "categories": [
             "files"
         ],
@@ -10095,6 +10741,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-input",
+        "component": FolderInput,
         "categories": [
             "files",
             "arrows"
@@ -10107,6 +10754,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-kanban",
+        "component": FolderKanban,
         "categories": [
             "charts",
             "development",
@@ -10135,6 +10783,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-key",
+        "component": FolderKey,
         "categories": [
             "files",
             "security"
@@ -10149,6 +10798,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-lock",
+        "component": FolderLock,
         "categories": [
             "files",
             "security"
@@ -10163,6 +10813,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-minus",
+        "component": FolderMinus,
         "categories": [
             "files"
         ],
@@ -10174,6 +10825,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-open-dot",
+        "component": FolderOpenDot,
         "categories": [
             "files",
             "development"
@@ -10189,6 +10841,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-open",
+        "component": FolderOpen,
         "categories": [
             "files"
         ],
@@ -10198,6 +10851,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-output",
+        "component": FolderOutput,
         "categories": [
             "files",
             "arrows"
@@ -10210,6 +10864,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-pen",
+        "component": FolderPen,
         "categories": [
             "files"
         ],
@@ -10220,6 +10875,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-plus",
+        "component": FolderPlus,
         "categories": [
             "files"
         ],
@@ -10232,6 +10888,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-root",
+        "component": FolderRoot,
         "categories": [
             "files",
             "development"
@@ -10246,6 +10903,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-search-2",
+        "component": FolderSearch2,
         "categories": [
             "files"
         ],
@@ -10259,6 +10917,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-search",
+        "component": FolderSearch,
         "categories": [
             "files"
         ],
@@ -10272,6 +10931,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-symlink",
+        "component": FolderSymlink,
         "categories": [
             "files"
         ],
@@ -10284,6 +10944,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-sync",
+        "component": FolderSync,
         "categories": [
             "files",
             "arrows"
@@ -10300,6 +10961,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-tree",
+        "component": FolderTree,
         "categories": [
             "files"
         ],
@@ -10311,6 +10973,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-up",
+        "component": FolderUp,
         "categories": [
             "files",
             "arrows"
@@ -10324,6 +10987,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder-x",
+        "component": FolderX,
         "categories": [
             "files"
         ],
@@ -10335,6 +10999,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folder",
+        "component": Folder,
         "categories": [
             "files"
         ],
@@ -10344,6 +11009,7 @@ export const iconsData: Array<{
     },
     {
         "name": "folders",
+        "component": Folders,
         "categories": [
             "files"
         ],
@@ -10355,6 +11021,7 @@ export const iconsData: Array<{
     },
     {
         "name": "footprints",
+        "component": Footprints,
         "categories": [
             "navigation"
         ],
@@ -10369,6 +11036,7 @@ export const iconsData: Array<{
     },
     {
         "name": "forklift",
+        "component": Forklift,
         "categories": [
             "transportation"
         ],
@@ -10380,6 +11048,7 @@ export const iconsData: Array<{
     },
     {
         "name": "forward",
+        "component": Forward,
         "categories": [
             "mail"
         ],
@@ -10391,6 +11060,7 @@ export const iconsData: Array<{
     },
     {
         "name": "frame",
+        "component": Frame,
         "categories": [
             "design",
             "photography"
@@ -10403,6 +11073,7 @@ export const iconsData: Array<{
     },
     {
         "name": "framer",
+        "component": Framer,
         "categories": [
             "brands",
             "design"
@@ -10415,6 +11086,7 @@ export const iconsData: Array<{
     },
     {
         "name": "frown",
+        "component": Frown,
         "categories": [
             "emoji",
             "account"
@@ -10429,6 +11101,7 @@ export const iconsData: Array<{
     },
     {
         "name": "fuel",
+        "component": Fuel,
         "categories": [
             "transportation",
             "navigation"
@@ -10442,6 +11115,7 @@ export const iconsData: Array<{
     },
     {
         "name": "fullscreen",
+        "component": Fullscreen,
         "categories": [
             "layout",
             "multimedia",
@@ -10460,6 +11134,7 @@ export const iconsData: Array<{
     },
     {
         "name": "gallery-horizontal-end",
+        "component": GalleryHorizontalEnd,
         "categories": [
             "layout",
             "design",
@@ -10484,6 +11159,7 @@ export const iconsData: Array<{
     },
     {
         "name": "gallery-horizontal",
+        "component": GalleryHorizontal,
         "categories": [
             "layout",
             "design",
@@ -10503,6 +11179,7 @@ export const iconsData: Array<{
     },
     {
         "name": "gallery-thumbnails",
+        "component": GalleryThumbnails,
         "categories": [
             "layout",
             "design",
@@ -10521,6 +11198,7 @@ export const iconsData: Array<{
     },
     {
         "name": "gallery-vertical-end",
+        "component": GalleryVerticalEnd,
         "categories": [
             "layout",
             "design",
@@ -10545,6 +11223,7 @@ export const iconsData: Array<{
     },
     {
         "name": "gallery-vertical",
+        "component": GalleryVertical,
         "categories": [
             "layout",
             "design",
@@ -10564,6 +11243,7 @@ export const iconsData: Array<{
     },
     {
         "name": "gamepad-2",
+        "component": Gamepad2,
         "categories": [
             "gaming",
             "devices"
@@ -10574,6 +11254,7 @@ export const iconsData: Array<{
     },
     {
         "name": "gamepad",
+        "component": Gamepad,
         "categories": [
             "gaming",
             "devices"
@@ -10584,6 +11265,7 @@ export const iconsData: Array<{
     },
     {
         "name": "gauge",
+        "component": Gauge,
         "categories": [
             "transportation",
             "sports",
@@ -10601,6 +11283,7 @@ export const iconsData: Array<{
     },
     {
         "name": "gavel",
+        "component": Gavel,
         "categories": [
             "navigation",
             "tools"
@@ -10612,6 +11295,7 @@ export const iconsData: Array<{
     },
     {
         "name": "gem",
+        "component": Gem,
         "categories": [
             "gaming",
             "development",
@@ -10635,6 +11319,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ghost",
+        "component": Ghost,
         "categories": [
             "gaming"
         ],
@@ -10645,6 +11330,7 @@ export const iconsData: Array<{
     },
     {
         "name": "gift",
+        "component": Gift,
         "categories": [
             "gaming",
             "account"
@@ -10658,6 +11344,7 @@ export const iconsData: Array<{
     },
     {
         "name": "git-branch-plus",
+        "component": GitBranchPlus,
         "categories": [
             "development"
         ],
@@ -10669,6 +11356,7 @@ export const iconsData: Array<{
     },
     {
         "name": "git-branch",
+        "component": GitBranch,
         "categories": [
             "development"
         ],
@@ -10679,6 +11367,7 @@ export const iconsData: Array<{
     },
     {
         "name": "git-commit-horizontal",
+        "component": GitCommitHorizontal,
         "categories": [
             "development",
             "navigation"
@@ -10693,6 +11382,7 @@ export const iconsData: Array<{
     },
     {
         "name": "git-commit-vertical",
+        "component": GitCommitVertical,
         "categories": [
             "development",
             "navigation"
@@ -10707,6 +11397,7 @@ export const iconsData: Array<{
     },
     {
         "name": "git-compare-arrows",
+        "component": GitCompareArrows,
         "categories": [
             "development",
             "arrows"
@@ -10719,6 +11410,7 @@ export const iconsData: Array<{
     },
     {
         "name": "git-compare",
+        "component": GitCompare,
         "categories": [
             "development"
         ],
@@ -10730,6 +11422,7 @@ export const iconsData: Array<{
     },
     {
         "name": "git-fork",
+        "component": GitFork,
         "categories": [
             "development"
         ],
@@ -10740,6 +11433,7 @@ export const iconsData: Array<{
     },
     {
         "name": "git-graph",
+        "component": GitGraph,
         "categories": [
             "development"
         ],
@@ -10753,6 +11447,7 @@ export const iconsData: Array<{
     },
     {
         "name": "git-merge",
+        "component": GitMerge,
         "categories": [
             "development"
         ],
@@ -10763,6 +11458,7 @@ export const iconsData: Array<{
     },
     {
         "name": "git-pull-request-arrow",
+        "component": GitPullRequestArrow,
         "categories": [
             "development",
             "arrows"
@@ -10775,6 +11471,7 @@ export const iconsData: Array<{
     },
     {
         "name": "git-pull-request-closed",
+        "component": GitPullRequestClosed,
         "categories": [
             "development"
         ],
@@ -10789,6 +11486,7 @@ export const iconsData: Array<{
     },
     {
         "name": "git-pull-request-create-arrow",
+        "component": GitPullRequestCreateArrow,
         "categories": [
             "development",
             "arrows"
@@ -10804,6 +11502,7 @@ export const iconsData: Array<{
     },
     {
         "name": "git-pull-request-create",
+        "component": GitPullRequestCreate,
         "categories": [
             "development"
         ],
@@ -10818,6 +11517,7 @@ export const iconsData: Array<{
     },
     {
         "name": "git-pull-request-draft",
+        "component": GitPullRequestDraft,
         "categories": [
             "development"
         ],
@@ -10831,6 +11531,7 @@ export const iconsData: Array<{
     },
     {
         "name": "git-pull-request",
+        "component": GitPullRequest,
         "categories": [
             "development"
         ],
@@ -10842,6 +11543,7 @@ export const iconsData: Array<{
     },
     {
         "name": "github",
+        "component": Github,
         "categories": [
             "brands",
             "development"
@@ -10853,6 +11555,7 @@ export const iconsData: Array<{
     },
     {
         "name": "gitlab",
+        "component": Gitlab,
         "categories": [
             "brands",
             "development"
@@ -10864,6 +11567,7 @@ export const iconsData: Array<{
     },
     {
         "name": "glass-water",
+        "component": GlassWater,
         "categories": [
             "food-beverage"
         ],
@@ -10876,6 +11580,7 @@ export const iconsData: Array<{
     },
     {
         "name": "glasses",
+        "component": Glasses,
         "categories": [
             "accessibility"
         ],
@@ -10886,6 +11591,7 @@ export const iconsData: Array<{
     },
     {
         "name": "globe-lock",
+        "component": GlobeLock,
         "categories": [
             "security",
             "development",
@@ -10906,6 +11612,7 @@ export const iconsData: Array<{
     },
     {
         "name": "globe",
+        "component": Globe,
         "categories": [
             "navigation"
         ],
@@ -10918,6 +11625,7 @@ export const iconsData: Array<{
     },
     {
         "name": "goal",
+        "component": Goal,
         "categories": [
             "gaming"
         ],
@@ -10928,6 +11636,7 @@ export const iconsData: Array<{
     },
     {
         "name": "grab",
+        "component": Grab,
         "categories": [
             "cursors",
             "design",
@@ -10939,6 +11648,7 @@ export const iconsData: Array<{
     },
     {
         "name": "graduation-cap",
+        "component": GraduationCap,
         "categories": [
             "buildings"
         ],
@@ -10960,6 +11670,7 @@ export const iconsData: Array<{
     },
     {
         "name": "grape",
+        "component": Grape,
         "categories": [
             "food-beverage"
         ],
@@ -10971,6 +11682,7 @@ export const iconsData: Array<{
     },
     {
         "name": "grid-2x2-check",
+        "component": Grid2x2Check,
         "categories": [
             "text",
             "layout",
@@ -10997,6 +11709,7 @@ export const iconsData: Array<{
     },
     {
         "name": "grid-2x2-plus",
+        "component": Grid2x2Plus,
         "categories": [
             "text",
             "layout",
@@ -11023,6 +11736,7 @@ export const iconsData: Array<{
     },
     {
         "name": "grid-2x2-x",
+        "component": Grid2x2X,
         "categories": [
             "text",
             "layout",
@@ -11049,6 +11763,7 @@ export const iconsData: Array<{
     },
     {
         "name": "grid-2x2",
+        "component": Grid2x2,
         "categories": [
             "text",
             "layout",
@@ -11077,6 +11792,7 @@ export const iconsData: Array<{
     },
     {
         "name": "grid-3x3",
+        "component": Grid3x3,
         "categories": [
             "text",
             "layout",
@@ -11090,6 +11806,7 @@ export const iconsData: Array<{
     },
     {
         "name": "grip-horizontal",
+        "component": GripHorizontal,
         "categories": [
             "layout"
         ],
@@ -11103,6 +11820,7 @@ export const iconsData: Array<{
     },
     {
         "name": "grip-vertical",
+        "component": GripVertical,
         "categories": [
             "layout"
         ],
@@ -11116,6 +11834,7 @@ export const iconsData: Array<{
     },
     {
         "name": "grip",
+        "component": Grip,
         "categories": [
             "layout"
         ],
@@ -11129,6 +11848,7 @@ export const iconsData: Array<{
     },
     {
         "name": "group",
+        "component": Group,
         "categories": [
             "files"
         ],
@@ -11145,6 +11865,7 @@ export const iconsData: Array<{
     },
     {
         "name": "guitar",
+        "component": Guitar,
         "categories": [
             "multimedia"
         ],
@@ -11169,6 +11890,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ham",
+        "component": Ham,
         "categories": [
             "food-beverage"
         ],
@@ -11186,6 +11908,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hammer",
+        "component": Hammer,
         "categories": [
             "tools",
             "home"
@@ -11201,6 +11924,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hand-coins",
+        "component": HandCoins,
         "categories": [
             "finance",
             "account"
@@ -11224,6 +11948,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hand-heart",
+        "component": HandHeart,
         "categories": [
             "social"
         ],
@@ -11235,6 +11960,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hand-helping",
+        "component": HandHelping,
         "categories": [
             "emoji"
         ],
@@ -11249,6 +11975,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hand-metal",
+        "component": HandMetal,
         "categories": [
             "emoji",
             "multimedia"
@@ -11259,6 +11986,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hand-platter",
+        "component": HandPlatter,
         "categories": [
             "food-beverage",
             "people"
@@ -11278,6 +12006,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hand",
+        "component": Hand,
         "categories": [
             "cursors",
             "accessibility"
@@ -11291,6 +12020,7 @@ export const iconsData: Array<{
     },
     {
         "name": "handshake",
+        "component": Handshake,
         "categories": [
             "account",
             "social",
@@ -11312,6 +12042,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hard-drive-download",
+        "component": HardDriveDownload,
         "categories": [
             "development",
             "devices",
@@ -11331,6 +12062,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hard-drive-upload",
+        "component": HardDriveUpload,
         "categories": [
             "development",
             "devices",
@@ -11350,6 +12082,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hard-drive",
+        "component": HardDrive,
         "categories": [
             "development",
             "devices"
@@ -11366,6 +12099,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hard-hat",
+        "component": HardHat,
         "categories": [
             "tools"
         ],
@@ -11378,6 +12112,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hash",
+        "component": Hash,
         "categories": [
             "text",
             "social"
@@ -11390,6 +12125,7 @@ export const iconsData: Array<{
     },
     {
         "name": "haze",
+        "component": Haze,
         "categories": [
             "weather"
         ],
@@ -11400,6 +12136,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hdmi-port",
+        "component": HdmiPort,
         "categories": [
             "devices",
             "multimedia",
@@ -11425,6 +12162,7 @@ export const iconsData: Array<{
     },
     {
         "name": "heading-1",
+        "component": Heading1,
         "categories": [
             "text"
         ],
@@ -11437,6 +12175,7 @@ export const iconsData: Array<{
     },
     {
         "name": "heading-2",
+        "component": Heading2,
         "categories": [
             "text"
         ],
@@ -11449,6 +12188,7 @@ export const iconsData: Array<{
     },
     {
         "name": "heading-3",
+        "component": Heading3,
         "categories": [
             "text"
         ],
@@ -11461,6 +12201,7 @@ export const iconsData: Array<{
     },
     {
         "name": "heading-4",
+        "component": Heading4,
         "categories": [
             "text"
         ],
@@ -11473,6 +12214,7 @@ export const iconsData: Array<{
     },
     {
         "name": "heading-5",
+        "component": Heading5,
         "categories": [
             "text"
         ],
@@ -11485,6 +12227,7 @@ export const iconsData: Array<{
     },
     {
         "name": "heading-6",
+        "component": Heading6,
         "categories": [
             "text"
         ],
@@ -11497,6 +12240,7 @@ export const iconsData: Array<{
     },
     {
         "name": "heading",
+        "component": Heading,
         "categories": [
             "text"
         ],
@@ -11509,6 +12253,7 @@ export const iconsData: Array<{
     },
     {
         "name": "headphone-off",
+        "component": HeadphoneOff,
         "categories": [
             "multimedia",
             "connectivity",
@@ -11526,6 +12271,7 @@ export const iconsData: Array<{
     },
     {
         "name": "headphones",
+        "component": Headphones,
         "categories": [
             "multimedia",
             "connectivity",
@@ -11541,6 +12287,7 @@ export const iconsData: Array<{
     },
     {
         "name": "headset",
+        "component": Headset,
         "categories": [
             "multimedia",
             "connectivity",
@@ -11565,6 +12312,7 @@ export const iconsData: Array<{
     },
     {
         "name": "heart-crack",
+        "component": HeartCrack,
         "categories": [
             "emoji"
         ],
@@ -11576,6 +12324,7 @@ export const iconsData: Array<{
     },
     {
         "name": "heart-handshake",
+        "component": HeartHandshake,
         "categories": [
             "emoji",
             "account",
@@ -11594,6 +12343,7 @@ export const iconsData: Array<{
     },
     {
         "name": "heart-off",
+        "component": HeartOff,
         "categories": [
             "social",
             "multimedia"
@@ -11607,6 +12357,7 @@ export const iconsData: Array<{
     },
     {
         "name": "heart-pulse",
+        "component": HeartPulse,
         "categories": [
             "medical"
         ],
@@ -11623,6 +12374,7 @@ export const iconsData: Array<{
     },
     {
         "name": "heart",
+        "component": Heart,
         "categories": [
             "medical",
             "social",
@@ -11642,6 +12394,7 @@ export const iconsData: Array<{
     },
     {
         "name": "heater",
+        "component": Heater,
         "categories": [
             "home",
             "devices",
@@ -11660,6 +12413,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hexagon",
+        "component": Hexagon,
         "categories": [
             "shapes",
             "brands",
@@ -11673,6 +12427,7 @@ export const iconsData: Array<{
     },
     {
         "name": "highlighter",
+        "component": Highlighter,
         "categories": [
             "text",
             "design"
@@ -11684,6 +12439,7 @@ export const iconsData: Array<{
     },
     {
         "name": "history",
+        "component": History,
         "categories": [
             "arrows",
             "time"
@@ -11703,6 +12459,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hop-off",
+        "component": HopOff,
         "categories": [
             "food-beverage"
         ],
@@ -11718,6 +12475,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hop",
+        "component": Hop,
         "categories": [
             "food-beverage"
         ],
@@ -11729,6 +12487,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hospital",
+        "component": Hospital,
         "categories": [
             "medical",
             "buildings",
@@ -11751,6 +12510,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hotel",
+        "component": Hotel,
         "categories": [
             "buildings",
             "navigation",
@@ -11765,6 +12525,7 @@ export const iconsData: Array<{
     },
     {
         "name": "hourglass",
+        "component": Hourglass,
         "categories": [
             "time",
             "gaming"
@@ -11777,6 +12538,7 @@ export const iconsData: Array<{
     },
     {
         "name": "house-plug",
+        "component": HousePlug,
         "categories": [
             "buildings",
             "home",
@@ -11794,6 +12556,7 @@ export const iconsData: Array<{
     },
     {
         "name": "house-plus",
+        "component": HousePlus,
         "categories": [
             "buildings",
             "medical"
@@ -11811,6 +12574,7 @@ export const iconsData: Array<{
     },
     {
         "name": "house-wifi",
+        "component": HouseWifi,
         "categories": [
             "home",
             "buildings",
@@ -11826,6 +12590,7 @@ export const iconsData: Array<{
     },
     {
         "name": "house",
+        "component": House,
         "categories": [
             "buildings",
             "home"
@@ -11840,6 +12605,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ice-cream-bowl",
+        "component": IceCreamBowl,
         "categories": [
             "food-beverage"
         ],
@@ -11855,6 +12621,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ice-cream-cone",
+        "component": IceCreamCone,
         "categories": [
             "food-beverage"
         ],
@@ -11865,6 +12632,7 @@ export const iconsData: Array<{
     },
     {
         "name": "id-card",
+        "component": IdCard,
         "categories": [
             "security",
             "account"
@@ -11879,6 +12647,7 @@ export const iconsData: Array<{
     },
     {
         "name": "image-down",
+        "component": ImageDown,
         "categories": [
             "photography",
             "text",
@@ -11895,6 +12664,7 @@ export const iconsData: Array<{
     },
     {
         "name": "image-minus",
+        "component": ImageMinus,
         "categories": [
             "photography",
             "multimedia",
@@ -11907,6 +12677,7 @@ export const iconsData: Array<{
     },
     {
         "name": "image-off",
+        "component": ImageOff,
         "categories": [
             "photography",
             "multimedia",
@@ -11919,6 +12690,7 @@ export const iconsData: Array<{
     },
     {
         "name": "image-play",
+        "component": ImagePlay,
         "categories": [
             "photography",
             "text",
@@ -11933,6 +12705,7 @@ export const iconsData: Array<{
     },
     {
         "name": "image-plus",
+        "component": ImagePlus,
         "categories": [
             "photography",
             "multimedia",
@@ -11946,6 +12719,7 @@ export const iconsData: Array<{
     },
     {
         "name": "image-up",
+        "component": ImageUp,
         "categories": [
             "photography",
             "text",
@@ -11961,6 +12735,7 @@ export const iconsData: Array<{
     },
     {
         "name": "image-upscale",
+        "component": ImageUpscale,
         "categories": [
             "photography",
             "multimedia"
@@ -11974,6 +12749,7 @@ export const iconsData: Array<{
     },
     {
         "name": "image",
+        "component": Image,
         "categories": [
             "photography",
             "text",
@@ -11987,6 +12763,7 @@ export const iconsData: Array<{
     },
     {
         "name": "images",
+        "component": Images,
         "categories": [
             "photography",
             "text",
@@ -12007,6 +12784,7 @@ export const iconsData: Array<{
     },
     {
         "name": "import",
+        "component": Import,
         "categories": [
             "arrows",
             "files"
@@ -12017,6 +12795,7 @@ export const iconsData: Array<{
     },
     {
         "name": "inbox",
+        "component": Inbox,
         "categories": [
             "account",
             "mail"
@@ -12027,6 +12806,7 @@ export const iconsData: Array<{
     },
     {
         "name": "indent-decrease",
+        "component": IndentDecrease,
         "categories": [
             "text",
             "development"
@@ -12038,6 +12818,7 @@ export const iconsData: Array<{
     },
     {
         "name": "indent-increase",
+        "component": IndentIncrease,
         "categories": [
             "text",
             "development"
@@ -12049,6 +12830,7 @@ export const iconsData: Array<{
     },
     {
         "name": "indian-rupee",
+        "component": IndianRupee,
         "categories": [
             "finance"
         ],
@@ -12060,6 +12842,7 @@ export const iconsData: Array<{
     },
     {
         "name": "infinity",
+        "component": Infinity,
         "categories": [
             "multimedia"
         ],
@@ -12072,6 +12855,7 @@ export const iconsData: Array<{
     },
     {
         "name": "info",
+        "component": Info,
         "categories": [
             "accessibility",
             "notifications"
@@ -12082,6 +12866,7 @@ export const iconsData: Array<{
     },
     {
         "name": "inspection-panel",
+        "component": InspectionPanel,
         "categories": [
             "tools"
         ],
@@ -12096,6 +12881,7 @@ export const iconsData: Array<{
     },
     {
         "name": "instagram",
+        "component": Instagram,
         "categories": [
             "brands",
             "social",
@@ -12109,6 +12895,7 @@ export const iconsData: Array<{
     },
     {
         "name": "italic",
+        "component": Italic,
         "categories": [
             "text"
         ],
@@ -12120,6 +12907,7 @@ export const iconsData: Array<{
     },
     {
         "name": "iteration-ccw",
+        "component": IterationCcw,
         "categories": [
             "arrows",
             "design"
@@ -12131,6 +12919,7 @@ export const iconsData: Array<{
     },
     {
         "name": "iteration-cw",
+        "component": IterationCw,
         "categories": [
             "arrows",
             "design"
@@ -12142,6 +12931,7 @@ export const iconsData: Array<{
     },
     {
         "name": "japanese-yen",
+        "component": JapaneseYen,
         "categories": [
             "finance"
         ],
@@ -12153,6 +12943,7 @@ export const iconsData: Array<{
     },
     {
         "name": "joystick",
+        "component": Joystick,
         "categories": [
             "gaming",
             "devices"
@@ -12165,6 +12956,7 @@ export const iconsData: Array<{
     },
     {
         "name": "kanban",
+        "component": Kanban,
         "categories": [
             "charts",
             "development",
@@ -12189,6 +12981,7 @@ export const iconsData: Array<{
     },
     {
         "name": "key-round",
+        "component": KeyRound,
         "categories": [
             "security",
             "account"
@@ -12203,6 +12996,7 @@ export const iconsData: Array<{
     },
     {
         "name": "key-square",
+        "component": KeySquare,
         "categories": [
             "security",
             "account"
@@ -12218,6 +13012,7 @@ export const iconsData: Array<{
     },
     {
         "name": "key",
+        "component": Key,
         "categories": [
             "security",
             "account"
@@ -12235,6 +13030,7 @@ export const iconsData: Array<{
     },
     {
         "name": "keyboard-music",
+        "component": KeyboardMusic,
         "categories": [
             "multimedia",
             "devices"
@@ -12266,6 +13062,7 @@ export const iconsData: Array<{
     },
     {
         "name": "keyboard-off",
+        "component": KeyboardOff,
         "categories": [
             "devices",
             "text",
@@ -12281,6 +13078,7 @@ export const iconsData: Array<{
     },
     {
         "name": "keyboard",
+        "component": Keyboard,
         "categories": [
             "text",
             "devices",
@@ -12295,6 +13093,7 @@ export const iconsData: Array<{
     },
     {
         "name": "lamp-ceiling",
+        "component": LampCeiling,
         "categories": [
             "home"
         ],
@@ -12307,6 +13106,7 @@ export const iconsData: Array<{
     },
     {
         "name": "lamp-desk",
+        "component": LampDesk,
         "categories": [
             "home"
         ],
@@ -12321,6 +13121,7 @@ export const iconsData: Array<{
     },
     {
         "name": "lamp-floor",
+        "component": LampFloor,
         "categories": [
             "home"
         ],
@@ -12334,6 +13135,7 @@ export const iconsData: Array<{
     },
     {
         "name": "lamp-wall-down",
+        "component": LampWallDown,
         "categories": [
             "home"
         ],
@@ -12347,6 +13149,7 @@ export const iconsData: Array<{
     },
     {
         "name": "lamp-wall-up",
+        "component": LampWallUp,
         "categories": [
             "home"
         ],
@@ -12360,6 +13163,7 @@ export const iconsData: Array<{
     },
     {
         "name": "lamp",
+        "component": Lamp,
         "categories": [
             "home"
         ],
@@ -12372,6 +13176,7 @@ export const iconsData: Array<{
     },
     {
         "name": "land-plot",
+        "component": LandPlot,
         "categories": [
             "design",
             "tools",
@@ -12398,6 +13203,7 @@ export const iconsData: Array<{
     },
     {
         "name": "landmark",
+        "component": Landmark,
         "categories": [
             "finance",
             "navigation",
@@ -12415,6 +13221,7 @@ export const iconsData: Array<{
     },
     {
         "name": "languages",
+        "component": Languages,
         "categories": [
             "text"
         ],
@@ -12424,6 +13231,7 @@ export const iconsData: Array<{
     },
     {
         "name": "laptop-minimal-check",
+        "component": LaptopMinimalCheck,
         "categories": [
             "devices",
             "notifications"
@@ -12442,6 +13250,7 @@ export const iconsData: Array<{
     },
     {
         "name": "laptop-minimal",
+        "component": LaptopMinimal,
         "categories": [
             "devices"
         ],
@@ -12453,6 +13262,7 @@ export const iconsData: Array<{
     },
     {
         "name": "laptop",
+        "component": Laptop,
         "categories": [
             "devices"
         ],
@@ -12464,6 +13274,7 @@ export const iconsData: Array<{
     },
     {
         "name": "lasso-select",
+        "component": LassoSelect,
         "categories": [
             "arrows",
             "design",
@@ -12476,6 +13287,7 @@ export const iconsData: Array<{
     },
     {
         "name": "lasso",
+        "component": Lasso,
         "categories": [
             "design",
             "cursors"
@@ -12487,6 +13299,7 @@ export const iconsData: Array<{
     },
     {
         "name": "laugh",
+        "component": Laugh,
         "categories": [
             "emoji"
         ],
@@ -12500,6 +13313,7 @@ export const iconsData: Array<{
     },
     {
         "name": "layers-2",
+        "component": Layers2,
         "categories": [
             "design",
             "layout"
@@ -12519,6 +13333,7 @@ export const iconsData: Array<{
     },
     {
         "name": "layers",
+        "component": Layers,
         "categories": [
             "design",
             "layout"
@@ -12535,6 +13350,7 @@ export const iconsData: Array<{
     },
     {
         "name": "layout-dashboard",
+        "component": LayoutDashboard,
         "categories": [
             "design",
             "layout"
@@ -12546,6 +13362,7 @@ export const iconsData: Array<{
     },
     {
         "name": "layout-grid",
+        "component": LayoutGrid,
         "categories": [
             "design",
             "layout"
@@ -12558,6 +13375,7 @@ export const iconsData: Array<{
     },
     {
         "name": "layout-list",
+        "component": LayoutList,
         "categories": [
             "design",
             "layout",
@@ -12575,6 +13393,7 @@ export const iconsData: Array<{
     },
     {
         "name": "layout-panel-left",
+        "component": LayoutPanelLeft,
         "categories": [
             "design",
             "layout"
@@ -12588,6 +13407,7 @@ export const iconsData: Array<{
     },
     {
         "name": "layout-panel-top",
+        "component": LayoutPanelTop,
         "categories": [
             "layout"
         ],
@@ -12603,6 +13423,7 @@ export const iconsData: Array<{
     },
     {
         "name": "layout-template",
+        "component": LayoutTemplate,
         "categories": [
             "layout"
         ],
@@ -12615,6 +13436,7 @@ export const iconsData: Array<{
     },
     {
         "name": "leaf",
+        "component": Leaf,
         "categories": [
             "nature",
             "sustainability",
@@ -12630,6 +13452,7 @@ export const iconsData: Array<{
     },
     {
         "name": "leafy-green",
+        "component": LeafyGreen,
         "categories": [
             "food-beverage",
             "emoji",
@@ -12646,6 +13469,7 @@ export const iconsData: Array<{
     },
     {
         "name": "lectern",
+        "component": Lectern,
         "categories": [
             "communication",
             "multimedia"
@@ -12658,6 +13482,7 @@ export const iconsData: Array<{
     },
     {
         "name": "letter-text",
+        "component": LetterText,
         "categories": [
             "text"
         ],
@@ -12672,6 +13497,7 @@ export const iconsData: Array<{
     },
     {
         "name": "library-big",
+        "component": LibraryBig,
         "categories": [
             "text",
             "photography",
@@ -12707,6 +13533,7 @@ export const iconsData: Array<{
     },
     {
         "name": "library",
+        "component": Library,
         "categories": [
             "text",
             "photography",
@@ -12742,6 +13569,7 @@ export const iconsData: Array<{
     },
     {
         "name": "life-buoy",
+        "component": LifeBuoy,
         "categories": [
             "accessibility",
             "medical"
@@ -12762,6 +13590,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ligature",
+        "component": Ligature,
         "categories": [
             "text"
         ],
@@ -12775,6 +13604,7 @@ export const iconsData: Array<{
     },
     {
         "name": "lightbulb-off",
+        "component": LightbulbOff,
         "categories": [
             "photography"
         ],
@@ -12784,6 +13614,7 @@ export const iconsData: Array<{
     },
     {
         "name": "lightbulb",
+        "component": Lightbulb,
         "categories": [
             "photography"
         ],
@@ -12795,6 +13626,7 @@ export const iconsData: Array<{
     },
     {
         "name": "link-2-off",
+        "component": Link2Off,
         "categories": [
             "text"
         ],
@@ -12805,6 +13637,7 @@ export const iconsData: Array<{
     },
     {
         "name": "link-2",
+        "component": Link2,
         "categories": [
             "text",
             "account"
@@ -12816,6 +13649,7 @@ export const iconsData: Array<{
     },
     {
         "name": "link",
+        "component": Link,
         "categories": [
             "text",
             "account"
@@ -12827,6 +13661,7 @@ export const iconsData: Array<{
     },
     {
         "name": "linkedin",
+        "component": Linkedin,
         "categories": [
             "social",
             "brands"
@@ -12839,6 +13674,7 @@ export const iconsData: Array<{
     },
     {
         "name": "list-check",
+        "component": ListCheck,
         "categories": [
             "text"
         ],
@@ -12854,6 +13690,7 @@ export const iconsData: Array<{
     },
     {
         "name": "list-checks",
+        "component": ListChecks,
         "categories": [
             "text"
         ],
@@ -12870,6 +13707,7 @@ export const iconsData: Array<{
     },
     {
         "name": "list-collapse",
+        "component": ListCollapse,
         "categories": [
             "text"
         ],
@@ -12891,6 +13729,7 @@ export const iconsData: Array<{
     },
     {
         "name": "list-end",
+        "component": ListEnd,
         "categories": [
             "multimedia",
             "text"
@@ -12904,6 +13743,7 @@ export const iconsData: Array<{
     },
     {
         "name": "list-filter-plus",
+        "component": ListFilterPlus,
         "categories": [
             "text",
             "layout"
@@ -12917,6 +13757,7 @@ export const iconsData: Array<{
     },
     {
         "name": "list-filter",
+        "component": ListFilter,
         "categories": [
             "text"
         ],
@@ -12926,6 +13767,7 @@ export const iconsData: Array<{
     },
     {
         "name": "list-minus",
+        "component": ListMinus,
         "categories": [
             "multimedia",
             "text"
@@ -12941,6 +13783,7 @@ export const iconsData: Array<{
     },
     {
         "name": "list-music",
+        "component": ListMusic,
         "categories": [
             "multimedia"
         ],
@@ -12954,6 +13797,7 @@ export const iconsData: Array<{
     },
     {
         "name": "list-ordered",
+        "component": ListOrdered,
         "categories": [
             "text"
         ],
@@ -12965,6 +13809,7 @@ export const iconsData: Array<{
     },
     {
         "name": "list-plus",
+        "component": ListPlus,
         "categories": [
             "multimedia",
             "text"
@@ -12979,6 +13824,7 @@ export const iconsData: Array<{
     },
     {
         "name": "list-restart",
+        "component": ListRestart,
         "categories": [
             "multimedia",
             "text"
@@ -12993,6 +13839,7 @@ export const iconsData: Array<{
     },
     {
         "name": "list-start",
+        "component": ListStart,
         "categories": [
             "multimedia",
             "text"
@@ -13007,6 +13854,7 @@ export const iconsData: Array<{
     },
     {
         "name": "list-todo",
+        "component": ListTodo,
         "categories": [
             "text"
         ],
@@ -13023,6 +13871,7 @@ export const iconsData: Array<{
     },
     {
         "name": "list-tree",
+        "component": ListTree,
         "categories": [
             "files",
             "text",
@@ -13035,6 +13884,7 @@ export const iconsData: Array<{
     },
     {
         "name": "list-video",
+        "component": ListVideo,
         "categories": [
             "multimedia"
         ],
@@ -13046,6 +13896,7 @@ export const iconsData: Array<{
     },
     {
         "name": "list-x",
+        "component": ListX,
         "categories": [
             "multimedia",
             "text"
@@ -13060,6 +13911,7 @@ export const iconsData: Array<{
     },
     {
         "name": "list",
+        "component": List,
         "categories": [
             "text"
         ],
@@ -13069,6 +13921,7 @@ export const iconsData: Array<{
     },
     {
         "name": "loader-circle",
+        "component": LoaderCircle,
         "categories": [
             "cursors",
             "multimedia",
@@ -13087,6 +13940,7 @@ export const iconsData: Array<{
     },
     {
         "name": "loader-pinwheel",
+        "component": LoaderPinwheel,
         "categories": [
             "cursors",
             "design"
@@ -13106,6 +13960,7 @@ export const iconsData: Array<{
     },
     {
         "name": "loader",
+        "component": Loader,
         "categories": [
             "cursors",
             "multimedia",
@@ -13124,6 +13979,7 @@ export const iconsData: Array<{
     },
     {
         "name": "locate-fixed",
+        "component": LocateFixed,
         "categories": [
             "navigation"
         ],
@@ -13136,6 +13992,7 @@ export const iconsData: Array<{
     },
     {
         "name": "locate-off",
+        "component": LocateOff,
         "categories": [
             "navigation"
         ],
@@ -13148,6 +14005,7 @@ export const iconsData: Array<{
     },
     {
         "name": "locate",
+        "component": Locate,
         "categories": [
             "navigation"
         ],
@@ -13160,6 +14018,7 @@ export const iconsData: Array<{
     },
     {
         "name": "lock-keyhole-open",
+        "component": LockKeyholeOpen,
         "categories": [
             "security"
         ],
@@ -13169,6 +14028,7 @@ export const iconsData: Array<{
     },
     {
         "name": "lock-keyhole",
+        "component": LockKeyhole,
         "categories": [
             "security"
         ],
@@ -13181,6 +14041,7 @@ export const iconsData: Array<{
     },
     {
         "name": "lock-open",
+        "component": LockOpen,
         "categories": [
             "security"
         ],
@@ -13190,6 +14051,7 @@ export const iconsData: Array<{
     },
     {
         "name": "lock",
+        "component": Lock,
         "categories": [
             "security"
         ],
@@ -13202,6 +14064,7 @@ export const iconsData: Array<{
     },
     {
         "name": "log-in",
+        "component": LogIn,
         "categories": [
             "arrows",
             "account"
@@ -13215,6 +14078,7 @@ export const iconsData: Array<{
     },
     {
         "name": "log-out",
+        "component": LogOut,
         "categories": [
             "arrows",
             "account"
@@ -13228,6 +14092,7 @@ export const iconsData: Array<{
     },
     {
         "name": "logs",
+        "component": Logs,
         "categories": [
             "text"
         ],
@@ -13243,6 +14108,7 @@ export const iconsData: Array<{
     },
     {
         "name": "lollipop",
+        "component": Lollipop,
         "categories": [
             "food-beverage"
         ],
@@ -13258,6 +14124,7 @@ export const iconsData: Array<{
     },
     {
         "name": "luggage",
+        "component": Luggage,
         "categories": [
             "travel",
             "transportation"
@@ -13271,6 +14138,7 @@ export const iconsData: Array<{
     },
     {
         "name": "magnet",
+        "component": Magnet,
         "categories": [
             "design"
         ],
@@ -13283,6 +14151,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mail-check",
+        "component": MailCheck,
         "categories": [
             "mail"
         ],
@@ -13303,6 +14172,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mail-minus",
+        "component": MailMinus,
         "categories": [
             "mail"
         ],
@@ -13316,6 +14186,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mail-open",
+        "component": MailOpen,
         "categories": [
             "mail"
         ],
@@ -13328,6 +14199,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mail-plus",
+        "component": MailPlus,
         "categories": [
             "mail"
         ],
@@ -13343,6 +14215,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mail-question",
+        "component": MailQuestion,
         "categories": [
             "mail"
         ],
@@ -13356,6 +14229,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mail-search",
+        "component": MailSearch,
         "categories": [
             "mail"
         ],
@@ -13368,6 +14242,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mail-warning",
+        "component": MailWarning,
         "categories": [
             "mail"
         ],
@@ -13381,6 +14256,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mail-x",
+        "component": MailX,
         "categories": [
             "mail"
         ],
@@ -13394,6 +14270,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mail",
+        "component": Mail,
         "categories": [
             "text",
             "account",
@@ -13408,6 +14285,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mailbox",
+        "component": Mailbox,
         "categories": [
             "mail"
         ],
@@ -13421,6 +14299,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mails",
+        "component": Mails,
         "categories": [
             "mail"
         ],
@@ -13436,6 +14315,7 @@ export const iconsData: Array<{
     },
     {
         "name": "map-pin-check-inside",
+        "component": MapPinCheckInside,
         "categories": [
             "navigation",
             "travel",
@@ -13455,6 +14335,7 @@ export const iconsData: Array<{
     },
     {
         "name": "map-pin-check",
+        "component": MapPinCheck,
         "categories": [
             "navigation",
             "travel",
@@ -13474,6 +14355,7 @@ export const iconsData: Array<{
     },
     {
         "name": "map-pin-house",
+        "component": MapPinHouse,
         "categories": [
             "navigation",
             "travel",
@@ -13502,6 +14384,7 @@ export const iconsData: Array<{
     },
     {
         "name": "map-pin-minus-inside",
+        "component": MapPinMinusInside,
         "categories": [
             "navigation",
             "travel",
@@ -13519,6 +14402,7 @@ export const iconsData: Array<{
     },
     {
         "name": "map-pin-minus",
+        "component": MapPinMinus,
         "categories": [
             "navigation",
             "travel",
@@ -13536,6 +14420,7 @@ export const iconsData: Array<{
     },
     {
         "name": "map-pin-off",
+        "component": MapPinOff,
         "categories": [
             "navigation",
             "travel"
@@ -13549,6 +14434,7 @@ export const iconsData: Array<{
     },
     {
         "name": "map-pin-plus-inside",
+        "component": MapPinPlusInside,
         "categories": [
             "navigation",
             "travel",
@@ -13566,6 +14452,7 @@ export const iconsData: Array<{
     },
     {
         "name": "map-pin-plus",
+        "component": MapPinPlus,
         "categories": [
             "navigation",
             "travel",
@@ -13583,6 +14470,7 @@ export const iconsData: Array<{
     },
     {
         "name": "map-pin-x-inside",
+        "component": MapPinXInside,
         "categories": [
             "navigation",
             "travel",
@@ -13600,6 +14488,7 @@ export const iconsData: Array<{
     },
     {
         "name": "map-pin-x",
+        "component": MapPinX,
         "categories": [
             "navigation",
             "travel",
@@ -13617,6 +14506,7 @@ export const iconsData: Array<{
     },
     {
         "name": "map-pin",
+        "component": MapPin,
         "categories": [
             "navigation",
             "travel",
@@ -13631,6 +14521,7 @@ export const iconsData: Array<{
     },
     {
         "name": "map-pinned",
+        "component": MapPinned,
         "categories": [
             "navigation",
             "travel",
@@ -13645,6 +14536,7 @@ export const iconsData: Array<{
     },
     {
         "name": "map",
+        "component": Map,
         "categories": [
             "text",
             "navigation"
@@ -13657,6 +14549,7 @@ export const iconsData: Array<{
     },
     {
         "name": "martini",
+        "component": Martini,
         "categories": [
             "food-beverage"
         ],
@@ -13671,6 +14564,7 @@ export const iconsData: Array<{
     },
     {
         "name": "maximize-2",
+        "component": Maximize2,
         "categories": [
             "arrows",
             "layout",
@@ -13684,6 +14578,7 @@ export const iconsData: Array<{
     },
     {
         "name": "maximize",
+        "component": Maximize,
         "categories": [
             "layout",
             "design"
@@ -13696,6 +14591,7 @@ export const iconsData: Array<{
     },
     {
         "name": "medal",
+        "component": Medal,
         "categories": [
             "sports",
             "gaming"
@@ -13711,6 +14607,7 @@ export const iconsData: Array<{
     },
     {
         "name": "megaphone-off",
+        "component": MegaphoneOff,
         "categories": [
             "multimedia",
             "notifications"
@@ -13726,6 +14623,7 @@ export const iconsData: Array<{
     },
     {
         "name": "megaphone",
+        "component": Megaphone,
         "categories": [
             "multimedia",
             "notifications"
@@ -13739,6 +14637,7 @@ export const iconsData: Array<{
     },
     {
         "name": "meh",
+        "component": Meh,
         "categories": [
             "emoji"
         ],
@@ -13751,6 +14650,7 @@ export const iconsData: Array<{
     },
     {
         "name": "memory-stick",
+        "component": MemoryStick,
         "categories": [
             "devices",
             "gaming"
@@ -13770,6 +14670,7 @@ export const iconsData: Array<{
     },
     {
         "name": "menu",
+        "component": Menu,
         "categories": [
             "layout",
             "account"
@@ -13783,6 +14684,7 @@ export const iconsData: Array<{
     },
     {
         "name": "merge",
+        "component": Merge,
         "categories": [
             "development",
             "arrows"
@@ -13795,6 +14697,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-circle-code",
+        "component": MessageCircleCode,
         "categories": [
             "development",
             "social"
@@ -13812,6 +14715,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-circle-dashed",
+        "component": MessageCircleDashed,
         "categories": [
             "social"
         ],
@@ -13827,6 +14731,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-circle-heart",
+        "component": MessageCircleHeart,
         "categories": [
             "social"
         ],
@@ -13848,6 +14753,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-circle-more",
+        "component": MessageCircleMore,
         "categories": [
             "social"
         ],
@@ -13870,6 +14776,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-circle-off",
+        "component": MessageCircleOff,
         "categories": [
             "social"
         ],
@@ -13892,6 +14799,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-circle-plus",
+        "component": MessageCirclePlus,
         "categories": [
             "social"
         ],
@@ -13907,6 +14815,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-circle-question",
+        "component": MessageCircleQuestion,
         "categories": [
             "social"
         ],
@@ -13922,6 +14831,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-circle-reply",
+        "component": MessageCircleReply,
         "categories": [
             "social"
         ],
@@ -13938,6 +14848,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-circle-warning",
+        "component": MessageCircleWarning,
         "categories": [
             "social",
             "notifications"
@@ -13961,6 +14872,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-circle-x",
+        "component": MessageCircleX,
         "categories": [
             "account",
             "social"
@@ -13984,6 +14896,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-circle",
+        "component": MessageCircle,
         "categories": [
             "social"
         ],
@@ -13998,6 +14911,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-square-code",
+        "component": MessageSquareCode,
         "categories": [
             "development",
             "social"
@@ -14015,6 +14929,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-square-dashed",
+        "component": MessageSquareDashed,
         "categories": [
             "social"
         ],
@@ -14030,6 +14945,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-square-diff",
+        "component": MessageSquareDiff,
         "categories": [
             "development",
             "files",
@@ -14057,6 +14973,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-square-dot",
+        "component": MessageSquareDot,
         "categories": [
             "social",
             "notifications"
@@ -14074,6 +14991,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-square-heart",
+        "component": MessageSquareHeart,
         "categories": [
             "social"
         ],
@@ -14095,6 +15013,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-square-lock",
+        "component": MessageSquareLock,
         "categories": [
             "social"
         ],
@@ -14111,6 +15030,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-square-more",
+        "component": MessageSquareMore,
         "categories": [
             "social"
         ],
@@ -14133,6 +15053,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-square-off",
+        "component": MessageSquareOff,
         "categories": [
             "social"
         ],
@@ -14155,6 +15076,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-square-plus",
+        "component": MessageSquarePlus,
         "categories": [
             "social"
         ],
@@ -14170,6 +15092,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-square-quote",
+        "component": MessageSquareQuote,
         "categories": [
             "social",
             "text"
@@ -14190,6 +15113,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-square-reply",
+        "component": MessageSquareReply,
         "categories": [
             "social"
         ],
@@ -14206,6 +15130,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-square-share",
+        "component": MessageSquareShare,
         "categories": [
             "social"
         ],
@@ -14222,6 +15147,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-square-text",
+        "component": MessageSquareText,
         "categories": [
             "social"
         ],
@@ -14236,6 +15162,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-square-warning",
+        "component": MessageSquareWarning,
         "categories": [
             "social",
             "notifications"
@@ -14259,6 +15186,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-square-x",
+        "component": MessageSquareX,
         "categories": [
             "social"
         ],
@@ -14281,6 +15209,7 @@ export const iconsData: Array<{
     },
     {
         "name": "message-square",
+        "component": MessageSquare,
         "categories": [
             "social"
         ],
@@ -14295,6 +15224,7 @@ export const iconsData: Array<{
     },
     {
         "name": "messages-square",
+        "component": MessagesSquare,
         "categories": [
             "social"
         ],
@@ -14311,6 +15241,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mic-off",
+        "component": MicOff,
         "categories": [
             "devices",
             "communication",
@@ -14326,6 +15257,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mic-vocal",
+        "component": MicVocal,
         "categories": [
             "devices",
             "multimedia"
@@ -14345,6 +15277,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mic",
+        "component": Mic,
         "categories": [
             "devices",
             "communication",
@@ -14362,6 +15295,7 @@ export const iconsData: Array<{
     },
     {
         "name": "microchip",
+        "component": Microchip,
         "categories": [
             "devices"
         ],
@@ -14382,6 +15316,7 @@ export const iconsData: Array<{
     },
     {
         "name": "microscope",
+        "component": Microscope,
         "categories": [
             "science",
             "medical"
@@ -14396,6 +15331,7 @@ export const iconsData: Array<{
     },
     {
         "name": "microwave",
+        "component": Microwave,
         "categories": [
             "food-beverage",
             "home"
@@ -14409,6 +15345,7 @@ export const iconsData: Array<{
     },
     {
         "name": "milestone",
+        "component": Milestone,
         "categories": [
             "arrows",
             "navigation",
@@ -14427,6 +15364,7 @@ export const iconsData: Array<{
     },
     {
         "name": "milk-off",
+        "component": MilkOff,
         "categories": [
             "food-beverage"
         ],
@@ -14443,6 +15381,7 @@ export const iconsData: Array<{
     },
     {
         "name": "milk",
+        "component": Milk,
         "categories": [
             "food-beverage"
         ],
@@ -14457,6 +15396,7 @@ export const iconsData: Array<{
     },
     {
         "name": "minimize-2",
+        "component": Minimize2,
         "categories": [
             "arrows",
             "layout",
@@ -14471,6 +15411,7 @@ export const iconsData: Array<{
     },
     {
         "name": "minimize",
+        "component": Minimize,
         "categories": [
             "layout",
             "design"
@@ -14483,6 +15424,7 @@ export const iconsData: Array<{
     },
     {
         "name": "minus",
+        "component": Minus,
         "categories": [
             "math",
             "development",
@@ -14516,6 +15458,7 @@ export const iconsData: Array<{
     },
     {
         "name": "monitor-check",
+        "component": MonitorCheck,
         "categories": [
             "connectivity",
             "devices"
@@ -14533,6 +15476,7 @@ export const iconsData: Array<{
     },
     {
         "name": "monitor-cog",
+        "component": MonitorCog,
         "categories": [
             "connectivity",
             "devices"
@@ -14558,6 +15502,7 @@ export const iconsData: Array<{
     },
     {
         "name": "monitor-dot",
+        "component": MonitorDot,
         "categories": [
             "connectivity",
             "devices"
@@ -14575,6 +15520,7 @@ export const iconsData: Array<{
     },
     {
         "name": "monitor-down",
+        "component": MonitorDown,
         "categories": [
             "connectivity",
             "devices"
@@ -14589,6 +15535,7 @@ export const iconsData: Array<{
     },
     {
         "name": "monitor-off",
+        "component": MonitorOff,
         "categories": [
             "connectivity",
             "devices"
@@ -14599,6 +15546,7 @@ export const iconsData: Array<{
     },
     {
         "name": "monitor-pause",
+        "component": MonitorPause,
         "categories": [
             "connectivity",
             "devices",
@@ -14621,6 +15569,7 @@ export const iconsData: Array<{
     },
     {
         "name": "monitor-play",
+        "component": MonitorPlay,
         "categories": [
             "connectivity",
             "devices",
@@ -14643,6 +15592,7 @@ export const iconsData: Array<{
     },
     {
         "name": "monitor-smartphone",
+        "component": MonitorSmartphone,
         "categories": [
             "connectivity",
             "devices"
@@ -14661,6 +15611,7 @@ export const iconsData: Array<{
     },
     {
         "name": "monitor-speaker",
+        "component": MonitorSpeaker,
         "categories": [
             "connectivity",
             "devices"
@@ -14673,6 +15624,7 @@ export const iconsData: Array<{
     },
     {
         "name": "monitor-stop",
+        "component": MonitorStop,
         "categories": [
             "connectivity",
             "devices",
@@ -14694,6 +15646,7 @@ export const iconsData: Array<{
     },
     {
         "name": "monitor-up",
+        "component": MonitorUp,
         "categories": [
             "connectivity",
             "devices"
@@ -14710,6 +15663,7 @@ export const iconsData: Array<{
     },
     {
         "name": "monitor-x",
+        "component": MonitorX,
         "categories": [
             "connectivity",
             "devices"
@@ -14730,6 +15684,7 @@ export const iconsData: Array<{
     },
     {
         "name": "monitor",
+        "component": Monitor,
         "categories": [
             "connectivity",
             "devices"
@@ -14744,6 +15699,7 @@ export const iconsData: Array<{
     },
     {
         "name": "moon-star",
+        "component": MoonStar,
         "categories": [
             "accessibility",
             "weather"
@@ -14756,6 +15712,7 @@ export const iconsData: Array<{
     },
     {
         "name": "moon",
+        "component": Moon,
         "categories": [
             "accessibility"
         ],
@@ -14766,6 +15723,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mountain-snow",
+        "component": MountainSnow,
         "categories": [
             "nature"
         ],
@@ -14777,6 +15735,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mountain",
+        "component": Mountain,
         "categories": [
             "nature",
             "gaming"
@@ -14789,6 +15748,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mouse-off",
+        "component": MouseOff,
         "categories": [
             "devices"
         ],
@@ -14801,6 +15761,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mouse-pointer-2",
+        "component": MousePointer2,
         "categories": [
             "arrows",
             "cursors"
@@ -14812,6 +15773,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mouse-pointer-ban",
+        "component": MousePointerBan,
         "categories": [
             "arrows",
             "cursors"
@@ -14827,6 +15789,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mouse-pointer-click",
+        "component": MousePointerClick,
         "categories": [
             "arrows",
             "cursors"
@@ -14838,6 +15801,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mouse-pointer",
+        "component": MousePointer,
         "categories": [
             "arrows",
             "cursors"
@@ -14849,6 +15813,7 @@ export const iconsData: Array<{
     },
     {
         "name": "mouse",
+        "component": Mouse,
         "categories": [
             "devices"
         ],
@@ -14860,6 +15825,7 @@ export const iconsData: Array<{
     },
     {
         "name": "move-3d",
+        "component": Move3d,
         "categories": [
             "design"
         ],
@@ -14874,6 +15840,7 @@ export const iconsData: Array<{
     },
     {
         "name": "move-diagonal-2",
+        "component": MoveDiagonal2,
         "categories": [
             "arrows",
             "cursors"
@@ -14885,6 +15852,7 @@ export const iconsData: Array<{
     },
     {
         "name": "move-diagonal",
+        "component": MoveDiagonal,
         "categories": [
             "arrows",
             "cursors"
@@ -14896,6 +15864,7 @@ export const iconsData: Array<{
     },
     {
         "name": "move-down-left",
+        "component": MoveDownLeft,
         "categories": [
             "arrows"
         ],
@@ -14906,6 +15875,7 @@ export const iconsData: Array<{
     },
     {
         "name": "move-down-right",
+        "component": MoveDownRight,
         "categories": [
             "arrows"
         ],
@@ -14916,6 +15886,7 @@ export const iconsData: Array<{
     },
     {
         "name": "move-down",
+        "component": MoveDown,
         "categories": [
             "arrows"
         ],
@@ -14928,6 +15899,7 @@ export const iconsData: Array<{
     },
     {
         "name": "move-horizontal",
+        "component": MoveHorizontal,
         "categories": [
             "arrows",
             "cursors"
@@ -14939,6 +15911,7 @@ export const iconsData: Array<{
     },
     {
         "name": "move-left",
+        "component": MoveLeft,
         "categories": [
             "arrows"
         ],
@@ -14951,6 +15924,7 @@ export const iconsData: Array<{
     },
     {
         "name": "move-right",
+        "component": MoveRight,
         "categories": [
             "arrows"
         ],
@@ -14963,6 +15937,7 @@ export const iconsData: Array<{
     },
     {
         "name": "move-up-left",
+        "component": MoveUpLeft,
         "categories": [
             "arrows"
         ],
@@ -14973,6 +15948,7 @@ export const iconsData: Array<{
     },
     {
         "name": "move-up-right",
+        "component": MoveUpRight,
         "categories": [
             "arrows"
         ],
@@ -14983,6 +15959,7 @@ export const iconsData: Array<{
     },
     {
         "name": "move-up",
+        "component": MoveUp,
         "categories": [
             "arrows"
         ],
@@ -14995,6 +15972,7 @@ export const iconsData: Array<{
     },
     {
         "name": "move-vertical",
+        "component": MoveVertical,
         "categories": [
             "arrows",
             "cursors"
@@ -15006,6 +15984,7 @@ export const iconsData: Array<{
     },
     {
         "name": "move",
+        "component": Move,
         "categories": [
             "arrows",
             "cursors"
@@ -15016,6 +15995,7 @@ export const iconsData: Array<{
     },
     {
         "name": "music-2",
+        "component": Music2,
         "categories": [
             "multimedia",
             "files"
@@ -15028,6 +16008,7 @@ export const iconsData: Array<{
     },
     {
         "name": "music-3",
+        "component": Music3,
         "categories": [
             "multimedia",
             "files"
@@ -15042,6 +16023,7 @@ export const iconsData: Array<{
     },
     {
         "name": "music-4",
+        "component": Music4,
         "categories": [
             "multimedia",
             "files"
@@ -15054,6 +16036,7 @@ export const iconsData: Array<{
     },
     {
         "name": "music",
+        "component": Music,
         "categories": [
             "multimedia",
             "files"
@@ -15066,6 +16049,7 @@ export const iconsData: Array<{
     },
     {
         "name": "navigation-2-off",
+        "component": Navigation2Off,
         "categories": [
             "navigation"
         ],
@@ -15076,6 +16060,7 @@ export const iconsData: Array<{
     },
     {
         "name": "navigation-2",
+        "component": Navigation2,
         "categories": [
             "navigation"
         ],
@@ -15086,6 +16071,7 @@ export const iconsData: Array<{
     },
     {
         "name": "navigation-off",
+        "component": NavigationOff,
         "categories": [
             "navigation"
         ],
@@ -15096,6 +16082,7 @@ export const iconsData: Array<{
     },
     {
         "name": "navigation",
+        "component": Navigation,
         "categories": [
             "navigation"
         ],
@@ -15106,6 +16093,7 @@ export const iconsData: Array<{
     },
     {
         "name": "network",
+        "component": Network,
         "categories": [
             "development"
         ],
@@ -15115,6 +16103,7 @@ export const iconsData: Array<{
     },
     {
         "name": "newspaper",
+        "component": Newspaper,
         "categories": [
             "multimedia",
             "communication"
@@ -15130,6 +16119,7 @@ export const iconsData: Array<{
     },
     {
         "name": "nfc",
+        "component": Nfc,
         "categories": [
             "communication",
             "finance",
@@ -15143,6 +16133,7 @@ export const iconsData: Array<{
     },
     {
         "name": "notebook-pen",
+        "component": NotebookPen,
         "categories": [
             "text",
             "social"
@@ -15177,6 +16168,7 @@ export const iconsData: Array<{
     },
     {
         "name": "notebook-tabs",
+        "component": NotebookTabs,
         "categories": [
             "account",
             "communication",
@@ -15207,6 +16199,7 @@ export const iconsData: Array<{
     },
     {
         "name": "notebook-text",
+        "component": NotebookText,
         "categories": [
             "text",
             "social"
@@ -15241,6 +16234,7 @@ export const iconsData: Array<{
     },
     {
         "name": "notebook",
+        "component": Notebook,
         "categories": [
             "text",
             "communication",
@@ -15278,6 +16272,7 @@ export const iconsData: Array<{
     },
     {
         "name": "notepad-text-dashed",
+        "component": NotepadTextDashed,
         "categories": [
             "text",
             "social"
@@ -15300,6 +16295,7 @@ export const iconsData: Array<{
     },
     {
         "name": "notepad-text",
+        "component": NotepadText,
         "categories": [
             "text",
             "social"
@@ -15334,6 +16330,7 @@ export const iconsData: Array<{
     },
     {
         "name": "nut-off",
+        "component": NutOff,
         "categories": [
             "food-beverage"
         ],
@@ -15348,6 +16345,7 @@ export const iconsData: Array<{
     },
     {
         "name": "nut",
+        "component": Nut,
         "categories": [
             "food-beverage"
         ],
@@ -15360,6 +16358,7 @@ export const iconsData: Array<{
     },
     {
         "name": "octagon-alert",
+        "component": OctagonAlert,
         "categories": [
             "notifications",
             "shapes"
@@ -15373,6 +16372,7 @@ export const iconsData: Array<{
     },
     {
         "name": "octagon-minus",
+        "component": OctagonMinus,
         "categories": [
             "transportation"
         ],
@@ -15391,6 +16391,7 @@ export const iconsData: Array<{
     },
     {
         "name": "octagon-pause",
+        "component": OctagonPause,
         "categories": [
             "multimedia",
             "shapes"
@@ -15403,6 +16404,7 @@ export const iconsData: Array<{
     },
     {
         "name": "octagon-x",
+        "component": OctagonX,
         "categories": [
             "math",
             "notifications"
@@ -15419,6 +16421,7 @@ export const iconsData: Array<{
     },
     {
         "name": "octagon",
+        "component": Octagon,
         "categories": [
             "shapes"
         ],
@@ -15429,6 +16432,7 @@ export const iconsData: Array<{
     },
     {
         "name": "omega",
+        "component": Omega,
         "categories": [
             "math",
             "development",
@@ -15453,6 +16457,7 @@ export const iconsData: Array<{
     },
     {
         "name": "option",
+        "component": Option,
         "categories": [
             "development"
         ],
@@ -15466,6 +16471,7 @@ export const iconsData: Array<{
     },
     {
         "name": "orbit",
+        "component": Orbit,
         "categories": [
             "science"
         ],
@@ -15479,6 +16485,7 @@ export const iconsData: Array<{
     },
     {
         "name": "origami",
+        "component": Origami,
         "categories": [
             "animals",
             "design"
@@ -15490,6 +16497,7 @@ export const iconsData: Array<{
     },
     {
         "name": "package-2",
+        "component": Package2,
         "categories": [
             "files",
             "development"
@@ -15508,6 +16516,7 @@ export const iconsData: Array<{
     },
     {
         "name": "package-check",
+        "component": PackageCheck,
         "categories": [
             "development"
         ],
@@ -15524,6 +16533,7 @@ export const iconsData: Array<{
     },
     {
         "name": "package-minus",
+        "component": PackageMinus,
         "categories": [
             "development"
         ],
@@ -15534,6 +16544,7 @@ export const iconsData: Array<{
     },
     {
         "name": "package-open",
+        "component": PackageOpen,
         "categories": [
             "files",
             "development"
@@ -15551,6 +16562,7 @@ export const iconsData: Array<{
     },
     {
         "name": "package-plus",
+        "component": PackagePlus,
         "categories": [
             "development"
         ],
@@ -15562,6 +16574,7 @@ export const iconsData: Array<{
     },
     {
         "name": "package-search",
+        "component": PackageSearch,
         "categories": [
             "files",
             "development"
@@ -15573,6 +16586,7 @@ export const iconsData: Array<{
     },
     {
         "name": "package-x",
+        "component": PackageX,
         "categories": [
             "development"
         ],
@@ -15583,6 +16597,7 @@ export const iconsData: Array<{
     },
     {
         "name": "package",
+        "component": Package,
         "categories": [
             "files",
             "development"
@@ -15603,6 +16618,7 @@ export const iconsData: Array<{
     },
     {
         "name": "paint-bucket",
+        "component": PaintBucket,
         "categories": [
             "design",
             "tools"
@@ -15617,6 +16633,7 @@ export const iconsData: Array<{
     },
     {
         "name": "paint-roller",
+        "component": PaintRoller,
         "categories": [
             "text",
             "design",
@@ -15633,6 +16650,7 @@ export const iconsData: Array<{
     },
     {
         "name": "paintbrush-vertical",
+        "component": PaintbrushVertical,
         "categories": [
             "text",
             "design",
@@ -15652,6 +16670,7 @@ export const iconsData: Array<{
     },
     {
         "name": "paintbrush",
+        "component": Paintbrush,
         "categories": [
             "text",
             "design",
@@ -15671,6 +16690,7 @@ export const iconsData: Array<{
     },
     {
         "name": "palette",
+        "component": Palette,
         "categories": [
             "text",
             "design",
@@ -15689,6 +16709,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panel-bottom-close",
+        "component": PanelBottomClose,
         "categories": [
             "layout",
             "arrows"
@@ -15703,6 +16724,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panel-bottom-dashed",
+        "component": PanelBottomDashed,
         "categories": [
             "layout"
         ],
@@ -15715,6 +16737,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panel-bottom-open",
+        "component": PanelBottomOpen,
         "categories": [
             "layout",
             "arrows"
@@ -15730,6 +16753,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panel-bottom",
+        "component": PanelBottom,
         "categories": [
             "layout"
         ],
@@ -15740,6 +16764,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panel-left-close",
+        "component": PanelLeftClose,
         "categories": [
             "layout",
             "arrows"
@@ -15754,6 +16779,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panel-left-dashed",
+        "component": PanelLeftDashed,
         "categories": [
             "layout"
         ],
@@ -15767,6 +16793,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panel-left-open",
+        "component": PanelLeftOpen,
         "categories": [
             "layout",
             "arrows"
@@ -15783,6 +16810,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panel-left",
+        "component": PanelLeft,
         "categories": [
             "layout"
         ],
@@ -15793,6 +16821,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panel-right-close",
+        "component": PanelRightClose,
         "categories": [
             "layout",
             "arrows"
@@ -15808,6 +16837,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panel-right-dashed",
+        "component": PanelRightDashed,
         "categories": [
             "layout"
         ],
@@ -15821,6 +16851,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panel-right-open",
+        "component": PanelRightOpen,
         "categories": [
             "layout",
             "arrows"
@@ -15838,6 +16869,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panel-right",
+        "component": PanelRight,
         "categories": [
             "layout"
         ],
@@ -15849,6 +16881,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panel-top-close",
+        "component": PanelTopClose,
         "categories": [
             "layout",
             "arrows"
@@ -15863,6 +16896,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panel-top-dashed",
+        "component": PanelTopDashed,
         "categories": [
             "layout"
         ],
@@ -15875,6 +16909,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panel-top-open",
+        "component": PanelTopOpen,
         "categories": [
             "layout",
             "arrows"
@@ -15890,6 +16925,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panel-top",
+        "component": PanelTop,
         "categories": [
             "layout",
             "design",
@@ -15903,6 +16939,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panels-left-bottom",
+        "component": PanelsLeftBottom,
         "categories": [
             "layout"
         ],
@@ -15914,6 +16951,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panels-right-bottom",
+        "component": PanelsRightBottom,
         "categories": [
             "layout"
         ],
@@ -15925,6 +16963,7 @@ export const iconsData: Array<{
     },
     {
         "name": "panels-top-left",
+        "component": PanelsTopLeft,
         "categories": [
             "layout",
             "design",
@@ -15943,6 +16982,7 @@ export const iconsData: Array<{
     },
     {
         "name": "paperclip",
+        "component": Paperclip,
         "categories": [
             "text",
             "design",
@@ -15956,6 +16996,7 @@ export const iconsData: Array<{
     },
     {
         "name": "parentheses",
+        "component": Parentheses,
         "categories": [
             "development",
             "files",
@@ -15981,6 +17022,7 @@ export const iconsData: Array<{
     },
     {
         "name": "parking-meter",
+        "component": ParkingMeter,
         "categories": [
             "transportation",
             "navigation"
@@ -15995,6 +17037,7 @@ export const iconsData: Array<{
     },
     {
         "name": "party-popper",
+        "component": PartyPopper,
         "categories": [
             "emoji"
         ],
@@ -16014,6 +17057,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pause",
+        "component": Pause,
         "categories": [
             "multimedia"
         ],
@@ -16024,6 +17068,7 @@ export const iconsData: Array<{
     },
     {
         "name": "paw-print",
+        "component": PawPrint,
         "categories": [
             "animals"
         ],
@@ -16039,6 +17084,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pc-case",
+        "component": PcCase,
         "categories": [
             "devices",
             "gaming"
@@ -16050,6 +17096,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pen-line",
+        "component": PenLine,
         "categories": [
             "text",
             "design",
@@ -16072,6 +17119,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pen-off",
+        "component": PenOff,
         "categories": [
             "text",
             "design",
@@ -16102,6 +17150,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pen-tool",
+        "component": PenTool,
         "categories": [
             "text",
             "design",
@@ -16115,6 +17164,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pen",
+        "component": Pen,
         "categories": [
             "text",
             "design",
@@ -16137,6 +17187,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pencil-line",
+        "component": PencilLine,
         "categories": [
             "text",
             "design",
@@ -16161,6 +17212,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pencil-off",
+        "component": PencilOff,
         "categories": [
             "design",
             "cursors",
@@ -16190,6 +17242,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pencil-ruler",
+        "component": PencilRuler,
         "categories": [
             "tools",
             "design",
@@ -16228,6 +17281,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pencil",
+        "component": Pencil,
         "categories": [
             "design",
             "cursors",
@@ -16249,6 +17303,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pentagon",
+        "component": Pentagon,
         "categories": [
             "shapes"
         ],
@@ -16258,6 +17313,7 @@ export const iconsData: Array<{
     },
     {
         "name": "percent",
+        "component": Percent,
         "categories": [
             "math",
             "development",
@@ -16278,6 +17334,7 @@ export const iconsData: Array<{
     },
     {
         "name": "person-standing",
+        "component": PersonStanding,
         "categories": [
             "accessibility",
             "people"
@@ -16291,6 +17348,7 @@ export const iconsData: Array<{
     },
     {
         "name": "philippine-peso",
+        "component": PhilippinePeso,
         "categories": [
             "finance"
         ],
@@ -16303,6 +17361,7 @@ export const iconsData: Array<{
     },
     {
         "name": "phone-call",
+        "component": PhoneCall,
         "categories": [
             "connectivity",
             "devices",
@@ -16314,6 +17373,7 @@ export const iconsData: Array<{
     },
     {
         "name": "phone-forwarded",
+        "component": PhoneForwarded,
         "categories": [
             "arrows",
             "connectivity",
@@ -16326,6 +17386,7 @@ export const iconsData: Array<{
     },
     {
         "name": "phone-incoming",
+        "component": PhoneIncoming,
         "categories": [
             "arrows",
             "connectivity",
@@ -16338,6 +17399,7 @@ export const iconsData: Array<{
     },
     {
         "name": "phone-missed",
+        "component": PhoneMissed,
         "categories": [
             "connectivity",
             "devices",
@@ -16349,6 +17411,7 @@ export const iconsData: Array<{
     },
     {
         "name": "phone-off",
+        "component": PhoneOff,
         "categories": [
             "connectivity",
             "devices",
@@ -16361,6 +17424,7 @@ export const iconsData: Array<{
     },
     {
         "name": "phone-outgoing",
+        "component": PhoneOutgoing,
         "categories": [
             "arrows",
             "connectivity",
@@ -16373,6 +17437,7 @@ export const iconsData: Array<{
     },
     {
         "name": "phone",
+        "component": Phone,
         "categories": [
             "text",
             "connectivity",
@@ -16385,6 +17450,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pi",
+        "component": Pi,
         "categories": [
             "development",
             "math"
@@ -16402,6 +17468,7 @@ export const iconsData: Array<{
     },
     {
         "name": "piano",
+        "component": Piano,
         "categories": [
             "multimedia",
             "devices"
@@ -16425,6 +17492,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pickaxe",
+        "component": Pickaxe,
         "categories": [
             "tools",
             "gaming"
@@ -16445,6 +17513,7 @@ export const iconsData: Array<{
     },
     {
         "name": "picture-in-picture-2",
+        "component": PictureInPicture2,
         "categories": [
             "multimedia"
         ],
@@ -16461,6 +17530,7 @@ export const iconsData: Array<{
     },
     {
         "name": "picture-in-picture",
+        "component": PictureInPicture,
         "categories": [
             "multimedia"
         ],
@@ -16477,6 +17547,7 @@ export const iconsData: Array<{
     },
     {
         "name": "piggy-bank",
+        "component": PiggyBank,
         "categories": [
             "finance"
         ],
@@ -16487,6 +17558,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pilcrow-left",
+        "component": PilcrowLeft,
         "categories": [
             "text"
         ],
@@ -16505,6 +17577,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pilcrow-right",
+        "component": PilcrowRight,
         "categories": [
             "text"
         ],
@@ -16523,6 +17596,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pilcrow",
+        "component": Pilcrow,
         "categories": [
             "text"
         ],
@@ -16540,6 +17614,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pill-bottle",
+        "component": PillBottle,
         "categories": [
             "medical"
         ],
@@ -16560,6 +17635,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pill",
+        "component": Pill,
         "categories": [
             "medical"
         ],
@@ -16574,6 +17650,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pin-off",
+        "component": PinOff,
         "categories": [
             "navigation"
         ],
@@ -16588,6 +17665,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pin",
+        "component": Pin,
         "categories": [
             "navigation",
             "account"
@@ -16601,6 +17679,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pipette",
+        "component": Pipette,
         "categories": [
             "text",
             "design",
@@ -16615,6 +17694,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pizza",
+        "component": Pizza,
         "categories": [
             "food-beverage"
         ],
@@ -16626,6 +17706,7 @@ export const iconsData: Array<{
     },
     {
         "name": "plane-landing",
+        "component": PlaneLanding,
         "categories": [
             "transportation",
             "travel"
@@ -16640,6 +17721,7 @@ export const iconsData: Array<{
     },
     {
         "name": "plane-takeoff",
+        "component": PlaneTakeoff,
         "categories": [
             "transportation",
             "travel"
@@ -16654,6 +17736,7 @@ export const iconsData: Array<{
     },
     {
         "name": "plane",
+        "component": Plane,
         "categories": [
             "transportation",
             "travel"
@@ -16666,6 +17749,7 @@ export const iconsData: Array<{
     },
     {
         "name": "play",
+        "component": Play,
         "categories": [
             "arrows",
             "multimedia"
@@ -16680,6 +17764,7 @@ export const iconsData: Array<{
     },
     {
         "name": "plug-2",
+        "component": Plug2,
         "categories": [
             "devices",
             "development"
@@ -16693,6 +17778,7 @@ export const iconsData: Array<{
     },
     {
         "name": "plug-zap",
+        "component": PlugZap,
         "categories": [
             "devices"
         ],
@@ -16708,6 +17794,7 @@ export const iconsData: Array<{
     },
     {
         "name": "plug",
+        "component": Plug,
         "categories": [
             "devices",
             "development"
@@ -16722,6 +17809,7 @@ export const iconsData: Array<{
     },
     {
         "name": "plus",
+        "component": Plus,
         "categories": [
             "math",
             "tools",
@@ -16752,6 +17840,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pocket-knife",
+        "component": PocketKnife,
         "categories": [
             "tools"
         ],
@@ -16768,6 +17857,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pocket",
+        "component": Pocket,
         "categories": [
             "brands"
         ],
@@ -16778,6 +17868,7 @@ export const iconsData: Array<{
     },
     {
         "name": "podcast",
+        "component": Podcast,
         "categories": [
             "multimedia",
             "social"
@@ -16795,6 +17886,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pointer-off",
+        "component": PointerOff,
         "categories": [
             "cursors"
         ],
@@ -16804,6 +17896,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pointer",
+        "component": Pointer,
         "categories": [
             "cursors"
         ],
@@ -16813,6 +17906,7 @@ export const iconsData: Array<{
     },
     {
         "name": "popcorn",
+        "component": Popcorn,
         "categories": [
             "food-beverage",
             "multimedia"
@@ -16830,6 +17924,7 @@ export const iconsData: Array<{
     },
     {
         "name": "popsicle",
+        "component": Popsicle,
         "categories": [
             "food-beverage"
         ],
@@ -16842,6 +17937,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pound-sterling",
+        "component": PoundSterling,
         "categories": [
             "finance"
         ],
@@ -16853,6 +17949,7 @@ export const iconsData: Array<{
     },
     {
         "name": "power-off",
+        "component": PowerOff,
         "categories": [
             "connectivity"
         ],
@@ -16865,6 +17962,7 @@ export const iconsData: Array<{
     },
     {
         "name": "power",
+        "component": Power,
         "categories": [
             "connectivity"
         ],
@@ -16885,6 +17983,7 @@ export const iconsData: Array<{
     },
     {
         "name": "presentation",
+        "component": Presentation,
         "categories": [
             "multimedia",
             "photography",
@@ -16911,6 +18010,7 @@ export const iconsData: Array<{
     },
     {
         "name": "printer-check",
+        "component": PrinterCheck,
         "categories": [
             "devices"
         ],
@@ -16924,6 +18024,7 @@ export const iconsData: Array<{
     },
     {
         "name": "printer",
+        "component": Printer,
         "categories": [
             "devices"
         ],
@@ -16935,6 +18036,7 @@ export const iconsData: Array<{
     },
     {
         "name": "projector",
+        "component": Projector,
         "categories": [
             "multimedia",
             "photography",
@@ -16956,6 +18058,7 @@ export const iconsData: Array<{
     },
     {
         "name": "proportions",
+        "component": Proportions,
         "categories": [
             "layout",
             "design",
@@ -16985,6 +18088,7 @@ export const iconsData: Array<{
     },
     {
         "name": "puzzle",
+        "component": Puzzle,
         "categories": [
             "development",
             "gaming"
@@ -16998,6 +18102,7 @@ export const iconsData: Array<{
     },
     {
         "name": "pyramid",
+        "component": Pyramid,
         "categories": [
             "shapes",
             "math",
@@ -17018,6 +18123,7 @@ export const iconsData: Array<{
     },
     {
         "name": "qr-code",
+        "component": QrCode,
         "categories": [
             "development",
             "social"
@@ -17033,6 +18139,7 @@ export const iconsData: Array<{
     },
     {
         "name": "quote",
+        "component": Quote,
         "categories": [
             "text"
         ],
@@ -17042,6 +18149,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rabbit",
+        "component": Rabbit,
         "categories": [
             "animals"
         ],
@@ -17059,6 +18167,7 @@ export const iconsData: Array<{
     },
     {
         "name": "radar",
+        "component": Radar,
         "categories": [
             "navigation",
             "security",
@@ -17074,6 +18183,7 @@ export const iconsData: Array<{
     },
     {
         "name": "radiation",
+        "component": Radiation,
         "categories": [
             "science"
         ],
@@ -17091,6 +18201,7 @@ export const iconsData: Array<{
     },
     {
         "name": "radical",
+        "component": Radical,
         "categories": [
             "development",
             "math"
@@ -17107,6 +18218,7 @@ export const iconsData: Array<{
     },
     {
         "name": "radio-receiver",
+        "component": RadioReceiver,
         "categories": [
             "devices"
         ],
@@ -17118,6 +18230,7 @@ export const iconsData: Array<{
     },
     {
         "name": "radio-tower",
+        "component": RadioTower,
         "categories": [
             "devices",
             "multimedia",
@@ -17133,6 +18246,7 @@ export const iconsData: Array<{
     },
     {
         "name": "radio",
+        "component": Radio,
         "categories": [
             "devices",
             "multimedia",
@@ -17148,6 +18262,7 @@ export const iconsData: Array<{
     },
     {
         "name": "radius",
+        "component": Radius,
         "categories": [
             "shapes",
             "math",
@@ -17167,6 +18282,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rail-symbol",
+        "component": RailSymbol,
         "categories": [
             "transportation",
             "navigation"
@@ -17180,6 +18296,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rainbow",
+        "component": Rainbow,
         "categories": [
             "weather"
         ],
@@ -17196,6 +18313,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rat",
+        "component": Rat,
         "categories": [
             "animals"
         ],
@@ -17212,6 +18330,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ratio",
+        "component": Ratio,
         "categories": [
             "layout",
             "design",
@@ -17241,6 +18360,7 @@ export const iconsData: Array<{
     },
     {
         "name": "receipt-cent",
+        "component": ReceiptCent,
         "categories": [
             "finance",
             "travel"
@@ -17261,6 +18381,7 @@ export const iconsData: Array<{
     },
     {
         "name": "receipt-euro",
+        "component": ReceiptEuro,
         "categories": [
             "finance",
             "travel"
@@ -17277,6 +18398,7 @@ export const iconsData: Array<{
     },
     {
         "name": "receipt-indian-rupee",
+        "component": ReceiptIndianRupee,
         "categories": [
             "finance",
             "travel"
@@ -17294,6 +18416,7 @@ export const iconsData: Array<{
     },
     {
         "name": "receipt-japanese-yen",
+        "component": ReceiptJapaneseYen,
         "categories": [
             "finance",
             "travel"
@@ -17311,6 +18434,7 @@ export const iconsData: Array<{
     },
     {
         "name": "receipt-pound-sterling",
+        "component": ReceiptPoundSterling,
         "categories": [
             "finance",
             "travel"
@@ -17329,6 +18453,7 @@ export const iconsData: Array<{
     },
     {
         "name": "receipt-russian-ruble",
+        "component": ReceiptRussianRuble,
         "categories": [
             "finance",
             "travel"
@@ -17346,6 +18471,7 @@ export const iconsData: Array<{
     },
     {
         "name": "receipt-swiss-franc",
+        "component": ReceiptSwissFranc,
         "categories": [
             "finance",
             "travel"
@@ -17363,6 +18489,7 @@ export const iconsData: Array<{
     },
     {
         "name": "receipt-text",
+        "component": ReceiptText,
         "categories": [
             "finance",
             "travel"
@@ -17382,6 +18509,7 @@ export const iconsData: Array<{
     },
     {
         "name": "receipt",
+        "component": Receipt,
         "categories": [
             "finance",
             "travel"
@@ -17400,6 +18528,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rectangle-ellipsis",
+        "component": RectangleEllipsis,
         "categories": [
             "text",
             "development"
@@ -17436,6 +18565,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rectangle-horizontal",
+        "component": RectangleHorizontal,
         "categories": [
             "shapes",
             "design"
@@ -17450,6 +18580,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rectangle-vertical",
+        "component": RectangleVertical,
         "categories": [
             "shapes",
             "design"
@@ -17464,6 +18595,7 @@ export const iconsData: Array<{
     },
     {
         "name": "recycle",
+        "component": Recycle,
         "categories": [
             "sustainability"
         ],
@@ -17475,6 +18607,7 @@ export const iconsData: Array<{
     },
     {
         "name": "redo-2",
+        "component": Redo2,
         "categories": [
             "text",
             "arrows"
@@ -17487,6 +18620,7 @@ export const iconsData: Array<{
     },
     {
         "name": "redo-dot",
+        "component": RedoDot,
         "categories": [
             "text",
             "arrows"
@@ -17501,6 +18635,7 @@ export const iconsData: Array<{
     },
     {
         "name": "redo",
+        "component": Redo,
         "categories": [
             "text",
             "arrows"
@@ -17513,6 +18648,7 @@ export const iconsData: Array<{
     },
     {
         "name": "refresh-ccw-dot",
+        "component": RefreshCcwDot,
         "categories": [
             "arrows",
             "development"
@@ -17533,6 +18669,7 @@ export const iconsData: Array<{
     },
     {
         "name": "refresh-ccw",
+        "component": RefreshCcw,
         "categories": [
             "arrows"
         ],
@@ -17549,6 +18686,7 @@ export const iconsData: Array<{
     },
     {
         "name": "refresh-cw-off",
+        "component": RefreshCwOff,
         "categories": [
             "arrows"
         ],
@@ -17571,6 +18709,7 @@ export const iconsData: Array<{
     },
     {
         "name": "refresh-cw",
+        "component": RefreshCw,
         "categories": [
             "arrows"
         ],
@@ -17587,6 +18726,7 @@ export const iconsData: Array<{
     },
     {
         "name": "refrigerator",
+        "component": Refrigerator,
         "categories": [
             "food-beverage",
             "home"
@@ -17603,6 +18743,7 @@ export const iconsData: Array<{
     },
     {
         "name": "regex",
+        "component": Regex,
         "categories": [
             "text",
             "development"
@@ -17615,6 +18756,7 @@ export const iconsData: Array<{
     },
     {
         "name": "remove-formatting",
+        "component": RemoveFormatting,
         "categories": [
             "text"
         ],
@@ -17632,6 +18774,7 @@ export const iconsData: Array<{
     },
     {
         "name": "repeat-1",
+        "component": Repeat1,
         "categories": [
             "multimedia"
         ],
@@ -17641,6 +18784,7 @@ export const iconsData: Array<{
     },
     {
         "name": "repeat-2",
+        "component": Repeat2,
         "categories": [
             "arrows",
             "social",
@@ -17657,6 +18801,7 @@ export const iconsData: Array<{
     },
     {
         "name": "repeat",
+        "component": Repeat,
         "categories": [
             "arrows",
             "multimedia"
@@ -17668,6 +18813,7 @@ export const iconsData: Array<{
     },
     {
         "name": "replace-all",
+        "component": ReplaceAll,
         "categories": [
             "text"
         ],
@@ -17680,6 +18826,7 @@ export const iconsData: Array<{
     },
     {
         "name": "replace",
+        "component": Replace,
         "categories": [
             "text"
         ],
@@ -17692,6 +18839,7 @@ export const iconsData: Array<{
     },
     {
         "name": "reply-all",
+        "component": ReplyAll,
         "categories": [
             "mail"
         ],
@@ -17701,6 +18849,7 @@ export const iconsData: Array<{
     },
     {
         "name": "reply",
+        "component": Reply,
         "categories": [
             "mail"
         ],
@@ -17710,6 +18859,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rewind",
+        "component": Rewind,
         "categories": [
             "arrows",
             "multimedia"
@@ -17720,6 +18870,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ribbon",
+        "component": Ribbon,
         "categories": [
             "social",
             "medical",
@@ -17736,6 +18887,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rocket",
+        "component": Rocket,
         "categories": [
             "gaming",
             "development"
@@ -17750,6 +18902,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rocking-chair",
+        "component": RockingChair,
         "categories": [
             "home"
         ],
@@ -17761,6 +18914,7 @@ export const iconsData: Array<{
     },
     {
         "name": "roller-coaster",
+        "component": RollerCoaster,
         "categories": [
             "navigation"
         ],
@@ -17774,6 +18928,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rotate-3d",
+        "component": Rotate3d,
         "categories": [
             "design"
         ],
@@ -17787,6 +18942,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rotate-ccw-square",
+        "component": RotateCcwSquare,
         "categories": [
             "layout",
             "design",
@@ -17807,6 +18963,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rotate-ccw",
+        "component": RotateCcw,
         "categories": [
             "arrows",
             "design",
@@ -17831,6 +18988,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rotate-cw-square",
+        "component": RotateCwSquare,
         "categories": [
             "layout",
             "design",
@@ -17851,6 +19009,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rotate-cw",
+        "component": RotateCw,
         "categories": [
             "arrows",
             "design",
@@ -17868,6 +19027,7 @@ export const iconsData: Array<{
     },
     {
         "name": "route-off",
+        "component": RouteOff,
         "categories": [
             "navigation"
         ],
@@ -17887,6 +19047,7 @@ export const iconsData: Array<{
     },
     {
         "name": "route",
+        "component": Route,
         "categories": [
             "navigation"
         ],
@@ -17901,6 +19062,7 @@ export const iconsData: Array<{
     },
     {
         "name": "router",
+        "component": Router,
         "categories": [
             "development",
             "devices",
@@ -17915,6 +19077,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rows-2",
+        "component": Rows2,
         "categories": [
             "layout",
             "design",
@@ -17941,6 +19104,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rows-3",
+        "component": Rows3,
         "categories": [
             "layout",
             "design",
@@ -17966,6 +19130,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rows-4",
+        "component": Rows4,
         "categories": [
             "layout",
             "design",
@@ -17992,6 +19157,7 @@ export const iconsData: Array<{
     },
     {
         "name": "rss",
+        "component": Rss,
         "categories": [
             "development",
             "social"
@@ -18022,6 +19188,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ruler",
+        "component": Ruler,
         "categories": [
             "tools",
             "design",
@@ -18051,6 +19218,7 @@ export const iconsData: Array<{
     },
     {
         "name": "russian-ruble",
+        "component": RussianRuble,
         "categories": [
             "finance"
         ],
@@ -18062,6 +19230,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sailboat",
+        "component": Sailboat,
         "categories": [
             "transportation",
             "travel"
@@ -18076,6 +19245,7 @@ export const iconsData: Array<{
     },
     {
         "name": "salad",
+        "component": Salad,
         "categories": [
             "food-beverage",
             "emoji"
@@ -18094,6 +19264,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sandwich",
+        "component": Sandwich,
         "categories": [
             "food-beverage"
         ],
@@ -18108,6 +19279,7 @@ export const iconsData: Array<{
     },
     {
         "name": "satellite-dish",
+        "component": SatelliteDish,
         "categories": [
             "connectivity",
             "devices",
@@ -18122,6 +19294,7 @@ export const iconsData: Array<{
     },
     {
         "name": "satellite",
+        "component": Satellite,
         "categories": [
             "connectivity",
             "science"
@@ -18134,6 +19307,7 @@ export const iconsData: Array<{
     },
     {
         "name": "save-all",
+        "component": SaveAll,
         "categories": [
             "text",
             "files"
@@ -18145,6 +19319,7 @@ export const iconsData: Array<{
     },
     {
         "name": "save-off",
+        "component": SaveOff,
         "categories": [
             "text",
             "files"
@@ -18156,6 +19331,7 @@ export const iconsData: Array<{
     },
     {
         "name": "save",
+        "component": Save,
         "categories": [
             "text",
             "files"
@@ -18166,6 +19342,7 @@ export const iconsData: Array<{
     },
     {
         "name": "scale-3d",
+        "component": Scale3d,
         "categories": [
             "design"
         ],
@@ -18178,6 +19355,7 @@ export const iconsData: Array<{
     },
     {
         "name": "scale",
+        "component": Scale,
         "categories": [
             "navigation"
         ],
@@ -18192,6 +19370,7 @@ export const iconsData: Array<{
     },
     {
         "name": "scaling",
+        "component": Scaling,
         "categories": [
             "design"
         ],
@@ -18203,6 +19382,7 @@ export const iconsData: Array<{
     },
     {
         "name": "scan-barcode",
+        "component": ScanBarcode,
         "categories": [
             "shopping",
             "devices"
@@ -18222,6 +19402,7 @@ export const iconsData: Array<{
     },
     {
         "name": "scan-eye",
+        "component": ScanEye,
         "categories": [
             "photography",
             "multimedia",
@@ -18252,6 +19433,7 @@ export const iconsData: Array<{
     },
     {
         "name": "scan-face",
+        "component": ScanFace,
         "categories": [
             "account",
             "security",
@@ -18271,6 +19453,7 @@ export const iconsData: Array<{
     },
     {
         "name": "scan-heart",
+        "component": ScanHeart,
         "categories": [
             "medical"
         ],
@@ -18286,6 +19469,7 @@ export const iconsData: Array<{
     },
     {
         "name": "scan-line",
+        "component": ScanLine,
         "categories": [
             "devices",
             "shopping"
@@ -18307,6 +19491,7 @@ export const iconsData: Array<{
     },
     {
         "name": "scan-qr-code",
+        "component": ScanQrCode,
         "categories": [
             "account",
             "shopping",
@@ -18325,6 +19510,7 @@ export const iconsData: Array<{
     },
     {
         "name": "scan-search",
+        "component": ScanSearch,
         "categories": [
             "photography",
             "multimedia",
@@ -18343,6 +19529,7 @@ export const iconsData: Array<{
     },
     {
         "name": "scan-text",
+        "component": ScanText,
         "categories": [
             "text",
             "devices"
@@ -18357,6 +19544,7 @@ export const iconsData: Array<{
     },
     {
         "name": "scan",
+        "component": Scan,
         "categories": [
             "devices",
             "shopping",
@@ -18387,6 +19575,7 @@ export const iconsData: Array<{
     },
     {
         "name": "school",
+        "component": School,
         "categories": [
             "buildings",
             "navigation"
@@ -18419,6 +19608,7 @@ export const iconsData: Array<{
     },
     {
         "name": "scissors-line-dashed",
+        "component": ScissorsLineDashed,
         "categories": [
             "design",
             "tools"
@@ -18436,6 +19626,7 @@ export const iconsData: Array<{
     },
     {
         "name": "scissors",
+        "component": Scissors,
         "categories": [
             "text",
             "design",
@@ -18451,6 +19642,7 @@ export const iconsData: Array<{
     },
     {
         "name": "screen-share-off",
+        "component": ScreenShareOff,
         "categories": [
             "connectivity",
             "devices",
@@ -18464,6 +19656,7 @@ export const iconsData: Array<{
     },
     {
         "name": "screen-share",
+        "component": ScreenShare,
         "categories": [
             "connectivity",
             "devices",
@@ -18477,6 +19670,7 @@ export const iconsData: Array<{
     },
     {
         "name": "scroll-text",
+        "component": ScrollText,
         "categories": [
             "gaming",
             "development",
@@ -18499,6 +19693,7 @@ export const iconsData: Array<{
     },
     {
         "name": "scroll",
+        "component": Scroll,
         "categories": [
             "gaming",
             "development",
@@ -18521,6 +19716,7 @@ export const iconsData: Array<{
     },
     {
         "name": "search-check",
+        "component": SearchCheck,
         "categories": [
             "text",
             "social"
@@ -18538,6 +19734,7 @@ export const iconsData: Array<{
     },
     {
         "name": "search-code",
+        "component": SearchCode,
         "categories": [
             "text",
             "social",
@@ -18555,6 +19752,7 @@ export const iconsData: Array<{
     },
     {
         "name": "search-slash",
+        "component": SearchSlash,
         "categories": [
             "text",
             "social"
@@ -18573,6 +19771,7 @@ export const iconsData: Array<{
     },
     {
         "name": "search-x",
+        "component": SearchX,
         "categories": [
             "text",
             "social"
@@ -18590,6 +19789,7 @@ export const iconsData: Array<{
     },
     {
         "name": "search",
+        "component": Search,
         "categories": [
             "text",
             "social"
@@ -18603,6 +19803,7 @@ export const iconsData: Array<{
     },
     {
         "name": "section",
+        "component": Section,
         "categories": [
             "text"
         ],
@@ -18619,6 +19820,7 @@ export const iconsData: Array<{
     },
     {
         "name": "send-horizontal",
+        "component": SendHorizontal,
         "categories": [
             "mail",
             "communication",
@@ -18635,6 +19837,7 @@ export const iconsData: Array<{
     },
     {
         "name": "send-to-back",
+        "component": SendToBack,
         "categories": [
             "design",
             "layout"
@@ -18653,6 +19856,7 @@ export const iconsData: Array<{
     },
     {
         "name": "send",
+        "component": Send,
         "categories": [
             "mail",
             "communication",
@@ -18669,6 +19873,7 @@ export const iconsData: Array<{
     },
     {
         "name": "separator-horizontal",
+        "component": SeparatorHorizontal,
         "categories": [
             "text",
             "arrows",
@@ -18681,6 +19886,7 @@ export const iconsData: Array<{
     },
     {
         "name": "separator-vertical",
+        "component": SeparatorVertical,
         "categories": [
             "text",
             "arrows",
@@ -18693,6 +19899,7 @@ export const iconsData: Array<{
     },
     {
         "name": "server-cog",
+        "component": ServerCog,
         "categories": [
             "development",
             "devices"
@@ -18707,6 +19914,7 @@ export const iconsData: Array<{
     },
     {
         "name": "server-crash",
+        "component": ServerCrash,
         "categories": [
             "development",
             "devices"
@@ -18720,6 +19928,7 @@ export const iconsData: Array<{
     },
     {
         "name": "server-off",
+        "component": ServerOff,
         "categories": [
             "development",
             "devices"
@@ -18731,6 +19940,7 @@ export const iconsData: Array<{
     },
     {
         "name": "server",
+        "component": Server,
         "categories": [
             "development",
             "devices"
@@ -18742,6 +19952,7 @@ export const iconsData: Array<{
     },
     {
         "name": "settings-2",
+        "component": Settings2,
         "categories": [
             "account"
         ],
@@ -18754,6 +19965,7 @@ export const iconsData: Array<{
     },
     {
         "name": "settings",
+        "component": Settings,
         "categories": [
             "account"
         ],
@@ -18766,6 +19978,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shapes",
+        "component": Shapes,
         "categories": [
             "shapes",
             "gaming"
@@ -18785,6 +19998,7 @@ export const iconsData: Array<{
     },
     {
         "name": "share-2",
+        "component": Share2,
         "categories": [
             "account",
             "social"
@@ -18796,6 +20010,7 @@ export const iconsData: Array<{
     },
     {
         "name": "share",
+        "component": Share,
         "categories": [
             "account",
             "social"
@@ -18807,6 +20022,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sheet",
+        "component": Sheet,
         "categories": [
             "text",
             "files"
@@ -18819,6 +20035,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shell",
+        "component": Shell,
         "categories": [
             "animals",
             "development",
@@ -18859,6 +20076,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shield-alert",
+        "component": ShieldAlert,
         "categories": [
             "account",
             "security",
@@ -18935,6 +20153,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shield-ban",
+        "component": ShieldBan,
         "categories": [
             "account",
             "security",
@@ -19004,6 +20223,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shield-check",
+        "component": ShieldCheck,
         "categories": [
             "account",
             "security",
@@ -19068,6 +20288,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shield-ellipsis",
+        "component": ShieldEllipsis,
         "categories": [
             "account",
             "security",
@@ -19106,6 +20327,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shield-half",
+        "component": ShieldHalf,
         "categories": [
             "account",
             "security",
@@ -19171,6 +20393,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shield-minus",
+        "component": ShieldMinus,
         "categories": [
             "account",
             "security",
@@ -19210,6 +20433,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shield-off",
+        "component": ShieldOff,
         "categories": [
             "account",
             "security",
@@ -19266,6 +20490,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shield-plus",
+        "component": ShieldPlus,
         "categories": [
             "account",
             "security",
@@ -19319,6 +20544,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shield-question",
+        "component": ShieldQuestion,
         "categories": [
             "account",
             "security",
@@ -19374,6 +20600,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shield-x",
+        "component": ShieldX,
         "categories": [
             "account",
             "security",
@@ -19445,6 +20672,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shield",
+        "component": Shield,
         "categories": [
             "account",
             "security",
@@ -19499,6 +20727,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ship-wheel",
+        "component": ShipWheel,
         "categories": [
             "transportation",
             "navigation",
@@ -19523,6 +20752,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ship",
+        "component": Ship,
         "categories": [
             "transportation",
             "navigation",
@@ -19545,6 +20775,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shirt",
+        "component": Shirt,
         "categories": [
             "shopping"
         ],
@@ -19558,6 +20789,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shopping-bag",
+        "component": ShoppingBag,
         "categories": [
             "shopping"
         ],
@@ -19570,6 +20802,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shopping-basket",
+        "component": ShoppingBasket,
         "categories": [
             "shopping"
         ],
@@ -19585,6 +20818,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shopping-cart",
+        "component": ShoppingCart,
         "categories": [
             "shopping"
         ],
@@ -19602,6 +20836,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shovel",
+        "component": Shovel,
         "categories": [
             "nature",
             "tools",
@@ -19615,6 +20850,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shower-head",
+        "component": ShowerHead,
         "categories": [
             "home",
             "travel"
@@ -19629,6 +20865,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shrink",
+        "component": Shrink,
         "categories": [
             "layout",
             "arrows"
@@ -19640,6 +20877,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shrub",
+        "component": Shrub,
         "categories": [
             "nature"
         ],
@@ -19652,6 +20890,7 @@ export const iconsData: Array<{
     },
     {
         "name": "shuffle",
+        "component": Shuffle,
         "categories": [
             "multimedia",
             "arrows"
@@ -19664,6 +20903,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sigma",
+        "component": Sigma,
         "categories": [
             "text",
             "math",
@@ -19680,6 +20920,7 @@ export const iconsData: Array<{
     },
     {
         "name": "signal-high",
+        "component": SignalHigh,
         "categories": [
             "connectivity"
         ],
@@ -19696,6 +20937,7 @@ export const iconsData: Array<{
     },
     {
         "name": "signal-low",
+        "component": SignalLow,
         "categories": [
             "connectivity"
         ],
@@ -19712,6 +20954,7 @@ export const iconsData: Array<{
     },
     {
         "name": "signal-medium",
+        "component": SignalMedium,
         "categories": [
             "connectivity"
         ],
@@ -19728,6 +20971,7 @@ export const iconsData: Array<{
     },
     {
         "name": "signal-zero",
+        "component": SignalZero,
         "categories": [
             "connectivity"
         ],
@@ -19745,6 +20989,7 @@ export const iconsData: Array<{
     },
     {
         "name": "signal",
+        "component": Signal,
         "categories": [
             "connectivity"
         ],
@@ -19761,6 +21006,7 @@ export const iconsData: Array<{
     },
     {
         "name": "signature",
+        "component": Signature,
         "categories": [
             "text"
         ],
@@ -19789,6 +21035,7 @@ export const iconsData: Array<{
     },
     {
         "name": "signpost-big",
+        "component": SignpostBig,
         "categories": [
             "arrows",
             "navigation",
@@ -19805,6 +21052,7 @@ export const iconsData: Array<{
     },
     {
         "name": "signpost",
+        "component": Signpost,
         "categories": [
             "arrows",
             "navigation",
@@ -19821,6 +21069,7 @@ export const iconsData: Array<{
     },
     {
         "name": "siren",
+        "component": Siren,
         "categories": [
             "medical"
         ],
@@ -19836,6 +21085,7 @@ export const iconsData: Array<{
     },
     {
         "name": "skip-back",
+        "component": SkipBack,
         "categories": [
             "multimedia",
             "arrows"
@@ -19848,6 +21098,7 @@ export const iconsData: Array<{
     },
     {
         "name": "skip-forward",
+        "component": SkipForward,
         "categories": [
             "multimedia",
             "arrows"
@@ -19861,6 +21112,7 @@ export const iconsData: Array<{
     },
     {
         "name": "skull",
+        "component": Skull,
         "categories": [
             "gaming"
         ],
@@ -19872,6 +21124,7 @@ export const iconsData: Array<{
     },
     {
         "name": "slack",
+        "component": Slack,
         "categories": [
             "account",
             "social",
@@ -19884,6 +21137,7 @@ export const iconsData: Array<{
     },
     {
         "name": "slash",
+        "component": Slash,
         "categories": [
             "development",
             "math"
@@ -19897,6 +21151,7 @@ export const iconsData: Array<{
     },
     {
         "name": "slice",
+        "component": Slice,
         "categories": [
             "design"
         ],
@@ -19908,6 +21163,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sliders-horizontal",
+        "component": SlidersHorizontal,
         "categories": [
             "account"
         ],
@@ -19919,6 +21175,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sliders-vertical",
+        "component": SlidersVertical,
         "categories": [
             "account"
         ],
@@ -19929,6 +21186,7 @@ export const iconsData: Array<{
     },
     {
         "name": "smartphone-charging",
+        "component": SmartphoneCharging,
         "categories": [
             "connectivity",
             "devices"
@@ -19943,6 +21201,7 @@ export const iconsData: Array<{
     },
     {
         "name": "smartphone-nfc",
+        "component": SmartphoneNfc,
         "categories": [
             "communication",
             "finance",
@@ -19957,6 +21216,7 @@ export const iconsData: Array<{
     },
     {
         "name": "smartphone",
+        "component": Smartphone,
         "categories": [
             "connectivity",
             "devices"
@@ -19970,6 +21230,7 @@ export const iconsData: Array<{
     },
     {
         "name": "smile-plus",
+        "component": SmilePlus,
         "categories": [
             "emoji",
             "social",
@@ -19989,6 +21250,7 @@ export const iconsData: Array<{
     },
     {
         "name": "smile",
+        "component": Smile,
         "categories": [
             "emoji",
             "account"
@@ -20003,6 +21265,7 @@ export const iconsData: Array<{
     },
     {
         "name": "snail",
+        "component": Snail,
         "categories": [
             "animals",
             "food-beverage"
@@ -20018,6 +21281,7 @@ export const iconsData: Array<{
     },
     {
         "name": "snowflake",
+        "component": Snowflake,
         "categories": [
             "weather",
             "seasons"
@@ -20032,6 +21296,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sofa",
+        "component": Sofa,
         "categories": [
             "home"
         ],
@@ -20046,6 +21311,7 @@ export const iconsData: Array<{
     },
     {
         "name": "soup",
+        "component": Soup,
         "categories": [
             "food-beverage"
         ],
@@ -20061,6 +21327,7 @@ export const iconsData: Array<{
     },
     {
         "name": "space",
+        "component": Space,
         "categories": [
             "text"
         ],
@@ -20075,6 +21342,7 @@ export const iconsData: Array<{
     },
     {
         "name": "spade",
+        "component": Spade,
         "categories": [
             "shapes",
             "gaming"
@@ -20088,6 +21356,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sparkle",
+        "component": Sparkle,
         "categories": [
             "shapes"
         ],
@@ -20105,6 +21374,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sparkles",
+        "component": Sparkles,
         "categories": [
             "cursors",
             "multimedia",
@@ -20121,6 +21391,7 @@ export const iconsData: Array<{
     },
     {
         "name": "speaker",
+        "component": Speaker,
         "categories": [
             "multimedia",
             "devices"
@@ -20139,6 +21410,7 @@ export const iconsData: Array<{
     },
     {
         "name": "speech",
+        "component": Speech,
         "categories": [
             "accessibility",
             "communication"
@@ -20155,6 +21427,7 @@ export const iconsData: Array<{
     },
     {
         "name": "spell-check-2",
+        "component": SpellCheck2,
         "categories": [
             "text",
             "development"
@@ -20173,6 +21446,7 @@ export const iconsData: Array<{
     },
     {
         "name": "spell-check",
+        "component": SpellCheck,
         "categories": [
             "text",
             "development"
@@ -20191,6 +21465,7 @@ export const iconsData: Array<{
     },
     {
         "name": "spline",
+        "component": Spline,
         "categories": [
             "design"
         ],
@@ -20205,6 +21480,7 @@ export const iconsData: Array<{
     },
     {
         "name": "split",
+        "component": Split,
         "categories": [
             "development",
             "arrows"
@@ -20220,6 +21496,7 @@ export const iconsData: Array<{
     },
     {
         "name": "spray-can",
+        "component": SprayCan,
         "categories": [
             "design",
             "tools"
@@ -20237,6 +21514,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sprout",
+        "component": Sprout,
         "categories": [
             "nature",
             "gaming",
@@ -20250,6 +21528,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-activity",
+        "component": SquareActivity,
         "categories": [
             "medical",
             "social",
@@ -20288,6 +21567,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-arrow-down-left",
+        "component": SquareArrowDownLeft,
         "categories": [
             "arrows",
             "navigation",
@@ -20305,6 +21585,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-arrow-down-right",
+        "component": SquareArrowDownRight,
         "categories": [
             "arrows",
             "navigation",
@@ -20322,6 +21603,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-arrow-down",
+        "component": SquareArrowDown,
         "categories": [
             "arrows",
             "navigation",
@@ -20339,6 +21621,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-arrow-left",
+        "component": SquareArrowLeft,
         "categories": [
             "arrows",
             "navigation"
@@ -20356,6 +21639,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-arrow-out-down-left",
+        "component": SquareArrowOutDownLeft,
         "categories": [
             "arrows",
             "navigation"
@@ -20369,6 +21653,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-arrow-out-down-right",
+        "component": SquareArrowOutDownRight,
         "categories": [
             "arrows",
             "navigation"
@@ -20382,6 +21667,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-arrow-out-up-left",
+        "component": SquareArrowOutUpLeft,
         "categories": [
             "arrows",
             "navigation"
@@ -20395,6 +21681,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-arrow-out-up-right",
+        "component": SquareArrowOutUpRight,
         "categories": [
             "arrows",
             "navigation",
@@ -20413,6 +21700,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-arrow-right",
+        "component": SquareArrowRight,
         "categories": [
             "arrows",
             "navigation"
@@ -20430,6 +21718,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-arrow-up-left",
+        "component": SquareArrowUpLeft,
         "categories": [
             "arrows",
             "navigation"
@@ -20445,6 +21734,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-arrow-up-right",
+        "component": SquareArrowUpRight,
         "categories": [
             "arrows",
             "navigation",
@@ -20462,6 +21752,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-arrow-up",
+        "component": SquareArrowUp,
         "categories": [
             "arrows",
             "navigation"
@@ -20477,6 +21768,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-asterisk",
+        "component": SquareAsterisk,
         "categories": [
             "text",
             "security",
@@ -20497,6 +21789,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-bottom-dashed-scissors",
+        "component": SquareBottomDashedScissors,
         "categories": [
             "text",
             "design",
@@ -20514,6 +21807,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-chart-gantt",
+        "component": SquareChartGantt,
         "categories": [
             "charts",
             "time",
@@ -20544,6 +21838,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-check-big",
+        "component": SquareCheckBig,
         "categories": [
             "notifications"
         ],
@@ -20557,6 +21852,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-check",
+        "component": SquareCheck,
         "categories": [
             "notifications"
         ],
@@ -20570,6 +21866,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-chevron-down",
+        "component": SquareChevronDown,
         "categories": [
             "arrows",
             "navigation"
@@ -20582,6 +21879,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-chevron-left",
+        "component": SquareChevronLeft,
         "categories": [
             "arrows",
             "navigation"
@@ -20600,6 +21898,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-chevron-right",
+        "component": SquareChevronRight,
         "categories": [
             "arrows",
             "navigation",
@@ -20624,6 +21923,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-chevron-up",
+        "component": SquareChevronUp,
         "categories": [
             "arrows",
             "navigation",
@@ -20647,6 +21947,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-code",
+        "component": SquareCode,
         "categories": [
             "text",
             "development"
@@ -20662,6 +21963,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-dashed-bottom-code",
+        "component": SquareDashedBottomCode,
         "categories": [
             "development",
             "files"
@@ -20678,6 +21980,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-dashed-bottom",
+        "component": SquareDashedBottom,
         "categories": [
             "development",
             "files"
@@ -20694,6 +21997,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-dashed-kanban",
+        "component": SquareDashedKanban,
         "categories": [
             "charts",
             "development",
@@ -20721,6 +22025,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-dashed-mouse-pointer",
+        "component": SquareDashedMousePointer,
         "categories": [
             "arrows",
             "cursors",
@@ -20743,6 +22048,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-dashed",
+        "component": SquareDashed,
         "categories": [
             "text",
             "design"
@@ -20759,6 +22065,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-divide",
+        "component": SquareDivide,
         "categories": [
             "math"
         ],
@@ -20771,6 +22078,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-dot",
+        "component": SquareDot,
         "categories": [
             "development"
         ],
@@ -20783,6 +22091,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-equal",
+        "component": SquareEqual,
         "categories": [
             "math"
         ],
@@ -20793,6 +22102,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-function",
+        "component": SquareFunction,
         "categories": [
             "development",
             "math"
@@ -20806,6 +22116,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-kanban",
+        "component": SquareKanban,
         "categories": [
             "charts",
             "development",
@@ -20832,6 +22143,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-library",
+        "component": SquareLibrary,
         "categories": [
             "text",
             "photography",
@@ -20867,6 +22179,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-m",
+        "component": SquareM,
         "categories": [
             "transportation",
             "navigation"
@@ -20881,6 +22194,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-menu",
+        "component": SquareMenu,
         "categories": [
             "layout"
         ],
@@ -20895,6 +22209,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-minus",
+        "component": SquareMinus,
         "categories": [
             "math",
             "development",
@@ -20929,6 +22244,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-mouse-pointer",
+        "component": SquareMousePointer,
         "categories": [
             "arrows",
             "cursors",
@@ -20951,6 +22267,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-parking-off",
+        "component": SquareParkingOff,
         "categories": [
             "transportation",
             "navigation"
@@ -20963,6 +22280,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-parking",
+        "component": SquareParking,
         "categories": [
             "transportation",
             "navigation"
@@ -20974,6 +22292,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-pen",
+        "component": SquarePen,
         "categories": [
             "text"
         ],
@@ -20996,6 +22315,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-percent",
+        "component": SquarePercent,
         "categories": [
             "social",
             "finance",
@@ -21015,6 +22335,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-pi",
+        "component": SquarePi,
         "categories": [
             "development",
             "math"
@@ -21032,6 +22353,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-pilcrow",
+        "component": SquarePilcrow,
         "categories": [
             "text"
         ],
@@ -21049,6 +22371,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-play",
+        "component": SquarePlay,
         "categories": [
             "arrows",
             "multimedia"
@@ -21063,6 +22386,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-plus",
+        "component": SquarePlus,
         "categories": [
             "math",
             "tools",
@@ -21093,6 +22417,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-power",
+        "component": SquarePower,
         "categories": [
             "connectivity"
         ],
@@ -21113,6 +22438,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-radical",
+        "component": SquareRadical,
         "categories": [
             "development",
             "math"
@@ -21129,6 +22455,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-scissors",
+        "component": SquareScissors,
         "categories": [
             "text",
             "design",
@@ -21148,6 +22475,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-sigma",
+        "component": SquareSigma,
         "categories": [
             "text",
             "math"
@@ -21163,6 +22491,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-slash",
+        "component": SquareSlash,
         "categories": [
             "development",
             "math"
@@ -21180,6 +22509,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-split-horizontal",
+        "component": SquareSplitHorizontal,
         "categories": [
             "layout"
         ],
@@ -21190,6 +22520,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-split-vertical",
+        "component": SquareSplitVertical,
         "categories": [
             "layout"
         ],
@@ -21200,6 +22531,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-square",
+        "component": SquareSquare,
         "categories": [
             "layout"
         ],
@@ -21211,6 +22543,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-stack",
+        "component": SquareStack,
         "categories": [
             "text",
             "files",
@@ -21230,6 +22563,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-terminal",
+        "component": SquareTerminal,
         "categories": [
             "development"
         ],
@@ -21242,6 +22576,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-user-round",
+        "component": SquareUserRound,
         "categories": [
             "account"
         ],
@@ -21253,6 +22588,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-user",
+        "component": SquareUser,
         "categories": [
             "account"
         ],
@@ -21264,6 +22600,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square-x",
+        "component": SquareX,
         "categories": [
             "math",
             "notifications"
@@ -21282,6 +22619,7 @@ export const iconsData: Array<{
     },
     {
         "name": "square",
+        "component": Square,
         "categories": [
             "shapes"
         ],
@@ -21294,6 +22632,7 @@ export const iconsData: Array<{
     },
     {
         "name": "squircle",
+        "component": Squircle,
         "categories": [
             "shapes"
         ],
@@ -21303,6 +22642,7 @@ export const iconsData: Array<{
     },
     {
         "name": "squirrel",
+        "component": Squirrel,
         "categories": [
             "animals"
         ],
@@ -21320,6 +22660,7 @@ export const iconsData: Array<{
     },
     {
         "name": "stamp",
+        "component": Stamp,
         "categories": [
             "design",
             "cursors",
@@ -21335,6 +22676,7 @@ export const iconsData: Array<{
     },
     {
         "name": "star-half",
+        "component": StarHalf,
         "categories": [
             "social",
             "multimedia"
@@ -21349,6 +22691,7 @@ export const iconsData: Array<{
     },
     {
         "name": "star-off",
+        "component": StarOff,
         "categories": [
             "multimedia",
             "social"
@@ -21362,6 +22705,7 @@ export const iconsData: Array<{
     },
     {
         "name": "star",
+        "component": Star,
         "categories": [
             "account",
             "social",
@@ -21381,6 +22725,7 @@ export const iconsData: Array<{
     },
     {
         "name": "step-back",
+        "component": StepBack,
         "categories": [
             "multimedia",
             "arrows"
@@ -21395,6 +22740,7 @@ export const iconsData: Array<{
     },
     {
         "name": "step-forward",
+        "component": StepForward,
         "categories": [
             "multimedia",
             "arrows"
@@ -21409,6 +22755,7 @@ export const iconsData: Array<{
     },
     {
         "name": "stethoscope",
+        "component": Stethoscope,
         "categories": [
             "science",
             "medical"
@@ -21423,6 +22770,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sticker",
+        "component": Sticker,
         "categories": [
             "social"
         ],
@@ -21436,6 +22784,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sticky-note",
+        "component": StickyNote,
         "categories": [
             "text",
             "social"
@@ -21461,6 +22810,7 @@ export const iconsData: Array<{
     },
     {
         "name": "store",
+        "component": Store,
         "categories": [
             "buildings",
             "navigation",
@@ -21476,6 +22826,7 @@ export const iconsData: Array<{
     },
     {
         "name": "stretch-horizontal",
+        "component": StretchHorizontal,
         "categories": [
             "layout"
         ],
@@ -21488,6 +22839,7 @@ export const iconsData: Array<{
     },
     {
         "name": "stretch-vertical",
+        "component": StretchVertical,
         "categories": [
             "layout"
         ],
@@ -21500,6 +22852,7 @@ export const iconsData: Array<{
     },
     {
         "name": "strikethrough",
+        "component": Strikethrough,
         "categories": [
             "text"
         ],
@@ -21512,6 +22865,7 @@ export const iconsData: Array<{
     },
     {
         "name": "subscript",
+        "component": Subscript,
         "categories": [
             "text"
         ],
@@ -21521,6 +22875,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sun-dim",
+        "component": SunDim,
         "categories": [
             "accessibility",
             "weather"
@@ -21534,6 +22889,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sun-medium",
+        "component": SunMedium,
         "categories": [
             "accessibility",
             "weather"
@@ -21545,6 +22901,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sun-moon",
+        "component": SunMoon,
         "categories": [
             "accessibility"
         ],
@@ -21563,6 +22920,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sun-snow",
+        "component": SunSnow,
         "categories": [
             "weather"
         ],
@@ -21577,6 +22935,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sun",
+        "component": Sun,
         "categories": [
             "accessibility",
             "weather",
@@ -21592,6 +22951,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sunrise",
+        "component": Sunrise,
         "categories": [
             "arrows",
             "weather",
@@ -21606,6 +22966,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sunset",
+        "component": Sunset,
         "categories": [
             "arrows",
             "weather"
@@ -21619,6 +22980,7 @@ export const iconsData: Array<{
     },
     {
         "name": "superscript",
+        "component": Superscript,
         "categories": [
             "text"
         ],
@@ -21629,6 +22991,7 @@ export const iconsData: Array<{
     },
     {
         "name": "swatch-book",
+        "component": SwatchBook,
         "categories": [
             "design",
             "home",
@@ -21654,6 +23017,7 @@ export const iconsData: Array<{
     },
     {
         "name": "swiss-franc",
+        "component": SwissFranc,
         "categories": [
             "finance"
         ],
@@ -21665,6 +23029,7 @@ export const iconsData: Array<{
     },
     {
         "name": "switch-camera",
+        "component": SwitchCamera,
         "categories": [
             "communication",
             "devices"
@@ -21678,6 +23043,7 @@ export const iconsData: Array<{
     },
     {
         "name": "sword",
+        "component": Sword,
         "categories": [
             "gaming",
             "tools"
@@ -21692,6 +23058,7 @@ export const iconsData: Array<{
     },
     {
         "name": "swords",
+        "component": Swords,
         "categories": [
             "gaming",
             "tools"
@@ -21706,6 +23073,7 @@ export const iconsData: Array<{
     },
     {
         "name": "syringe",
+        "component": Syringe,
         "categories": [
             "science",
             "medical"
@@ -21722,6 +23090,7 @@ export const iconsData: Array<{
     },
     {
         "name": "table-2",
+        "component": Table2,
         "categories": [
             "text",
             "files"
@@ -21733,6 +23102,7 @@ export const iconsData: Array<{
     },
     {
         "name": "table-cells-merge",
+        "component": TableCellsMerge,
         "categories": [
             "text",
             "files"
@@ -21745,6 +23115,7 @@ export const iconsData: Array<{
     },
     {
         "name": "table-cells-split",
+        "component": TableCellsSplit,
         "categories": [
             "text",
             "files"
@@ -21757,6 +23128,7 @@ export const iconsData: Array<{
     },
     {
         "name": "table-columns-split",
+        "component": TableColumnsSplit,
         "categories": [
             "text",
             "files"
@@ -21773,6 +23145,7 @@ export const iconsData: Array<{
     },
     {
         "name": "table-of-contents",
+        "component": TableOfContents,
         "categories": [
             "text"
         ],
@@ -21794,6 +23167,7 @@ export const iconsData: Array<{
     },
     {
         "name": "table-properties",
+        "component": TableProperties,
         "categories": [
             "text",
             "development",
@@ -21811,6 +23185,7 @@ export const iconsData: Array<{
     },
     {
         "name": "table-rows-split",
+        "component": TableRowsSplit,
         "categories": [
             "text",
             "files"
@@ -21827,6 +23202,7 @@ export const iconsData: Array<{
     },
     {
         "name": "table",
+        "component": Table,
         "categories": [
             "text",
             "files"
@@ -21838,6 +23214,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tablet-smartphone",
+        "component": TabletSmartphone,
         "categories": [
             "devices",
             "design",
@@ -21854,6 +23231,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tablet",
+        "component": Tablet,
         "categories": [
             "devices"
         ],
@@ -21863,6 +23241,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tablets",
+        "component": Tablets,
         "categories": [
             "medical"
         ],
@@ -21877,6 +23256,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tag",
+        "component": Tag,
         "categories": [
             "account"
         ],
@@ -21889,6 +23269,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tags",
+        "component": Tags,
         "categories": [
             "account"
         ],
@@ -21903,6 +23284,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tally-1",
+        "component": Tally1,
         "categories": [
             "math",
             "gaming"
@@ -21923,6 +23305,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tally-2",
+        "component": Tally2,
         "categories": [
             "math",
             "gaming"
@@ -21944,6 +23327,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tally-3",
+        "component": Tally3,
         "categories": [
             "math",
             "gaming"
@@ -21965,6 +23349,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tally-4",
+        "component": Tally4,
         "categories": [
             "math",
             "gaming"
@@ -21985,6 +23370,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tally-5",
+        "component": Tally5,
         "categories": [
             "math",
             "gaming"
@@ -22007,6 +23393,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tangent",
+        "component": Tangent,
         "categories": [
             "shapes",
             "math",
@@ -22024,6 +23411,7 @@ export const iconsData: Array<{
     },
     {
         "name": "target",
+        "component": Target,
         "categories": [
             "brands",
             "gaming"
@@ -22040,6 +23428,7 @@ export const iconsData: Array<{
     },
     {
         "name": "telescope",
+        "component": Telescope,
         "categories": [
             "science",
             "development",
@@ -22061,6 +23450,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tent-tree",
+        "component": TentTree,
         "categories": [
             "travel",
             "nature"
@@ -22077,6 +23467,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tent",
+        "component": Tent,
         "categories": [
             "travel",
             "nature",
@@ -22100,6 +23491,7 @@ export const iconsData: Array<{
     },
     {
         "name": "terminal",
+        "component": Terminal,
         "categories": [
             "development"
         ],
@@ -22112,6 +23504,7 @@ export const iconsData: Array<{
     },
     {
         "name": "test-tube-diagonal",
+        "component": TestTubeDiagonal,
         "categories": [
             "science"
         ],
@@ -22130,6 +23523,7 @@ export const iconsData: Array<{
     },
     {
         "name": "test-tube",
+        "component": TestTube,
         "categories": [
             "science"
         ],
@@ -22148,6 +23542,7 @@ export const iconsData: Array<{
     },
     {
         "name": "test-tubes",
+        "component": TestTubes,
         "categories": [
             "science"
         ],
@@ -22166,6 +23561,7 @@ export const iconsData: Array<{
     },
     {
         "name": "text-cursor-input",
+        "component": TextCursorInput,
         "categories": [
             "text",
             "layout"
@@ -22176,6 +23572,7 @@ export const iconsData: Array<{
     },
     {
         "name": "text-cursor",
+        "component": TextCursor,
         "categories": [
             "text",
             "cursors"
@@ -22186,6 +23583,7 @@ export const iconsData: Array<{
     },
     {
         "name": "text-quote",
+        "component": TextQuote,
         "categories": [
             "text"
         ],
@@ -22199,6 +23597,7 @@ export const iconsData: Array<{
     },
     {
         "name": "text-search",
+        "component": TextSearch,
         "categories": [
             "text"
         ],
@@ -22216,6 +23615,7 @@ export const iconsData: Array<{
     },
     {
         "name": "text-select",
+        "component": TextSelect,
         "categories": [
             "text",
             "cursors"
@@ -22229,6 +23629,7 @@ export const iconsData: Array<{
     },
     {
         "name": "text",
+        "component": Text,
         "categories": [
             "text",
             "files",
@@ -22245,6 +23646,7 @@ export const iconsData: Array<{
     },
     {
         "name": "theater",
+        "component": Theater,
         "categories": [
             "buildings",
             "social"
@@ -22260,6 +23662,7 @@ export const iconsData: Array<{
     },
     {
         "name": "thermometer-snowflake",
+        "component": ThermometerSnowflake,
         "categories": [
             "weather"
         ],
@@ -22275,6 +23678,7 @@ export const iconsData: Array<{
     },
     {
         "name": "thermometer-sun",
+        "component": ThermometerSun,
         "categories": [
             "weather"
         ],
@@ -22289,6 +23693,7 @@ export const iconsData: Array<{
     },
     {
         "name": "thermometer",
+        "component": Thermometer,
         "categories": [
             "weather"
         ],
@@ -22301,6 +23706,7 @@ export const iconsData: Array<{
     },
     {
         "name": "thumbs-down",
+        "component": ThumbsDown,
         "categories": [
             "account",
             "social",
@@ -22314,6 +23720,7 @@ export const iconsData: Array<{
     },
     {
         "name": "thumbs-up",
+        "component": ThumbsUp,
         "categories": [
             "account",
             "social",
@@ -22327,6 +23734,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ticket-check",
+        "component": TicketCheck,
         "categories": [
             "transportation"
         ],
@@ -22350,6 +23758,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ticket-minus",
+        "component": TicketMinus,
         "categories": [
             "transportation"
         ],
@@ -22370,6 +23779,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ticket-percent",
+        "component": TicketPercent,
         "categories": [
             "transportation",
             "shopping"
@@ -22391,6 +23801,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ticket-plus",
+        "component": TicketPlus,
         "categories": [
             "transportation"
         ],
@@ -22409,6 +23820,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ticket-slash",
+        "component": TicketSlash,
         "categories": [
             "transportation"
         ],
@@ -22444,6 +23856,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ticket-x",
+        "component": TicketX,
         "categories": [
             "transportation"
         ],
@@ -22476,6 +23889,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ticket",
+        "component": Ticket,
         "categories": [
             "account",
             "transportation"
@@ -22493,6 +23907,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tickets-plane",
+        "component": TicketsPlane,
         "categories": [
             "transportation",
             "travel"
@@ -22514,6 +23929,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tickets",
+        "component": Tickets,
         "categories": [
             "travel",
             "account",
@@ -22534,6 +23950,7 @@ export const iconsData: Array<{
     },
     {
         "name": "timer-off",
+        "component": TimerOff,
         "categories": [
             "time"
         ],
@@ -22545,6 +23962,7 @@ export const iconsData: Array<{
     },
     {
         "name": "timer-reset",
+        "component": TimerReset,
         "categories": [
             "time"
         ],
@@ -22556,6 +23974,7 @@ export const iconsData: Array<{
     },
     {
         "name": "timer",
+        "component": Timer,
         "categories": [
             "time"
         ],
@@ -22567,6 +23986,7 @@ export const iconsData: Array<{
     },
     {
         "name": "toggle-left",
+        "component": ToggleLeft,
         "categories": [
             "layout",
             "account",
@@ -22581,6 +24001,7 @@ export const iconsData: Array<{
     },
     {
         "name": "toggle-right",
+        "component": ToggleRight,
         "categories": [
             "layout",
             "account",
@@ -22595,6 +24016,7 @@ export const iconsData: Array<{
     },
     {
         "name": "toilet",
+        "component": Toilet,
         "categories": [
             "devices",
             "home"
@@ -22608,6 +24030,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tornado",
+        "component": Tornado,
         "categories": [
             "weather"
         ],
@@ -22620,6 +24043,7 @@ export const iconsData: Array<{
     },
     {
         "name": "torus",
+        "component": Torus,
         "categories": [
             "shapes",
             "design",
@@ -22643,6 +24067,7 @@ export const iconsData: Array<{
     },
     {
         "name": "touchpad-off",
+        "component": TouchpadOff,
         "categories": [
             "devices"
         ],
@@ -22653,6 +24078,7 @@ export const iconsData: Array<{
     },
     {
         "name": "touchpad",
+        "component": Touchpad,
         "categories": [
             "devices"
         ],
@@ -22663,6 +24089,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tower-control",
+        "component": TowerControl,
         "categories": [
             "travel",
             "transportation"
@@ -22677,6 +24104,7 @@ export const iconsData: Array<{
     },
     {
         "name": "toy-brick",
+        "component": ToyBrick,
         "categories": [
             "gaming",
             "development"
@@ -22691,6 +24119,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tractor",
+        "component": Tractor,
         "categories": [
             "transportation",
             "sustainability",
@@ -22707,6 +24136,7 @@ export const iconsData: Array<{
     },
     {
         "name": "traffic-cone",
+        "component": TrafficCone,
         "categories": [
             "transportation"
         ],
@@ -22719,6 +24149,7 @@ export const iconsData: Array<{
     },
     {
         "name": "train-front-tunnel",
+        "component": TrainFrontTunnel,
         "categories": [
             "transportation",
             "navigation"
@@ -22737,6 +24168,7 @@ export const iconsData: Array<{
     },
     {
         "name": "train-front",
+        "component": TrainFront,
         "categories": [
             "transportation"
         ],
@@ -22754,6 +24186,7 @@ export const iconsData: Array<{
     },
     {
         "name": "train-track",
+        "component": TrainTrack,
         "categories": [
             "transportation",
             "navigation"
@@ -22765,6 +24198,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tram-front",
+        "component": TramFront,
         "categories": [
             "transportation"
         ],
@@ -22780,6 +24214,7 @@ export const iconsData: Array<{
     },
     {
         "name": "trash-2",
+        "component": Trash2,
         "categories": [
             "files",
             "mail"
@@ -22793,6 +24228,7 @@ export const iconsData: Array<{
     },
     {
         "name": "trash",
+        "component": Trash,
         "categories": [
             "files",
             "mail"
@@ -22806,6 +24242,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tree-deciduous",
+        "component": TreeDeciduous,
         "categories": [
             "nature",
             "sustainability"
@@ -22819,6 +24256,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tree-palm",
+        "component": TreePalm,
         "categories": [
             "nature",
             "sustainability"
@@ -22831,6 +24269,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tree-pine",
+        "component": TreePine,
         "categories": [
             "nature",
             "sustainability"
@@ -22845,6 +24284,7 @@ export const iconsData: Array<{
     },
     {
         "name": "trees",
+        "component": Trees,
         "categories": [
             "nature",
             "sustainability"
@@ -22858,6 +24298,7 @@ export const iconsData: Array<{
     },
     {
         "name": "trello",
+        "component": Trello,
         "categories": [
             "account",
             "brands",
@@ -22870,6 +24311,7 @@ export const iconsData: Array<{
     },
     {
         "name": "trending-down",
+        "component": TrendingDown,
         "categories": [
             "charts",
             "arrows"
@@ -22880,6 +24322,7 @@ export const iconsData: Array<{
     },
     {
         "name": "trending-up-down",
+        "component": TrendingUpDown,
         "categories": [
             "charts",
             "arrows"
@@ -22899,6 +24342,7 @@ export const iconsData: Array<{
     },
     {
         "name": "trending-up",
+        "component": TrendingUp,
         "categories": [
             "charts",
             "arrows"
@@ -22909,6 +24353,7 @@ export const iconsData: Array<{
     },
     {
         "name": "triangle-alert",
+        "component": TriangleAlert,
         "categories": [
             "notifications",
             "shapes",
@@ -22924,6 +24369,7 @@ export const iconsData: Array<{
     },
     {
         "name": "triangle-dashed",
+        "component": TriangleDashed,
         "categories": [
             "shapes"
         ],
@@ -22938,6 +24384,7 @@ export const iconsData: Array<{
     },
     {
         "name": "triangle-right",
+        "component": TriangleRight,
         "categories": [
             "shapes",
             "math"
@@ -22957,6 +24404,7 @@ export const iconsData: Array<{
     },
     {
         "name": "triangle",
+        "component": Triangle,
         "categories": [
             "shapes"
         ],
@@ -22970,6 +24418,7 @@ export const iconsData: Array<{
     },
     {
         "name": "trophy",
+        "component": Trophy,
         "categories": [
             "sports",
             "gaming"
@@ -22987,6 +24436,7 @@ export const iconsData: Array<{
     },
     {
         "name": "truck",
+        "component": Truck,
         "categories": [
             "transportation"
         ],
@@ -23000,6 +24450,7 @@ export const iconsData: Array<{
     },
     {
         "name": "turtle",
+        "component": Turtle,
         "categories": [
             "animals"
         ],
@@ -23013,6 +24464,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tv-minimal-play",
+        "component": TvMinimalPlay,
         "categories": [
             "devices",
             "multimedia"
@@ -23046,6 +24498,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tv-minimal",
+        "component": TvMinimal,
         "categories": [
             "devices",
             "multimedia"
@@ -23073,6 +24526,7 @@ export const iconsData: Array<{
     },
     {
         "name": "tv",
+        "component": Tv,
         "categories": [
             "devices",
             "multimedia",
@@ -23112,6 +24566,7 @@ export const iconsData: Array<{
     },
     {
         "name": "twitch",
+        "component": Twitch,
         "categories": [
             "brands",
             "social",
@@ -23125,6 +24580,7 @@ export const iconsData: Array<{
     },
     {
         "name": "twitter",
+        "component": Twitter,
         "categories": [
             "brands",
             "social",
@@ -23137,6 +24593,7 @@ export const iconsData: Array<{
     },
     {
         "name": "type-outline",
+        "component": TypeOutline,
         "categories": [
             "text"
         ],
@@ -23153,6 +24610,7 @@ export const iconsData: Array<{
     },
     {
         "name": "type",
+        "component": Type,
         "categories": [
             "text"
         ],
@@ -23164,6 +24622,7 @@ export const iconsData: Array<{
     },
     {
         "name": "umbrella-off",
+        "component": UmbrellaOff,
         "categories": [
             "weather"
         ],
@@ -23179,6 +24638,7 @@ export const iconsData: Array<{
     },
     {
         "name": "umbrella",
+        "component": Umbrella,
         "categories": [
             "weather"
         ],
@@ -23189,6 +24649,7 @@ export const iconsData: Array<{
     },
     {
         "name": "underline",
+        "component": Underline,
         "categories": [
             "text"
         ],
@@ -23199,6 +24660,7 @@ export const iconsData: Array<{
     },
     {
         "name": "undo-2",
+        "component": Undo2,
         "categories": [
             "text",
             "arrows"
@@ -23217,6 +24679,7 @@ export const iconsData: Array<{
     },
     {
         "name": "undo-dot",
+        "component": UndoDot,
         "categories": [
             "text",
             "arrows"
@@ -23230,6 +24693,7 @@ export const iconsData: Array<{
     },
     {
         "name": "undo",
+        "component": Undo,
         "categories": [
             "text",
             "arrows"
@@ -23242,6 +24706,7 @@ export const iconsData: Array<{
     },
     {
         "name": "unfold-horizontal",
+        "component": UnfoldHorizontal,
         "categories": [
             "arrows",
             "layout"
@@ -23256,6 +24721,7 @@ export const iconsData: Array<{
     },
     {
         "name": "unfold-vertical",
+        "component": UnfoldVertical,
         "categories": [
             "arrows",
             "layout"
@@ -23269,6 +24735,7 @@ export const iconsData: Array<{
     },
     {
         "name": "ungroup",
+        "component": Ungroup,
         "categories": [
             "shapes",
             "files"
@@ -23285,6 +24752,7 @@ export const iconsData: Array<{
     },
     {
         "name": "university",
+        "component": University,
         "categories": [
             "buildings",
             "navigation"
@@ -23298,6 +24766,7 @@ export const iconsData: Array<{
     },
     {
         "name": "unlink-2",
+        "component": Unlink2,
         "categories": [
             "text"
         ],
@@ -23308,6 +24777,7 @@ export const iconsData: Array<{
     },
     {
         "name": "unlink",
+        "component": Unlink,
         "categories": [
             "text"
         ],
@@ -23318,6 +24788,7 @@ export const iconsData: Array<{
     },
     {
         "name": "unplug",
+        "component": Unplug,
         "categories": [
             "devices",
             "development"
@@ -23333,6 +24804,7 @@ export const iconsData: Array<{
     },
     {
         "name": "upload",
+        "component": Upload,
         "categories": [
             "arrows",
             "files"
@@ -23343,6 +24815,7 @@ export const iconsData: Array<{
     },
     {
         "name": "usb",
+        "component": Usb,
         "categories": [
             "devices",
             "multimedia",
@@ -23359,6 +24832,7 @@ export const iconsData: Array<{
     },
     {
         "name": "user-check",
+        "component": UserCheck,
         "categories": [
             "account"
         ],
@@ -23374,6 +24848,7 @@ export const iconsData: Array<{
     },
     {
         "name": "user-cog",
+        "component": UserCog,
         "categories": [
             "account"
         ],
@@ -23386,6 +24861,7 @@ export const iconsData: Array<{
     },
     {
         "name": "user-minus",
+        "component": UserMinus,
         "categories": [
             "account"
         ],
@@ -23398,6 +24874,7 @@ export const iconsData: Array<{
     },
     {
         "name": "user-pen",
+        "component": UserPen,
         "categories": [
             "account"
         ],
@@ -23412,6 +24889,7 @@ export const iconsData: Array<{
     },
     {
         "name": "user-plus",
+        "component": UserPlus,
         "categories": [
             "account"
         ],
@@ -23425,6 +24903,7 @@ export const iconsData: Array<{
     },
     {
         "name": "user-round-check",
+        "component": UserRoundCheck,
         "categories": [
             "account"
         ],
@@ -23440,6 +24919,7 @@ export const iconsData: Array<{
     },
     {
         "name": "user-round-cog",
+        "component": UserRoundCog,
         "categories": [
             "account"
         ],
@@ -23452,6 +24932,7 @@ export const iconsData: Array<{
     },
     {
         "name": "user-round-minus",
+        "component": UserRoundMinus,
         "categories": [
             "account"
         ],
@@ -23464,6 +24945,7 @@ export const iconsData: Array<{
     },
     {
         "name": "user-round-pen",
+        "component": UserRoundPen,
         "categories": [
             "account"
         ],
@@ -23478,6 +24960,7 @@ export const iconsData: Array<{
     },
     {
         "name": "user-round-plus",
+        "component": UserRoundPlus,
         "categories": [
             "account"
         ],
@@ -23491,6 +24974,7 @@ export const iconsData: Array<{
     },
     {
         "name": "user-round-search",
+        "component": UserRoundSearch,
         "categories": [
             "account",
             "social"
@@ -23507,6 +24991,7 @@ export const iconsData: Array<{
     },
     {
         "name": "user-round-x",
+        "component": UserRoundX,
         "categories": [
             "account"
         ],
@@ -23520,6 +25005,7 @@ export const iconsData: Array<{
     },
     {
         "name": "user-round",
+        "component": UserRound,
         "categories": [
             "account"
         ],
@@ -23531,6 +25017,7 @@ export const iconsData: Array<{
     },
     {
         "name": "user-search",
+        "component": UserSearch,
         "categories": [
             "account",
             "social"
@@ -23547,6 +25034,7 @@ export const iconsData: Array<{
     },
     {
         "name": "user-x",
+        "component": UserX,
         "categories": [
             "account"
         ],
@@ -23560,6 +25048,7 @@ export const iconsData: Array<{
     },
     {
         "name": "user",
+        "component": User,
         "categories": [
             "account"
         ],
@@ -23571,6 +25060,7 @@ export const iconsData: Array<{
     },
     {
         "name": "users-round",
+        "component": UsersRound,
         "categories": [
             "account"
         ],
@@ -23581,6 +25071,7 @@ export const iconsData: Array<{
     },
     {
         "name": "users",
+        "component": Users,
         "categories": [
             "account"
         ],
@@ -23591,6 +25082,7 @@ export const iconsData: Array<{
     },
     {
         "name": "utensils-crossed",
+        "component": UtensilsCrossed,
         "categories": [
             "food-beverage",
             "travel",
@@ -23613,6 +25105,7 @@ export const iconsData: Array<{
     },
     {
         "name": "utensils",
+        "component": Utensils,
         "categories": [
             "food-beverage",
             "travel",
@@ -23635,6 +25128,7 @@ export const iconsData: Array<{
     },
     {
         "name": "utility-pole",
+        "component": UtilityPole,
         "categories": [
             "buildings",
             "home",
@@ -23651,6 +25145,7 @@ export const iconsData: Array<{
     },
     {
         "name": "variable",
+        "component": Variable,
         "categories": [
             "development",
             "math"
@@ -23673,6 +25168,7 @@ export const iconsData: Array<{
     },
     {
         "name": "vault",
+        "component": Vault,
         "categories": [
             "security",
             "travel",
@@ -23694,6 +25190,7 @@ export const iconsData: Array<{
     },
     {
         "name": "vegan",
+        "component": Vegan,
         "categories": [
             "food-beverage",
             "sustainability"
@@ -23708,6 +25205,7 @@ export const iconsData: Array<{
     },
     {
         "name": "venetian-mask",
+        "component": VenetianMask,
         "categories": [
             "account",
             "gaming"
@@ -23722,6 +25220,7 @@ export const iconsData: Array<{
     },
     {
         "name": "vibrate-off",
+        "component": VibrateOff,
         "categories": [
             "devices",
             "connectivity",
@@ -23738,6 +25237,7 @@ export const iconsData: Array<{
     },
     {
         "name": "vibrate",
+        "component": Vibrate,
         "categories": [
             "devices",
             "connectivity",
@@ -23754,6 +25254,7 @@ export const iconsData: Array<{
     },
     {
         "name": "video-off",
+        "component": VideoOff,
         "categories": [
             "devices",
             "communication",
@@ -23768,6 +25269,7 @@ export const iconsData: Array<{
     },
     {
         "name": "video",
+        "component": Video,
         "categories": [
             "devices",
             "communication",
@@ -23786,6 +25288,7 @@ export const iconsData: Array<{
     },
     {
         "name": "videotape",
+        "component": Videotape,
         "categories": [
             "devices",
             "communication",
@@ -23805,6 +25308,7 @@ export const iconsData: Array<{
     },
     {
         "name": "view",
+        "component": View,
         "categories": [
             "design",
             "photography"
@@ -23816,6 +25320,7 @@ export const iconsData: Array<{
     },
     {
         "name": "voicemail",
+        "component": Voicemail,
         "categories": [
             "connectivity",
             "devices",
@@ -23832,6 +25337,7 @@ export const iconsData: Array<{
     },
     {
         "name": "volleyball",
+        "component": Volleyball,
         "categories": [
             "sports",
             "gaming",
@@ -23864,6 +25370,7 @@ export const iconsData: Array<{
     },
     {
         "name": "volume-1",
+        "component": Volume1,
         "categories": [
             "connectivity",
             "communication",
@@ -23877,6 +25384,7 @@ export const iconsData: Array<{
     },
     {
         "name": "volume-2",
+        "component": Volume2,
         "categories": [
             "connectivity",
             "communication",
@@ -23890,6 +25398,7 @@ export const iconsData: Array<{
     },
     {
         "name": "volume-off",
+        "component": VolumeOff,
         "categories": [
             "connectivity",
             "communication",
@@ -23904,6 +25413,7 @@ export const iconsData: Array<{
     },
     {
         "name": "volume-x",
+        "component": VolumeX,
         "categories": [
             "connectivity",
             "communication",
@@ -23918,6 +25428,7 @@ export const iconsData: Array<{
     },
     {
         "name": "volume",
+        "component": Volume,
         "categories": [
             "connectivity",
             "communication",
@@ -23932,6 +25443,7 @@ export const iconsData: Array<{
     },
     {
         "name": "vote",
+        "component": Vote,
         "categories": [
             "social"
         ],
@@ -23947,6 +25459,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wallet-cards",
+        "component": WalletCards,
         "categories": [
             "account",
             "finance"
@@ -23966,6 +25479,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wallet-minimal",
+        "component": WalletMinimal,
         "categories": [
             "account",
             "finance"
@@ -23977,6 +25491,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wallet",
+        "component": Wallet,
         "categories": [
             "account",
             "finance"
@@ -23989,6 +25504,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wallpaper",
+        "component": Wallpaper,
         "categories": [
             "account",
             "devices"
@@ -24000,6 +25516,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wand-sparkles",
+        "component": WandSparkles,
         "categories": [
             "design",
             "gaming",
@@ -24014,6 +25531,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wand",
+        "component": Wand,
         "categories": [
             "design",
             "gaming",
@@ -24027,6 +25545,7 @@ export const iconsData: Array<{
     },
     {
         "name": "warehouse",
+        "component": Warehouse,
         "categories": [
             "buildings",
             "navigation"
@@ -24039,6 +25558,7 @@ export const iconsData: Array<{
     },
     {
         "name": "washing-machine",
+        "component": WashingMachine,
         "categories": [
             "home",
             "devices",
@@ -24057,6 +25577,7 @@ export const iconsData: Array<{
     },
     {
         "name": "watch",
+        "component": Watch,
         "categories": [
             "time"
         ],
@@ -24067,6 +25588,7 @@ export const iconsData: Array<{
     },
     {
         "name": "waves-ladder",
+        "component": WavesLadder,
         "categories": [
             "sports",
             "home"
@@ -24086,6 +25608,7 @@ export const iconsData: Array<{
     },
     {
         "name": "waves",
+        "component": Waves,
         "categories": [
             "weather",
             "navigation",
@@ -24103,6 +25626,7 @@ export const iconsData: Array<{
     },
     {
         "name": "waypoints",
+        "component": Waypoints,
         "categories": [
             "security",
             "account",
@@ -24130,6 +25654,7 @@ export const iconsData: Array<{
     },
     {
         "name": "webcam",
+        "component": Webcam,
         "categories": [
             "connectivity",
             "devices",
@@ -24142,6 +25667,7 @@ export const iconsData: Array<{
     },
     {
         "name": "webhook-off",
+        "component": WebhookOff,
         "categories": [
             "development",
             "social",
@@ -24155,6 +25681,7 @@ export const iconsData: Array<{
     },
     {
         "name": "webhook",
+        "component": Webhook,
         "categories": [
             "development",
             "social",
@@ -24168,6 +25695,7 @@ export const iconsData: Array<{
     },
     {
         "name": "weight",
+        "component": Weight,
         "categories": [
             "math"
         ],
@@ -24184,6 +25712,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wheat-off",
+        "component": WheatOff,
         "categories": [
             "food-beverage"
         ],
@@ -24199,6 +25728,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wheat",
+        "component": Wheat,
         "categories": [
             "food-beverage"
         ],
@@ -24211,6 +25741,7 @@ export const iconsData: Array<{
     },
     {
         "name": "whole-word",
+        "component": WholeWord,
         "categories": [
             "text"
         ],
@@ -24225,6 +25756,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wifi-high",
+        "component": WifiHigh,
         "categories": [
             "connectivity",
             "devices"
@@ -24237,6 +25769,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wifi-low",
+        "component": WifiLow,
         "categories": [
             "connectivity",
             "devices"
@@ -24249,6 +25782,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wifi-off",
+        "component": WifiOff,
         "categories": [
             "connectivity",
             "devices"
@@ -24259,6 +25793,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wifi-zero",
+        "component": WifiZero,
         "categories": [
             "connectivity",
             "devices"
@@ -24271,6 +25806,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wifi",
+        "component": Wifi,
         "categories": [
             "connectivity",
             "devices"
@@ -24283,6 +25819,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wind-arrow-down",
+        "component": WindArrowDown,
         "categories": [
             "weather",
             "sustainability"
@@ -24296,6 +25833,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wind",
+        "component": Wind,
         "categories": [
             "weather",
             "sustainability"
@@ -24308,6 +25846,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wine-off",
+        "component": WineOff,
         "categories": [
             "food-beverage"
         ],
@@ -24326,6 +25865,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wine",
+        "component": Wine,
         "categories": [
             "food-beverage"
         ],
@@ -24342,6 +25882,7 @@ export const iconsData: Array<{
     },
     {
         "name": "workflow",
+        "component": Workflow,
         "categories": [
             "development"
         ],
@@ -24358,6 +25899,7 @@ export const iconsData: Array<{
     },
     {
         "name": "worm",
+        "component": Worm,
         "categories": [
             "animals",
             "security"
@@ -24377,6 +25919,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wrap-text",
+        "component": WrapText,
         "categories": [
             "text",
             "arrows"
@@ -24390,6 +25933,7 @@ export const iconsData: Array<{
     },
     {
         "name": "wrench",
+        "component": Wrench,
         "categories": [
             "account",
             "development",
@@ -24407,6 +25951,7 @@ export const iconsData: Array<{
     },
     {
         "name": "x",
+        "component": X,
         "categories": [
             "notifications",
             "math"
@@ -24425,6 +25970,7 @@ export const iconsData: Array<{
     },
     {
         "name": "youtube",
+        "component": Youtube,
         "categories": [
             "multimedia",
             "social",
@@ -24439,6 +25985,7 @@ export const iconsData: Array<{
     },
     {
         "name": "zap-off",
+        "component": ZapOff,
         "categories": [
             "connectivity",
             "devices",
@@ -24455,6 +26002,7 @@ export const iconsData: Array<{
     },
     {
         "name": "zap",
+        "component": Zap,
         "categories": [
             "connectivity",
             "devices",
@@ -24471,6 +26019,7 @@ export const iconsData: Array<{
     },
     {
         "name": "zoom-in",
+        "component": ZoomIn,
         "categories": [
             "accessibility",
             "layout",
@@ -24485,6 +26034,7 @@ export const iconsData: Array<{
     },
     {
         "name": "zoom-out",
+        "component": ZoomOut,
         "categories": [
             "accessibility",
             "layout",

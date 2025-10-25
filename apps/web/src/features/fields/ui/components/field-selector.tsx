@@ -45,15 +45,15 @@ export default function FieldSelector({
                             <TooltipContent className="p-4">
                                 {field.description || "Açıklama yok"}
                                 {field.options.map((option => {
-                                    const isStaticSelect = option.key === "is-dynamic-options" && option.value === "false"
+                                    const isStaticSelect = option.fieldTypeOption.key === "is-dynamic-options" && option.value === "false"
                                     return (
                                         <div key={option.id} className="mt-2">
-                                            <strong>{option.name}:</strong> {option.type === "boolean" ? (option.value === "true" ? "Evet" : "Hayır") : option.value}
-                                            {isStaticSelect && field.selectOptions.length ? (
+                                            <strong>{option.fieldTypeOption.name}:</strong> {option.fieldTypeOption.type === "boolean" ? (option.value === "true" ? "Evet" : "Hayır") : option.value}
+                                            {isStaticSelect && option.selectOptions.length ? (
                                                 <div className="mt-1">
                                                     <strong>Seçenekler:</strong>
                                                     <ul className="list-disc list-inside">
-                                                        {field.selectOptions.map((selectOption: any) => (
+                                                        {option.selectOptions.map((selectOption: any) => (
                                                             <li key={selectOption.id}
                                                                 className="flex items-center gap-2">
                                                                 <Icon name={selectOption.icon}

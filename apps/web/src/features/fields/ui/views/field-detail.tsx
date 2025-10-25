@@ -7,13 +7,12 @@ import DeleteFieldButton from "@/features/fields/ui/components/delete-field-butt
 import {Route} from "@/routes/__protected/settings/fields/$id";
 import {
     BooleanFormElement,
-    SelectFormElement,
+    SelectFormElement, type SelectOption,
     StaticSelectOptionsFormElement,
     TextFormElement,
 } from "@/components/type-form-element";
-import {useEffect, useState} from "react";
-import {queryClient} from "@/utils/trpc";
-import {getFieldWithDetailsQuery, getSelectOptionsByFieldOptionIdsQuery} from "@/features/fields/lib/queries";
+import {Fragment, useEffect, useState} from "react";
+import {getFieldWithDetailsQuery} from "@/features/fields/lib/queries";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {
     saveSelectOptionsMutation,
@@ -24,12 +23,12 @@ import type {IconName} from "lucide-react/dynamic";
 
 export default function FieldDetail() {
     const {id} = useParams({from: Route.id});
-    const {data: {data}} = useQuery(getFieldWithDetailsQuery(id))
+    const {data} = useQuery(getFieldWithDetailsQuery(id))
     const {open} = useEditFieldModal();
     const saveSelectOptions = useMutation(saveSelectOptionsMutation);
     const updateFieldOptionValue = useMutation(updateFieldOptionValueMutation);
 
-    const [optionsData, setOptionsData] = useState(data?.options || []);
+    const [optionsData, setOptionsData] = useState(data?.data?.options || []);
 
     const [originalOptionsData, setOriginalOptionsData] = useState<any>({});
     const [selectOptionsData, setSelectOptionsData] = useState<any>({});
@@ -48,7 +47,7 @@ export default function FieldDetail() {
         });
 
         const dynamicOption = optionsData.find(
-            (option) => option.key === "is-dynamic-options"
+            (option) => option.fieldTypeOption.key === "is-dynamic-options"
         );
         if (dynamicOption && JSON.parse(dynamicOption.value) === false) {
             const selectOptions = selectOptionsData[dynamicOption.id] || [];
@@ -58,6 +57,7 @@ export default function FieldDetail() {
                     fieldOptionId: dynamicOption.id,
                     name: option.name,
                     icon: option.icon,
+                    order: option.order,
                     id: option.id,
                 })),
             });
@@ -75,11 +75,6 @@ export default function FieldDetail() {
         );
     };
 
-    const fetchSelectOptions = async (optionIds: string[]) => {
-        return await queryClient.fetchQuery(
-            getSelectOptionsByFieldOptionIdsQuery(optionIds)
-        );
-    };
 
     const onChangeSelectOptions = (optionId: string, newOptions: any[]) => {
         setSelectOptionsData((prev: any) => ({
@@ -89,24 +84,20 @@ export default function FieldDetail() {
     };
     useEffect(() => {
         if (!data) return;
-        setOptionsData(data.options || []);
-        if (data.options?.some((option) => option.key === "is-dynamic-options")) {
-            fetchSelectOptions(
-                data.options
-                    .filter((opt) => opt.key === "is-dynamic-options")
-                    .map((opt: any) => opt.id)
-            ).then((res) => {
-                const selectOptionsMap: any = {};
-                data.options
-                    .filter((opt) => opt.key === "is-dynamic-options")
-                    .forEach((option: any) => {
-                        selectOptionsMap[option.id] = res.data.filter(
-                            (selectOption: any) => selectOption.fieldOptionId === option.id
-                        );
-                    });
-                setSelectOptionsData(selectOptionsMap);
-                setOriginalOptionsData(selectOptionsMap);
-            });
+        setOptionsData(data?.data?.options || []);
+        if (data?.data?.options?.some((option) => option.fieldTypeOption.key === "is-dynamic-options")) {
+
+            const selectOptionsMap: any = {};
+            data?.data?.options
+                .filter((opt) => opt.fieldTypeOption.key === "is-dynamic-options")
+                .forEach((option: any) => {
+                    selectOptionsMap[option.id] = option.selectOptions?.filter(
+                        (selectOption: any) => selectOption.fieldOptionId === option.id
+                    );
+                });
+            setSelectOptionsData(selectOptionsMap);
+            setOriginalOptionsData(selectOptionsMap);
+
         }
 
         setIsUpdated(false);
@@ -122,7 +113,7 @@ export default function FieldDetail() {
                             ? option.value
                             : JSON.stringify(option.value),
                 }))
-            ) !== JSON.stringify(data?.options)
+            ) !== JSON.stringify(data?.data?.options)
         ) {
             setIsUpdated(true);
         } else {
@@ -132,7 +123,7 @@ export default function FieldDetail() {
 
     useEffect(() => {
         const dynamicOption = optionsData.find(
-            (option) => option.key === "is-dynamic-options"
+            (option) => option.fieldTypeOption.key === "is-dynamic-options"
         );
         if (dynamicOption && JSON.parse(dynamicOption.value) === false) {
             const originalSelectOptions = originalOptionsData || {};
@@ -153,8 +144,8 @@ export default function FieldDetail() {
             <EditFieldModal/>
             <div className="flex justify-between items-center">
                 <h2 className="text-xl font-bold leading-tight flex items-center gap-2 truncate">
-                    <Icon name={data?.icon as IconName ?? ""}/>
-                    {data.name}
+                    <Icon name={data?.data?.icon as IconName ?? ""}/>
+                    {data?.data?.name}
                 </h2>
 
                 <div className="flex items-center gap-2">
@@ -165,22 +156,21 @@ export default function FieldDetail() {
                     <DeleteFieldButton id={id}/>
                 </div>
             </div>
-            {data?.description && (
-                <p className="text-sm text-muted-foreground">{data.description}</p>
+            {data?.data?.description && (
+                <p className="text-sm text-muted-foreground">{data?.data?.description}</p>
             )}
             {optionsData.map((option) => {
-                switch (option.type) {
+                switch (option.fieldTypeOption.type) {
                     case "boolean":
-                        const isDynamicSelectOptions = option.key === "is-dynamic-options";
+                        const isDynamicSelectOptions = option.fieldTypeOption.key === "is-dynamic-options";
                         return (
-                            <>
+                            <Fragment key={option.id}>
                                 <div
-                                    key={option.id}
                                     className="p-4 border rounded-md flex items-center justify-between"
                                 >
                                     <BooleanFormElement
                                         id={option.id}
-                                        name={option.name}
+                                        name={option.fieldTypeOption?.name}
                                         value={option.value}
                                         onChange={(value: any) => onChangeOption(option.id, value)}
                                     />
@@ -195,23 +185,47 @@ export default function FieldDetail() {
                                             id={option.id}
                                         />
                                     ))}
-                            </>
+                            </Fragment>
                         );
                     case "text":
                         return <div
-                        key={option.id}
-                        className="p-4 border rounded-md flex items-center justify-between"
-                    ><TextFormElement name={option.name} id={option.id} value={option.value} onChange={(value: any) => onChangeOption(option.id, value)}/></div>;
-                    case "select":
-                        const isDefaultOption = option.key === "default-option";
-                            return <div
                             key={option.id}
                             className="p-4 border rounded-md flex items-center justify-between"
-                    ><SelectFormElement options={data.selectOptions} name={option.name} id={option.id} value={option.value} onChange={(value: any) => onChangeOption(option.id, value)}/></div>
-                        
-                    
-                    case "number":
+                        ><TextFormElement name={option.fieldTypeOption.name} id={option.id} value={option.value}
+                                          onChange={(value: any) => onChangeOption(option.id, value)}/></div>;
                     case "select":
+                        const isDefaultOption = option.fieldTypeOption.key === "default-option";
+                        let options: SelectOption[] = [];
+                        if (isDefaultOption) {
+                            const dynamicOption = optionsData.find(
+                                (opt) => opt.fieldTypeOption.key === "is-dynamic-options"
+                            );
+                            if (dynamicOption) {
+                                options = dynamicOption.selectOptions;
+                            }
+
+                        } else if (
+                            option.fieldTypeOption.key === "granularity"
+                        ) {
+                            options = [
+                                {id: 'day', name: 'Gün', fieldOptionId: option.id, order: 0, icon: ''},
+                                {id: 'hour', name: 'Saat', fieldOptionId: option.id, order: 1, icon: ''},
+                                {id: 'minute', name: 'Dakika', fieldOptionId: option.id, order: 2, icon: ''},
+                                {id: 'second', name: 'Saniye', fieldOptionId: option.id, order: 3, icon: ''},
+                            ];
+                        } else {
+                            options = option.selectOptions || [];
+                        }
+                        return <div
+                            key={option.id}
+                            className="p-4 border rounded-md flex items-center justify-between"
+                        ><SelectFormElement options={options} name={option.fieldTypeOption.name}
+                                            id={option.id}
+                                            value={option.value}
+                                            onChange={(value: any) => onChangeOption(option.id, value)}/></div>
+
+
+                    case "number":
                         break;
                     default:
                         return null;

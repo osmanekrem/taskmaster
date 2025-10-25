@@ -5,7 +5,9 @@ import type {IconName} from "lucide-react/dynamic";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {DatePicker} from "@/components/ui/date-picker";
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import {Field, FieldDescription, FieldLabel} from "@/components/ui/field";
+import {useState} from "react";
+import type {DateValue} from "react-aria-components";
 
 interface fieldRendererProps {
     field: FieldWithDetails;
@@ -13,43 +15,48 @@ interface fieldRendererProps {
 
 export default function FieldRendererPreview({field}: fieldRendererProps) {
 
-    const isRequired = field.options.find(option => option.key === "is-required")?.value === "true";
+    const isRequired = field.options.find(option => option.fieldTypeOption.key === "is-required")?.value === "true";
     return (
-       <Field>
-        <FieldLabel className="flex items-center">
-            <Icon name={field.icon} className="size-4" /> {field.name} {isRequired && '*'}
-        </FieldLabel>
-        <FieldRendererPreviewComponent field={field}/>
-        <FieldDescription>
-            {field.description}
-        </FieldDescription>
-       </Field>
+        <Field>
+            <FieldLabel className="flex items-center">
+                <Icon name={field.icon as IconName} className="size-4"/> {field.name} {isRequired && '*'}
+            </FieldLabel>
+            <FieldRendererPreviewComponent field={field}/>
+            <FieldDescription>
+                {field.description}
+            </FieldDescription>
+        </Field>
     );
 }
 
 export function FieldRendererPreviewComponent({
-                                                 field,
-                                             }: fieldRendererProps) {
+                                                  field,
+                                              }: fieldRendererProps) {
+
+
+    const placeholder = field.options.find(option => option.fieldTypeOption.key === "placeholder")?.value || "";
+    const isDynamicOptions = field.options.find(option => option.fieldTypeOption.key === "is-dynamic-options");
+    const defaultOption = field.options.find(option => option.fieldTypeOption.key === "default-option")?.value || "";
+
+
+    const [option, setOption] = useState<string | undefined>(defaultOption);
+    const [date, setDate] = useState<DateValue | null>(null);
 
     if (!field.fieldType) return null;
-
-    const placeholder = field.options.find(option => option.key === "placeholder")?.value || "";
 
     if (field.fieldType.component === "single-select") {
         return (
 
-            <Select>
+            <Select value={option} onValueChange={setOption}>
                 <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder={placeholder || "Select an option"}></SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                    {field.selectOptions?.map(option => (
-
-                        <SelectItem value={option.id}>
-                            <Icon name={option.icon as IconName ?? ''} className="size-4 mr-2"/>
-                            {
-                                option.name
-                            }</SelectItem>
+                    {isDynamicOptions?.selectOptions?.map(option => (
+                        <SelectItem key={option.id} value={option.id}>
+                            <Icon name={option.icon as IconName} className="size-4 mr-2"/>
+                            {option.name}
+                        </SelectItem>
                     ))}
                 </SelectContent>
             </Select>
@@ -73,8 +80,13 @@ export function FieldRendererPreviewComponent({
     }
 
     if (field.fieldType.component === "date") {
+        const granularity = field.options.find(option => option.fieldTypeOption.key === "granularity")?.value || "day";
         return (
             <DatePicker
+                value={date}
+                onChange={setDate}
+                shouldForceLeadingZeros={true}
+                granularity={granularity as "day" | "hour" | "minute" | "second"}
             />
         );
     }

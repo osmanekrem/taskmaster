@@ -1,8 +1,4 @@
-import {useQuery} from "@tanstack/react-query";
-import {getFieldsForTicketTypeQuery} from "@/features/ticket-types/lib/queries";
 import {KanbanBoard, KanbanCard, KanbanCards, KanbanHeader, KanbanProvider} from "@/components/ui/shadcn-io/kanban";
-import {Item, ItemContent, ItemDescription, ItemMedia, ItemTitle} from "@/components/ui/item";
-import {Icon} from "@/components/ui/icon-picker";
 import FieldRendererPreview from "@/features/fields/ui/components/field-renderer-preview";
 
 interface TicketTypePreviewProps {
@@ -20,9 +16,6 @@ export default function TicketTypePreview({
                                               setFields,
                                               id
                                           }: TicketTypePreviewProps) {
-
-    const {data} = useQuery(getFieldsForTicketTypeQuery(id));
-
     return (
         <KanbanProvider
             columns={columns}
@@ -48,7 +41,7 @@ export default function TicketTypePreview({
                                 name={field.name}
                                 className="pt-4 pr-4"
                             >
-                                            <FieldRendererPreview field={field}/>
+                                <FieldRendererPreview field={field}/>
                             </KanbanCard>
                         )}
                     </KanbanCards>

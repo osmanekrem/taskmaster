@@ -145,7 +145,7 @@ export const KanbanCard = <T extends KanbanItemProps = KanbanItemProps>({
                 <t.In>
                     <Card
                         className={cn(
-                            "cursor-grab gap-4 rounded-md p-2 shadow-sm ring-2 ring-primary flex flex-row flex-nowrap items-center",
+                            "cursor-grab gap-4 rounded-md p-2 shadow-sm ring-2 ring-primary flex flex-row flex-nowrap items-start",
                             isDragging && "cursor-grabbing",
                             className
                         )}
