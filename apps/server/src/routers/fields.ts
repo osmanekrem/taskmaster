@@ -1,478 +1,116 @@
-import {protectedProcedure, router} from "@/lib/trpc";
-import {fieldOptions, fields, selectOptions} from "@/db/schema/field";
-import {successResponse} from "@/utils/response";
-import {and, eq, exists, notInArray, sql} from "drizzle-orm";
-import {z} from "zod";
-import {fieldTypeOptions, fieldTypes} from "@/db/schema/field-types";
-import {createFieldSchema, editFieldSchema} from "@/schemas/fields";
+import { protectedProcedure, router } from "@/lib/trpc";
+import { successResponse } from "@/utils/response";
+import { z } from "zod";
+import { createFieldSchema, editFieldSchema } from "@/schemas/fields";
+import { fieldService } from "@/services/field-service";
+import { db } from "@/db";
+import { selectOptionSchema } from "@/schemas/fields";
 
 export const fieldsRouter = router({
-    getFields: protectedProcedure.query(async ({ctx}) => {
-        const data = await ctx.db.select().from(fields);
+    getFields: protectedProcedure.query(async () => {
+        const service = fieldService(db);
+        const data = await service.getAllFields();
         return successResponse(data, "Alanlar başarıyla getirildi");
     }),
+    
     getFieldById: protectedProcedure
-        .input(z.object({fieldId: z.string()}))
-        .query(async ({ctx, input}) => {
-            const data = await ctx.db
-                .select()
-                .from(fields)
-                .where(eq(fields.id, input.fieldId));
-            return successResponse(data[0], "Alan başarıyla getirildi");
+        .input(z.object({ fieldId: z.string() }))
+        .query(async ({ input }) => {
+            const service = fieldService(db);
+            const data = await service.getFieldById(input.fieldId);
+            return successResponse(data, "Alan başarıyla getirildi");
         }),
-    getFieldsWithDetails: protectedProcedure.query(async ({ctx}) => {
-        const data = await ctx.db
-            .select({
-                id: fields.id,
-                name: fields.name,
-                description: fields.description,
-                icon: fields.icon,
-                fieldType: {
-                    id: fieldTypes.id,
-                    name: fieldTypes.name,
-                    component: fieldTypes.component,
-                    icon: fieldTypes.icon,
-                },
-                options: sql<
-                    Array<{
-                        id: string;
-                        value: string;
-                        name: string;
-                        type: string;
-                        fieldTypeId: string;
-                        key: string;
-                        order: number
-                    }>
-                >`
-                    COALESCE(
-                    json_agg(
-                        DISTINCT CAST(json_build_object(
-                            'id',
-                    ${fieldOptions.id},
-                    'value',
-                    ${fieldOptions.value},
-                    'name',
-                    ${fieldTypeOptions.name},
-                    'type',
-                    ${fieldTypeOptions.type},
-                    'fieldTypeId',
-                    ${fieldTypeOptions.id},
-                    'key',
-                    ${fieldTypeOptions.key},
-                'order',
-                ${fieldTypeOptions.order}
-                    )
-                    AS
-                    jsonb
-                    )
-                    )
-                    FILTER
-                    (
-                    WHERE
-                    ${fieldOptions.id}
-                    IS
-                    NOT
-                    NULL
-                    ),
-                    CAST
-                    (
-                    '[]'
-                    AS
-                    json
-                    )
-                    )
-                `,
-                selectOptions: sql<
-                    Array<{
-                        id: string;
-                        name: string;
-                        icon: string;
-                        fieldOptionId: string;
-                        order: number;
-                    }>
-                >`
-                    COALESCE(
-                    json_agg(
-                        json_build_object(
-                            'id',
-                    ${selectOptions.id},
-                    'name',
-                    ${selectOptions.name},
-                    'icon',
-                    ${selectOptions.icon},
-                    'fieldOptionId',
-                    ${selectOptions.fieldOptionId},
-                'order',
-                ${selectOptions.order}
-                    )
-                    )
-                    FILTER
-                    (
-                    WHERE
-                    ${selectOptions.id}
-                    IS
-                    NOT
-                    NULL
-                    ),
-                    CAST
-                    (
-                    '[]'
-                    AS
-                    json
-                    )
-                    )
-                `,
-            })
-            .from(fields)
-            .leftJoin(fieldTypes, eq(fields.fieldTypeId, fieldTypes.id))
-            .leftJoin(fieldOptions, eq(fields.id, fieldOptions.fieldId))
-            .leftJoin(
-                fieldTypeOptions,
-                eq(fieldOptions.fieldTypeOptionId, fieldTypeOptions.id)
-            )
-            .leftJoin(
-                selectOptions,
-                eq(fieldOptions.id, selectOptions.fieldOptionId)
-            )
-            .groupBy(fields.id, fieldTypes.id);
-
+    
+    getFieldsWithDetails: protectedProcedure.query(async () => {
+        const service = fieldService(db);
+        const data = await service.getAllFieldsWithDetails();
         return successResponse(data, "Alanlar başarıyla getirildi");
     }),
+    
     getFieldWithDetailsById: protectedProcedure
-        .input(z.object({fieldId: z.string()}))
-        .query(async ({ctx, input}) => {
-            const data = await ctx.db
-                .select({
-                    id: fields.id,
-                    name: fields.name,
-                    description: fields.description,
-                    icon: fields.icon,
-                    fieldType: {
-                        id: fieldTypes.id,
-                        name: fieldTypes.name,
-                        component: fieldTypes.component,
-                        icon: fieldTypes.icon,
-                    },
-                    options: sql<
-                        Array<{
-                            id: string;
-                            value: string;
-                            name: string;
-                            type: string;
-                            fieldTypeId: string;
-                            key: string;
-                            order: number
-                        }>
-                    >`
-                        COALESCE(
-                    json_agg(
-                        -- The fix is to CAST the object to jsonb right here
-                        DISTINCT CAST(json_build_object(
-                            'id',
-                        ${fieldOptions.id},
-                        'value',
-                        ${fieldOptions.value},
-                        'name',
-                        ${fieldTypeOptions.name},
-                        'type',
-                        ${fieldTypeOptions.type},
-                        'fieldTypeId',
-                        ${fieldTypeOptions.id},
-                        'key',
-                        ${fieldTypeOptions.key},
-                        'order',
-                        ${fieldTypeOptions.order}
-                        )
-                        AS
-                        jsonb
-                        )
-                        )
-                        FILTER
-                        (
-                        WHERE
-                        ${fieldOptions.id}
-                        IS
-                        NOT
-                        NULL
-                        ),
-                        CAST
-                        (
-                        '[]'
-                        AS
-                        json
-                        )
-                        )
-                    `,
-                    selectOptions: sql<
-                        Array<{
-                            id: string;
-                            name: string;
-                            icon: string;
-                            fieldOptionId: string;
-                            order: number;
-                        }>
-                    >`
-                        COALESCE(
-                    json_agg(
-                        json_build_object(
-                            'id',
-                        ${selectOptions.id},
-                        'name',
-                        ${selectOptions.name},
-                        'icon',
-                        ${selectOptions.icon},
-                        'fieldOptionId',
-                        ${selectOptions.fieldOptionId},
-                'order',
-                ${selectOptions.order}
-                        )
-                        )
-                        FILTER
-                        (
-                        WHERE
-                        ${selectOptions.id}
-                        IS
-                        NOT
-                        NULL
-                        ),
-                        CAST
-                        (
-                        '[]'
-                        AS
-                        json
-                        )
-                        )
-                    `,
-                })
-                .from(fields)
-                .leftJoin(fieldTypes, eq(fields.fieldTypeId, fieldTypes.id))
-                .leftJoin(fieldOptions, eq(fields.id, fieldOptions.fieldId))
-                .leftJoin(
-                    fieldTypeOptions,
-                    eq(fieldOptions.fieldTypeOptionId, fieldTypeOptions.id)
-                )
-                .leftJoin(
-                    selectOptions,
-                    eq(fieldOptions.id, selectOptions.fieldOptionId)
-                )
-                .where(eq(fields.id, input.fieldId))
-                .groupBy(fields.id, fieldTypes.id);
-            return successResponse(data[0], "Alan başarıyla getirildi");
+        .input(z.object({ fieldId: z.string() }))
+        .query(async ({ input }) => {
+            const service = fieldService(db);
+            const data = await service.getFieldWithDetailsById(input.fieldId);
+            return successResponse(data, "Alan başarıyla getirildi");
         }),
-    getFieldsWithFieldType: protectedProcedure.query(async ({ctx}) => {
-        const data = await ctx.db
-            .select({
-                id: fields.id,
-                name: fields.name,
-                description: fields.description,
-                icon: fields.icon,
-                fieldType: {
-                    id: fieldTypes.id,
-                    name: fieldTypes.name,
-                    component: fieldTypes.component,
-                    icon: fieldTypes.icon,
-                },
-            })
-            .from(fields)
-            .leftJoin(fieldTypes, eq(fields.fieldTypeId, fieldTypes.id));
+    
+    getFieldsWithFieldType: protectedProcedure.query(async () => {
+        const service = fieldService(db);
+        const data = await service.getAllFieldsWithDetails();
         return successResponse(data, "Alanlar başarıyla getirildi");
     }),
+    
     getFieldWithFieldTypeById: protectedProcedure
-        .input(z.object({fieldId: z.string()}))
-        .query(async ({ctx, input}) => {
-            const data = await ctx.db
-                .select({
-                    id: fields.id,
-                    name: fields.name,
-                    description: fields.description,
-                    icon: fields.icon,
-                    fieldType: {
-                        id: fieldTypes.id,
-                        name: fieldTypes.name,
-                        component: fieldTypes.component,
-                        icon: fieldTypes.icon,
-                    },
-                })
-                .from(fields)
-                .leftJoin(fieldTypes, eq(fields.fieldTypeId, fieldTypes.id))
-                .where(eq(fields.id, input.fieldId));
-            return successResponse(data[0], "Alan başarıyla getirildi");
+        .input(z.object({ fieldId: z.string() }))
+        .query(async ({ input }) => {
+            const service = fieldService(db);
+            const data = await service.getFieldWithDetailsById(input.fieldId);
+            return successResponse(data, "Alan başarıyla getirildi");
         }),
+    
     createField: protectedProcedure
         .input(createFieldSchema)
-        .mutation(async ({ctx, input}) => {
-            const data = await ctx.db.insert(fields).values(input).returning();
-            const fieldTypeOptionsData = await ctx.db
-                .select()
-                .from(fieldTypeOptions)
-                .where(eq(fieldTypeOptions.fieldTypeId, input.fieldTypeId));
-            const fieldOptionsData = fieldTypeOptionsData.map((option) => ({
-                fieldId: data[0].id,
-                fieldTypeId: option.fieldTypeId,
-                fieldTypeOptionId: option.id,
-                value:
-                    option.type === "string"
-                        ? ""
-                        : option.type === "number"
-                            ? "0"
-                            : option.type === "boolean"
-                                ? "false"
-                                : option.type === "select-options"
-                                    ? "false"
-                                    : "",
-            }));
-
-            await ctx.db.insert(fieldOptions).values(fieldOptionsData);
-
-            return successResponse(data[0], "Alan başarıyla oluşturuldu");
+        .mutation(async ({ input }) => {
+            const service = fieldService(db);
+            const data = await service.createField(input);
+            return successResponse(data, "Alan başarıyla oluşturuldu");
         }),
+    
     deleteField: protectedProcedure
-        .input(z.object({fieldId: z.string()}))
-        .mutation(async ({ctx, input}) => {
-            const data = await ctx.db
-                .delete(fields)
-                .where(eq(fields.id, input.fieldId))
-                .returning();
-            return successResponse(data[0], "Alan başarıyla silindi");
+        .input(z.object({ fieldId: z.string() }))
+        .mutation(async ({ input }) => {
+            const service = fieldService(db);
+            const data = await service.deleteField(input.fieldId);
+            return successResponse(data, "Alan başarıyla silindi");
         }),
+    
     editField: protectedProcedure
         .input(editFieldSchema)
-        .mutation(async ({ctx, input}) => {
-            const {fieldId, ...rest} = input;
-            const data = await ctx.db
-                .update(fields)
-                .set(rest)
-                .where(eq(fields.id, fieldId))
-                .returning();
-            return successResponse(data[0], "Alan başarıyla güncellendi");
+        .mutation(async ({ input }) => {
+            const service = fieldService(db);
+            const { fieldId, ...rest } = input;
+            const data = await service.updateField(fieldId, rest);
+            return successResponse(data, "Alan başarıyla güncellendi");
         }),
+    
     getSelectOptionsByFieldOptionId: protectedProcedure
-        .input(z.object({fieldOptionId: z.string()}))
-        .query(async ({ctx, input}) => {
-            const data = await ctx.db
-                .select()
-                .from(selectOptions)
-                .where(eq(selectOptions.fieldOptionId, input.fieldOptionId));
+        .input(z.object({ fieldOptionId: z.string() }))
+        .query(async ({ input }) => {
+            const service = fieldService(db);
+            const data = await service.getSelectOptionsByFieldOptionIds([input.fieldOptionId]);
             return successResponse(data, "Seçim seçenekleri başarıyla getirildi");
         }),
+    
     getSelectOptionsByFieldOptionIds: protectedProcedure
-        .input(z.object({fieldOptionIds: z.array(z.string())}))
-        .query(async ({ctx, input}) => {
-            const data = await ctx.db
-                .select()
-                .from(selectOptions)
-                .where(
-                    exists(
-                        ctx.db
-                            .select()
-                            .from(selectOptions)
-                            .where(
-                                and(
-                                    eq(selectOptions.fieldOptionId, selectOptions.fieldOptionId),
-                                    sql`${selectOptions.fieldOptionId}
-                                    IN (
-                                    ${sql.join(
-                                            input.fieldOptionIds.map((id) => sql`${id}`),
-                                            sql`, `
-                                    )}
-                                    )`
-                                )
-                            )
-                    )
-                );
+        .input(z.object({ fieldOptionIds: z.array(z.string()) }))
+        .query(async ({ input }) => {
+            const service = fieldService(db);
+            const data = await service.getSelectOptionsByFieldOptionIds(input.fieldOptionIds);
             return successResponse(data, "Seçim seçenekleri başarıyla getirildi");
         }),
+    
     saveSelectOptions: protectedProcedure
         .input(
             z.object({
                 fieldOptionId: z.string(),
-                options: z.array(
-                    z.object({
-                        id: z.string().optional(),
-                        name: z.string(),
-                        icon: z.string(),
-                        fieldOptionId: z.string(),
-                        order: z.number(),
-                    })
-                ),
+                options: z.array(selectOptionSchema),
             })
         )
-        .mutation(async ({ctx, input}) => {
-            const {fieldOptionId, options} = input;
-
-            // 1. Get the IDs of incoming options that already exist.
-            const incomingOptionIds = options
-                .map((opt) => opt.id)
-                .filter((id): id is string => !!id);
-
-            // 2. Delete options from the database that are not in the incoming list.
-            if (incomingOptionIds.length > 0) {
-                // If we have existing option IDs, delete any DB records that are NOT in this list.
-                await ctx.db.delete(selectOptions).where(
-                    and(
-                        eq(selectOptions.fieldOptionId, fieldOptionId),
-                        notInArray(selectOptions.id, incomingOptionIds)
-                    )
-                );
-            } else {
-                // If no existing option IDs are passed, it means all options for this field should be deleted.
-                await ctx.db.delete(selectOptions)
-                    .where(eq(selectOptions.fieldOptionId, fieldOptionId));
-            }
-
-
-            // 3. Upsert new and existing options (this part of your logic was correct).
-            for (const option of options) {
-                if (option.id) {
-                    // Update existing option
-                    await ctx.db
-                        .update(selectOptions)
-                        .set({
-                            name: option.name,
-                            icon: option.icon,
-                        })
-                        .where(eq(selectOptions.id, option.id));
-                } else {
-                    // Insert new option
-                    await ctx.db.insert(selectOptions).values({
-                        name: option.name,
-                        icon: option.icon,
-                        fieldOptionId: fieldOptionId,
-                        order: option.order,
-                    });
-                }
-            }
-
-            // ... (rest of your function)
-            const updatedOptions = await ctx.db
-                .select({
-                    id: selectOptions.id,
-                    name: selectOptions.name,
-                    icon: selectOptions.icon,
-                    fieldOptionId: selectOptions.fieldOptionId,
-                    order: selectOptions.order,
-                    fieldId: fieldOptions.fieldId,
-                })
-                .from(selectOptions)
-                .where(eq(selectOptions.fieldOptionId, fieldOptionId))
-                .leftJoin(fieldOptions, eq(selectOptions.fieldOptionId, fieldOptions.id));
-
-            return successResponse(
-                updatedOptions,
-                "Seçim seçenekleri başarıyla kaydedildi"
-            );
+        .mutation(async ({ input }) => {
+            const service = fieldService(db);
+            const data = await service.saveSelectOptions(input.fieldOptionId, input.options);
+            return successResponse(data, "Seçim seçenekleri başarıyla kaydedildi");
         }),
+    
     updateFieldOptionValue: protectedProcedure
         .input(z.object({
             fieldOptionId: z.string(),
             value: z.string(),
         }))
-        .mutation(async ({ctx, input}) => {
-            const data = await ctx.db
-                .update(fieldOptions)
-                .set({value: input.value})
-                .where(eq(fieldOptions.id, input.fieldOptionId))
-                .returning();
-            return successResponse(data[0], "Alan seçeneği değeri başarıyla güncellendi");
+        .mutation(async ({ input }) => {
+            const service = fieldService(db);
+            const data = await service.updateFieldOptionValue(input.fieldOptionId, input.value);
+            return successResponse(data, "Alan seçeneği değeri başarıyla güncellendi");
         }),
 });

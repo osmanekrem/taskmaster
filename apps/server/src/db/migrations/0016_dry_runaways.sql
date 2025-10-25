@@ -1,0 +1,1 @@
+ALTER TABLE "field-options" ADD COLUMN "order" smallint DEFAULT 0 NOT NULL;

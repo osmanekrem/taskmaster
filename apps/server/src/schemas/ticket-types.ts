@@ -6,9 +6,13 @@ export const createTicketTypeRequestSchema = z.object({
   icon: z.string().optional(),
 });
 
+export type CreateTicketTypeRequestSchema = z.infer<typeof createTicketTypeRequestSchema>;
+
 export const editTicketTypeRequestSchema = z.object({
   ticketTypeId: z.string(),
   name: z.string().min(1, "Bilet türü adı zoruludur"),
   description: z.string().optional(),
   icon: z.string().optional(),
 });
+
+export type EditTicketTypeRequestSchema = z.infer<typeof editTicketTypeRequestSchema>;
