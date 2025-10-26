@@ -7,7 +7,6 @@ export const fields = pgTable("fields", {
         .primaryKey()
         .$defaultFn(() => crypto.randomUUID()),
     name: text("name").notNull(),
-    description: text("description"),
     icon: text("icon"),
     fieldTypeId: text("field_type_id")
         .notNull()

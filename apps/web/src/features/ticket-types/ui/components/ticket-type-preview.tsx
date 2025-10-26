@@ -39,7 +39,7 @@ export default function TicketTypePreview({
                                 id={field.id}
                                 key={field.id}
                                 name={field.name}
-                                className="pt-4 pr-4"
+                                className="p-4"
                             >
                                 <FieldRendererPreview field={field}/>
                             </KanbanCard>

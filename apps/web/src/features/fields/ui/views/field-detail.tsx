@@ -6,7 +6,7 @@ import EditFieldModal from "@/features/fields/ui/components/edit-field-modal";
 import DeleteFieldButton from "@/features/fields/ui/components/delete-field-button";
 import {Route} from "@/routes/__protected/settings/fields/$id";
 import {
-    BooleanFormElement,
+    BooleanFormElement, ParagraphFormElement,
     SelectFormElement, type SelectOption,
     StaticSelectOptionsFormElement,
     TextFormElement,
@@ -156,9 +156,6 @@ export default function FieldDetail() {
                     <DeleteFieldButton id={id}/>
                 </div>
             </div>
-            {data?.data?.description && (
-                <p className="text-sm text-muted-foreground">{data?.data?.description}</p>
-            )}
             {optionsData.map((option) => {
                 switch (option.fieldTypeOption.type) {
                     case "boolean":
@@ -224,7 +221,11 @@ export default function FieldDetail() {
                                             value={option.value}
                                             onChange={(value: any) => onChangeOption(option.id, value)}/></div>
 
-
+                    case "paragraph":
+                        return <div key={option.id} className="p-4 border rounded-md">
+                            <ParagraphFormElement value={option.value} name={option.fieldTypeOption.name} id={option.id}
+                                                  onChange={(value: any) => onChangeOption(option.id, value)}/>
+                        </div>;
                     case "number":
                         break;
                     default:

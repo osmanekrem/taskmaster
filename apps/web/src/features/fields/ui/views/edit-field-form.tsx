@@ -27,7 +27,6 @@ export default function EditFieldForm(
         defaultValues: {
             fieldId: fieldId,
             name: data?.data?.name ?? "",
-            description: data?.data?.description ?? "",
             icon: data?.data?.icon ?? "",
             fieldTypeId: data?.data?.fieldTypeId ?? "",
         },
@@ -116,30 +115,6 @@ export default function EditFieldForm(
                             <FieldTypeIconSelect
                                 value={field.state.value}
                                 onChange={(value) => field.handleChange(value)}
-                            />
-                            {field.state.meta.errors.map((error) => (
-                                <p key={error?.message} className="text-destructive">
-                                    {error?.message}
-                                </p>
-                            ))}
-                        </div>
-                    )}
-                </form.Field>
-            </div>
-
-            <div>
-                <form.Field name="description">
-                    {(field) => (
-                        <div className="space-y-2">
-                            <Label htmlFor={field.name}>
-                                Alan Açıklaması
-                            </Label>
-                            <Textarea
-                                id={field.name}
-                                name={field.name}
-                                value={field.state.value}
-                                onBlur={field.handleBlur}
-                                onChange={(e) => field.handleChange(e.target.value)}
                             />
                             {field.state.meta.errors.map((error) => (
                                 <p key={error?.message} className="text-destructive">

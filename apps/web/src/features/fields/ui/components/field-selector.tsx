@@ -43,7 +43,6 @@ export default function FieldSelector({
                                 <Icon className="size-4" name={"info"}/>
                             </TooltipTrigger>
                             <TooltipContent className="p-4">
-                                {field.description || "Açıklama yok"}
                                 {field.options.map((option => {
                                     const isStaticSelect = option.fieldTypeOption.key === "is-dynamic-options" && option.value === "false"
                                     return (

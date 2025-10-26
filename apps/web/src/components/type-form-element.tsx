@@ -25,6 +25,7 @@ import {Input} from "./ui/input";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "./ui/select";
 import {KanbanBoard, KanbanCard, KanbanCards, KanbanHeader, KanbanProvider} from "@/components/ui/shadcn-io/kanban";
 import FieldRendererPreview from "@/features/fields/ui/components/field-renderer-preview";
+import {Textarea} from "@/components/ui/textarea";
 
 const types: Record<string, any> = {
     boolean: BooleanFormElement,
@@ -301,6 +302,32 @@ export function SelectFormElement({
                     ))}
                 </SelectContent>
             </Select>
+        </div>
+    );
+}
+
+interface ParagraphFormElementProps {
+    value: string;
+    onChange: (value: string) => void;
+    name: string;
+    id: string;
+}
+
+export function ParagraphFormElement({
+                                         value,
+                                         onChange,
+                                         name,
+                                         id,
+                                     }: ParagraphFormElementProps) {
+    return (
+        <div className="flex flex-col items-start space-y-2 w-full">
+            <Label htmlFor={id}>{name}</Label>
+
+            <Textarea
+                id={id}
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+            />
         </div>
     );
 }

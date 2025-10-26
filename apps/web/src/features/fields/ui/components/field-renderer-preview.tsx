@@ -16,15 +16,18 @@ interface fieldRendererProps {
 export default function FieldRendererPreview({field}: fieldRendererProps) {
 
     const isRequired = field.options.find(option => option.fieldTypeOption.key === "is-required")?.value === "true";
+    const description = field.options.find(option => option.fieldTypeOption.key === "description")?.value || "";
     return (
         <Field>
             <FieldLabel className="flex items-center">
                 <Icon name={field.icon as IconName} className="size-4"/> {field.name} {isRequired && '*'}
             </FieldLabel>
             <FieldRendererPreviewComponent field={field}/>
-            <FieldDescription>
-                {field.description}
-            </FieldDescription>
+            {description &&
+                <FieldDescription>
+                    {description}
+                </FieldDescription>
+            }
         </Field>
     );
 }
