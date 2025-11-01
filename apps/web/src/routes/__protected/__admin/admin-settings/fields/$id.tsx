@@ -3,7 +3,7 @@ import NotFound from "@/components/not-found";
 import {getFieldWithDetailsQuery} from "@/features/fields/lib/queries";
 import FieldDetail from "@/features/fields/ui/views/field-detail";
 
-export const Route = createFileRoute("/__protected/settings/fields/$id")({
+export const Route = createFileRoute("/__protected/__admin/admin-settings/fields/$id")({
     component: FieldDetail,
     loader: async ({context, params}) => {
         const {id} = params;

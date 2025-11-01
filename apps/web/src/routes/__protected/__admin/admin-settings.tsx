@@ -1,27 +1,27 @@
 import { createFileRoute, Link, Outlet } from '@tanstack/react-router';
 import GoBackButton from '@/components/go-back-button';
-import {
-  BugIcon,
-  LayoutTemplateIcon,
-  TextCursorInputIcon,
-  UserIcon,
-} from 'lucide-react';
+import { BugIcon, TextCursorInputIcon } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
 
 const routes = [
   {
-    label: 'Genel',
+    label: 'Değişkenler',
     items: [
       {
-        label: 'Profil Ayarları',
-        to: '/settings/profile',
-        icon: UserIcon,
+        label: 'Bilet Türleri',
+        to: '/admin-settings/ticket-types',
+        icon: BugIcon,
+      },
+      {
+        label: 'Alanlar',
+        to: '/admin-settings/fields',
+        icon: TextCursorInputIcon,
       },
     ],
   },
 ];
 
-export const Route = createFileRoute('/__protected/settings')({
+export const Route = createFileRoute('/__protected/__admin/admin-settings')({
   component: RouteComponent,
 });
 

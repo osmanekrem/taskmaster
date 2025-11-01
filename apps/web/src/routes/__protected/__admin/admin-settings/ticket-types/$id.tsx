@@ -4,7 +4,7 @@ import {getTicketTypeQuery} from "@/features/ticket-types/lib/queries";
 import {redirect} from "@tanstack/react-router";
 import NotFound from "@/components/not-found";
 
-export const Route = createFileRoute("/__protected/settings/ticket-types/$id")({
+export const Route = createFileRoute("/__protected/__admin/admin-settings/ticket-types/$id")({
     component: TicketTypeDetail,
     loader: async ({context, params}) => {
         const {id} = params;
