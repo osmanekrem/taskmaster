@@ -23,7 +23,13 @@ export default function AdminMenu() {
           {links.map((item) => (
             <SidebarMenuItem key={item.label}>
               <SidebarMenuButton asChild>
-                <Link to={item.to}>
+                <Link
+                  to={item.to}
+                  activeProps={{
+                    className:
+                      'bg-primary !text-primary-foreground hover:!bg-primary/90',
+                  }}
+                >
                   <item.icon />
                   <span>{item.label}</span>
                 </Link>
