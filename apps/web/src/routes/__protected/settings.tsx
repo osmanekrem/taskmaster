@@ -47,10 +47,8 @@ function RouteComponent() {
                   <Link
                     to={route.to}
                     activeProps={{
-                      className: buttonVariants({
-                        size: 'lg',
-                        className: 'w-full justify-start',
-                      }),
+                      className:
+                        'bg-primary hover:!bg-primary/90 !text-primary-foreground',
                     }}
                     className={buttonVariants({
                       variant: 'ghost',

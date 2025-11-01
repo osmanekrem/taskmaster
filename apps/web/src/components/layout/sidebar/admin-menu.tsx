@@ -11,7 +11,7 @@ import { SettingsIcon, UsersIcon } from 'lucide-react';
 
 const links = [
   { to: '/user-management', label: 'Kullanıcı Yönetimi', icon: UsersIcon },
-  { to: '/admin-settings', label: 'Ayarlar', icon: SettingsIcon },
+  { to: '/admin-settings', label: 'Yönetici Ayarları', icon: SettingsIcon },
 ];
 
 export default function AdminMenu() {

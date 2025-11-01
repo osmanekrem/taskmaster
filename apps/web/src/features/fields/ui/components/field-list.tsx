@@ -38,7 +38,10 @@ export default function FieldList() {
               className='w-full'
             >
               <ItemMedia>
-                <Icon name={(field?.icon as IconName) ?? ''} />
+                <Icon
+                  name={(field?.icon as IconName) ?? ''}
+                  className='size-4'
+                />
               </ItemMedia>
               <ItemContent>
                 <ItemTitle>{field.name}</ItemTitle>

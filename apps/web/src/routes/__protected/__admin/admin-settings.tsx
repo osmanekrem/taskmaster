@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet } from '@tanstack/react-router';
 import GoBackButton from '@/components/go-back-button';
-import { BugIcon, TextCursorInputIcon } from 'lucide-react';
+import { TextCursorInputIcon, TicketIcon } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
 
 const routes = [
@@ -10,7 +10,7 @@ const routes = [
       {
         label: 'Bilet Türleri',
         to: '/admin-settings/ticket-types',
-        icon: BugIcon,
+        icon: TicketIcon,
       },
       {
         label: 'Alanlar',
@@ -47,10 +47,8 @@ function RouteComponent() {
                   <Link
                     to={route.to}
                     activeProps={{
-                      className: buttonVariants({
-                        size: 'lg',
-                        className: 'w-full justify-start',
-                      }),
+                      className:
+                        'bg-primary hover:!bg-primary/90 !text-primary-foreground',
                     }}
                     className={buttonVariants({
                       variant: 'ghost',

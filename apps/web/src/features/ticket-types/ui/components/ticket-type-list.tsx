@@ -40,7 +40,10 @@ export default function TicketTypeList() {
               className='w-full'
             >
               <ItemMedia>
-                <Icon name={(ticketType.icon as IconName) ?? ''} />
+                <Icon
+                  name={(ticketType.icon as IconName) ?? ''}
+                  className='size-4'
+                />
               </ItemMedia>
               <ItemContent>
                 <ItemTitle>{ticketType.name}</ItemTitle>

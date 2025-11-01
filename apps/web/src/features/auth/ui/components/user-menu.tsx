@@ -14,6 +14,7 @@ import { LogOutIcon, SettingsIcon } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 import { SidebarMenuButton } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
+import { ModeToggle } from '@/components/mode-toggle';
 
 export default function UserMenu() {
   const session = useAuthenticatedUser();
@@ -47,23 +48,30 @@ export default function UserMenu() {
           <Link
             className={cn(
               buttonVariants({ variant: 'ghost' }),
-              'w-full text-foreground justify-start',
+              'w-full justify-start',
             )}
             to='/settings'
           >
-            <SettingsIcon className='text-foreground' />
+            <SettingsIcon className='size-4' />
             Ayarlar
           </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <ModeToggle
+            size='default'
+            className='w-full justify-start'
+            variant='ghost'
+          />
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Button
             variant='destructive'
-            className='w-full text-foreground justify-start'
+            className='w-full justify-start !text-white hover:!bg-destructive/90'
             disabled={isPending}
             onClick={() => logout()}
           >
-            <LogOutIcon className='text-foreground' />
+            <LogOutIcon className='size-4 text-white' />
             Çıkış Yap
           </Button>
         </DropdownMenuItem>
