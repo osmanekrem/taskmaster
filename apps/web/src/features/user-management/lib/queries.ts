@@ -49,9 +49,10 @@ export const getUsersInfiniteQuery = (
   searchField: 'name' | 'email',
   searchValue: string,
   limit: number = 10,
+  searchOperator: "contains" | "starts_with" | "ends_with" = "contains",
 ) =>
   infiniteQueryOptions({
-    queryKey: ['users', searchField, searchValue, limit],
+    queryKey: ['users', searchField, searchValue, limit, searchOperator],
     queryFn: async ({ pageParam }) => {
       const response = await authClient.admin.listUsers({
         query: {
@@ -59,6 +60,7 @@ export const getUsersInfiniteQuery = (
           offset: pageParam,
           searchField,
           searchValue,
+          searchOperator,
         },
       });
       return response.data;

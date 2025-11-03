@@ -29,15 +29,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
-import {
-  KanbanBoard,
-  KanbanCard,
-  KanbanCards,
-  KanbanHeader,
-  KanbanProvider,
-} from '@/components/ui/shadcn-io/kanban';
 import FieldRendererPreview from '@/features/fields/ui/components/field-renderer-preview';
+import * as Sortable from '@/components/ui/sortable';
 import { Textarea } from '@/components/ui/textarea';
+import { GripVertical } from 'lucide-react';
 
 const types: Record<string, any> = {
   boolean: BooleanFormElement,
@@ -107,43 +102,43 @@ export function StaticSelectOptionsFormElement({
 
   if (!value) return null;
   return (
-    <div className='flex flex-col space-y-1 w-full'>
-      <KanbanProvider
-        columns={columns}
-        data={value.map((option) => ({
-          ...option,
-          column: '0',
-          id: option.id || `temp-${option.order}`,
-        }))}
-        onDataChange={(v) =>
-          onChange(
-            id,
-            v.map((option, i) => ({
-              order: i,
-              fieldOptionId: option.fieldOptionId,
-              name: option.name,
-              icon: option.icon,
-              ...(option.id.startsWith('temp-')
-                ? {}
-                : {
-                    id: option.id,
-                  }),
-            })),
-          )
-        }
-      >
-        {(column) => (
-          <KanbanBoard id={column.id} key={column.id}>
-            <KanbanCards id={column.id}>
-              {(option) => (
-                <KanbanCard
-                  column={column.id}
-                  id={option.id}
-                  key={option.id}
-                  name={option.name}
-                  className=' pr-4 items-center'
-                >
-                  <ItemMedia>
+    <div className='flex flex-col space-y-4 w-full p-4 border border-border rounded-md'>
+      <Sortable.Root
+      value={value.map((option) => ({
+        ...option,
+        id: option.id || `temp-${option.order}`,
+      }))}
+      onValueChange={v => onChange(
+        id,
+        v.map((option, i) => ({
+          order: i,
+          fieldOptionId: option.fieldOptionId,
+          name: option.name,
+          icon: option.icon,
+          ...(option.id.startsWith('temp-')
+            ? {}
+            : {
+                id: option.id,
+              }),
+        })),
+      )}
+      getItemValue={(field) => field.id}
+      orientation="vertical"
+    >
+      <Sortable.Content className="grid gap-2.5">
+        {value.map((option) => ({
+        ...option,
+        id: option.id || `temp-${option.order}`,
+      })).map((option) => (
+            <Sortable.Item key={option.id} value={option.id}>
+                <Item size="sm"  variant="outline" className="py-1.5">
+<ItemMedia>
+                <Sortable.ItemHandle asChild>
+                      <Button variant="ghost" size="icon" className="size-8">
+                        <GripVertical className="h-4 w-4" />
+                      </Button>
+                    </Sortable.ItemHandle>
+
                     {editingOptionIndex === option.id ? (
                       <IconPicker
                         value={option.icon as IconName}
@@ -167,6 +162,7 @@ export function StaticSelectOptionsFormElement({
                         name={option.icon as IconName}
                       />
                     )}
+                  
                   </ItemMedia>
                   <ItemContent>
                     {editingOptionIndex === option.id ? (
@@ -229,12 +225,39 @@ export function StaticSelectOptionsFormElement({
                       <TrashIcon className='size-3.5' />
                     </Button>
                   </ItemActions>
-                </KanbanCard>
-              )}
-            </KanbanCards>
-          </KanbanBoard>
-        )}
-      </KanbanProvider>
+
+                </Item>
+            </Sortable.Item>
+        ))}
+      </Sortable.Content>
+      <Sortable.Overlay>
+        {(activeItem) => {
+          const option = value.find((option) => option.id === activeItem.value);
+ 
+          if (!option) return null;
+ 
+            return <Item size="sm"  variant="outline" className="py-1.5">
+    <ItemMedia>
+
+                        <Button variant="ghost" size="icon" className="size-8">
+                            <GripVertical className="h-4 w-4" />
+                        </Button>
+    
+                      <Icon
+                        className='size-9 p-2.5'
+                        name={option.icon as IconName}
+                      />
+                  </ItemMedia>
+                  <ItemContent>
+                      <ItemTitle className='px-3 py-1 h-9 border border-transparent font-normal'>
+                        {option.name}
+                      </ItemTitle>
+                    
+                  </ItemContent>
+                </Item>
+        }}
+      </Sortable.Overlay>
+    </Sortable.Root>
       <Button
         variant='outline'
         size='sm'
