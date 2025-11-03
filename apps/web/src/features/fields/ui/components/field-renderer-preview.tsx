@@ -14,6 +14,8 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { useState } from 'react';
 import type { DateValue } from 'react-aria-components';
+import UserSelector from '@/components/user-selector';
+import type { User } from '@/lib/auth-client';
 
 interface fieldRendererProps {
   field: FieldWithDetails;
@@ -52,7 +54,7 @@ export function FieldRendererPreviewComponent({ field }: fieldRendererProps) {
 
   const [option, setOption] = useState<string | undefined>(defaultOption);
   const [date, setDate] = useState<DateValue | null>(null);
-
+  const [user, setUser] = useState<string | undefined>();
   if (!field.fieldType) return null;
 
   if (field.fieldType.component === 'single-select') {
@@ -97,6 +99,10 @@ export function FieldRendererPreviewComponent({ field }: fieldRendererProps) {
         granularity={granularity as 'day' | 'hour' | 'minute' | 'second'}
       />
     );
+  }
+
+  if (field.fieldType.component === 'user') {
+    return <UserSelector value={user} onChange={setUser} />;
   }
 
   return null;
