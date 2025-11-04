@@ -7,20 +7,11 @@ import {
   ItemMedia,
   ItemTitle,
 } from '@/components/ui/item';
-import {
-  BadgeCheckIcon,
-  ChevronRightIcon,
-  PencilIcon,
-  PlusIcon,
-  SaveIcon,
-  TrashIcon,
-} from 'lucide-react';
+import { PencilIcon, PlusIcon, SaveIcon, TrashIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useState, type JSX } from 'react';
+import { useState } from 'react';
 import { IconPicker, Icon, type IconName } from './ui/icon-picker';
 import { iconsData } from './ui/icons-data';
-import { useQuery } from '@tanstack/react-query';
-import { getSelectOptionsByFieldOptionIdQuery } from '@/features/fields/lib/queries';
 import { Input } from './ui/input';
 import {
   Select,
@@ -29,10 +20,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
-import FieldRendererPreview from '@/features/fields/ui/components/field-renderer-preview';
 import * as Sortable from '@/components/ui/sortable';
 import { Textarea } from '@/components/ui/textarea';
 import { GripVertical } from 'lucide-react';
+import { Field, FieldLabel } from './ui/field';
 
 const types: Record<string, any> = {
   boolean: BooleanFormElement,
@@ -104,38 +95,42 @@ export function StaticSelectOptionsFormElement({
   return (
     <div className='flex flex-col space-y-4 w-full p-4 border border-border rounded-md'>
       <Sortable.Root
-      value={value.map((option) => ({
-        ...option,
-        id: option.id || `temp-${option.order}`,
-      }))}
-      onValueChange={v => onChange(
-        id,
-        v.map((option, i) => ({
-          order: i,
-          fieldOptionId: option.fieldOptionId,
-          name: option.name,
-          icon: option.icon,
-          ...(option.id.startsWith('temp-')
-            ? {}
-            : {
-                id: option.id,
-              }),
-        })),
-      )}
-      getItemValue={(field) => field.id}
-      orientation="vertical"
-    >
-      <Sortable.Content className="grid gap-2.5">
-        {value.map((option) => ({
-        ...option,
-        id: option.id || `temp-${option.order}`,
-      })).map((option) => (
-            <Sortable.Item key={option.id} value={option.id}>
-                <Item size="sm"  variant="outline" className="py-1.5">
-<ItemMedia>
-                <Sortable.ItemHandle asChild>
-                      <Button variant="ghost" size="icon" className="size-8">
-                        <GripVertical className="h-4 w-4" />
+        value={value.map((option) => ({
+          ...option,
+          id: option.id || `temp-${option.order}`,
+        }))}
+        onValueChange={(v) =>
+          onChange(
+            id,
+            v.map((option, i) => ({
+              order: i,
+              fieldOptionId: option.fieldOptionId,
+              name: option.name,
+              icon: option.icon,
+              ...(option.id.startsWith('temp-')
+                ? {}
+                : {
+                    id: option.id,
+                  }),
+            })),
+          )
+        }
+        getItemValue={(field) => field.id}
+        orientation='vertical'
+      >
+        <Sortable.Content className='grid gap-2.5'>
+          {value
+            .map((option) => ({
+              ...option,
+              id: option.id || `temp-${option.order}`,
+            }))
+            .map((option) => (
+              <Sortable.Item key={option.id} value={option.id}>
+                <Item size='sm' variant='outline' className='py-1.5'>
+                  <ItemMedia>
+                    <Sortable.ItemHandle asChild>
+                      <Button variant='ghost' size='icon' className='size-8'>
+                        <GripVertical className='h-4 w-4' />
                       </Button>
                     </Sortable.ItemHandle>
 
@@ -162,26 +157,23 @@ export function StaticSelectOptionsFormElement({
                         name={option.icon as IconName}
                       />
                     )}
-                  
                   </ItemMedia>
                   <ItemContent>
                     {editingOptionIndex === option.id ? (
-                      <div className='flex flex-col space-y-2'>
-                        <Input
-                          value={option.name}
-                          onChange={(e) => {
-                            const newOptions = [...value];
-                            const index = newOptions.findIndex(
-                              (opt) => opt.id === option.id,
-                            );
-                            newOptions[index] = {
-                              ...newOptions[index],
-                              name: e.target.value,
-                            };
-                            onChange(id, newOptions);
-                          }}
-                        />
-                      </div>
+                      <Input
+                        value={option.name}
+                        onChange={(e) => {
+                          const newOptions = [...value];
+                          const index = newOptions.findIndex(
+                            (opt) => opt.id === option.id,
+                          );
+                          newOptions[index] = {
+                            ...newOptions[index],
+                            name: e.target.value,
+                          };
+                          onChange(id, newOptions);
+                        }}
+                      />
                     ) : (
                       <ItemTitle className='px-3 py-1 h-9 border border-transparent font-normal'>
                         {option.name}
@@ -225,39 +217,40 @@ export function StaticSelectOptionsFormElement({
                       <TrashIcon className='size-3.5' />
                     </Button>
                   </ItemActions>
-
                 </Item>
-            </Sortable.Item>
-        ))}
-      </Sortable.Content>
-      <Sortable.Overlay>
-        {(activeItem) => {
-          const option = value.find((option) => option.id === activeItem.value);
- 
-          if (!option) return null;
- 
-            return <Item size="sm"  variant="outline" className="py-1.5">
-    <ItemMedia>
+              </Sortable.Item>
+            ))}
+        </Sortable.Content>
+        <Sortable.Overlay>
+          {(activeItem) => {
+            const option = value.find(
+              (option) => option.id === activeItem.value,
+            );
 
-                        <Button variant="ghost" size="icon" className="size-8">
-                            <GripVertical className="h-4 w-4" />
-                        </Button>
-    
-                      <Icon
-                        className='size-9 p-2.5'
-                        name={option.icon as IconName}
-                      />
-                  </ItemMedia>
-                  <ItemContent>
-                      <ItemTitle className='px-3 py-1 h-9 border border-transparent font-normal'>
-                        {option.name}
-                      </ItemTitle>
-                    
-                  </ItemContent>
-                </Item>
-        }}
-      </Sortable.Overlay>
-    </Sortable.Root>
+            if (!option) return null;
+
+            return (
+              <Item size='sm' variant='outline' className='py-1.5'>
+                <ItemMedia>
+                  <Button variant='ghost' size='icon' className='size-8'>
+                    <GripVertical className='h-4 w-4' />
+                  </Button>
+
+                  <Icon
+                    className='size-9 p-2.5'
+                    name={option.icon as IconName}
+                  />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle className='px-3 py-1 h-9 border border-transparent font-normal'>
+                    {option.name}
+                  </ItemTitle>
+                </ItemContent>
+              </Item>
+            );
+          }}
+        </Sortable.Overlay>
+      </Sortable.Root>
       <Button
         variant='outline'
         size='sm'
@@ -295,8 +288,8 @@ export function TextFormElement({
   id,
 }: TextFormElementProps) {
   return (
-    <div className='flex flex-col items-start space-y-2 w-full'>
-      <Label htmlFor={id}>{name}</Label>
+    <Field>
+      <FieldLabel htmlFor={id}>{name}</FieldLabel>
 
       <Input
         id={id}
@@ -304,7 +297,7 @@ export function TextFormElement({
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
-    </div>
+    </Field>
   );
 }
 
@@ -324,8 +317,8 @@ export function SelectFormElement({
   id,
 }: SelectFormElementProps) {
   return (
-    <div className='flex flex-col items-start space-y-2 w-full'>
-      <Label htmlFor={id}>{name}</Label>
+    <Field>
+      <FieldLabel htmlFor={id}>{name}</FieldLabel>
 
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger className='w-full'>
@@ -345,7 +338,7 @@ export function SelectFormElement({
           ))}
         </SelectContent>
       </Select>
-    </div>
+    </Field>
   );
 }
 
@@ -363,14 +356,14 @@ export function ParagraphFormElement({
   id,
 }: ParagraphFormElementProps) {
   return (
-    <div className='flex flex-col items-start space-y-2 w-full'>
-      <Label htmlFor={id}>{name}</Label>
+    <Field>
+      <FieldLabel htmlFor={id}>{name}</FieldLabel>
 
       <Textarea
         id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
-    </div>
+    </Field>
   );
 }

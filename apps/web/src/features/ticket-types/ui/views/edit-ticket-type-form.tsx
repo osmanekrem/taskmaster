@@ -1,15 +1,15 @@
-import { useForm } from "@tanstack/react-form";
-import { editTicketTypeSchema } from "@/features/ticket-types/schemas";
-import { editTicketTypeMutation } from "@/features/ticket-types/lib/mutations";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import TicketTypeIconSelect from "../components/ticket-type-icon-select";
-import { getTicketTypeQuery } from "../../lib/queries";
-import useEditTicketTypeModal from "@/features/ticket-types/hooks/use-edit-ticket-type-modal";
+import { useForm } from '@tanstack/react-form';
+import { editTicketTypeSchema } from '@/features/ticket-types/schemas';
+import { editTicketTypeMutation } from '@/features/ticket-types/lib/mutations';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import TicketTypeIconSelect from '../components/ticket-type-icon-select';
+import { getTicketTypeQuery } from '../../lib/queries';
+import useEditTicketTypeModal from '@/features/ticket-types/hooks/use-edit-ticket-type-modal';
+import { Field, FieldLabel, FieldSet } from '@/components/ui/field';
 
 interface EditTicketTypeFormProps {
   ticketTypeId: string;
@@ -18,15 +18,15 @@ interface EditTicketTypeFormProps {
 export default function EditTicketTypeForm({
   ticketTypeId,
 }: EditTicketTypeFormProps) {
-  const { data } = useQuery(getTicketTypeQuery(ticketTypeId ?? ""));
+  const { data } = useQuery(getTicketTypeQuery(ticketTypeId ?? ''));
   const editTicketType = useMutation(editTicketTypeMutation);
   const { close } = useEditTicketTypeModal();
   const form = useForm({
     defaultValues: {
-      ticketTypeId: ticketTypeId ?? "",
-      name: data?.data?.name ?? "",
-      description: data?.data?.description ?? "",
-      icon: data?.data?.icon ?? "",
+      ticketTypeId: ticketTypeId ?? '',
+      name: data?.data?.name ?? '',
+      description: data?.data?.description ?? '',
+      icon: data?.data?.icon ?? '',
     },
     onSubmit: async ({ value }) => {
       if (!ticketTypeId) return;
@@ -34,14 +34,14 @@ export default function EditTicketTypeForm({
         { ...value, ticketTypeId },
         {
           onSuccess: () => {
-            toast.success("Bilet türü başarıyla düzenlendi");
+            toast.success('Bilet türü başarıyla düzenlendi');
             form.reset();
             close();
           },
           onError: () => {
-            toast.error("Bilet türü düzenlenirken bir hata oluştu");
+            toast.error('Bilet türü düzenlenirken bir hata oluştu');
           },
-        }
+        },
       );
     },
     validators: {
@@ -56,14 +56,13 @@ export default function EditTicketTypeForm({
         e.stopPropagation();
         form.handleSubmit();
       }}
-      className="space-y-4 p-4 w-full h-full"
+      className=' p-4 w-full h-full'
     >
-      <h2 className="text-lg font-medium">Bilet Türü Düzenle</h2>
-      <div>
-        <form.Field name="name">
+      <FieldSet className='h-full flex flex-col'>
+        <form.Field name='name'>
           {(field) => (
-            <div className="space-y-2">
-              <Label htmlFor={field.name}>Bilet Türü Adı</Label>
+            <Field>
+              <FieldLabel htmlFor={field.name}>Bilet Türü Adı</FieldLabel>
               <Input
                 id={field.name}
                 name={field.name}
@@ -72,39 +71,37 @@ export default function EditTicketTypeForm({
                 onChange={(e) => field.handleChange(e.target.value)}
               />
               {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className="text-destructive">
+                <p key={error?.message} className='text-destructive'>
                   {error?.message}
                 </p>
               ))}
-            </div>
+            </Field>
           )}
         </form.Field>
-      </div>
 
-      <div>
-        <form.Field name="icon">
+        <form.Field name='icon'>
           {(field) => (
-            <div className="space-y-2">
-              <Label htmlFor={field.name}>Bilet Türü Simgesi</Label>
+            <Field>
+              <FieldLabel htmlFor={field.name}>Bilet Türü Simgesi</FieldLabel>
               <TicketTypeIconSelect
                 value={field.state.value}
                 onChange={(value) => field.handleChange(value)}
               />
               {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className="text-destructive">
+                <p key={error?.message} className='text-destructive'>
                   {error?.message}
                 </p>
               ))}
-            </div>
+            </Field>
           )}
         </form.Field>
-      </div>
 
-      <div>
-        <form.Field name="description">
+        <form.Field name='description'>
           {(field) => (
-            <div className="space-y-2">
-              <Label htmlFor={field.name}>Bilet Türü Açıklaması</Label>
+            <Field>
+              <FieldLabel htmlFor={field.name}>
+                Bilet Türü Açıklaması
+              </FieldLabel>
               <Textarea
                 id={field.name}
                 name={field.name}
@@ -113,26 +110,26 @@ export default function EditTicketTypeForm({
                 onChange={(e) => field.handleChange(e.target.value)}
               />
               {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className="text-destructive">
+                <p key={error?.message} className='text-destructive'>
                   {error?.message}
                 </p>
               ))}
-            </div>
+            </Field>
           )}
         </form.Field>
-      </div>
 
-      <form.Subscribe>
-        {(state) => (
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={!state.canSubmit || state.isSubmitting}
-          >
-            {state.isSubmitting ? "Gönderiliyor..." : "Bilet Türü Düzenle"}
-          </Button>
-        )}
-      </form.Subscribe>
+        <form.Subscribe>
+          {(state) => (
+            <Button
+              type='submit'
+              className='w-full mt-auto'
+              disabled={!state.canSubmit || state.isSubmitting}
+            >
+              {state.isSubmitting ? 'Gönderiliyor...' : 'Bilet Türü Düzenle'}
+            </Button>
+          )}
+        </form.Subscribe>
+      </FieldSet>
     </form>
   );
 }

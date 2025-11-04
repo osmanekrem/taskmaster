@@ -22,87 +22,60 @@ type SelectOption = Field['options'][number]['selectOptions'][number];
 
 export default function TicketTypeFields({ id }: TicketTypeFields) {
   const [fields, setFields] = useState<Field[]>([]);
-  const [mode, setMode] = useState<'preview' | 'customize'>('customize');
   const { fieldId } = useCustomizeFieldModal();
 
   const updateFieldOptionValue = (data: UpdateFieldOptionValueRequest) => {
-    const fieldsUpdated = fields.map((field) => {
-      if (field.id === fieldId) {
-        return {
-          ...field,
-          options: field.options.map((option) =>
-            option.id === data.fieldOptionId
-              ? { ...option, value: data.value }
-              : option,
-          ),
-        };
-      }
-      return field;
-    });
-    setFields([...fieldsUpdated]);
+    setFields((prev) =>
+      prev.map((field) => {
+        if (field.id === fieldId) {
+          return {
+            ...field,
+            options: field.options.map((option) =>
+              option.id === data.fieldOptionId
+                ? { ...option, value: data.value }
+                : option,
+            ),
+          };
+        }
+        return field;
+      }),
+    );
   };
 
   const saveSelectOptions = (data: SaveSelectOptionsRequest) => {
-    const fieldsUpdated = fields.map((field) => {
-      if (field.id === fieldId) {
-        return {
-          ...field,
-          options: field.options.map((option) => {
-            if (option.id === data.fieldOptionId) {
-              return {
-                ...option,
-                selectOptions: data.options as SelectOption[],
-              };
-            }
-            return option;
-          }),
-        };
-      }
-      return field;
-    });
-    setFields([...fieldsUpdated]);
+    setFields((prev) =>
+      prev.map((field) => {
+        if (field.id === fieldId) {
+          return {
+            ...field,
+            options: field.options.map((option) => {
+              if (option.id === data.fieldOptionId) {
+                return {
+                  ...option,
+                  selectOptions: data.options as SelectOption[],
+                };
+              }
+              return option;
+            }),
+          };
+        }
+        return field;
+      }),
+    );
   };
 
   return (
     <div className='flex w-full flex-1 min-h-0 gap-2.5 border-t pt-4'>
       <CustomizeFieldModal
+        fields={fields}
         updateFieldOptionValue={updateFieldOptionValue}
         saveSelectOptions={saveSelectOptions}
       />
-      <div className='flex flex-col flex-1 min-w-0 space-y-4'>
-        <div className='grid grid-cols-2 gap-2'>
-          <Button
-            variant='outline'
-            className={cn(
-              mode === 'preview' && '!bg-primary !text-primary-foreground',
-            )}
-            onClick={() => setMode('preview')}
-          >
-            <EyeIcon className='size-4' />
-            Önizleme
-          </Button>
-          <Button
-            variant='outline'
-            className={cn(
-              mode === 'customize' && '!bg-primary !text-primary-foreground',
-            )}
-            onClick={() => setMode('customize')}
-          >
-            <PencilIcon className='size-4' />
-            Özelleştir
-          </Button>
+      <div className='flex flex-col flex-1 min-w-0 space-y-4 '>
+        <div className='flex flex-col flex-1 min-h-0 space-y-4 overflow-y-auto border border-border rounded-md'>
+          <TicketTypeCustomize fields={fields} setFields={setFields} id={id} />
         </div>
-        <div className='flex-1 min-h-0 border border-border rounded-md'>
-          {mode === 'preview' ? (
-            <TicketTypePreview fields={fields} />
-          ) : (
-            <TicketTypeCustomize
-              fields={fields}
-              setFields={setFields}
-              id={id}
-            />
-          )}
-        </div>
+        <Button>Kaydet</Button>
       </div>
       <div className='flex flex-col min-w-0 w-full max-w-xs space-y-4'>
         <h2 className='text-xl font-bold leading-tight truncate'>Alanlar</h2>

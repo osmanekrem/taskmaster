@@ -1,6 +1,11 @@
-import ResponsiveModal from "@/components/responsive-modal";
-import useEditTicketTypeModal from "@/features/ticket-types/hooks/use-edit-ticket-type-modal";
-import EditTicketTypeForm from "../views/edit-ticket-type-form";
+import useEditTicketTypeModal from '@/features/ticket-types/hooks/use-edit-ticket-type-modal';
+import EditTicketTypeForm from '../views/edit-ticket-type-form';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 
 export default function EditTicketTypeModal() {
   const { ticketTypeId, setTicketTypeId } = useEditTicketTypeModal();
@@ -8,13 +13,18 @@ export default function EditTicketTypeModal() {
   if (!ticketTypeId) return null;
 
   return (
-    <ResponsiveModal
+    <Sheet
       open={!!ticketTypeId}
       onOpenChange={() => {
-        setTicketTypeId("");
+        setTicketTypeId('');
       }}
     >
-      <EditTicketTypeForm ticketTypeId={ticketTypeId} />
-    </ResponsiveModal>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Bilet Türü Düzenle</SheetTitle>
+        </SheetHeader>
+        <EditTicketTypeForm ticketTypeId={ticketTypeId} />
+      </SheetContent>
+    </Sheet>
   );
 }
