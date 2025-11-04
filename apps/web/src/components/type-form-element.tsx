@@ -71,21 +71,21 @@ export interface SelectOption {
   name: string;
   icon: string | null;
   order: number;
-  fieldOptionId: string;
+  [key: string]: string | number | null | undefined;
 }
 
 export interface SelectOptionsFormElementProps {
   id: string;
   value: SelectOption[];
   onChange: (optionId: string, options: SelectOption[]) => void;
+  key: string;
 }
-
-const columns = [{ id: '0', name: 'Önizleme' }];
 
 export function StaticSelectOptionsFormElement({
   id,
   value,
   onChange,
+  key,
 }: SelectOptionsFormElementProps) {
   const [editingOptionIndex, setEditingOptionIndex] = useState<string | null>(
     null,
@@ -103,10 +103,8 @@ export function StaticSelectOptionsFormElement({
           onChange(
             id,
             v.map((option, i) => ({
+              ...option,
               order: i,
-              fieldOptionId: option.fieldOptionId,
-              name: option.name,
-              icon: option.icon,
               ...(option.id.startsWith('temp-')
                 ? {}
                 : {
@@ -260,7 +258,7 @@ export function StaticSelectOptionsFormElement({
             ...value,
             {
               order: value.length + 1,
-              fieldOptionId: id,
+              [key]: id,
               name: `Seçenek ${value.length + 1}`,
               icon: iconsData[0].name,
             },

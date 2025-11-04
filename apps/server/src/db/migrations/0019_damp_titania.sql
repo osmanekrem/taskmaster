@@ -1,0 +1,1 @@
+ALTER TABLE "issue_type_field_options" ADD COLUMN "order" smallint DEFAULT 0 NOT NULL;

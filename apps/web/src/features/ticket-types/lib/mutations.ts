@@ -1,11 +1,11 @@
-import type { RouterInput, RouterOutput } from "@/utils/trpc";
-import { queryClient, trpcClient } from "@/utils/trpc";
-import { mutationOptions } from "@tanstack/react-query";
+import type { RouterInput, RouterOutput } from '@/utils/trpc';
+import { queryClient, trpcClient } from '@/utils/trpc';
+import { mutationOptions } from '@tanstack/react-query';
 
 type CreateTicketTypeRequestType =
-  RouterInput["ticketTypes"]["createTicketType"];
+  RouterInput['ticketTypes']['createTicketType'];
 type CreateTicketTypeResponseType =
-  RouterOutput["ticketTypes"]["createTicketType"];
+  RouterOutput['ticketTypes']['createTicketType'];
 
 export const createTicketTypeMutation = mutationOptions<
   CreateTicketTypeResponseType,
@@ -16,15 +16,15 @@ export const createTicketTypeMutation = mutationOptions<
     return trpcClient.ticketTypes.createTicketType.mutate(data);
   },
   onSuccess: (res) => {
-    queryClient.invalidateQueries({ queryKey: ["ticket-types"] });
+    queryClient.invalidateQueries({ queryKey: ['ticket-types'] });
     queryClient.invalidateQueries({
-      queryKey: ["ticket-type", res?.data?.[0]?.id],
+      queryKey: ['ticket-type', res?.data?.id],
     });
   },
 });
 
-type EditTicketTypeRequestType = RouterInput["ticketTypes"]["editTicketType"];
-type EditTicketTypeResponseType = RouterOutput["ticketTypes"]["editTicketType"];
+type EditTicketTypeRequestType = RouterInput['ticketTypes']['editTicketType'];
+type EditTicketTypeResponseType = RouterOutput['ticketTypes']['editTicketType'];
 
 export const editTicketTypeMutation = mutationOptions<
   EditTicketTypeResponseType,
@@ -35,17 +35,17 @@ export const editTicketTypeMutation = mutationOptions<
     return trpcClient.ticketTypes.editTicketType.mutate(data);
   },
   onSuccess: (res) => {
-    queryClient.invalidateQueries({ queryKey: ["ticket-types"] });
+    queryClient.invalidateQueries({ queryKey: ['ticket-types'] });
     queryClient.invalidateQueries({
-      queryKey: ["ticket-type", res?.data?.[0]?.id],
+      queryKey: ['ticket-type', res?.data?.id],
     });
   },
 });
 
 type DeleteTicketTypeRequestType =
-  RouterInput["ticketTypes"]["deleteTicketType"];
+  RouterInput['ticketTypes']['deleteTicketType'];
 type DeleteTicketTypeResponseType =
-  RouterOutput["ticketTypes"]["deleteTicketType"];
+  RouterOutput['ticketTypes']['deleteTicketType'];
 
 export const deleteTicketTypeMutation = mutationOptions<
   DeleteTicketTypeResponseType,
@@ -56,9 +56,30 @@ export const deleteTicketTypeMutation = mutationOptions<
     return trpcClient.ticketTypes.deleteTicketType.mutate(data);
   },
   onSuccess: (res) => {
-    queryClient.invalidateQueries({ queryKey: ["ticket-types"] });
+    queryClient.invalidateQueries({ queryKey: ['ticket-types'] });
     queryClient.invalidateQueries({
-      queryKey: ["ticket-type", res?.data?.[0]?.id],
+      queryKey: ['ticket-type', res?.data?.id],
+    });
+  },
+});
+
+type SaveIssueTypeFieldsRequestType =
+  RouterInput['fields']['saveIssueTypeFields'];
+type SaveIssueTypeFieldsResponseType =
+  RouterOutput['fields']['saveIssueTypeFields'];
+
+export const saveIssueTypeFieldsMutation = mutationOptions<
+  SaveIssueTypeFieldsResponseType,
+  Error,
+  SaveIssueTypeFieldsRequestType
+>({
+  mutationFn: (data: SaveIssueTypeFieldsRequestType) => {
+    return trpcClient.fields.saveIssueTypeFields.mutate(data);
+  },
+  onSuccess: (res) => {
+    queryClient.invalidateQueries({ queryKey: ['ticket-types'] });
+    queryClient.invalidateQueries({
+      queryKey: ['ticket-type', res?.data?.[0]?.issueTypeId],
     });
   },
 });

@@ -12,6 +12,9 @@ import type {
   UpdateFieldOptionValueRequest,
 } from '@/features/fields/lib/mutations';
 import useCustomizeFieldModal from '../../hooks/use-customize-field-modal';
+import { useQuery } from '@tanstack/react-query';
+import { getIssueTypeWithDetailsByIssueTypeIdQuery } from '../../lib/queries';
+import type { IssueTypeFieldWithDetails } from '@/features/fields/types';
 
 interface TicketTypeFields {
   id: string;
@@ -21,7 +24,10 @@ type Field = RouterOutput['fields']['getFieldsWithDetails']['data'][number];
 type SelectOption = Field['options'][number]['selectOptions'][number];
 
 export default function TicketTypeFields({ id }: TicketTypeFields) {
-  const [fields, setFields] = useState<Field[]>([]);
+  const { data } = useQuery(getIssueTypeWithDetailsByIssueTypeIdQuery(id));
+  const [fields, setFields] = useState<IssueTypeFieldWithDetails[]>(
+    data?.data?.fields ?? [],
+  );
   const { fieldId } = useCustomizeFieldModal();
 
   const updateFieldOptionValue = (data: UpdateFieldOptionValueRequest) => {
@@ -30,7 +36,7 @@ export default function TicketTypeFields({ id }: TicketTypeFields) {
         if (field.id === fieldId) {
           return {
             ...field,
-            options: field.options.map((option) =>
+            options: field.fieldOptions.map((option) =>
               option.id === data.fieldOptionId
                 ? { ...option, value: data.value }
                 : option,
@@ -48,7 +54,7 @@ export default function TicketTypeFields({ id }: TicketTypeFields) {
         if (field.id === fieldId) {
           return {
             ...field,
-            options: field.options.map((option) => {
+            options: field.fieldOptions.map((option) => {
               if (option.id === data.fieldOptionId) {
                 return {
                   ...option,

@@ -13,17 +13,15 @@ import type {
   SaveSelectOptionsRequest,
   UpdateFieldOptionValueRequest,
 } from '../../lib/mutations';
-
-type FieldOptions =
-  RouterOutput['fields']['getFieldsWithDetails']['data'][number]['options'][number];
+import type { IssueTypeFieldWithDetails } from '../../types';
 
 interface CustomizeFieldFormProps {
-  options?: FieldOptions[];
+  options?: IssueTypeFieldWithDetails['fieldOptions'];
   updateFieldOptionValue: (data: UpdateFieldOptionValueRequest) => void;
   saveSelectOptions: (data: SaveSelectOptionsRequest) => void;
 }
 
-export default function CustomizeFieldForm({
+export default function CustomizeFieldFormIssueType({
   options,
   updateFieldOptionValue,
   saveSelectOptions,
@@ -165,7 +163,7 @@ export default function CustomizeFieldForm({
                     ) : (
                       <StaticSelectOptionsFormElement
                         onChange={onChangeSelectOptions}
-                        key={'fieldOptionId'}
+                        key={'issueTypeFieldOptionId'}
                         value={selectOptionsData[option.id]}
                         id={option.id}
                       />
@@ -189,7 +187,8 @@ export default function CustomizeFieldForm({
             case 'select':
               const isDefaultOption =
                 option.fieldTypeOption.key === 'default-option';
-              let options: SelectOption[] = [];
+              let options: IssueTypeFieldWithDetails['fieldOptions'][number]['selectOptions'] =
+                [];
               if (isDefaultOption) {
                 const dynamicOption = optionsData.find(
                   (opt) => opt.fieldTypeOption.key === 'is-dynamic-options',
@@ -202,28 +201,28 @@ export default function CustomizeFieldForm({
                   {
                     id: 'day',
                     name: 'Gün',
-                    fieldOptionId: option.id,
+                    issueTypeFieldOptionId: option.id,
                     order: 0,
                     icon: '',
                   },
                   {
                     id: 'hour',
                     name: 'Saat',
-                    fieldOptionId: option.id,
+                    issueTypeFieldOptionId: option.id,
                     order: 1,
                     icon: '',
                   },
                   {
                     id: 'minute',
                     name: 'Dakika',
-                    fieldOptionId: option.id,
+                    issueTypeFieldOptionId: option.id,
                     order: 2,
                     icon: '',
                   },
                   {
                     id: 'second',
                     name: 'Saniye',
-                    fieldOptionId: option.id,
+                    issueTypeFieldOptionId: option.id,
                     order: 3,
                     icon: '',
                   },
@@ -237,10 +236,15 @@ export default function CustomizeFieldForm({
                   className='p-4 border rounded-md flex items-center justify-between'
                 >
                   <SelectFormElement
-                    options={options}
+                    options={options.map((option) => ({
+                      id: option.id,
+                      name: option.name,
+                      icon: option.icon,
+                      order: option.order,
+                      issueTypeFieldOptionId: option.issueTypeFieldOptionId,
+                    }))}
                     name={option.fieldTypeOption.name}
                     id={option.id}
-                    key={'fieldOption'}
                     value={option.value}
                     onChange={(value: any) => onChangeOption(option.id, value)}
                   />
