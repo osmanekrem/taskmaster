@@ -230,6 +230,18 @@ export const fieldRepository = (
     return result;
   },
 
+  updateIssueTypeFieldOptionValueById: async (
+    issueTypeFieldOptionId: string,
+    value: string,
+  ) => {
+    const [result] = await drizzle
+      .update(issueTypeFieldOptions)
+      .set({ value })
+      .where(eq(issueTypeFieldOptions.id, issueTypeFieldOptionId))
+      .returning();
+    return result;
+  },
+
   updateIssueTypeSelectOption: async (
     fieldOptionId: string,
     name: string,
@@ -242,6 +254,35 @@ export const fieldRepository = (
       .where(eq(issueTypeSelectOptions.fieldOptionId, fieldOptionId))
       .returning();
     return result;
+  },
+
+  updateIssueTypeSelectOptionById: async (
+    selectOptionId: string,
+    name: string,
+    icon: string,
+    order: number,
+  ) => {
+    const [result] = await drizzle
+      .update(issueTypeSelectOptions)
+      .set({ name, icon, order })
+      .where(eq(issueTypeSelectOptions.id, selectOptionId))
+      .returning();
+    return result;
+  },
+
+  deleteIssueTypeSelectOptionsNotInList: async (
+    fieldOptionId: string,
+    selectOptionIdsToKeep: string[],
+  ) => {
+    const condition =
+      selectOptionIdsToKeep.length > 0
+        ? and(
+            eq(issueTypeSelectOptions.fieldOptionId, fieldOptionId),
+            notInArray(issueTypeSelectOptions.id, selectOptionIdsToKeep),
+          )
+        : eq(issueTypeSelectOptions.fieldOptionId, fieldOptionId);
+
+    return drizzle.delete(issueTypeSelectOptions).where(condition);
   },
 
   findIssueTypeFieldsByIssueTypeId: async (issueTypeId: string) => {

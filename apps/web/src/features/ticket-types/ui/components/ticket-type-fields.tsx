@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FieldSelector from '@/features/fields/ui/components/field-selector';
 import TicketTypeCustomize from '@/features/ticket-types/ui/components/ticket-type-customize';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import useCustomizeFieldModal from '../../hooks/use-customize-field-modal';
 import { useQuery } from '@tanstack/react-query';
 import { getIssueTypeWithDetailsByIssueTypeIdQuery } from '../../lib/queries';
 import type { FieldWithDetails } from '@/features/fields/types';
+import { useSaveIssueTypeFieldsMutation } from '../../lib/mutations';
 
 interface TicketTypeFields {
   id: string;
@@ -25,10 +26,33 @@ export default function TicketTypeFields({ id }: TicketTypeFields) {
   const [fields, setFields] = useState<FieldWithDetails[]>(
     data?.data?.fields ?? [],
   );
+
+  useEffect(() => {
+    if (data?.data?.fields) {
+      setFields(data.data.fields);
+    }
+  }, [data]);
+
   const { fieldId } = useCustomizeFieldModal();
+  const { mutate: saveFieldsMutation } = useSaveIssueTypeFieldsMutation();
 
   const saveFields = () => {
-    console.log(fields);
+    saveFieldsMutation({
+      issueTypeId: id,
+      fields: fields.map((field) => ({
+        id: field.id,
+        options: field.options.map((option) => ({
+          id: option.id,
+          value: option.value,
+          selectOptions: option.selectOptions.map((selectOption) => ({
+            id: selectOption.id,
+            name: selectOption.name,
+            order: selectOption.order,
+            icon: selectOption.icon || undefined,
+          })),
+        })),
+      })),
+    });
   };
 
   const updateFieldOptionValue = (data: UpdateFieldOptionValueRequest) => {

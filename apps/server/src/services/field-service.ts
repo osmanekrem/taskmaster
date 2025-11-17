@@ -138,73 +138,120 @@ export const fieldService = (
           issueTypeId,
         );
 
-        for (const field of existingFields) {
-          if (!field?.id) continue;
-          if (!fields.some((f) => f?.id === field.id)) {
-            await repo.deleteIssueTypeField(issueTypeId, field.id);
+        // Get incoming field template IDs as a Set for efficient lookup
+        const incomingFieldIds = new Set(
+          fields.map((f) => f?.id).filter((id): id is string => !!id),
+        );
 
-            const deletedField = fields.find((f) => f?.id === field.id);
-            if (deletedField) {
-              await repo.deleteIssueTypeFieldOptions(
-                deletedField.options
-                  .map((o) => o?.id)
-                  .filter((id): id is string => !!id) || [],
-              );
-            }
-          } else {
-            const existingField = fields.find((f) => f?.id === field.id);
-            if (existingField) {
-              existingField.options?.forEach(async (option) => {
-                await repo.updateIssueTypeFieldOptionValue(
-                  field.id,
-                  option.id!,
-                  option.value,
-                );
-                option.selectOptions?.forEach(async (selectOption) => {
-                  await repo.updateIssueTypeSelectOption(
-                    option.id!,
-                    selectOption.name,
-                    selectOption.icon || '',
-                    selectOption.order,
-                  );
-                });
-              });
-            }
+        // Delete fields that are not in the incoming list
+        // Compare fieldId (field template ID) from existingFields with id from incoming fields
+        for (const existingField of existingFields) {
+          if (!existingField?.fieldId) continue;
+          if (!incomingFieldIds.has(existingField.fieldId)) {
+            // Delete the issue type field (cascade will delete options and select options)
+            await repo.deleteIssueTypeField(issueTypeId, existingField.fieldId);
           }
         }
 
+        // Process each incoming field
         for (const [index, field] of fields.entries()) {
           if (!field?.id) continue;
-          if (!existingFields.some((f) => f?.id === field.id)) {
-            const newField = await repo.createIssueTypeField(
+
+          // Find existing issue type field by field template ID
+          const existingIssueTypeField = existingFields.find(
+            (f) => f.fieldId === field.id,
+          );
+
+          if (existingIssueTypeField) {
+            // Update existing field: update order and options
+            // Note: We don't update the order in the database here since there's no update method
+            // If order update is needed, we'd need to add an update method to the repository
+
+            // Update field options
+            if (field.options) {
+              for (const option of field.options) {
+                if (!option.id) continue;
+
+                // Update option value using issueTypeFieldOption ID (not template fieldOptionId)
+                await repo.updateIssueTypeFieldOptionValueById(
+                  option.id,
+                  option.value,
+                );
+
+                // Handle select options: delete, create, update
+                if (option.selectOptions) {
+                  const incomingSelectOptionIds = option.selectOptions
+                    .map((so) => so.id)
+                    .filter((id): id is string => !!id);
+
+                  // Delete select options not in the incoming list
+                  // option.id is the issueTypeFieldOption ID
+                  await repo.deleteIssueTypeSelectOptionsNotInList(
+                    option.id,
+                    incomingSelectOptionIds,
+                  );
+
+                  // Process each select option
+                  for (const selectOption of option.selectOptions) {
+                    if (selectOption.id) {
+                      // Update existing select option
+                      await repo.updateIssueTypeSelectOptionById(
+                        selectOption.id,
+                        selectOption.name,
+                        selectOption.icon || '',
+                        selectOption.order,
+                      );
+                    } else {
+                      // Create new select option
+                      // option.id is the issueTypeFieldOption ID
+                      await repo.createIssueTypeSelectOption(
+                        option.id,
+                        selectOption.name,
+                        selectOption.icon || '',
+                        selectOption.order,
+                      );
+                    }
+                  }
+                }
+              }
+            }
+          } else {
+            // Create new issue type field
+            const newIssueTypeField = await repo.createIssueTypeField(
               issueTypeId,
               field.id,
               index,
             );
-            field.options?.forEach(async (option: any) => {
-              await repo
-                .createIssueTypeFieldOption(
-                  newField.id,
+
+            // Create field options
+            if (field.options) {
+              for (const option of field.options) {
+                if (!option.id) continue;
+
+                const newFieldOption = await repo.createIssueTypeFieldOption(
+                  newIssueTypeField.id,
                   option.id,
                   option.value,
-                )
-                .then(async (result) => {
-                  if (result) {
-                    await repo.createManyIssueTypeSelectOptions(
-                      option.selectOptions?.map(
-                        (selectOption: SelectOptionSchema) => ({
-                          fieldOptionId: result.id,
-                          name: selectOption.name,
-                          icon: selectOption.icon || '',
-                          order: selectOption.order || 0,
-                        }),
-                      ),
-                    );
-                  }
-                });
-            });
+                );
+
+                // Create select options if they exist
+                if (option.selectOptions && option.selectOptions.length > 0) {
+                  await repo.createManyIssueTypeSelectOptions(
+                    option.selectOptions.map(
+                      (selectOption: SelectOptionSchema) => ({
+                        fieldOptionId: newFieldOption.id,
+                        name: selectOption.name,
+                        icon: selectOption.icon || '',
+                        order: selectOption.order || 0,
+                      }),
+                    ),
+                  );
+                }
+              }
+            }
           }
         }
+
         return await repo.findIssueTypeFieldsByIssueTypeId(issueTypeId);
       });
     },

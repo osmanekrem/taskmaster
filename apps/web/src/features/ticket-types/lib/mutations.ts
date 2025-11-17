@@ -1,6 +1,6 @@
 import type { RouterInput, RouterOutput } from '@/utils/trpc';
-import { queryClient, trpcClient } from '@/utils/trpc';
-import { mutationOptions } from '@tanstack/react-query';
+import { queryClient, trpc, trpcClient } from '@/utils/trpc';
+import { mutationOptions, useMutation } from '@tanstack/react-query';
 
 type CreateTicketTypeRequestType =
   RouterInput['ticketTypes']['createTicketType'];
@@ -63,23 +63,14 @@ export const deleteTicketTypeMutation = mutationOptions<
   },
 });
 
-type SaveIssueTypeFieldsRequestType =
-  RouterInput['fields']['saveIssueTypeFields'];
-type SaveIssueTypeFieldsResponseType =
-  RouterOutput['fields']['saveIssueTypeFields'];
-
-export const saveIssueTypeFieldsMutation = mutationOptions<
-  SaveIssueTypeFieldsResponseType,
-  Error,
-  SaveIssueTypeFieldsRequestType
->({
-  mutationFn: (data: SaveIssueTypeFieldsRequestType) => {
-    return trpcClient.fields.saveIssueTypeFields.mutate(data);
-  },
-  onSuccess: (res) => {
-    queryClient.invalidateQueries({ queryKey: ['ticket-types'] });
-    queryClient.invalidateQueries({
-      queryKey: ['ticket-type', res?.data?.[0]?.issueTypeId],
-    });
-  },
-});
+export const useSaveIssueTypeFieldsMutation = () =>
+  useMutation(
+    trpc.fields.saveIssueTypeFields.mutationOptions({
+      onSuccess: (res) => {
+        queryClient.invalidateQueries({ queryKey: ['ticket-types'] });
+        queryClient.invalidateQueries({
+          queryKey: ['ticket-type', res?.data?.[0]?.issueTypeId],
+        });
+      },
+    }),
+  );
