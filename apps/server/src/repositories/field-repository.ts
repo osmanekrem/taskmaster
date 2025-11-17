@@ -122,12 +122,11 @@ export const fieldRepository = (
   createIssueTypeField: async (
     issueTypeId: string,
     fieldId: string,
-    fieldTypeId: string,
     order: number,
   ) => {
     const [result] = await drizzle
       .insert(issueTypeFields)
-      .values({ issueTypeId, fieldId, fieldTypeId, order })
+      .values({ issueTypeId, fieldId, order })
       .returning();
     return result;
   },

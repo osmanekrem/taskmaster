@@ -14,9 +14,6 @@ export const issueTypeFields = pgTable('issue_type_fields', {
   fieldId: text('field_id')
     .notNull()
     .references(() => fields.id, { onDelete: 'cascade' }),
-  fieldTypeId: text('field_type_id')
-    .notNull()
-    .references(() => fieldTypes.id, { onDelete: 'cascade' }),
   order: smallint('order').notNull().default(0),
 });
 
@@ -52,10 +49,6 @@ export const issueTypeSelectOptions = pgTable('issue_type_select_options', {
 export const issueTypeFieldRelations = relations(
   issueTypeFields,
   ({ many, one }) => ({
-    fieldType: one(fieldTypes, {
-      fields: [issueTypeFields.fieldTypeId],
-      references: [fieldTypes.id],
-    }),
     options: many(issueTypeFieldOptions),
     field: one(fields, {
       fields: [issueTypeFields.fieldId],

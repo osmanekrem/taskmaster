@@ -177,12 +177,7 @@ export const fieldService = (
         for (const [index, field] of fields.entries()) {
           if (!field?.id) continue;
           if (!existingFields.some((f) => f?.id === field.id)) {
-            await repo.createIssueTypeField(
-              issueTypeId,
-              field.id,
-              field.fieldTypeId,
-              index,
-            );
+            await repo.createIssueTypeField(issueTypeId, field.id, index);
             field.options?.forEach(async (option: any) => {
               await repo
                 .createIssueTypeFieldOption(
