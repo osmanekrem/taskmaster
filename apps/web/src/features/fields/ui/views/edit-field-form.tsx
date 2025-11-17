@@ -1,6 +1,5 @@
 import { useForm } from '@tanstack/react-form';
 import { useQuery } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { editFieldSchema } from '@/features/fields/schemas';
@@ -33,12 +32,8 @@ export default function EditFieldForm({ fieldId }: EditFieldFormProps) {
     onSubmit: async ({ value }) => {
       await createField.mutateAsync(value, {
         onSuccess: () => {
-          toast.success('Alan başarıyla düzenlendi');
           form.reset();
           close();
-        },
-        onError: () => {
-          toast.error('Alan düzenlenirken bir hata oluştu');
         },
       });
     },

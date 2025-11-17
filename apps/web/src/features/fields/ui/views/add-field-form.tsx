@@ -1,6 +1,5 @@
 import { useForm } from '@tanstack/react-form';
 import { useQuery } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { addFieldSchema } from '@/features/fields/schemas';
@@ -24,12 +23,8 @@ export default function AddFieldForm() {
     onSubmit: async ({ value }) => {
       await createField.mutateAsync(value, {
         onSuccess: () => {
-          toast.success('Alan başarıyla oluşturuldu');
           form.reset();
           close();
-        },
-        onError: () => {
-          toast.error('Alan oluşturulurken bir hata oluştu');
         },
       });
     },

@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { queryClient, type RouterInput, trpc } from '@/utils/trpc';
+import { toast } from 'sonner';
 
 export type CreateFieldRequestType = RouterInput['fields']['createField'];
 
@@ -7,6 +8,9 @@ export const useCreateFieldMutation = () =>
   useMutation(
     trpc.fields.createField.mutationOptions({
       onSuccess: (res) => {
+        if (res?.message) {
+          toast.success(res.message);
+        }
         queryClient.invalidateQueries({
           queryKey: trpc.fields.getFields.queryKey(),
         });
@@ -16,6 +20,9 @@ export const useCreateFieldMutation = () =>
         queryClient.invalidateQueries({
           queryKey: trpc.fields.getFieldsWithFieldType.queryKey(),
         });
+      },
+      onError: (error) => {
+        toast.error(error.message || 'Bir hata oluştu');
       },
     }),
   );
@@ -26,6 +33,9 @@ export const useEditFieldMutation = () =>
   useMutation(
     trpc.fields.editField.mutationOptions({
       onSuccess: (res) => {
+        if (res?.message) {
+          toast.success(res.message);
+        }
         queryClient.invalidateQueries({
           queryKey: trpc.fields.getFields.queryKey(),
         });
@@ -53,6 +63,9 @@ export const useEditFieldMutation = () =>
           });
         }
       },
+      onError: (error) => {
+        toast.error(error.message || 'Bir hata oluştu');
+      },
     }),
   );
 
@@ -62,6 +75,9 @@ export const useDeleteFieldMutation = () =>
   useMutation(
     trpc.fields.deleteField.mutationOptions({
       onSuccess: (res) => {
+        if (res?.message) {
+          toast.success(res.message);
+        }
         queryClient.invalidateQueries({
           queryKey: trpc.fields.getFields.queryKey(),
         });
@@ -88,6 +104,9 @@ export const useDeleteFieldMutation = () =>
             }),
           });
         }
+      },
+      onError: (error) => {
+        toast.error(error.message || 'Bir hata oluştu');
       },
     }),
   );
@@ -99,6 +118,9 @@ export const useUpdateFieldOptionValueMutation = () =>
   useMutation(
     trpc.fields.updateFieldOptionValue.mutationOptions({
       onSuccess: (res) => {
+        if (res?.message) {
+          toast.success(res.message);
+        }
         if (res?.data?.fieldId) {
           queryClient.invalidateQueries({
             queryKey: trpc.fields.getFieldWithDetailsById.queryKey({
@@ -112,6 +134,9 @@ export const useUpdateFieldOptionValueMutation = () =>
           });
         }
       },
+      onError: (error) => {
+        toast.error(error.message || 'Bir hata oluştu');
+      },
     }),
   );
 
@@ -122,6 +147,9 @@ export const useSaveSelectOptionsMutation = () =>
   useMutation(
     trpc.fields.saveSelectOptions.mutationOptions({
       onSuccess: (res) => {
+        if (res?.message) {
+          toast.success(res.message);
+        }
         if (res?.data?.[0]?.fieldOptionId) {
           queryClient.invalidateQueries({
             queryKey: trpc.fields.getSelectOptionsByFieldOptionId.queryKey({
@@ -129,6 +157,9 @@ export const useSaveSelectOptionsMutation = () =>
             }),
           });
         }
+      },
+      onError: (error) => {
+        toast.error(error.message || 'Bir hata oluştu');
       },
     }),
   );

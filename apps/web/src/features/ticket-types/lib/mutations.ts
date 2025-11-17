@@ -1,6 +1,7 @@
 import type { RouterInput } from '@/utils/trpc';
 import { queryClient, trpc } from '@/utils/trpc';
 import { useMutation } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 export type CreateTicketTypeRequestType =
   RouterInput['ticketTypes']['createTicketType'];
@@ -9,6 +10,9 @@ export const useCreateTicketTypeMutation = () =>
   useMutation(
     trpc.ticketTypes.createTicketType.mutationOptions({
       onSuccess: (res) => {
+        if (res?.message) {
+          toast.success(res.message);
+        }
         queryClient.invalidateQueries({
           queryKey: trpc.ticketTypes.getTicketTypes.queryKey(),
         });
@@ -19,6 +23,9 @@ export const useCreateTicketTypeMutation = () =>
             }),
           });
         }
+      },
+      onError: (error) => {
+        toast.error(error.message || 'Bir hata oluştu');
       },
     }),
   );
@@ -30,6 +37,9 @@ export const useEditTicketTypeMutation = () =>
   useMutation(
     trpc.ticketTypes.editTicketType.mutationOptions({
       onSuccess: (res) => {
+        if (res?.message) {
+          toast.success(res.message);
+        }
         queryClient.invalidateQueries({
           queryKey: trpc.ticketTypes.getTicketTypes.queryKey(),
         });
@@ -40,6 +50,9 @@ export const useEditTicketTypeMutation = () =>
             }),
           });
         }
+      },
+      onError: (error) => {
+        toast.error(error.message || 'Bir hata oluştu');
       },
     }),
   );
@@ -51,6 +64,9 @@ export const useDeleteTicketTypeMutation = () =>
   useMutation(
     trpc.ticketTypes.deleteTicketType.mutationOptions({
       onSuccess: (res) => {
+        if (res?.message) {
+          toast.success(res.message);
+        }
         queryClient.invalidateQueries({
           queryKey: trpc.ticketTypes.getTicketTypes.queryKey(),
         });
@@ -62,6 +78,9 @@ export const useDeleteTicketTypeMutation = () =>
           });
         }
       },
+      onError: (error) => {
+        toast.error(error.message || 'Bir hata oluştu');
+      },
     }),
   );
 
@@ -69,6 +88,9 @@ export const useSaveIssueTypeFieldsMutation = () =>
   useMutation(
     trpc.fields.saveIssueTypeFields.mutationOptions({
       onSuccess: (res) => {
+        if (res?.message) {
+          toast.success(res.message);
+        }
         queryClient.invalidateQueries({
           queryKey: trpc.ticketTypes.getTicketTypes.queryKey(),
         });
@@ -80,6 +102,9 @@ export const useSaveIssueTypeFieldsMutation = () =>
               }),
           });
         }
+      },
+      onError: (error) => {
+        toast.error(error.message || 'Bir hata oluştu');
       },
     }),
   );

@@ -1,7 +1,6 @@
 import { useForm } from '@tanstack/react-form';
 import { createTicketTypeSchema } from '@/features/ticket-types/schemas';
 import { useCreateTicketTypeMutation } from '@/features/ticket-types/lib/mutations';
-import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -21,12 +20,8 @@ export default function AddTicketTypeForm() {
     onSubmit: async ({ value }) => {
       await createTicketType.mutateAsync(value, {
         onSuccess: () => {
-          toast.success('Bilet türü başarıyla oluşturuldu');
           form.reset();
           close();
-        },
-        onError: () => {
-          toast.error('Bilet türü oluşturulurken bir hata oluştu');
         },
       });
     },

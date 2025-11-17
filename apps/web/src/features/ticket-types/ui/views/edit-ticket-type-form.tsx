@@ -2,7 +2,6 @@ import { useForm } from '@tanstack/react-form';
 import { editTicketTypeSchema } from '@/features/ticket-types/schemas';
 import { useEditTicketTypeMutation } from '@/features/ticket-types/lib/mutations';
 import { useQuery } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -34,12 +33,8 @@ export default function EditTicketTypeForm({
         { ...value, ticketTypeId },
         {
           onSuccess: () => {
-            toast.success('Bilet türü başarıyla düzenlendi');
             form.reset();
             close();
-          },
-          onError: () => {
-            toast.error('Bilet türü düzenlenirken bir hata oluştu');
           },
         },
       );
