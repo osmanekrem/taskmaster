@@ -1,12 +1,5 @@
-import {
-  Select,
-  SelectItem,
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ticketTypeIcons } from "../../constants/icons";
-import { Icon, type IconName } from "@/components/ui/icon-picker";
+import { IconPicker, Icon, type IconName } from '@/components/ui/icon-picker';
+import { Button } from '@/components/ui/button';
 
 interface TicketTypeSelectProps {
   value: string;
@@ -18,20 +11,22 @@ export default function TicketTypeIconSelect({
   onChange,
 }: TicketTypeSelectProps) {
   return (
-    <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-full">
-        <SelectValue
-          className="flex items-center gap-2 w-full"
-          placeholder="İkon seç"
-        />
-      </SelectTrigger>
-      <SelectContent>
-        {ticketTypeIcons.map(({ name }) => (
-          <SelectItem key={name} value={name}>
-            <Icon name={name as IconName} />
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <IconPicker
+      value={value as IconName}
+      onValueChange={(newValue) => onChange(newValue)}
+      triggerPlaceholder='İkon seç'
+      searchPlaceholder='İkon ara...'
+    >
+      <Button type='button' variant='outline' className='w-full justify-start'>
+        {value ? (
+          <>
+            <Icon name={value as IconName} className='mr-2 h-4 w-4' />
+            {value}
+          </>
+        ) : (
+          'İkon seç'
+        )}
+      </Button>
+    </IconPicker>
   );
 }
