@@ -1,7 +1,7 @@
 import { useForm } from '@tanstack/react-form';
 import { editTicketTypeSchema } from '@/features/ticket-types/schemas';
-import { editTicketTypeMutation } from '@/features/ticket-types/lib/mutations';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useEditTicketTypeMutation } from '@/features/ticket-types/lib/mutations';
+import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -19,7 +19,7 @@ export default function EditTicketTypeForm({
   ticketTypeId,
 }: EditTicketTypeFormProps) {
   const { data } = useQuery(getTicketTypeQuery(ticketTypeId ?? ''));
-  const editTicketType = useMutation(editTicketTypeMutation);
+  const editTicketType = useEditTicketTypeMutation();
   const { close } = useEditTicketTypeModal();
   const form = useForm({
     defaultValues: {

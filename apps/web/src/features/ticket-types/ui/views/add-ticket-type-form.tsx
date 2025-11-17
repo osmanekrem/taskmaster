@@ -1,9 +1,7 @@
 import { useForm } from '@tanstack/react-form';
 import { createTicketTypeSchema } from '@/features/ticket-types/schemas';
-import { createTicketTypeMutation } from '@/features/ticket-types/lib/mutations';
-import { useMutation } from '@tanstack/react-query';
+import { useCreateTicketTypeMutation } from '@/features/ticket-types/lib/mutations';
 import { toast } from 'sonner';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,7 +10,7 @@ import useAddTicketTypeModal from '@/features/ticket-types/hooks/use-add-ticket-
 import { Field, FieldLabel, FieldSet } from '@/components/ui/field';
 
 export default function AddTicketTypeForm() {
-  const createTicketType = useMutation(createTicketTypeMutation);
+  const createTicketType = useCreateTicketTypeMutation();
   const { close } = useAddTicketTypeModal();
   const form = useForm({
     defaultValues: {

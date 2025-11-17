@@ -1,9 +1,8 @@
-import { useMutation } from '@tanstack/react-query';
-import { deleteTicketTypeMutation } from '../../lib/mutations';
+import { useDeleteTicketTypeMutation } from '../../lib/mutations';
 import { Button } from '@/components/ui/button';
 import { TrashIcon } from 'lucide-react';
 import useConfirm from '@/hooks/use-confirm';
-import { redirect, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 
 interface DeleteTicketTypeButtonProps {
   id: string;
@@ -13,7 +12,7 @@ export default function DeleteTicketTypeButton({
   id,
 }: DeleteTicketTypeButtonProps) {
   const navigate = useNavigate();
-  const deleteTicketType = useMutation(deleteTicketTypeMutation);
+  const deleteTicketType = useDeleteTicketTypeMutation();
   const [DeleteConfirmDialog, confirmDelete] = useConfirm(
     'Silme Onayı',
     'Bu bilet türünü silmek istediğinize emin misiniz?',

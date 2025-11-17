@@ -1,20 +1,18 @@
 import { useForm } from '@tanstack/react-form';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { addFieldSchema } from '@/features/fields/schemas';
 import FieldTypeSelect from '@/features/fields/ui/components/field-type-select';
-import { createFieldMutation } from '@/features/fields/lib/mutations';
+import { useCreateFieldMutation } from '@/features/fields/lib/mutations';
 import useAddFieldModal from '@/features/fields/hooks/use-add-field-modal';
 import FieldTypeIconSelect from '@/features/fields/ui/components/field-type-icon-select';
-import { Textarea } from '@/components/ui/textarea';
 import { getFieldTypesQuery } from '@/features/fields/lib/queries';
 import { Field, FieldLabel, FieldSet } from '@/components/ui/field';
 
 export default function AddFieldForm() {
-  const createField = useMutation(createFieldMutation);
+  const createField = useCreateFieldMutation();
   const { data: fieldTypes } = useQuery(getFieldTypesQuery);
   const { close } = useAddFieldModal();
   const form = useForm({

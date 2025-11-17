@@ -1,11 +1,11 @@
 import { useForm } from '@tanstack/react-form';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { editFieldSchema } from '@/features/fields/schemas';
 import FieldTypeSelect from '@/features/fields/ui/components/field-type-select';
-import { editFieldMutation } from '@/features/fields/lib/mutations';
+import { useEditFieldMutation } from '@/features/fields/lib/mutations';
 import useEditFieldModal from '@/features/fields/hooks/use-edit-field-modal';
 import {
   getFieldQuery,
@@ -19,7 +19,7 @@ interface EditFieldFormProps {
 }
 
 export default function EditFieldForm({ fieldId }: EditFieldFormProps) {
-  const createField = useMutation(editFieldMutation);
+  const createField = useEditFieldMutation();
   const { data } = useQuery(getFieldQuery(fieldId));
   const { data: fieldTypes } = useQuery(getFieldTypesQuery);
   const { close } = useEditFieldModal();

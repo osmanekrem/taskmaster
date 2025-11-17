@@ -6,10 +6,10 @@ import EditFieldModal from '@/features/fields/ui/components/edit-field-modal';
 import DeleteFieldButton from '@/features/fields/ui/components/delete-field-button';
 import { Route } from '@/routes/__protected/__admin/admin-settings/fields/$id';
 import { getFieldWithDetailsQuery } from '@/features/fields/lib/queries';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
-  saveSelectOptionsMutation,
-  updateFieldOptionValueMutation,
+  useSaveSelectOptionsMutation,
+  useUpdateFieldOptionValueMutation,
 } from '@/features/fields/lib/mutations';
 import { Icon } from '@/components/ui/icon-picker';
 import type { IconName } from 'lucide-react/dynamic';
@@ -19,10 +19,9 @@ export default function FieldDetail() {
   const { id } = useParams({ from: Route.id });
   const { data } = useQuery(getFieldWithDetailsQuery(id));
   const { open } = useEditFieldModal();
-  const { mutate: saveSelectOptions } = useMutation(saveSelectOptionsMutation);
-  const { mutate: updateFieldOptionValue } = useMutation(
-    updateFieldOptionValueMutation,
-  );
+  const { mutate: saveSelectOptions } = useSaveSelectOptionsMutation();
+  const { mutate: updateFieldOptionValue } =
+    useUpdateFieldOptionValueMutation();
 
   return (
     <div className='flex flex-col w-full h-full space-y-4'>

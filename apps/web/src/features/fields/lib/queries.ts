@@ -1,84 +1,36 @@
-import { queryOptions } from '@tanstack/react-query';
-import { trpcClient } from '@/utils/trpc';
+import { trpc } from '@/utils/trpc';
 
-export const getFieldTypesQuery = queryOptions({
-  queryKey: ['field-types'],
-  queryFn: () => {
-    return trpcClient.fieldTypes.getFieldTypes.query();
-  },
-});
+export const getFieldTypesQuery = trpc.fieldTypes.getFieldTypes.queryOptions();
 
 export const getFieldTypeQuery = (fieldTypeId: string) =>
-  queryOptions({
-    queryKey: ['field-type', fieldTypeId],
-    queryFn: () => {
-      return trpcClient.fieldTypes.getFieldTypeById.query({ fieldTypeId });
-    },
-  });
+  trpc.fieldTypes.getFieldTypeById.queryOptions({ fieldTypeId });
 
-export const getFieldsQuery = queryOptions({
-  queryKey: ['fields'],
-  queryFn: () => {
-    return trpcClient.fields.getFields.query();
-  },
-});
+export const getFieldsQuery = trpc.fields.getFields.queryOptions();
 
 export const getFieldQuery = (fieldId: string) =>
-  queryOptions({
-    queryKey: ['field', fieldId],
-    queryFn: () => {
-      return trpcClient.fields.getFieldById.query({ fieldId });
-    },
-  });
+  trpc.fields.getFieldById.queryOptions({ fieldId });
 
-export const getFieldsWithDetailsQuery = queryOptions({
-  queryKey: ['fields-with-details'],
-  queryFn: () => {
-    return trpcClient.fields.getFieldsWithDetails.query();
-  },
-});
+export const getFieldsWithDetailsQuery =
+  trpc.fields.getFieldsWithDetails.queryOptions();
 
-export const getFieldWithDetailsQuery = (fieldId: string) =>
-  queryOptions({
-    queryKey: ['field-with-details', fieldId],
-    queryFn: () => {
-      return trpcClient.fields.getFieldWithDetailsById.query({ fieldId });
-    },
-    enabled: !!fieldId,
-  });
+export const getFieldWithDetailsQuery = (fieldId: string) => {
+  const options = trpc.fields.getFieldWithDetailsById.queryOptions({ fieldId });
+  return {
+    ...options,
+    enabled: !!fieldId && options.enabled !== false,
+  };
+};
 
-export const getFieldsWithFieldTypeQuery = queryOptions({
-  queryKey: ['fields-with-field-type'],
-  queryFn: () => {
-    return trpcClient.fields.getFieldsWithFieldType.query();
-  },
-});
+export const getFieldsWithFieldTypeQuery =
+  trpc.fields.getFieldsWithFieldType.queryOptions();
 
 export const getFieldWithFieldTypeQuery = (fieldId: string) =>
-  queryOptions({
-    queryKey: ['field-with-field-type', fieldId],
-    queryFn: () => {
-      return trpcClient.fields.getFieldWithFieldTypeById.query({ fieldId });
-    },
-  });
+  trpc.fields.getFieldWithFieldTypeById.queryOptions({ fieldId });
 
 export const getSelectOptionsByFieldOptionIdsQuery = (
   fieldOptionIds: string[],
 ) =>
-  queryOptions({
-    queryKey: ['select-options-by-field-option', fieldOptionIds.join(',')],
-    queryFn: () => {
-      return trpcClient.fields.getSelectOptionsByFieldOptionIds.query({
-        fieldOptionIds,
-      });
-    },
-  });
+  trpc.fields.getSelectOptionsByFieldOptionIds.queryOptions({ fieldOptionIds });
+
 export const getSelectOptionsByFieldOptionIdQuery = (fieldOptionId: string) =>
-  queryOptions({
-    queryKey: ['select-options-by-field-option', fieldOptionId],
-    queryFn: () => {
-      return trpcClient.fields.getSelectOptionsByFieldOptionId.query({
-        fieldOptionId,
-      });
-    },
-  });
+  trpc.fields.getSelectOptionsByFieldOptionId.queryOptions({ fieldOptionId });

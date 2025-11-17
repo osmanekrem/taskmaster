@@ -3,19 +3,14 @@ import {
   mutationOptions,
   queryOptions,
 } from '@tanstack/react-query';
-import { queryClient, trpcClient } from '@/utils/trpc';
+import { queryClient, trpc } from '@/utils/trpc';
 import { authClient, type User } from '@/lib/auth-client';
 import { createUser, deleteUser, editUser } from './actions';
 import { toast } from 'sonner';
 import type { CreateUserSchema } from '@/features/user-management/schemas';
 
 export const getUserQuery = (userId: string) =>
-  queryOptions({
-    queryKey: ['user', userId],
-    queryFn: () => {
-      return trpcClient.user.getUserById.query({ userId });
-    },
-  });
+  trpc.user.getUserById.queryOptions({ userId });
 
 export const getUsersQuery = ({
   limit,
@@ -49,7 +44,7 @@ export const getUsersInfiniteQuery = (
   searchField: 'name' | 'email',
   searchValue: string,
   limit: number = 10,
-  searchOperator: "contains" | "starts_with" | "ends_with" = "contains",
+  searchOperator: 'contains' | 'starts_with' | 'ends_with' = 'contains',
 ) =>
   infiniteQueryOptions({
     queryKey: ['users', searchField, searchValue, limit, searchOperator],
