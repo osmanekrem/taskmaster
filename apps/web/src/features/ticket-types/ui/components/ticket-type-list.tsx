@@ -18,17 +18,17 @@ export default function TicketTypeList() {
   const { data } = useQuery(getTicketTypesQuery);
   const { open } = useAddTicketTypeModal();
   return (
-    <div className='flex flex-col w-full max-w-64 space-y-4'>
+    <div className='flex flex-col w-full max-w-48 space-y-4'>
       <div className='flex justify-between items-center'>
-        <h2 className='text-xl font-bold leading-tight truncate'>
+        <h2 className='text-lg font-semibold leading-tight truncate'>
           Bilet Türleri
         </h2>
-        <Button variant='outline' onClick={open}>
-          <PlusIcon className='size-4' />
-          Ekle
-        </Button>
       </div>
-      <div className='flex flex-col w-full space-y-4'>
+      <Button variant='outline' onClick={open} className='w-full'>
+        <PlusIcon className='size-4' />
+        Ekle
+      </Button>
+      <div className='flex flex-col w-full space-y-2.5 overflow-y-auto'>
         {data?.data?.map((ticketType) => (
           <Item variant='outline' size='sm' key={ticketType.id} asChild>
             <Link
@@ -46,7 +46,9 @@ export default function TicketTypeList() {
                 />
               </ItemMedia>
               <ItemContent>
-                <ItemTitle>{ticketType.name}</ItemTitle>
+                <ItemTitle className='text-sm font-medium leading-tight truncate'>
+                  {ticketType.name}
+                </ItemTitle>
               </ItemContent>
               <ItemActions>
                 <ChevronRightIcon className='size-4' />

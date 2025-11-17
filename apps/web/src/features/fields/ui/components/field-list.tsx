@@ -18,15 +18,17 @@ export default function FieldList() {
   const { data } = useQuery(getFieldsQuery);
   const { open } = useAddFieldModal();
   return (
-    <div className='flex flex-col w-full max-w-64 space-y-4'>
+    <div className='flex flex-col w-full max-w-48 space-y-4'>
       <div className='flex justify-between items-center'>
-        <h2 className='text-xl font-bold leading-tight truncate'>Alanlar</h2>
-        <Button variant='outline' onClick={open}>
-          <PlusIcon className='size-4' />
-          Ekle
-        </Button>
+        <h2 className='text-lg font-semibold leading-tight truncate'>
+          Alanlar
+        </h2>
       </div>
-      <div className='flex flex-col w-full space-y-4'>
+      <Button variant='outline' onClick={open} className='w-full'>
+        <PlusIcon className='size-4' />
+        Ekle
+      </Button>
+      <div className='flex flex-col w-full space-y-2.5 overflow-y-auto'>
         {data?.data?.map((field) => (
           <Item variant='outline' size='sm' key={field.id} asChild>
             <Link
@@ -44,7 +46,9 @@ export default function FieldList() {
                 />
               </ItemMedia>
               <ItemContent>
-                <ItemTitle>{field.name}</ItemTitle>
+                <ItemTitle className='text-sm font-medium leading-tight truncate'>
+                  {field.name}
+                </ItemTitle>
               </ItemContent>
               <ItemActions>
                 <ChevronRightIcon className='size-4' />
