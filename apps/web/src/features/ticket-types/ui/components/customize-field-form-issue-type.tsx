@@ -4,16 +4,14 @@ import {
   SelectFormElement,
   StaticSelectOptionsFormElement,
   TextFormElement,
-  type SelectOption,
 } from '@/components/type-form-element';
 import { Button } from '@/components/ui/button';
-import type { RouterOutput } from '@/utils/trpc';
 import { Fragment, useEffect, useState } from 'react';
 import type {
   SaveSelectOptionsRequest,
   UpdateFieldOptionValueRequest,
-} from '../../lib/mutations';
-import type { IssueTypeFieldWithDetails } from '../../types';
+} from '../../../fields/lib/mutations';
+import type { IssueTypeFieldWithDetails } from '../../../fields/types';
 
 interface CustomizeFieldFormProps {
   options?: IssueTypeFieldWithDetails['fieldOptions'];

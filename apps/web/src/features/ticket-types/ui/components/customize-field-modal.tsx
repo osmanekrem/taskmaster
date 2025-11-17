@@ -1,16 +1,12 @@
-import ResponsiveModal from '@/components/responsive-modal';
 import useCustomizeFieldModal from '@/features/ticket-types/hooks/use-customize-field-modal';
-import CustomizeFieldForm from '../views/customize-field-form';
-import { useQuery } from '@tanstack/react-query';
-import { getFieldWithDetailsQuery } from '../../lib/queries';
-import type { IssueTypeFieldWithDetails } from '../../types';
+import type { IssueTypeFieldWithDetails } from '../../../fields/types';
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import CustomizeFieldFormIssueType from '../views/customize-field-form-issue-type';
+import CustomizeFieldFormIssueType from './customize-field-form-issue-type';
 
 interface CustomizeFieldModalProps {
   updateFieldOptionValue: (data: any) => void;

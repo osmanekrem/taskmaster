@@ -2,7 +2,7 @@ import { useState } from 'react';
 import FieldSelector from '@/features/fields/ui/components/field-selector';
 import TicketTypeCustomize from '@/features/ticket-types/ui/components/ticket-type-customize';
 import { Button } from '@/components/ui/button';
-import CustomizeFieldModal from '@/features/fields/ui/components/customize-field-modal';
+import CustomizeFieldModal from '@/features/ticket-types/ui/components/customize-field-modal';
 import type { RouterOutput } from '@/utils/trpc';
 import type {
   SaveSelectOptionsRequest,
