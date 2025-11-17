@@ -146,14 +146,14 @@ export const fieldRepository = (
   },
 
   createIssueTypeSelectOption: async (
-    issueTypeFieldOptionId: string,
+    fieldOptionId: string,
     name: string,
     icon: string,
     order: number,
   ) => {
     const [result] = await drizzle
       .insert(issueTypeSelectOptions)
-      .values({ issueTypeFieldOptionId, name, icon, order })
+      .values({ fieldOptionId, name, icon, order })
       .returning();
     return result;
   },
@@ -209,15 +209,10 @@ export const fieldRepository = (
     return result;
   },
 
-  deleteIssueTypeSelectOption: async (issueTypeFieldOptionId: string) => {
+  deleteIssueTypeSelectOption: async (fieldOptionId: string) => {
     const [result] = await drizzle
       .delete(issueTypeSelectOptions)
-      .where(
-        eq(
-          issueTypeSelectOptions.issueTypeFieldOptionId,
-          issueTypeFieldOptionId,
-        ),
-      )
+      .where(eq(issueTypeSelectOptions.fieldOptionId, fieldOptionId))
       .returning();
     return result;
   },
@@ -241,7 +236,7 @@ export const fieldRepository = (
   },
 
   updateIssueTypeSelectOption: async (
-    issueTypeFieldOptionId: string,
+    fieldOptionId: string,
     name: string,
     icon: string,
     order: number,
@@ -249,12 +244,7 @@ export const fieldRepository = (
     const [result] = await drizzle
       .update(issueTypeSelectOptions)
       .set({ name, icon, order })
-      .where(
-        eq(
-          issueTypeSelectOptions.issueTypeFieldOptionId,
-          issueTypeFieldOptionId,
-        ),
-      )
+      .where(eq(issueTypeSelectOptions.fieldOptionId, fieldOptionId))
       .returning();
     return result;
   },
@@ -276,17 +266,12 @@ export const fieldRepository = (
   },
 
   findIssueTypeSelectOptionsByIssueTypeFieldOptionId: async (
-    issueTypeFieldOptionId: string,
+    fieldOptionId: string,
   ) => {
     const result = await drizzle
       .select()
       .from(issueTypeSelectOptions)
-      .where(
-        eq(
-          issueTypeSelectOptions.issueTypeFieldOptionId,
-          issueTypeFieldOptionId,
-        ),
-      );
+      .where(eq(issueTypeSelectOptions.fieldOptionId, fieldOptionId));
     return result;
   },
 });

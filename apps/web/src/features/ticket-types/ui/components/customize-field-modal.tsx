@@ -28,7 +28,7 @@ export default function CustomizeFieldModal({
         </SheetHeader>
         <div className='flex flex-col w-full h-full space-y-4 overflow-y-auto p-4'>
           <CustomizeFieldFormIssueType
-            options={fields.find((field) => field.id === fieldId)?.fieldOptions}
+            options={fields.find((field) => field.id === fieldId)?.options}
             updateFieldOptionValue={updateFieldOptionValue}
             saveSelectOptions={saveSelectOptions}
           />

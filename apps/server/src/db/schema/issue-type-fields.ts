@@ -41,7 +41,7 @@ export const issueTypeSelectOptions = pgTable('issue_type_select_options', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  issueTypeFieldOptionId: text('issue_type_field_option_id')
+  fieldOptionId: text('field_option_id')
     .notNull()
     .references(() => issueTypeFieldOptions.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
@@ -56,7 +56,7 @@ export const issueTypeFieldRelations = relations(
       fields: [issueTypeFields.fieldTypeId],
       references: [fieldTypes.id],
     }),
-    fieldOptions: many(issueTypeFieldOptions),
+    options: many(issueTypeFieldOptions),
     field: one(fields, {
       fields: [issueTypeFields.fieldId],
       references: [fields.id],
@@ -94,8 +94,8 @@ export const issueTypeFieldOptionRelations = relations(
 export const issueTypeSelectOptionRelations = relations(
   issueTypeSelectOptions,
   ({ one }) => ({
-    issueTypeFieldOption: one(issueTypeFieldOptions, {
-      fields: [issueTypeSelectOptions.issueTypeFieldOptionId],
+    fieldOption: one(issueTypeFieldOptions, {
+      fields: [issueTypeSelectOptions.fieldOptionId],
       references: [issueTypeFieldOptions.id],
     }),
   }),

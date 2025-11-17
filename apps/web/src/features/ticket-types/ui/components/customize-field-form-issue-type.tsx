@@ -14,7 +14,7 @@ import type {
 import type { IssueTypeFieldWithDetails } from '../../../fields/types';
 
 interface CustomizeFieldFormProps {
-  options?: IssueTypeFieldWithDetails['fieldOptions'];
+  options?: IssueTypeFieldWithDetails['options'];
   updateFieldOptionValue: (data: UpdateFieldOptionValueRequest) => void;
   saveSelectOptions: (data: SaveSelectOptionsRequest) => void;
 }
@@ -161,7 +161,7 @@ export default function CustomizeFieldFormIssueType({
                     ) : (
                       <StaticSelectOptionsFormElement
                         onChange={onChangeSelectOptions}
-                        key={'issueTypeFieldOptionId'}
+                        key={'fieldOptionId'}
                         value={selectOptionsData[option.id]}
                         id={option.id}
                       />
@@ -185,7 +185,7 @@ export default function CustomizeFieldFormIssueType({
             case 'select':
               const isDefaultOption =
                 option.fieldTypeOption.key === 'default-option';
-              let options: IssueTypeFieldWithDetails['fieldOptions'][number]['selectOptions'] =
+              let options: IssueTypeFieldWithDetails['options'][number]['selectOptions'] =
                 [];
               if (isDefaultOption) {
                 const dynamicOption = optionsData.find(
@@ -199,28 +199,28 @@ export default function CustomizeFieldFormIssueType({
                   {
                     id: 'day',
                     name: 'Gün',
-                    issueTypeFieldOptionId: option.id,
+                    fieldOptionId: option.id,
                     order: 0,
                     icon: '',
                   },
                   {
                     id: 'hour',
                     name: 'Saat',
-                    issueTypeFieldOptionId: option.id,
+                    fieldOptionId: option.id,
                     order: 1,
                     icon: '',
                   },
                   {
                     id: 'minute',
                     name: 'Dakika',
-                    issueTypeFieldOptionId: option.id,
+                    fieldOptionId: option.id,
                     order: 2,
                     icon: '',
                   },
                   {
                     id: 'second',
                     name: 'Saniye',
-                    issueTypeFieldOptionId: option.id,
+                    fieldOptionId: option.id,
                     order: 3,
                     icon: '',
                   },
@@ -239,7 +239,7 @@ export default function CustomizeFieldFormIssueType({
                       name: option.name,
                       icon: option.icon,
                       order: option.order,
-                      issueTypeFieldOptionId: option.issueTypeFieldOptionId,
+                      fieldOptionId: option.fieldOptionId,
                     }))}
                     name={option.fieldTypeOption.name}
                     id={option.id}

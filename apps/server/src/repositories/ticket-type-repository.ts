@@ -53,13 +53,13 @@ export const ticketTypeRepository = (drizzle: DrizzleClient = db) => ({
           .groupBy(selectOptions.fieldOptionId),
       );
 
-    // CTE: Her bir field için fieldOptions'ları toplar.
+    // CTE: Her bir field için options'ları toplar.
     const fieldsWithOptions = drizzle.$with('fields_with_options').as(
       drizzle
         .with(optionsWithSelectOptions)
         .select({
           fieldId: fieldOptions.fieldId,
-          fieldOptions: sql<
+          options: sql<
             { id: string; value: string; selectOptions: any[] }[]
           >`coalesce(json_agg(json_build_object('id',
                         ${fieldOptions.id},
@@ -106,15 +106,15 @@ export const ticketTypeRepository = (drizzle: DrizzleClient = db) => ({
           description: issueTypes.description,
           icon: issueTypes.icon,
         },
-        fieldOptions: sql`coalesce(
-                ${fieldsWithOptions.fieldOptions},
+        options: sql`coalesce(
+                ${fieldsWithOptions.options},
                 CAST
                 (
                 '[]'
                 AS
                 json
                 )
-                )`.as('fieldOptions'),
+                )`.as('options'),
       })
       .from(issueTypeFields)
       .where(eq(issueTypeFields.issueTypeId, ticketTypeId))
@@ -160,8 +160,8 @@ export const ticketTypeRepository = (drizzle: DrizzleClient = db) => ({
           orderBy: [asc(issueTypeFields.order)],
           with: {
             fieldType: true,
-            fieldOptions: {
-              orderBy: [asc(fieldOptions.order)],
+            options: {
+              orderBy: [asc(issueTypeFieldOptions.order)],
               with: {
                 fieldTypeOption: true,
                 selectOptions: {

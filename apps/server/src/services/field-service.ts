@@ -196,7 +196,7 @@ export const fieldService = (
                     await repo.createManyIssueTypeSelectOptions(
                       option.selectOptions?.map(
                         (selectOption: SelectOptionSchema) => ({
-                          issueTypeFieldOptionId: result.id,
+                          fieldOptionId: result.id,
                           name: selectOption.name,
                           icon: selectOption.icon || '',
                           order: selectOption.order || 0,

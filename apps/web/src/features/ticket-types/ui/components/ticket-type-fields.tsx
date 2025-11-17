@@ -27,13 +27,17 @@ export default function TicketTypeFields({ id }: TicketTypeFields) {
   );
   const { fieldId } = useCustomizeFieldModal();
 
+  const saveFields = () => {
+    console.log(fields);
+  };
+
   const updateFieldOptionValue = (data: UpdateFieldOptionValueRequest) => {
     setFields((prev) =>
       prev.map((field) => {
         if (field.id === fieldId) {
           return {
             ...field,
-            options: field.fieldOptions.map((option) =>
+            options: field.options.map((option) =>
               option.id === data.fieldOptionId
                 ? { ...option, value: data.value }
                 : option,
@@ -51,7 +55,7 @@ export default function TicketTypeFields({ id }: TicketTypeFields) {
         if (field.id === fieldId) {
           return {
             ...field,
-            options: field.fieldOptions.map((option) => {
+            options: field.options.map((option) => {
               if (option.id === data.fieldOptionId) {
                 return {
                   ...option,
@@ -78,7 +82,7 @@ export default function TicketTypeFields({ id }: TicketTypeFields) {
         <div className='flex flex-col flex-1 min-h-0 space-y-4 overflow-y-auto border border-border rounded-md'>
           <TicketTypeCustomize fields={fields} setFields={setFields} id={id} />
         </div>
-        <Button>Kaydet</Button>
+        <Button onClick={saveFields}>Kaydet</Button>
       </div>
       <div className='flex flex-col min-w-0 w-full max-w-xs space-y-4'>
         <h2 className='text-xl font-bold leading-tight truncate'>Alanlar</h2>
