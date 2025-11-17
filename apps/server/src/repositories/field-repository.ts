@@ -132,14 +132,13 @@ export const fieldRepository = (
   },
 
   createIssueTypeFieldOption: async (
-    issueTypeId: string,
+    issueTypeFieldId: string,
     fieldOptionId: string,
     value: string,
-    fieldTypeOptionId: string,
   ) => {
     const [result] = await drizzle
       .insert(issueTypeFieldOptions)
-      .values({ issueTypeId, fieldOptionId, value, fieldTypeOptionId })
+      .values({ issueTypeFieldId, fieldOptionId, value })
       .returning();
     return result;
   },
@@ -181,14 +180,14 @@ export const fieldRepository = (
   },
 
   deleteIssueTypeFieldOption: async (
-    issueTypeId: string,
+    issueTypeFieldId: string,
     fieldOptionId: string,
   ) => {
     const [result] = await drizzle
       .delete(issueTypeFieldOptions)
       .where(
         and(
-          eq(issueTypeFieldOptions.issueTypeId, issueTypeId),
+          eq(issueTypeFieldOptions.issueTypeFieldId, issueTypeFieldId),
           eq(issueTypeFieldOptions.fieldOptionId, fieldOptionId),
         ),
       )
@@ -196,10 +195,7 @@ export const fieldRepository = (
     return result;
   },
 
-  deleteIssueTypeFieldOptions: async (
-    issueTypeId: string,
-    fieldOptionIds: string[],
-  ) => {
+  deleteIssueTypeFieldOptions: async (fieldOptionIds: string[]) => {
     if (fieldOptionIds.length === 0) return [];
     const [result] = await drizzle
       .delete(issueTypeFieldOptions)
@@ -217,7 +213,7 @@ export const fieldRepository = (
   },
 
   updateIssueTypeFieldOptionValue: async (
-    issueTypeId: string,
+    issueTypeFieldId: string,
     fieldOptionId: string,
     value: string,
   ) => {
@@ -226,7 +222,7 @@ export const fieldRepository = (
       .set({ value })
       .where(
         and(
-          eq(issueTypeFieldOptions.issueTypeId, issueTypeId),
+          eq(issueTypeFieldOptions.issueTypeFieldId, issueTypeFieldId),
           eq(issueTypeFieldOptions.fieldOptionId, fieldOptionId),
         ),
       )
@@ -253,14 +249,6 @@ export const fieldRepository = (
       .select()
       .from(issueTypeFields)
       .where(eq(issueTypeFields.issueTypeId, issueTypeId));
-    return result;
-  },
-
-  findIssueTypeFieldOptionsByIssueTypeId: async (issueTypeId: string) => {
-    const result = await drizzle
-      .select()
-      .from(issueTypeFieldOptions)
-      .where(eq(issueTypeFieldOptions.issueTypeId, issueTypeId));
     return result;
   },
 

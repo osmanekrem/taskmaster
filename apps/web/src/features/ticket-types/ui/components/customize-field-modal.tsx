@@ -1,5 +1,5 @@
 import useCustomizeFieldModal from '@/features/ticket-types/hooks/use-customize-field-modal';
-import type { IssueTypeFieldWithDetails } from '../../../fields/types';
+import type { FieldWithDetails } from '../../../fields/types';
 import {
   Sheet,
   SheetContent,
@@ -11,7 +11,7 @@ import CustomizeFieldFormIssueType from './customize-field-form-issue-type';
 interface CustomizeFieldModalProps {
   updateFieldOptionValue: (data: any) => void;
   saveSelectOptions: (data: any) => void;
-  fields: IssueTypeFieldWithDetails[];
+  fields: FieldWithDetails[];
 }
 
 export default function CustomizeFieldModal({

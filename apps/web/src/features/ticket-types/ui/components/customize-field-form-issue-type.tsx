@@ -11,10 +11,10 @@ import type {
   SaveSelectOptionsRequest,
   UpdateFieldOptionValueRequest,
 } from '../../../fields/lib/mutations';
-import type { IssueTypeFieldWithDetails } from '../../../fields/types';
+import type { FieldWithDetails } from '../../../fields/types';
 
 interface CustomizeFieldFormProps {
-  options?: IssueTypeFieldWithDetails['options'];
+  options?: FieldWithDetails['options'];
   updateFieldOptionValue: (data: UpdateFieldOptionValueRequest) => void;
   saveSelectOptions: (data: SaveSelectOptionsRequest) => void;
 }
@@ -43,7 +43,7 @@ export default function CustomizeFieldFormIssueType({
     });
 
     const dynamicOption = optionsData.find(
-      (option) => option.fieldTypeOption.key === 'is-dynamic-options',
+      (option) => option.fieldTypeOption?.key === 'is-dynamic-options',
     );
     if (dynamicOption && JSON.parse(dynamicOption.value) === false) {
       const selectOptions = selectOptionsData[dynamicOption.id] || [];
@@ -81,12 +81,12 @@ export default function CustomizeFieldFormIssueType({
     setOptionsData(options || []);
     if (
       options?.some(
-        (option) => option.fieldTypeOption.key === 'is-dynamic-options',
+        (option) => option.fieldTypeOption?.key === 'is-dynamic-options',
       )
     ) {
       const selectOptionsMap: any = {};
       options
-        .filter((opt) => opt.fieldTypeOption.key === 'is-dynamic-options')
+        .filter((opt) => opt.fieldTypeOption?.key === 'is-dynamic-options')
         .forEach((option: any) => {
           selectOptionsMap[option.id] = option.selectOptions?.filter(
             (selectOption: any) => selectOption.fieldOptionId === option.id,
@@ -119,7 +119,7 @@ export default function CustomizeFieldFormIssueType({
 
   useEffect(() => {
     const dynamicOption = optionsData.find(
-      (option) => option.fieldTypeOption.key === 'is-dynamic-options',
+      (option) => option.fieldTypeOption?.key === 'is-dynamic-options',
     );
     if (dynamicOption && JSON.parse(dynamicOption.value) === false) {
       const originalSelectOptions = originalOptionsData || {};
@@ -139,10 +139,10 @@ export default function CustomizeFieldFormIssueType({
     <>
       <div className='flex flex-col w-full flex-1 min-h-0 space-y-4 overflow-y-auto'>
         {optionsData.map((option) => {
-          switch (option.fieldTypeOption.type) {
+          switch (option.fieldTypeOption?.type) {
             case 'boolean':
               const isDynamicSelectOptions =
-                option.fieldTypeOption.key === 'is-dynamic-options';
+                option.fieldTypeOption?.key === 'is-dynamic-options';
               return (
                 <Fragment key={option.id}>
                   <div className='p-4 border rounded-md flex items-center justify-between'>
@@ -175,7 +175,7 @@ export default function CustomizeFieldFormIssueType({
                   className='p-4 border rounded-md flex items-center justify-between'
                 >
                   <TextFormElement
-                    name={option.fieldTypeOption.name}
+                    name={option.fieldTypeOption?.name || ''}
                     id={option.id}
                     value={option.value}
                     onChange={(value: any) => onChangeOption(option.id, value)}
@@ -184,17 +184,17 @@ export default function CustomizeFieldFormIssueType({
               );
             case 'select':
               const isDefaultOption =
-                option.fieldTypeOption.key === 'default-option';
-              let options: IssueTypeFieldWithDetails['options'][number]['selectOptions'] =
+                option.fieldTypeOption?.key === 'default-option';
+              let options: FieldWithDetails['options'][number]['selectOptions'] =
                 [];
               if (isDefaultOption) {
                 const dynamicOption = optionsData.find(
-                  (opt) => opt.fieldTypeOption.key === 'is-dynamic-options',
+                  (opt) => opt.fieldTypeOption?.key === 'is-dynamic-options',
                 );
                 if (dynamicOption) {
                   options = dynamicOption.selectOptions;
                 }
-              } else if (option.fieldTypeOption.key === 'granularity') {
+              } else if (option.fieldTypeOption?.key === 'granularity') {
                 options = [
                   {
                     id: 'day',
@@ -241,7 +241,7 @@ export default function CustomizeFieldFormIssueType({
                       order: option.order,
                       fieldOptionId: option.fieldOptionId,
                     }))}
-                    name={option.fieldTypeOption.name}
+                    name={option.fieldTypeOption?.name || ''}
                     id={option.id}
                     value={option.value}
                     onChange={(value: any) => onChangeOption(option.id, value)}
@@ -254,7 +254,7 @@ export default function CustomizeFieldFormIssueType({
                 <div key={option.id} className='p-4 border rounded-md'>
                   <ParagraphFormElement
                     value={option.value}
-                    name={option.fieldTypeOption.name}
+                    name={option.fieldTypeOption?.name || ''}
                     id={option.id}
                     onChange={(value: any) => onChangeOption(option.id, value)}
                   />

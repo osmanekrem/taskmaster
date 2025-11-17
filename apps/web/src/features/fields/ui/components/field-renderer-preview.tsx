@@ -15,13 +15,12 @@ import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { useState } from 'react';
 import type { DateValue } from 'react-aria-components';
 import UserSelector from '@/components/user-selector';
-import type { User } from '@/lib/auth-client';
 
-interface fieldRendererProps {
+interface FieldRendererProps {
   field: FieldWithDetails;
 }
 
-export default function FieldRendererPreview({ field }: fieldRendererProps) {
+export default function FieldRendererPreview({ field }: FieldRendererProps) {
   const isRequired =
     field.options.find((option) => option.fieldTypeOption.key === 'is-required')
       ?.value === 'true';
@@ -40,7 +39,7 @@ export default function FieldRendererPreview({ field }: fieldRendererProps) {
   );
 }
 
-export function FieldRendererPreviewComponent({ field }: fieldRendererProps) {
+export function FieldRendererPreviewComponent({ field }: FieldRendererProps) {
   const placeholder =
     field.options.find((option) => option.fieldTypeOption.key === 'placeholder')
       ?.value || '';

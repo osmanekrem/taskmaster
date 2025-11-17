@@ -146,10 +146,9 @@ export const fieldService = (
             const deletedField = fields.find((f) => f?.id === field.id);
             if (deletedField) {
               await repo.deleteIssueTypeFieldOptions(
-                issueTypeId,
                 deletedField.options
                   .map((o) => o?.id)
-                  .filter((id): id is string => !!id),
+                  .filter((id): id is string => !!id) || [],
               );
             }
           } else {
@@ -157,7 +156,7 @@ export const fieldService = (
             if (existingField) {
               existingField.options?.forEach(async (option) => {
                 await repo.updateIssueTypeFieldOptionValue(
-                  issueTypeId,
+                  field.id,
                   option.id!,
                   option.value,
                 );
@@ -177,14 +176,17 @@ export const fieldService = (
         for (const [index, field] of fields.entries()) {
           if (!field?.id) continue;
           if (!existingFields.some((f) => f?.id === field.id)) {
-            await repo.createIssueTypeField(issueTypeId, field.id, index);
+            const newField = await repo.createIssueTypeField(
+              issueTypeId,
+              field.id,
+              index,
+            );
             field.options?.forEach(async (option: any) => {
               await repo
                 .createIssueTypeFieldOption(
-                  issueTypeId,
+                  newField.id,
                   option.id,
                   option.value,
-                  option.fieldTypeOptionId,
                 )
                 .then(async (result) => {
                   if (result) {

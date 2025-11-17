@@ -11,7 +11,7 @@ import type {
 import useCustomizeFieldModal from '../../hooks/use-customize-field-modal';
 import { useQuery } from '@tanstack/react-query';
 import { getIssueTypeWithDetailsByIssueTypeIdQuery } from '../../lib/queries';
-import type { IssueTypeFieldWithDetails } from '@/features/fields/types';
+import type { FieldWithDetails } from '@/features/fields/types';
 
 interface TicketTypeFields {
   id: string;
@@ -22,7 +22,7 @@ type SelectOption = Field['options'][number]['selectOptions'][number];
 
 export default function TicketTypeFields({ id }: TicketTypeFields) {
   const { data } = useQuery(getIssueTypeWithDetailsByIssueTypeIdQuery(id));
-  const [fields, setFields] = useState<IssueTypeFieldWithDetails[]>(
+  const [fields, setFields] = useState<FieldWithDetails[]>(
     data?.data?.fields ?? [],
   );
   const { fieldId } = useCustomizeFieldModal();

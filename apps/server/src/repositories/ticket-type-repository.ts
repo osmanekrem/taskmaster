@@ -167,7 +167,11 @@ export const ticketTypeRepository = (drizzle: DrizzleClient = db) => ({
             options: {
               orderBy: [asc(issueTypeFieldOptions.order)],
               with: {
-                fieldTypeOption: true,
+                fieldOption: {
+                  with: {
+                    fieldTypeOption: true,
+                  },
+                },
                 selectOptions: {
                   orderBy: [asc(issueTypeSelectOptions.order)],
                 },

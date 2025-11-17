@@ -1,7 +1,6 @@
 import { pgTable, smallint, text } from 'drizzle-orm/pg-core';
 import { fields, fieldOptions } from '@/db/schema/field';
 import { relations } from 'drizzle-orm';
-import { fieldTypeOptions, fieldTypes } from './field-types';
 import { issueTypes } from './issue-types';
 
 export const issueTypeFields = pgTable('issue_type_fields', {
@@ -21,15 +20,12 @@ export const issueTypeFieldOptions = pgTable('issue_type_field_options', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  issueTypeId: text('issue_type_id')
+  issueTypeFieldId: text('issue_type_field_id')
     .notNull()
-    .references(() => issueTypes.id, { onDelete: 'cascade' }),
+    .references(() => issueTypeFields.id, { onDelete: 'cascade' }),
   fieldOptionId: text('field_option_id')
     .notNull()
     .references(() => fieldOptions.id, { onDelete: 'cascade' }),
-  fieldTypeOptionId: text('field_type_option_id')
-    .notNull()
-    .references(() => fieldTypeOptions.id, { onDelete: 'cascade' }),
   value: text('value').notNull(),
   order: smallint('order').notNull().default(0),
 });
@@ -69,16 +65,8 @@ export const issueTypeFieldOptionRelations = relations(
       fields: [issueTypeFieldOptions.fieldOptionId],
       references: [fieldOptions.id],
     }),
-    fieldTypeOption: one(fieldTypeOptions, {
-      fields: [issueTypeFieldOptions.fieldTypeOptionId],
-      references: [fieldTypeOptions.id],
-    }),
-    issueType: one(issueTypes, {
-      fields: [issueTypeFieldOptions.issueTypeId],
-      references: [issueTypes.id],
-    }),
     issueTypeField: one(issueTypeFields, {
-      fields: [issueTypeFieldOptions.id],
+      fields: [issueTypeFieldOptions.issueTypeFieldId],
       references: [issueTypeFields.id],
     }),
   }),

@@ -148,6 +148,13 @@
       "when": 1763392827038,
       "tag": "0020_calm_inertia",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1763400686718,
+      "tag": "0021_solid_vengeance",
+      "breakpoints": true
     }
   ]
 }
