@@ -7,7 +7,7 @@ import {
   issueTypeFieldOptions,
   issueTypeFields,
   issueTypeSelectOptions,
-} from '@/db/schema/issue-types';
+} from '@/db/schema/issue-type-fields';
 
 export const fieldRepository = (
   drizzle: typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0] = db,

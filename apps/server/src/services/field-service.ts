@@ -1,5 +1,4 @@
 import { db } from '@/db';
-import { issueTypes } from '@/db/schema/issue-types';
 import { fieldRepository } from '@/repositories/field-repository';
 import {
   type CreateFieldSchema,
@@ -7,7 +6,6 @@ import {
   type SelectOptionSchema,
   type FieldWithDetailsSchema,
 } from '@/schemas/fields';
-import { eq } from 'drizzle-orm';
 
 export const fieldService = (
   drizzle: typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0] = db,

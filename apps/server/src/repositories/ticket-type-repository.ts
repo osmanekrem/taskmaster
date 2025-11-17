@@ -1,9 +1,9 @@
+import { issueTypes } from '@/db/schema/issue-types';
 import {
   issueTypeFieldOptions,
   issueTypeFields,
-  issueTypes,
   issueTypeSelectOptions,
-} from '@/db/schema/issue-types';
+} from '@/db/schema/issue-type-fields';
 import { db } from '@/db';
 import { asc, eq, sql } from 'drizzle-orm';
 import type {
