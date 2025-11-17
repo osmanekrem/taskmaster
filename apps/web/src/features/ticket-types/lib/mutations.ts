@@ -9,10 +9,16 @@ export const useCreateTicketTypeMutation = () =>
   useMutation(
     trpc.ticketTypes.createTicketType.mutationOptions({
       onSuccess: (res) => {
-        queryClient.invalidateQueries({ queryKey: ['ticket-types'] });
         queryClient.invalidateQueries({
-          queryKey: ['ticket-type', res?.data?.id],
+          queryKey: trpc.ticketTypes.getTicketTypes.queryKey(),
         });
+        if (res?.data?.id) {
+          queryClient.invalidateQueries({
+            queryKey: trpc.ticketTypes.getTicketTypeById.queryKey({
+              ticketTypeId: res.data.id,
+            }),
+          });
+        }
       },
     }),
   );
@@ -24,10 +30,16 @@ export const useEditTicketTypeMutation = () =>
   useMutation(
     trpc.ticketTypes.editTicketType.mutationOptions({
       onSuccess: (res) => {
-        queryClient.invalidateQueries({ queryKey: ['ticket-types'] });
         queryClient.invalidateQueries({
-          queryKey: ['ticket-type', res?.data?.id],
+          queryKey: trpc.ticketTypes.getTicketTypes.queryKey(),
         });
+        if (res?.data?.id) {
+          queryClient.invalidateQueries({
+            queryKey: trpc.ticketTypes.getTicketTypeById.queryKey({
+              ticketTypeId: res.data.id,
+            }),
+          });
+        }
       },
     }),
   );
@@ -39,10 +51,16 @@ export const useDeleteTicketTypeMutation = () =>
   useMutation(
     trpc.ticketTypes.deleteTicketType.mutationOptions({
       onSuccess: (res) => {
-        queryClient.invalidateQueries({ queryKey: ['ticket-types'] });
         queryClient.invalidateQueries({
-          queryKey: ['ticket-type', res?.data?.id],
+          queryKey: trpc.ticketTypes.getTicketTypes.queryKey(),
         });
+        if (res?.data?.id) {
+          queryClient.invalidateQueries({
+            queryKey: trpc.ticketTypes.getTicketTypeById.queryKey({
+              ticketTypeId: res.data.id,
+            }),
+          });
+        }
       },
     }),
   );
@@ -51,10 +69,17 @@ export const useSaveIssueTypeFieldsMutation = () =>
   useMutation(
     trpc.fields.saveIssueTypeFields.mutationOptions({
       onSuccess: (res) => {
-        queryClient.invalidateQueries({ queryKey: ['ticket-types'] });
         queryClient.invalidateQueries({
-          queryKey: ['ticket-type', res?.data?.[0]?.issueTypeId],
+          queryKey: trpc.ticketTypes.getTicketTypes.queryKey(),
         });
+        if (res?.data?.[0]?.issueTypeId) {
+          queryClient.invalidateQueries({
+            queryKey:
+              trpc.ticketTypes.getIssueTypeWithDetailsByIssueTypeId.queryKey({
+                issueTypeId: res.data[0].issueTypeId,
+              }),
+          });
+        }
       },
     }),
   );

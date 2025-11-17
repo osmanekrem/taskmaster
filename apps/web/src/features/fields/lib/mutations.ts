@@ -7,9 +7,15 @@ export const useCreateFieldMutation = () =>
   useMutation(
     trpc.fields.createField.mutationOptions({
       onSuccess: (res) => {
-        queryClient.invalidateQueries({ queryKey: ['fields'] });
-        queryClient.invalidateQueries({ queryKey: ['fields-with-details'] });
-        queryClient.invalidateQueries({ queryKey: ['fields-with-field-type'] });
+        queryClient.invalidateQueries({
+          queryKey: trpc.fields.getFields.queryKey(),
+        });
+        queryClient.invalidateQueries({
+          queryKey: trpc.fields.getFieldsWithDetails.queryKey(),
+        });
+        queryClient.invalidateQueries({
+          queryKey: trpc.fields.getFieldsWithFieldType.queryKey(),
+        });
       },
     }),
   );
@@ -20,16 +26,32 @@ export const useEditFieldMutation = () =>
   useMutation(
     trpc.fields.editField.mutationOptions({
       onSuccess: (res) => {
-        queryClient.invalidateQueries({ queryKey: ['fields'] });
-        queryClient.invalidateQueries({ queryKey: ['fields-with-details'] });
-        queryClient.invalidateQueries({ queryKey: ['fields-with-field-type'] });
-        queryClient.invalidateQueries({ queryKey: ['field', res?.data?.id] });
         queryClient.invalidateQueries({
-          queryKey: ['field-with-details', res?.data?.id],
+          queryKey: trpc.fields.getFields.queryKey(),
         });
         queryClient.invalidateQueries({
-          queryKey: ['field-with-field-type', res?.data?.id],
+          queryKey: trpc.fields.getFieldsWithDetails.queryKey(),
         });
+        queryClient.invalidateQueries({
+          queryKey: trpc.fields.getFieldsWithFieldType.queryKey(),
+        });
+        if (res?.data?.id) {
+          queryClient.invalidateQueries({
+            queryKey: trpc.fields.getFieldById.queryKey({
+              fieldId: res.data.id,
+            }),
+          });
+          queryClient.invalidateQueries({
+            queryKey: trpc.fields.getFieldWithDetailsById.queryKey({
+              fieldId: res.data.id,
+            }),
+          });
+          queryClient.invalidateQueries({
+            queryKey: trpc.fields.getFieldWithFieldTypeById.queryKey({
+              fieldId: res.data.id,
+            }),
+          });
+        }
       },
     }),
   );
@@ -40,16 +62,32 @@ export const useDeleteFieldMutation = () =>
   useMutation(
     trpc.fields.deleteField.mutationOptions({
       onSuccess: (res) => {
-        queryClient.invalidateQueries({ queryKey: ['fields'] });
-        queryClient.invalidateQueries({ queryKey: ['fields-with-details'] });
-        queryClient.invalidateQueries({ queryKey: ['fields-with-field-type'] });
-        queryClient.invalidateQueries({ queryKey: ['field', res?.data?.id] });
         queryClient.invalidateQueries({
-          queryKey: ['field-with-details', res?.data?.id],
+          queryKey: trpc.fields.getFields.queryKey(),
         });
         queryClient.invalidateQueries({
-          queryKey: ['field-with-field-type', res?.data?.id],
+          queryKey: trpc.fields.getFieldsWithDetails.queryKey(),
         });
+        queryClient.invalidateQueries({
+          queryKey: trpc.fields.getFieldsWithFieldType.queryKey(),
+        });
+        if (res?.data?.id) {
+          queryClient.invalidateQueries({
+            queryKey: trpc.fields.getFieldById.queryKey({
+              fieldId: res.data.id,
+            }),
+          });
+          queryClient.invalidateQueries({
+            queryKey: trpc.fields.getFieldWithDetailsById.queryKey({
+              fieldId: res.data.id,
+            }),
+          });
+          queryClient.invalidateQueries({
+            queryKey: trpc.fields.getFieldWithFieldTypeById.queryKey({
+              fieldId: res.data.id,
+            }),
+          });
+        }
       },
     }),
   );
@@ -61,15 +99,18 @@ export const useUpdateFieldOptionValueMutation = () =>
   useMutation(
     trpc.fields.updateFieldOptionValue.mutationOptions({
       onSuccess: (res) => {
-        queryClient.invalidateQueries({
-          queryKey: ['field-options', res?.data?.fieldId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['field-with-details', res?.data?.fieldId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['field-with-field-type', res?.data?.fieldId],
-        });
+        if (res?.data?.fieldId) {
+          queryClient.invalidateQueries({
+            queryKey: trpc.fields.getFieldWithDetailsById.queryKey({
+              fieldId: res.data.fieldId,
+            }),
+          });
+          queryClient.invalidateQueries({
+            queryKey: trpc.fields.getFieldWithFieldTypeById.queryKey({
+              fieldId: res.data.fieldId,
+            }),
+          });
+        }
       },
     }),
   );
@@ -81,12 +122,13 @@ export const useSaveSelectOptionsMutation = () =>
   useMutation(
     trpc.fields.saveSelectOptions.mutationOptions({
       onSuccess: (res) => {
-        queryClient.invalidateQueries({
-          queryKey: [
-            'select-options-by-field-option',
-            res?.data[0]?.fieldOptionId,
-          ],
-        });
+        if (res?.data?.[0]?.fieldOptionId) {
+          queryClient.invalidateQueries({
+            queryKey: trpc.fields.getSelectOptionsByFieldOptionId.queryKey({
+              fieldOptionId: res.data[0].fieldOptionId,
+            }),
+          });
+        }
       },
     }),
   );
