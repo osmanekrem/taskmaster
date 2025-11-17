@@ -108,7 +108,7 @@ export default function TicketTypeFields({ id }: TicketTypeFields) {
         </div>
         <Button onClick={saveFields}>Kaydet</Button>
       </div>
-      <div className='flex flex-col min-w-0 w-full max-w-xs space-y-4'>
+      <div className='flex flex-col max-w-64 w-full space-y-4'>
         <h2 className='text-xl font-bold leading-tight truncate'>Alanlar</h2>
         <FieldSelector fields={fields} setFields={setFields} />
       </div>
