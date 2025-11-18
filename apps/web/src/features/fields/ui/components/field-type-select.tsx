@@ -4,10 +4,11 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useQuery } from "@tanstack/react-query";
-import { getFieldTypesQuery } from "@/features/fields/lib/queries";
-import { Icon } from "@/components/ui/icon-picker";
+} from '@/components/ui/select';
+import { useQuery } from '@tanstack/react-query';
+import { getFieldTypesQuery } from '@/features/fields/lib/queries';
+import { Icon } from '@/components/ui/icon-picker';
+import type { IconName } from 'lucide-react/dynamic';
 
 interface FieldTypeSelectProps {
   value: string;
@@ -22,16 +23,16 @@ export default function FieldTypeSelect({
 
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-full">
+      <SelectTrigger className='w-full'>
         <SelectValue
-          className="flex items-center gap-2 w-full"
-          placeholder="Alan tipi seç"
+          className='flex items-center gap-2 w-full'
+          placeholder='Alan tipi seç'
         />
       </SelectTrigger>
       <SelectContent>
         {fieldTypes?.data.map((fieldType) => (
           <SelectItem key={fieldType.id} value={fieldType.id}>
-            <Icon name={fieldType.icon ?? ""} />
+            <Icon name={(fieldType.icon as IconName) ?? ''} />
             {fieldType.name}
           </SelectItem>
         ))}

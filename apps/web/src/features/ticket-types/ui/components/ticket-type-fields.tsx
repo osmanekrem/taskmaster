@@ -21,7 +21,7 @@ interface TicketTypeFields {
 type Field = RouterOutput['fields']['getFieldsWithDetails']['data'][number];
 type SelectOption = Field['options'][number]['selectOptions'][number];
 
-export default function TicketTypeFields({ id }: TicketTypeFields) {
+export default function TicketTypeFields({ id }: Readonly<TicketTypeFields>) {
   const { data } = useQuery(getIssueTypeWithDetailsByIssueTypeIdQuery(id));
   const [fields, setFields] = useState<FieldWithDetails[]>(
     data?.data?.fields ?? [],

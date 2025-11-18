@@ -1,3 +1,4 @@
-import type {RouterOutput} from "@/utils/trpc";
+import type { RouterOutput } from '@/utils/trpc';
 
-export type TicketType = RouterOutput["ticketTypes"]["getTicketTypeById"][number];
+export type TicketType =
+  RouterOutput['ticketTypes']['getTicketTypeById']['data'];

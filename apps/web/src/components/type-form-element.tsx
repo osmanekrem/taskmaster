@@ -78,14 +78,14 @@ export interface SelectOptionsFormElementProps {
   id: string;
   value: SelectOption[];
   onChange: (optionId: string, options: SelectOption[]) => void;
-  key: string;
+  dataKey: string;
 }
 
 export function StaticSelectOptionsFormElement({
   id,
   value,
   onChange,
-  key,
+  dataKey,
 }: SelectOptionsFormElementProps) {
   const [editingOptionIndex, setEditingOptionIndex] = useState<string | null>(
     null,
@@ -258,7 +258,7 @@ export function StaticSelectOptionsFormElement({
             ...value,
             {
               order: value.length + 1,
-              [key]: id,
+              [dataKey]: id,
               name: `Seçenek ${value.length + 1}`,
               icon: iconsData[0].name,
             },
