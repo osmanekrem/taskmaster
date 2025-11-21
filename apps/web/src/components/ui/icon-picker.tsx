@@ -201,7 +201,6 @@ const IconPicker = React.forwardRef<
 
         if (newScrollTop !== scrollTop) {
           parentRef.current.scrollTop = newScrollTop;
-          e.preventDefault();
         }
       }
     }, []);
