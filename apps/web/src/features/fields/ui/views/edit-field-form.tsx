@@ -1,6 +1,5 @@
 import { useForm } from '@tanstack/react-form';
 import { useQuery } from '@tanstack/react-query';
-import { Input } from '@/components/ui/input';
 import { editFieldSchema } from '@/features/fields/schemas';
 import FieldTypeSelect from '@/features/fields/ui/components/field-type-select';
 import { useEditFieldMutation } from '@/features/fields/lib/mutations';
@@ -13,6 +12,7 @@ import FieldTypeIconSelect from '@/features/fields/ui/components/field-type-icon
 import { FieldSet } from '@/components/ui/field';
 import { FormField } from '@/components/form-elements/form-field';
 import { FormSubmitButton } from '@/components/form-elements/submit-button';
+import { TextField } from '@/components/form-elements/text-field';
 
 interface EditFieldFormProps {
   readonly fieldId: string;
@@ -56,17 +56,7 @@ export default function EditFieldForm({
     >
       <FieldSet className='h-full flex flex-col'>
         <form.Field name='name'>
-          {(field) => (
-            <FormField field={field} label='Alan Adı *'>
-              <Input
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormField>
-          )}
+          {(field) => <TextField field={field} label='Alan Adı *' />}
         </form.Field>
         <form.Field name='fieldTypeId'>
           {(field) => (
