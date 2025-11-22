@@ -2,12 +2,12 @@ import { useForm } from '@tanstack/react-form';
 import { createTicketTypeSchema } from '@/features/ticket-types/schemas';
 import { useCreateTicketTypeMutation } from '@/features/ticket-types/lib/mutations';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import TicketTypeIconSelect from '../components/ticket-type-icon-select';
 import useAddTicketTypeModal from '@/features/ticket-types/hooks/use-add-ticket-type-modal';
 import { FieldSet } from '@/components/ui/field';
 import { FormField } from '@/components/form-elements/form-field';
 import { FormSubmitButton } from '@/components/form-elements/submit-button';
+import { TextareaField } from '@/components/form-elements/textarea-field';
 
 export default function AddTicketTypeForm() {
   const createTicketType = useCreateTicketTypeMutation();
@@ -68,15 +68,7 @@ export default function AddTicketTypeForm() {
 
         <form.Field name='description'>
           {(field) => (
-            <FormField field={field} label='Bilet Türü Açıklaması'>
-              <Textarea
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormField>
+            <TextareaField field={field} label='Bilet Türü Açıklaması' />
           )}
         </form.Field>
 

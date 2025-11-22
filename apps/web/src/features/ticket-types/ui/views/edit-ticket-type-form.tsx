@@ -3,13 +3,13 @@ import { editTicketTypeSchema } from '@/features/ticket-types/schemas';
 import { useEditTicketTypeMutation } from '@/features/ticket-types/lib/mutations';
 import { useQuery } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import TicketTypeIconSelect from '../components/ticket-type-icon-select';
 import { getTicketTypeQuery } from '../../lib/queries';
 import useEditTicketTypeModal from '@/features/ticket-types/hooks/use-edit-ticket-type-modal';
 import { FieldSet } from '@/components/ui/field';
 import { FormField } from '@/components/form-elements/form-field';
 import { FormSubmitButton } from '@/components/form-elements/submit-button';
+import { TextareaField } from '@/components/form-elements/textarea-field';
 
 interface EditTicketTypeFormProps {
   readonly ticketTypeId: string;
@@ -82,15 +82,7 @@ export default function EditTicketTypeForm({
 
         <form.Field name='description'>
           {(field) => (
-            <FormField field={field} label='Bilet Türü Açıklaması'>
-              <Textarea
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormField>
+            <TextareaField field={field} label='Bilet Türü Açıklaması' />
           )}
         </form.Field>
 
