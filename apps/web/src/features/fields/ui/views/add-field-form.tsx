@@ -1,6 +1,5 @@
 import { useForm } from '@tanstack/react-form';
 import { useQuery } from '@tanstack/react-query';
-import { Input } from '@/components/ui/input';
 import { addFieldSchema } from '@/features/fields/schemas';
 import FieldTypeSelect from '@/features/fields/ui/components/field-type-select';
 import { useCreateFieldMutation } from '@/features/fields/lib/mutations';
@@ -10,6 +9,7 @@ import { getFieldTypesQuery } from '@/features/fields/lib/queries';
 import { FieldSet } from '@/components/ui/field';
 import { FormField } from '@/components/form-elements/form-field';
 import { FormSubmitButton } from '@/components/form-elements/submit-button';
+import { TextField } from '@/components/form-elements/text-field';
 
 export default function AddFieldForm() {
   const createField = useCreateFieldMutation();
@@ -45,17 +45,7 @@ export default function AddFieldForm() {
     >
       <FieldSet className='flex flex-col h-full'>
         <form.Field name='name'>
-          {(field) => (
-            <FormField field={field} label='Alan Adı *'>
-              <Input
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormField>
-          )}
+          {(field) => <TextField field={field} label='Alan Adı *' />}
         </form.Field>
         <form.Field name='fieldTypeId'>
           {(field) => (
