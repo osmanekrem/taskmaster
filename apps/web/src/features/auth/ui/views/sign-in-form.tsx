@@ -8,6 +8,7 @@ import { FieldSet } from '@/components/ui/field';
 import { FormSubmitButton } from '@/components/form-elements/submit-button';
 import { EmailField } from '@/components/form-elements/email-field';
 import { PasswordField } from '@/components/form-elements/password-field';
+import { Alert, AlertTitle } from '@/components/ui/alert';
 
 export default function SignInForm() {
   const navigate = useNavigate();
@@ -63,9 +64,9 @@ export default function SignInForm() {
         </div>
 
         {error && (
-          <p className='bg-destructive/25 text-destructive-foreground py-1.5 px-4 rounded-md'>
-            {error}
-          </p>
+          <Alert variant='destructive'>
+            <AlertTitle>{error}</AlertTitle>
+          </Alert>
         )}
 
         <FormSubmitButton
