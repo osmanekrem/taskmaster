@@ -5,7 +5,8 @@ import { toast } from 'sonner';
 import { setUserPassword } from '@/features/user-management/lib/actions';
 import { Button } from '@/components/ui/button';
 import InputPassword from '@/components/input-password';
-import { Field, FieldLabel, FieldSet } from '@/components/ui/field';
+import { FieldSet } from '@/components/ui/field';
+import { FormField } from '@/components/form-field';
 
 interface Props {
   userId: string;
@@ -48,8 +49,7 @@ export default function SetPasswordForm({ userId }: Props) {
       <FieldSet>
         <form.Field name='password'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Yeni Şifre</FieldLabel>
+            <FormField field={field} label='Yeni Şifre'>
               <InputPassword
                 id={field.name}
                 name={field.name}
@@ -57,12 +57,7 @@ export default function SetPasswordForm({ userId }: Props) {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
 

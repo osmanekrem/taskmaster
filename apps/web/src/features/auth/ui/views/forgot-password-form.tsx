@@ -2,12 +2,12 @@ import { useForm } from '@tanstack/react-form';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useMutation } from '@tanstack/react-query';
 import { forgotPassword } from '@/features/auth/lib/actions';
 import { forgotPasswordSchema } from '@/features/auth/schemas';
 import { toast } from 'sonner';
-import { Field, FieldSet, FieldLabel } from '@/components/ui/field';
+import { FieldSet } from '@/components/ui/field';
+import { FormField } from '@/components/form-field';
 
 export default function ForgotPasswordForm() {
   const forgotPasswordMutation = useMutation({
@@ -43,8 +43,7 @@ export default function ForgotPasswordForm() {
       <FieldSet>
         <form.Field name='email'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>E-posta</FieldLabel>
+            <FormField field={field} label='E-posta'>
               <Input
                 id={field.name}
                 name={field.name}
@@ -53,12 +52,7 @@ export default function ForgotPasswordForm() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
 

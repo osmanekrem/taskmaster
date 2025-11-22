@@ -1,12 +1,12 @@
 import { useForm } from '@tanstack/react-form';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { useMutation } from '@tanstack/react-query';
 import { changePassword } from '@/features/auth/lib/actions';
 import { changePasswordSchema } from '@/features/auth/schemas';
 import { toast } from 'sonner';
 import InputPassword from '@/components/input-password';
-import { Field, FieldLabel, FieldSet } from '@/components/ui/field';
+import { FieldSet } from '@/components/ui/field';
+import { FormField } from '@/components/form-field';
 
 export default function ChangePasswordForm() {
   const changePasswordMutation = useMutation({
@@ -44,8 +44,7 @@ export default function ChangePasswordForm() {
       <FieldSet>
         <form.Field name='currentPassword'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Mevcut Şifre</FieldLabel>
+            <FormField field={field} label='Mevcut Şifre'>
               <InputPassword
                 id={field.name}
                 name={field.name}
@@ -53,18 +52,12 @@ export default function ChangePasswordForm() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
         <form.Field name='newPassword'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Yeni Şifre</FieldLabel>
+            <FormField field={field} label='Yeni Şifre'>
               <InputPassword
                 id={field.name}
                 name={field.name}
@@ -72,12 +65,7 @@ export default function ChangePasswordForm() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
 

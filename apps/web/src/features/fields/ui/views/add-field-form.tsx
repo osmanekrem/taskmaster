@@ -8,7 +8,8 @@ import { useCreateFieldMutation } from '@/features/fields/lib/mutations';
 import useAddFieldModal from '@/features/fields/hooks/use-add-field-modal';
 import FieldTypeIconSelect from '@/features/fields/ui/components/field-type-icon-select';
 import { getFieldTypesQuery } from '@/features/fields/lib/queries';
-import { Field, FieldLabel, FieldSet } from '@/components/ui/field';
+import { FieldSet } from '@/components/ui/field';
+import { FormField } from '@/components/form-field';
 
 export default function AddFieldForm() {
   const createField = useCreateFieldMutation();
@@ -45,8 +46,7 @@ export default function AddFieldForm() {
       <FieldSet className='flex flex-col h-full'>
         <form.Field name='name'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Alan Adı *</FieldLabel>
+            <FormField field={field} label='Alan Adı *'>
               <Input
                 id={field.name}
                 name={field.name}
@@ -54,18 +54,12 @@ export default function AddFieldForm() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
         <form.Field name='fieldTypeId'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Alan Türü *</FieldLabel>
+            <FormField field={field} label='Alan Türü *'>
               <FieldTypeSelect
                 value={field.state.value}
                 onChange={(value) => {
@@ -76,29 +70,18 @@ export default function AddFieldForm() {
                   form.setFieldValue('icon', selectedFieldType?.icon || '');
                 }}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
 
         <form.Field name='icon'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Alan İkonu</FieldLabel>
+            <FormField field={field} label='Alan İkonu'>
               <FieldTypeIconSelect
                 value={field.state.value}
                 onChange={(value) => field.handleChange(value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
 

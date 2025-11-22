@@ -1,13 +1,13 @@
 import { useForm } from '@tanstack/react-form';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { useMutation } from '@tanstack/react-query';
 import { resetPassword } from '@/features/auth/lib/actions';
 import { resetPasswordSchema } from '@/features/auth/schemas';
 import { toast } from 'sonner';
 import InputPassword from '@/components/input-password';
-import { Field, FieldLabel, FieldSet } from '@/components/ui/field';
+import { FieldSet } from '@/components/ui/field';
+import { FormField } from '@/components/form-field';
 
 interface Props {
   token: string;
@@ -51,8 +51,7 @@ export default function ResetPasswordForm({ token }: Props) {
       <FieldSet>
         <form.Field name='password'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Şifre</FieldLabel>
+            <FormField field={field} label='Şifre'>
               <InputPassword
                 id={field.name}
                 name={field.name}
@@ -60,18 +59,12 @@ export default function ResetPasswordForm({ token }: Props) {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
         <form.Field name='passwordConfirm'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Şifre Tekrar</FieldLabel>
+            <FormField field={field} label='Şifre Tekrar'>
               <InputPassword
                 id={field.name}
                 name={field.name}
@@ -79,12 +72,7 @@ export default function ResetPasswordForm({ token }: Props) {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
 

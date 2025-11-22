@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import TicketTypeIconSelect from '../components/ticket-type-icon-select';
 import useAddTicketTypeModal from '@/features/ticket-types/hooks/use-add-ticket-type-modal';
-import { Field, FieldLabel, FieldSet } from '@/components/ui/field';
+import { FieldSet } from '@/components/ui/field';
+import { FormField } from '@/components/form-field';
 
 export default function AddTicketTypeForm() {
   const createTicketType = useCreateTicketTypeMutation();
@@ -42,8 +43,7 @@ export default function AddTicketTypeForm() {
       <FieldSet className='h-full flex flex-col'>
         <form.Field name='name'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Bilet Türü Adı *</FieldLabel>
+            <FormField field={field} label='Bilet Türü Adı *'>
               <Input
                 id={field.name}
                 name={field.name}
@@ -51,38 +51,24 @@ export default function AddTicketTypeForm() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
 
         <form.Field name='icon'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Bilet Türü Simgesi *</FieldLabel>
+            <FormField field={field} label='Bilet Türü Simgesi *'>
               <TicketTypeIconSelect
                 value={field.state.value}
                 onChange={(value) => field.handleChange(value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
 
         <form.Field name='description'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>
-                Bilet Türü Açıklaması
-              </FieldLabel>
+            <FormField field={field} label='Bilet Türü Açıklaması'>
               <Textarea
                 id={field.name}
                 name={field.name}
@@ -90,12 +76,7 @@ export default function AddTicketTypeForm() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
 

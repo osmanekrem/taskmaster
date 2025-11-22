@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import InputPassword from '@/components/input-password';
 import { useCreateUser } from '@/features/user-management/lib/api';
 import { useNavigate } from '@tanstack/react-router';
-import { Field, FieldLabel, FieldSet } from '@/components/ui/field';
+import { FieldSet } from '@/components/ui/field';
+import { FormField } from '@/components/form-field';
 
 export default function CreateUserForm() {
   const createUser = useCreateUser();
@@ -42,8 +43,7 @@ export default function CreateUserForm() {
       <FieldSet className='h-full flex flex-col'>
         <form.Field name='firstName'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Ad</FieldLabel>
+            <FormField field={field} label='Ad'>
               <Input
                 id={field.name}
                 name={field.name}
@@ -51,19 +51,13 @@ export default function CreateUserForm() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
 
         <form.Field name='lastName'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Soyad</FieldLabel>
+            <FormField field={field} label='Soyad'>
               <Input
                 id={field.name}
                 name={field.name}
@@ -71,19 +65,13 @@ export default function CreateUserForm() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
 
         <form.Field name='email'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>E-Posta</FieldLabel>
+            <FormField field={field} label='E-Posta'>
               <Input
                 id={field.name}
                 name={field.name}
@@ -92,19 +80,13 @@ export default function CreateUserForm() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
 
         <form.Field name='password'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Şifre</FieldLabel>
+            <FormField field={field} label='Şifre'>
               <InputPassword
                 id={field.name}
                 name={field.name}
@@ -112,12 +94,7 @@ export default function CreateUserForm() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
 

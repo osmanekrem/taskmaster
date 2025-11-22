@@ -1,12 +1,12 @@
 import { useForm } from '@tanstack/react-form';
 import { editUserSchema } from '@/features/user-management/schemas';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { type RouterOutput } from '@/utils/trpc';
 import { useNavigate } from '@tanstack/react-router';
 import { useEditUser } from '@/features/user-management/lib/api';
-import { Field, FieldLabel, FieldSet } from '@/components/ui/field';
+import { FieldSet } from '@/components/ui/field';
+import { FormField } from '@/components/form-field';
 
 interface Props {
   user: RouterOutput['user']['getUserById']['data'];
@@ -49,8 +49,7 @@ export default function EditUserForm({ user }: Props) {
       <FieldSet className='h-full flex flex-col'>
         <form.Field name='firstName'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Ad</FieldLabel>
+            <FormField field={field} label='Ad'>
               <Input
                 id={field.name}
                 name={field.name}
@@ -58,19 +57,13 @@ export default function EditUserForm({ user }: Props) {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
 
         <form.Field name='lastName'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Soyad</FieldLabel>
+            <FormField field={field} label='Soyad'>
               <Input
                 id={field.name}
                 name={field.name}
@@ -78,19 +71,13 @@ export default function EditUserForm({ user }: Props) {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
 
         <form.Field name='email'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>E-Posta</FieldLabel>
+            <FormField field={field} label='E-Posta'>
               <Input
                 id={field.name}
                 name={field.name}
@@ -99,12 +86,7 @@ export default function EditUserForm({ user }: Props) {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
 

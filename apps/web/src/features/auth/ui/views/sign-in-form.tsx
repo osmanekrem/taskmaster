@@ -7,7 +7,8 @@ import { signIn } from '@/features/auth/lib/actions';
 import { signInSchema } from '@/features/auth/schemas';
 import { useState } from 'react';
 import InputPassword from '@/components/input-password';
-import { Field, FieldLabel, FieldSet } from '@/components/ui/field';
+import { FieldSet } from '@/components/ui/field';
+import { FormField } from '@/components/form-field';
 
 export default function SignInForm() {
   const navigate = useNavigate();
@@ -50,8 +51,7 @@ export default function SignInForm() {
       <FieldSet>
         <form.Field name='email'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>E-posta</FieldLabel>
+            <FormField field={field} label='E-posta'>
               <Input
                 id={field.name}
                 name={field.name}
@@ -60,19 +60,13 @@ export default function SignInForm() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
 
         <form.Field name='password'>
           {(field) => (
-            <Field>
-              <FieldLabel htmlFor={field.name}>Şifre</FieldLabel>
+            <FormField field={field} label='Şifre'>
               <InputPassword
                 id={field.name}
                 name={field.name}
@@ -80,12 +74,7 @@ export default function SignInForm() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              {field.state.meta.errors.map((error) => (
-                <p key={error?.message} className='text-destructive'>
-                  {error?.message}
-                </p>
-              ))}
-            </Field>
+            </FormField>
           )}
         </form.Field>
 
