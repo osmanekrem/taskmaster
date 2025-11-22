@@ -16,9 +16,10 @@ type FieldApi = {
 type EmailFieldProps = {
   field: FieldApi;
   label: string;
+  [key: string]: any;
 };
 
-export const EmailField = ({ field, label }: EmailFieldProps) => {
+export const EmailField = ({ field, label, ...props }: EmailFieldProps) => {
   return (
     <FormField field={field} label={label}>
       <Input
@@ -28,6 +29,7 @@ export const EmailField = ({ field, label }: EmailFieldProps) => {
         name={field.name}
         id={field.name}
         type='email'
+        {...props}
       />
     </FormField>
   );

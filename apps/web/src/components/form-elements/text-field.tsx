@@ -16,9 +16,10 @@ type FieldApi = {
 type TextFieldProps = {
   field: FieldApi;
   label: string;
+  [key: string]: any;
 };
 
-export const TextField = ({ field, label }: TextFieldProps) => {
+export const TextField = ({ field, label, ...props }: TextFieldProps) => {
   return (
     <FormField field={field} label={label}>
       <Input
@@ -27,6 +28,8 @@ export const TextField = ({ field, label }: TextFieldProps) => {
         onBlur={field.handleBlur}
         name={field.name}
         id={field.name}
+        type='text'
+        {...props}
       />
     </FormField>
   );
