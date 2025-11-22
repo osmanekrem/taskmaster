@@ -1,14 +1,14 @@
 import { useForm } from '@tanstack/react-form';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { signIn } from '@/features/auth/lib/actions';
 import { signInSchema } from '@/features/auth/schemas';
 import { useState } from 'react';
-import InputPassword from '@/components/input-password';
+import InputPassword from '@/components/form-elements/input-password';
 import { FieldSet } from '@/components/ui/field';
-import { FormField } from '@/components/form-field';
+import { FormField } from '@/components/form-elements/form-field';
+import { FormSubmitButton } from '@/components/form-elements/submit-button';
 
 export default function SignInForm() {
   const navigate = useNavigate();
@@ -90,17 +90,12 @@ export default function SignInForm() {
           </p>
         )}
 
-        <form.Subscribe>
-          {(state) => (
-            <Button
-              type='submit'
-              className='w-full'
-              disabled={!state.canSubmit || state.isSubmitting}
-            >
-              {state.isSubmitting ? 'Gönderiliyor...' : 'Giriş Yap'}
-            </Button>
-          )}
-        </form.Subscribe>
+        <FormSubmitButton
+          form={form}
+          label='Giriş Yap'
+          submittingLabel='Gönderiliyor...'
+          className='w-full'
+        />
       </FieldSet>
     </form>
   );

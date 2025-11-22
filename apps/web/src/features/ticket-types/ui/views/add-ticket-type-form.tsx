@@ -2,12 +2,12 @@ import { useForm } from '@tanstack/react-form';
 import { createTicketTypeSchema } from '@/features/ticket-types/schemas';
 import { useCreateTicketTypeMutation } from '@/features/ticket-types/lib/mutations';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import TicketTypeIconSelect from '../components/ticket-type-icon-select';
 import useAddTicketTypeModal from '@/features/ticket-types/hooks/use-add-ticket-type-modal';
 import { FieldSet } from '@/components/ui/field';
-import { FormField } from '@/components/form-field';
+import { FormField } from '@/components/form-elements/form-field';
+import { FormSubmitButton } from '@/components/form-elements/submit-button';
 
 export default function AddTicketTypeForm() {
   const createTicketType = useCreateTicketTypeMutation();
@@ -80,17 +80,12 @@ export default function AddTicketTypeForm() {
           )}
         </form.Field>
 
-        <form.Subscribe>
-          {(state) => (
-            <Button
-              type='submit'
-              className='w-full mt-auto'
-              disabled={!state.canSubmit || state.isSubmitting}
-            >
-              {state.isSubmitting ? 'Gönderiliyor...' : 'Bilet Türü Ekle'}
-            </Button>
-          )}
-        </form.Subscribe>
+        <FormSubmitButton
+          form={form}
+          label='Bilet Türü Ekle'
+          submittingLabel='Gönderiliyor...'
+          className='w-full mt-auto'
+        />
       </FieldSet>
     </form>
   );

@@ -3,21 +3,21 @@ import { editTicketTypeSchema } from '@/features/ticket-types/schemas';
 import { useEditTicketTypeMutation } from '@/features/ticket-types/lib/mutations';
 import { useQuery } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import TicketTypeIconSelect from '../components/ticket-type-icon-select';
 import { getTicketTypeQuery } from '../../lib/queries';
 import useEditTicketTypeModal from '@/features/ticket-types/hooks/use-edit-ticket-type-modal';
 import { FieldSet } from '@/components/ui/field';
-import { FormField } from '@/components/form-field';
+import { FormField } from '@/components/form-elements/form-field';
+import { FormSubmitButton } from '@/components/form-elements/submit-button';
 
 interface EditTicketTypeFormProps {
-  ticketTypeId: string;
+  readonly ticketTypeId: string;
 }
 
 export default function EditTicketTypeForm({
   ticketTypeId,
-}: EditTicketTypeFormProps) {
+}: Readonly<EditTicketTypeFormProps>) {
   const { data } = useQuery(getTicketTypeQuery(ticketTypeId ?? ''));
   const editTicketType = useEditTicketTypeMutation();
   const { close } = useEditTicketTypeModal();
@@ -94,17 +94,12 @@ export default function EditTicketTypeForm({
           )}
         </form.Field>
 
-        <form.Subscribe>
-          {(state) => (
-            <Button
-              type='submit'
-              className='w-full mt-auto'
-              disabled={!state.canSubmit || state.isSubmitting}
-            >
-              {state.isSubmitting ? 'Gönderiliyor...' : 'Bilet Türü Düzenle'}
-            </Button>
-          )}
-        </form.Subscribe>
+        <FormSubmitButton
+          form={form}
+          label='Bilet Türü Düzenle'
+          submittingLabel='Gönderiliyor...'
+          className='w-full mt-auto'
+        />
       </FieldSet>
     </form>
   );

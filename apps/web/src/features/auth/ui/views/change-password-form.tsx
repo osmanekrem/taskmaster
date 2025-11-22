@@ -1,12 +1,12 @@
 import { useForm } from '@tanstack/react-form';
-import { Button } from '@/components/ui/button';
 import { useMutation } from '@tanstack/react-query';
 import { changePassword } from '@/features/auth/lib/actions';
 import { changePasswordSchema } from '@/features/auth/schemas';
 import { toast } from 'sonner';
-import InputPassword from '@/components/input-password';
+import InputPassword from '@/components/form-elements/input-password';
 import { FieldSet } from '@/components/ui/field';
-import { FormField } from '@/components/form-field';
+import { FormField } from '@/components/form-elements/form-field';
+import { FormSubmitButton } from '@/components/form-elements/submit-button';
 
 export default function ChangePasswordForm() {
   const changePasswordMutation = useMutation({
@@ -69,17 +69,12 @@ export default function ChangePasswordForm() {
           )}
         </form.Field>
 
-        <form.Subscribe>
-          {(state) => (
-            <Button
-              type='submit'
-              className='w-full'
-              disabled={!state.canSubmit || state.isSubmitting}
-            >
-              {state.isSubmitting ? 'Gönderiliyor...' : 'Şifremi Değiştir'}
-            </Button>
-          )}
-        </form.Subscribe>
+        <FormSubmitButton
+          form={form}
+          label='Şifremi Değiştir'
+          submittingLabel='Gönderiliyor...'
+          className='w-full'
+        />
       </FieldSet>
     </form>
   );

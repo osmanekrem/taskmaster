@@ -1,7 +1,6 @@
 import { useForm } from '@tanstack/react-form';
 import { useQuery } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { editFieldSchema } from '@/features/fields/schemas';
 import FieldTypeSelect from '@/features/fields/ui/components/field-type-select';
 import { useEditFieldMutation } from '@/features/fields/lib/mutations';
@@ -12,13 +11,14 @@ import {
 } from '@/features/fields/lib/queries';
 import FieldTypeIconSelect from '@/features/fields/ui/components/field-type-icon-select';
 import { FieldSet } from '@/components/ui/field';
-import { FormField } from '@/components/form-field';
+import { FormField } from '@/components/form-elements/form-field';
+import { FormSubmitButton } from '@/components/form-elements/submit-button';
 
 interface EditFieldFormProps {
-  fieldId: string;
+  readonly fieldId: string;
 }
 
-export default function EditFieldForm({ fieldId }: EditFieldFormProps) {
+export default function EditFieldForm({ fieldId }: Readonly<EditFieldFormProps>) {
   const createField = useEditFieldMutation();
   const { data } = useQuery(getFieldQuery(fieldId));
   const { data: fieldTypes } = useQuery(getFieldTypesQuery);
@@ -93,17 +93,12 @@ export default function EditFieldForm({ fieldId }: EditFieldFormProps) {
           )}
         </form.Field>
 
-        <form.Subscribe>
-          {(state) => (
-            <Button
-              type='submit'
-              className='w-full mt-auto'
-              disabled={!state.canSubmit || state.isSubmitting}
-            >
-              {state.isSubmitting ? 'Gönderiliyor...' : 'Kaydet'}
-            </Button>
-          )}
-        </form.Subscribe>
+        <FormSubmitButton
+          form={form}
+          label='Kaydet'
+          submittingLabel='Gönderiliyor...'
+          className='w-full mt-auto'
+        />
       </FieldSet>
     </form>
   );

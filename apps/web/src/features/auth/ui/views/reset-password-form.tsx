@@ -1,19 +1,19 @@
 import { useForm } from '@tanstack/react-form';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { Button } from '@/components/ui/button';
 import { useMutation } from '@tanstack/react-query';
 import { resetPassword } from '@/features/auth/lib/actions';
 import { resetPasswordSchema } from '@/features/auth/schemas';
 import { toast } from 'sonner';
-import InputPassword from '@/components/input-password';
+import InputPassword from '@/components/form-elements/input-password';
 import { FieldSet } from '@/components/ui/field';
-import { FormField } from '@/components/form-field';
+import { FormField } from '@/components/form-elements/form-field';
+import { FormSubmitButton } from '@/components/form-elements/submit-button';
 
 interface Props {
-  token: string;
+  readonly token: string;
 }
 
-export default function ResetPasswordForm({ token }: Props) {
+export default function ResetPasswordForm({ token }: Readonly<Props>) {
   const navigate = useNavigate();
   const resetPasswordMutation = useMutation({
     mutationFn: resetPassword,
@@ -76,17 +76,12 @@ export default function ResetPasswordForm({ token }: Props) {
           )}
         </form.Field>
 
-        <form.Subscribe>
-          {(state) => (
-            <Button
-              type='submit'
-              className='w-full'
-              disabled={!state.canSubmit || state.isSubmitting}
-            >
-              {state.isSubmitting ? 'Gönderiliyor...' : 'Şifremi Sıfırla'}
-            </Button>
-          )}
-        </form.Subscribe>
+        <FormSubmitButton
+          form={form}
+          label='Şifremi Sıfırla'
+          submittingLabel='Gönderiliyor...'
+          className='w-full'
+        />
 
         <div className='w-full flex items-center justify-center gap-6'>
           <Link to='/login' className='hover:underline'>

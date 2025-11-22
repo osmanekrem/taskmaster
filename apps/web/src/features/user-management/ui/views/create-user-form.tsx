@@ -1,12 +1,12 @@
 import { useForm } from '@tanstack/react-form';
 import { createUserSchema } from '@/features/user-management/schemas';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import InputPassword from '@/components/input-password';
+import InputPassword from '@/components/form-elements/input-password';
 import { useCreateUser } from '@/features/user-management/lib/api';
 import { useNavigate } from '@tanstack/react-router';
 import { FieldSet } from '@/components/ui/field';
-import { FormField } from '@/components/form-field';
+import { FormField } from '@/components/form-elements/form-field';
+import { FormSubmitButton } from '@/components/form-elements/submit-button';
 
 export default function CreateUserForm() {
   const createUser = useCreateUser();
@@ -98,17 +98,12 @@ export default function CreateUserForm() {
           )}
         </form.Field>
 
-        <form.Subscribe>
-          {(state) => (
-            <Button
-              type='submit'
-              className='w-full mt-auto'
-              disabled={!state.canSubmit || state.isSubmitting}
-            >
-              {state.isSubmitting ? 'Gönderiliyor...' : 'Kullanıcı Ekle'}
-            </Button>
-          )}
-        </form.Subscribe>
+        <FormSubmitButton
+          form={form}
+          label='Kullanıcı Ekle'
+          submittingLabel='Gönderiliyor...'
+          className='w-full mt-auto'
+        />
       </FieldSet>
     </form>
   );

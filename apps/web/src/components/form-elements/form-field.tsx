@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Field, FieldLabel, FieldError } from './ui/field';
+import { Field, FieldLabel, FieldError } from '../ui/field';
 
 type FieldApi = {
   name: string;

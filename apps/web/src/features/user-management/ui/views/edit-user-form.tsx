@@ -1,18 +1,18 @@
 import { useForm } from '@tanstack/react-form';
 import { editUserSchema } from '@/features/user-management/schemas';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { type RouterOutput } from '@/utils/trpc';
 import { useNavigate } from '@tanstack/react-router';
 import { useEditUser } from '@/features/user-management/lib/api';
 import { FieldSet } from '@/components/ui/field';
-import { FormField } from '@/components/form-field';
+import { FormField } from '@/components/form-elements/form-field';
+import { FormSubmitButton } from '@/components/form-elements/submit-button';
 
 interface Props {
-  user: RouterOutput['user']['getUserById']['data'];
+  readonly user: RouterOutput['user']['getUserById']['data'];
 }
 
-export default function EditUserForm({ user }: Props) {
+export default function EditUserForm({ user }: Readonly<Props>) {
   const navigate = useNavigate();
 
   const editUser = useEditUser(user.id);
@@ -90,17 +90,12 @@ export default function EditUserForm({ user }: Props) {
           )}
         </form.Field>
 
-        <form.Subscribe>
-          {(state) => (
-            <Button
-              type='submit'
-              className='w-full mt-auto'
-              disabled={!state.canSubmit || state.isSubmitting}
-            >
-              {state.isSubmitting ? 'Gönderiliyor...' : 'Kullanıcı Düzenle'}
-            </Button>
-          )}
-        </form.Subscribe>
+        <FormSubmitButton
+          form={form}
+          label='Kullanıcı Düzenle'
+          submittingLabel='Gönderiliyor...'
+          className='w-full mt-auto'
+        />
       </FieldSet>
     </form>
   );

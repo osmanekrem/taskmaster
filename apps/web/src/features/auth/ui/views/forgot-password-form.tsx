@@ -1,13 +1,13 @@
 import { useForm } from '@tanstack/react-form';
 import { Link } from '@tanstack/react-router';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useMutation } from '@tanstack/react-query';
 import { forgotPassword } from '@/features/auth/lib/actions';
 import { forgotPasswordSchema } from '@/features/auth/schemas';
 import { toast } from 'sonner';
 import { FieldSet } from '@/components/ui/field';
-import { FormField } from '@/components/form-field';
+import { FormField } from '@/components/form-elements/form-field';
+import { FormSubmitButton } from '@/components/form-elements/submit-button';
 
 export default function ForgotPasswordForm() {
   const forgotPasswordMutation = useMutation({
@@ -56,17 +56,12 @@ export default function ForgotPasswordForm() {
           )}
         </form.Field>
 
-        <form.Subscribe>
-          {(state) => (
-            <Button
-              type='submit'
-              className='w-full'
-              disabled={!state.canSubmit || state.isSubmitting}
-            >
-              {state.isSubmitting ? 'Gönderiliyor...' : 'Şifremi Unuttum'}
-            </Button>
-          )}
-        </form.Subscribe>
+        <FormSubmitButton
+          form={form}
+          label='Şifremi Unuttum'
+          submittingLabel='Gönderiliyor...'
+          className='w-full'
+        />
 
         <div className='w-full flex items-center justify-center gap-6'>
           <Link to='/login' className='hover:underline'>

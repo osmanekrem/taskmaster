@@ -1,7 +1,6 @@
 import { useForm } from '@tanstack/react-form';
 import { useQuery } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { addFieldSchema } from '@/features/fields/schemas';
 import FieldTypeSelect from '@/features/fields/ui/components/field-type-select';
 import { useCreateFieldMutation } from '@/features/fields/lib/mutations';
@@ -9,7 +8,8 @@ import useAddFieldModal from '@/features/fields/hooks/use-add-field-modal';
 import FieldTypeIconSelect from '@/features/fields/ui/components/field-type-icon-select';
 import { getFieldTypesQuery } from '@/features/fields/lib/queries';
 import { FieldSet } from '@/components/ui/field';
-import { FormField } from '@/components/form-field';
+import { FormField } from '@/components/form-elements/form-field';
+import { FormSubmitButton } from '@/components/form-elements/submit-button';
 
 export default function AddFieldForm() {
   const createField = useCreateFieldMutation();
@@ -85,17 +85,12 @@ export default function AddFieldForm() {
           )}
         </form.Field>
 
-        <form.Subscribe>
-          {(state) => (
-            <Button
-              type='submit'
-              className='w-full mt-auto'
-              disabled={!state.canSubmit || state.isSubmitting}
-            >
-              {state.isSubmitting ? 'Gönderiliyor...' : 'Alan Ekle'}
-            </Button>
-          )}
-        </form.Subscribe>
+        <FormSubmitButton
+          form={form}
+          label='Alan Ekle'
+          submittingLabel='Gönderiliyor...'
+          className='w-full mt-auto'
+        />
       </FieldSet>
     </form>
   );
