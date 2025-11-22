@@ -4,10 +4,9 @@ import { useMutation } from '@tanstack/react-query';
 import { resetPassword } from '@/features/auth/lib/actions';
 import { resetPasswordSchema } from '@/features/auth/schemas';
 import { toast } from 'sonner';
-import InputPassword from '@/components/form-elements/input-password';
 import { FieldSet } from '@/components/ui/field';
-import { FormField } from '@/components/form-elements/form-field';
 import { FormSubmitButton } from '@/components/form-elements/submit-button';
+import { PasswordField } from '@/components/form-elements/password-field';
 
 interface Props {
   readonly token: string;
@@ -50,30 +49,10 @@ export default function ResetPasswordForm({ token }: Readonly<Props>) {
     >
       <FieldSet>
         <form.Field name='password'>
-          {(field) => (
-            <FormField field={field} label='Şifre'>
-              <InputPassword
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormField>
-          )}
+          {(field) => <PasswordField field={field} label='Şifre' />}
         </form.Field>
         <form.Field name='passwordConfirm'>
-          {(field) => (
-            <FormField field={field} label='Şifre Tekrar'>
-              <InputPassword
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormField>
-          )}
+          {(field) => <PasswordField field={field} label='Şifre Tekrar' />}
         </form.Field>
 
         <FormSubmitButton

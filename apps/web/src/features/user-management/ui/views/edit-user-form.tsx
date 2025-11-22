@@ -1,12 +1,12 @@
 import { useForm } from '@tanstack/react-form';
 import { editUserSchema } from '@/features/user-management/schemas';
-import { Input } from '@/components/ui/input';
 import { type RouterOutput } from '@/utils/trpc';
 import { useNavigate } from '@tanstack/react-router';
 import { useEditUser } from '@/features/user-management/lib/api';
 import { FieldSet } from '@/components/ui/field';
-import { FormField } from '@/components/form-elements/form-field';
 import { FormSubmitButton } from '@/components/form-elements/submit-button';
+import { TextField } from '@/components/form-elements/text-field';
+import { EmailField } from '@/components/form-elements/email-field';
 
 interface Props {
   readonly user: RouterOutput['user']['getUserById']['data'];
@@ -48,46 +48,15 @@ export default function EditUserForm({ user }: Readonly<Props>) {
     >
       <FieldSet className='h-full flex flex-col'>
         <form.Field name='firstName'>
-          {(field) => (
-            <FormField field={field} label='Ad'>
-              <Input
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormField>
-          )}
+          {(field) => <TextField field={field} label='Ad' />}
         </form.Field>
 
         <form.Field name='lastName'>
-          {(field) => (
-            <FormField field={field} label='Soyad'>
-              <Input
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormField>
-          )}
+          {(field) => <TextField field={field} label='Soyad' />}
         </form.Field>
 
         <form.Field name='email'>
-          {(field) => (
-            <FormField field={field} label='E-Posta'>
-              <Input
-                id={field.name}
-                name={field.name}
-                type='email'
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormField>
-          )}
+          {(field) => <EmailField field={field} label='E-Posta' />}
         </form.Field>
 
         <FormSubmitButton

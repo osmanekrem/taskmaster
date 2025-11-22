@@ -1,13 +1,12 @@
 import { useForm } from '@tanstack/react-form';
 import { Link } from '@tanstack/react-router';
-import { Input } from '@/components/ui/input';
 import { useMutation } from '@tanstack/react-query';
 import { forgotPassword } from '@/features/auth/lib/actions';
 import { forgotPasswordSchema } from '@/features/auth/schemas';
 import { toast } from 'sonner';
 import { FieldSet } from '@/components/ui/field';
-import { FormField } from '@/components/form-elements/form-field';
 import { FormSubmitButton } from '@/components/form-elements/submit-button';
+import { EmailField } from '@/components/form-elements/email-field';
 
 export default function ForgotPasswordForm() {
   const forgotPasswordMutation = useMutation({
@@ -42,18 +41,7 @@ export default function ForgotPasswordForm() {
     >
       <FieldSet>
         <form.Field name='email'>
-          {(field) => (
-            <FormField field={field} label='E-posta'>
-              <Input
-                id={field.name}
-                name={field.name}
-                type='email'
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormField>
-          )}
+          {(field) => <EmailField field={field} label='E-posta' />}
         </form.Field>
 
         <FormSubmitButton

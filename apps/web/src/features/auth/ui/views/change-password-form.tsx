@@ -3,10 +3,9 @@ import { useMutation } from '@tanstack/react-query';
 import { changePassword } from '@/features/auth/lib/actions';
 import { changePasswordSchema } from '@/features/auth/schemas';
 import { toast } from 'sonner';
-import InputPassword from '@/components/form-elements/input-password';
 import { FieldSet } from '@/components/ui/field';
-import { FormField } from '@/components/form-elements/form-field';
 import { FormSubmitButton } from '@/components/form-elements/submit-button';
+import { PasswordField } from '@/components/form-elements/password-field';
 
 export default function ChangePasswordForm() {
   const changePasswordMutation = useMutation({
@@ -43,30 +42,10 @@ export default function ChangePasswordForm() {
     >
       <FieldSet>
         <form.Field name='currentPassword'>
-          {(field) => (
-            <FormField field={field} label='Mevcut Şifre'>
-              <InputPassword
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormField>
-          )}
+          {(field) => <PasswordField field={field} label='Mevcut Şifre' />}
         </form.Field>
         <form.Field name='newPassword'>
-          {(field) => (
-            <FormField field={field} label='Yeni Şifre'>
-              <InputPassword
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormField>
-          )}
+          {(field) => <PasswordField field={field} label='Yeni Şifre' />}
         </form.Field>
 
         <FormSubmitButton

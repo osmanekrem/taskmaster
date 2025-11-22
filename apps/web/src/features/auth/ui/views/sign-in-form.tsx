@@ -1,14 +1,13 @@
 import { useForm } from '@tanstack/react-form';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { Input } from '@/components/ui/input';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { signIn } from '@/features/auth/lib/actions';
 import { signInSchema } from '@/features/auth/schemas';
 import { useState } from 'react';
-import InputPassword from '@/components/form-elements/input-password';
 import { FieldSet } from '@/components/ui/field';
-import { FormField } from '@/components/form-elements/form-field';
 import { FormSubmitButton } from '@/components/form-elements/submit-button';
+import { EmailField } from '@/components/form-elements/email-field';
+import { PasswordField } from '@/components/form-elements/password-field';
 
 export default function SignInForm() {
   const navigate = useNavigate();
@@ -50,32 +49,11 @@ export default function SignInForm() {
     >
       <FieldSet>
         <form.Field name='email'>
-          {(field) => (
-            <FormField field={field} label='E-posta'>
-              <Input
-                id={field.name}
-                name={field.name}
-                type='email'
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormField>
-          )}
+          {(field) => <EmailField field={field} label='E-posta' />}
         </form.Field>
 
         <form.Field name='password'>
-          {(field) => (
-            <FormField field={field} label='Şifre'>
-              <InputPassword
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormField>
-          )}
+          {(field) => <PasswordField field={field} label='Şifre' />}
         </form.Field>
 
         <div className='w-full flex items-center justify-end gap-6'>

@@ -1,12 +1,12 @@
 import { useForm } from '@tanstack/react-form';
 import { createUserSchema } from '@/features/user-management/schemas';
-import { Input } from '@/components/ui/input';
-import InputPassword from '@/components/form-elements/input-password';
 import { useCreateUser } from '@/features/user-management/lib/api';
 import { useNavigate } from '@tanstack/react-router';
 import { FieldSet } from '@/components/ui/field';
-import { FormField } from '@/components/form-elements/form-field';
 import { FormSubmitButton } from '@/components/form-elements/submit-button';
+import { TextField } from '@/components/form-elements/text-field';
+import { EmailField } from '@/components/form-elements/email-field';
+import { PasswordField } from '@/components/form-elements/password-field';
 
 export default function CreateUserForm() {
   const createUser = useCreateUser();
@@ -42,60 +42,19 @@ export default function CreateUserForm() {
     >
       <FieldSet className='h-full flex flex-col'>
         <form.Field name='firstName'>
-          {(field) => (
-            <FormField field={field} label='Ad'>
-              <Input
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormField>
-          )}
+          {(field) => <TextField field={field} label='Ad' />}
         </form.Field>
 
         <form.Field name='lastName'>
-          {(field) => (
-            <FormField field={field} label='Soyad'>
-              <Input
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormField>
-          )}
+          {(field) => <TextField field={field} label='Soyad' />}
         </form.Field>
 
         <form.Field name='email'>
-          {(field) => (
-            <FormField field={field} label='E-Posta'>
-              <Input
-                id={field.name}
-                name={field.name}
-                type='email'
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormField>
-          )}
+          {(field) => <EmailField field={field} label='E-Posta' />}
         </form.Field>
 
         <form.Field name='password'>
-          {(field) => (
-            <FormField field={field} label='Şifre'>
-              <InputPassword
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            </FormField>
-          )}
+          {(field) => <PasswordField field={field} label='Şifre' />}
         </form.Field>
 
         <FormSubmitButton
