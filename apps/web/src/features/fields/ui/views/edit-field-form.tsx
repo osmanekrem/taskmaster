@@ -18,7 +18,9 @@ interface EditFieldFormProps {
   readonly fieldId: string;
 }
 
-export default function EditFieldForm({ fieldId }: Readonly<EditFieldFormProps>) {
+export default function EditFieldForm({
+  fieldId,
+}: Readonly<EditFieldFormProps>) {
   const createField = useEditFieldMutation();
   const { data } = useQuery(getFieldQuery(fieldId));
   const { data: fieldTypes } = useQuery(getFieldTypesQuery);
