@@ -32,7 +32,6 @@ export const PasswordField = ({
         onBlur={field.handleBlur}
         name={field.name}
         id={field.name}
-        type='email'
         {...props}
       />
     </FormField>
