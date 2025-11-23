@@ -40,10 +40,11 @@ export const userRepository = (drizzle: DrizzleClient = db) => ({
       sortOrder,
     } = data;
 
-    const sort = sortBy
+    const sortField = sortBy as 'name' | 'email' | 'role' | 'createdAt';
+    const sort = sortField
       ? sortOrder === 'asc'
-        ? asc(user[sortBy])
-        : desc(user[sortBy])
+        ? asc(user[sortField])
+        : desc(user[sortField])
       : undefined;
 
     const globalSearchQuery = globalSearch
