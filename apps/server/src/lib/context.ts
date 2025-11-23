@@ -1,6 +1,7 @@
 import type { Context as HonoContext } from "hono";
 import { auth } from "./auth";
 import { db } from "@/db";
+import { container } from "./container";
 
 export type CreateContextOptions = {
   context: HonoContext;
@@ -13,6 +14,12 @@ export async function createContext({ context }: CreateContextOptions) {
   return {
     session,
     db,
+    services: {
+      user: container.user,
+      field: container.field,
+      fieldType: container.fieldType,
+      ticketType: container.ticketType,
+    },
   };
 }
 

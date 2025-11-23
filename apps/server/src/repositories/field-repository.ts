@@ -8,10 +8,9 @@ import {
   issueTypeFields,
   issueTypeSelectOptions,
 } from '@/db/schema/issue-type-fields';
+import type { DrizzleClientOrTransaction } from '@/lib/types/db';
 
-export const fieldRepository = (
-  drizzle: typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0] = db,
-) => ({
+export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
   findMany: () => drizzle.select().from(fields),
 
   findById: (id: string) =>
@@ -51,7 +50,7 @@ export const fieldRepository = (
     return result;
   },
 
-  update: async (id: string, values: EditFieldSchema) => {
+  update: async (id: string, values: Omit<EditFieldSchema, 'fieldId'>) => {
     const [result] = await drizzle
       .update(fields)
       .set(values)

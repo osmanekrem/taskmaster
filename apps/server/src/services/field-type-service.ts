@@ -1,8 +1,14 @@
 import { db } from "@/db";
 import { fieldTypeRepository } from "@/repositories/field-type-repository";
-import type { CreateFieldTypeSchema, EditFieldTypeSchema } from "@taskmaster/validation";
-
-type DrizzleClient = typeof db;
+import type {
+  CreateFieldTypeSchema,
+  EditFieldTypeSchema,
+  GetFieldTypeByIdRequestSchema,
+  GetFieldTypeWithOptionsByIdRequestSchema,
+  DeleteFieldTypeRequestSchema,
+} from "@taskmaster/validation";
+import { throwNotFoundError } from "@/lib/errors";
+import type { DrizzleClient } from "@/lib/types/db";
 
 export const fieldTypeService = (drizzle: DrizzleClient = db) => {
     const repository = fieldTypeRepository(drizzle);
@@ -10,32 +16,35 @@ export const fieldTypeService = (drizzle: DrizzleClient = db) => {
     return {
         getAllFieldTypes: () => repository.findMany(),
 
-        getFieldTypeById: (id: string) => repository.findById(id),
+        getFieldTypeById: (input: GetFieldTypeByIdRequestSchema) =>
+            repository.findById(input.fieldTypeId),
 
         getAllFieldTypesWithOptions: () => repository.findWithOptions(),
 
-        getFieldTypeWithOptionsById: (id: string) => repository.findWithOptionsById(id),
+        getFieldTypeWithOptionsById: (input: GetFieldTypeWithOptionsByIdRequestSchema) =>
+            repository.findWithOptionsById(input.fieldTypeId),
 
         createFieldType: async (data: CreateFieldTypeSchema) => {
             return await repository.create(data);
         },
 
-        updateFieldType: async (id: string, data: Omit<EditFieldTypeSchema, 'fieldTypeId'>) => {
-            const existingFieldType = await repository.findById(id);
+        updateFieldType: async (data: EditFieldTypeSchema) => {
+            const existingFieldType = await repository.findById(data.fieldTypeId);
             if (!existingFieldType) {
-                throw new Error("Alan türü bulunamadı");
+                throwNotFoundError("FIELD_TYPE_NOT_FOUND", { fieldTypeId: data.fieldTypeId });
             }
 
-            return await repository.update(id, data);
+            const { fieldTypeId, ...updateData } = data;
+            return await repository.update(fieldTypeId, updateData);
         },
 
-        deleteFieldType: async (id: string) => {
-            const existingFieldType = await repository.findById(id);
+        deleteFieldType: async (input: DeleteFieldTypeRequestSchema) => {
+            const existingFieldType = await repository.findById(input.fieldTypeId);
             if (!existingFieldType) {
-                throw new Error("Alan türü bulunamadı");
+                throwNotFoundError("FIELD_TYPE_NOT_FOUND", { fieldTypeId: input.fieldTypeId });
             }
 
-            return await repository.delete(id);
+            return await repository.delete(input.fieldTypeId);
         },
     };
 };

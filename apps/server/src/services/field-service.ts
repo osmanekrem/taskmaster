@@ -4,22 +4,30 @@ import {
   type CreateFieldSchema,
   type EditFieldSchema,
   type SelectOptionSchema,
-  type FieldWithDetailsSchema,
+  type GetFieldByIdRequestSchema,
+  type DeleteFieldRequestSchema,
+  type UpdateFieldOptionValueRequestSchema,
+  type GetSelectOptionsByFieldOptionIdsRequestSchema,
+  type SaveSelectOptionsRequestSchema,
+  type SaveIssueTypeFieldsRequestSchema,
+  type GetIssueTypeFieldsByIssueTypeIdRequestSchema,
 } from '@taskmaster/validation';
+import { throwNotFoundError } from '@/lib/errors';
+import type { DrizzleClientOrTransaction } from '@/lib/types/db';
 
-export const fieldService = (
-  drizzle: typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0] = db,
-) => {
+export const fieldService = (drizzle: DrizzleClientOrTransaction = db) => {
   const repository = fieldRepository(drizzle);
 
   return {
     getAllFields: () => repository.findMany(),
 
-    getFieldById: (id: string) => repository.findById(id),
+    getFieldById: (input: GetFieldByIdRequestSchema) =>
+      repository.findById(input.fieldId),
 
     getAllFieldsWithDetails: () => repository.findWithDetails(),
 
-    getFieldWithDetailsById: (id: string) => repository.findWithDetailsById(id),
+    getFieldWithDetailsById: (input: GetFieldByIdRequestSchema) =>
+      repository.findWithDetailsById(input.fieldId),
 
     createField: async (data: CreateFieldSchema) => {
       return await drizzle.transaction(async (tx) => {
@@ -57,55 +65,59 @@ export const fieldService = (
       });
     },
 
-    updateField: async (id: string, data: Omit<EditFieldSchema, 'fieldId'>) => {
-      const existingField = await repository.findById(id);
+    updateField: async (data: EditFieldSchema) => {
+      const existingField = await repository.findById(data.fieldId);
       if (!existingField) {
-        throw new Error('Alan bulunamadı');
+        throwNotFoundError('FIELD_NOT_FOUND', { fieldId: data.fieldId });
       }
 
-      return await repository.update(id, data as EditFieldSchema);
+      const { fieldId, ...updateData } = data;
+      return await repository.update(fieldId, updateData);
     },
 
-    deleteField: async (id: string) => {
-      const existingField = await repository.findById(id);
+    deleteField: async (input: DeleteFieldRequestSchema) => {
+      const existingField = await repository.findById(input.fieldId);
       if (!existingField) {
-        throw new Error('Alan bulunamadı');
+        throwNotFoundError('FIELD_NOT_FOUND', { fieldId: input.fieldId });
       }
 
-      return await repository.delete(id);
+      return await repository.delete(input.fieldId);
     },
 
-    updateFieldOptionValue: async (fieldOptionId: string, value: string) => {
-      return await repository.updateFieldOptionValue(fieldOptionId, value);
-    },
-
-    getSelectOptionsByFieldOptionIds: (fieldOptionIds: string[]) =>
-      repository.findSelectOptionsByFieldOptionIds(fieldOptionIds),
-
-    saveSelectOptions: async (
-      fieldOptionId: string,
-      options: SelectOptionSchema[],
+    updateFieldOptionValue: async (
+      input: UpdateFieldOptionValueRequestSchema,
     ) => {
+      return await repository.updateFieldOptionValue(
+        input.fieldOptionId,
+        input.value,
+      );
+    },
+
+    getSelectOptionsByFieldOptionIds: (
+      input: GetSelectOptionsByFieldOptionIdsRequestSchema,
+    ) => repository.findSelectOptionsByFieldOptionIds(input.fieldOptionIds),
+
+    saveSelectOptions: async (input: SaveSelectOptionsRequestSchema) => {
       return await drizzle.transaction(async (tx) => {
         const repo = fieldRepository(tx);
 
-        const incomingOptionIds = options
+        const incomingOptionIds = input.options
           .map((opt) => opt.id)
           .filter((id): id is string => !!id);
 
         // Delete options that are not in the incoming list
         await repo.deleteSelectOptionsNotInList(
-          fieldOptionId,
+          input.fieldOptionId,
           incomingOptionIds,
         );
 
         // Insert new options
-        const optionsToInsert = options
+        const optionsToInsert = input.options
           .filter((opt) => !opt.id)
           .map((opt) => ({
             name: opt.name,
             icon: opt.icon || '',
-            fieldOptionId,
+            fieldOptionId: input.fieldOptionId,
             order: opt.order,
           }));
 
@@ -114,7 +126,7 @@ export const fieldService = (
         }
 
         // Update existing options
-        const optionsToUpdate = options.filter((opt) => !!opt.id);
+        const optionsToUpdate = input.options.filter((opt) => !!opt.id);
         for (const option of optionsToUpdate) {
           await repo.updateSelectOption(option.id!, {
             name: option.name,
@@ -123,24 +135,23 @@ export const fieldService = (
           });
         }
 
-        return await repo.findSelectOptionsByFieldOptionIds([fieldOptionId]);
+        return await repo.findSelectOptionsByFieldOptionIds([
+          input.fieldOptionId,
+        ]);
       });
     },
 
-    saveIssueTypeFields: async (
-      issueTypeId: string,
-      fields: FieldWithDetailsSchema[],
-    ) => {
+    saveIssueTypeFields: async (input: SaveIssueTypeFieldsRequestSchema) => {
       return await drizzle.transaction(async (tx) => {
         const repo = fieldRepository(tx);
 
         const existingFields = await repo.findIssueTypeFieldsByIssueTypeId(
-          issueTypeId,
+          input.issueTypeId,
         );
 
         // Get incoming field template IDs as a Set for efficient lookup
         const incomingFieldIds = new Set(
-          fields.map((f) => f?.id).filter((id): id is string => !!id),
+          input.fields.map((f) => f?.id).filter((id): id is string => !!id),
         );
 
         // Delete fields that are not in the incoming list
@@ -149,12 +160,15 @@ export const fieldService = (
           if (!existingField?.fieldId) continue;
           if (!incomingFieldIds.has(existingField.fieldId)) {
             // Delete the issue type field (cascade will delete options and select options)
-            await repo.deleteIssueTypeField(issueTypeId, existingField.fieldId);
+            await repo.deleteIssueTypeField(
+              input.issueTypeId,
+              existingField.fieldId,
+            );
           }
         }
 
         // Process each incoming field
-        for (const [index, field] of fields.entries()) {
+        for (const [index, field] of input.fields.entries()) {
           if (!field?.id) continue;
 
           // Find existing issue type field by field template ID
@@ -218,7 +232,7 @@ export const fieldService = (
           } else {
             // Create new issue type field
             const newIssueTypeField = await repo.createIssueTypeField(
-              issueTypeId,
+              input.issueTypeId,
               field.id,
               index,
             );
@@ -252,12 +266,16 @@ export const fieldService = (
           }
         }
 
-        return await repo.findIssueTypeFieldsByIssueTypeId(issueTypeId);
+        return await repo.findIssueTypeFieldsByIssueTypeId(input.issueTypeId);
       });
     },
 
-    getIssueTypeFieldsByIssueTypeId: async (issueTypeId: string) => {
-      return await repository.findIssueTypeFieldsByIssueTypeId(issueTypeId);
+    getIssueTypeFieldsByIssueTypeId: async (
+      input: GetIssueTypeFieldsByIssueTypeIdRequestSchema,
+    ) => {
+      return await repository.findIssueTypeFieldsByIssueTypeId(
+        input.issueTypeId,
+      );
     },
   };
 };

@@ -1,132 +1,104 @@
 import { protectedProcedure, router } from '@/lib/trpc';
 import { successResponse } from '@/utils/response';
-import { z } from 'zod';
 import {
   createFieldSchema,
   editFieldSchema,
-  selectOptionSchema,
-  fieldWithDetailsSchema,
+  getFieldByIdRequestSchema,
+  deleteFieldRequestSchema,
+  getSelectOptionsByFieldOptionIdRequestSchema,
+  getSelectOptionsByFieldOptionIdsRequestSchema,
+  saveSelectOptionsRequestSchema,
+  updateFieldOptionValueRequestSchema,
+  saveIssueTypeFieldsRequestSchema,
 } from '@taskmaster/validation';
-import { fieldService } from '@/services/field-service';
-import { db } from '@/db';
 
 export const fieldsRouter = router({
-  getFields: protectedProcedure.query(async () => {
-    const service = fieldService(db);
-    const data = await service.getAllFields();
+  getFields: protectedProcedure.query(async ({ ctx }) => {
+    const data = await ctx.services.field.getAllFields();
     return successResponse(data, 'Alanlar başarıyla getirildi');
   }),
 
   getFieldById: protectedProcedure
-    .input(z.object({ fieldId: z.string() }))
-    .query(async ({ input }) => {
-      const service = fieldService(db);
-      const data = await service.getFieldById(input.fieldId);
+    .input(getFieldByIdRequestSchema)
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.services.field.getFieldById(input);
       return successResponse(data, 'Alan başarıyla getirildi');
     }),
 
-  getFieldsWithDetails: protectedProcedure.query(async () => {
-    const service = fieldService(db);
-    const data = await service.getAllFieldsWithDetails();
+  getFieldsWithDetails: protectedProcedure.query(async ({ ctx }) => {
+    const data = await ctx.services.field.getAllFieldsWithDetails();
     return successResponse(data, 'Alanlar başarıyla getirildi');
   }),
 
   getFieldWithDetailsById: protectedProcedure
-    .input(z.object({ fieldId: z.string() }))
-    .query(async ({ input }) => {
-      const service = fieldService(db);
-      const data = await service.getFieldWithDetailsById(input.fieldId);
+    .input(getFieldByIdRequestSchema)
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.services.field.getFieldWithDetailsById(input);
       return successResponse(data, 'Alan başarıyla getirildi');
     }),
 
-  getFieldsWithFieldType: protectedProcedure.query(async () => {
-    const service = fieldService(db);
-    const data = await service.getAllFieldsWithDetails();
+  getFieldsWithFieldType: protectedProcedure.query(async ({ ctx }) => {
+    const data = await ctx.services.field.getAllFieldsWithDetails();
     return successResponse(data, 'Alanlar başarıyla getirildi');
   }),
 
   getFieldWithFieldTypeById: protectedProcedure
-    .input(z.object({ fieldId: z.string() }))
-    .query(async ({ input }) => {
-      const service = fieldService(db);
-      const data = await service.getFieldWithDetailsById(input.fieldId);
+    .input(getFieldByIdRequestSchema)
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.services.field.getFieldWithDetailsById(input);
       return successResponse(data, 'Alan başarıyla getirildi');
     }),
 
   createField: protectedProcedure
     .input(createFieldSchema)
-    .mutation(async ({ input }) => {
-      const service = fieldService(db);
-      const data = await service.createField(input);
+    .mutation(async ({ ctx, input }) => {
+      const data = await ctx.services.field.createField(input);
       return successResponse(data, 'Alan başarıyla oluşturuldu');
     }),
 
   deleteField: protectedProcedure
-    .input(z.object({ fieldId: z.string() }))
-    .mutation(async ({ input }) => {
-      const service = fieldService(db);
-      const data = await service.deleteField(input.fieldId);
+    .input(deleteFieldRequestSchema)
+    .mutation(async ({ ctx, input }) => {
+      const data = await ctx.services.field.deleteField(input);
       return successResponse(data, 'Alan başarıyla silindi');
     }),
 
   editField: protectedProcedure
     .input(editFieldSchema)
-    .mutation(async ({ input }) => {
-      const service = fieldService(db);
-      const { fieldId, ...rest } = input;
-      const data = await service.updateField(fieldId, rest);
+    .mutation(async ({ ctx, input }) => {
+      const data = await ctx.services.field.updateField(input);
       return successResponse(data, 'Alan başarıyla güncellendi');
     }),
 
   getSelectOptionsByFieldOptionId: protectedProcedure
-    .input(z.object({ fieldOptionId: z.string() }))
-    .query(async ({ input }) => {
-      const service = fieldService(db);
-      const data = await service.getSelectOptionsByFieldOptionIds([
-        input.fieldOptionId,
-      ]);
+    .input(getSelectOptionsByFieldOptionIdRequestSchema)
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.services.field.getSelectOptionsByFieldOptionIds({
+        fieldOptionIds: [input.fieldOptionId],
+      });
       return successResponse(data, 'Seçim seçenekleri başarıyla getirildi');
     }),
 
   getSelectOptionsByFieldOptionIds: protectedProcedure
-    .input(z.object({ fieldOptionIds: z.array(z.string()) }))
-    .query(async ({ input }) => {
-      const service = fieldService(db);
-      const data = await service.getSelectOptionsByFieldOptionIds(
-        input.fieldOptionIds,
+    .input(getSelectOptionsByFieldOptionIdsRequestSchema)
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.services.field.getSelectOptionsByFieldOptionIds(
+        input,
       );
       return successResponse(data, 'Seçim seçenekleri başarıyla getirildi');
     }),
 
   saveSelectOptions: protectedProcedure
-    .input(
-      z.object({
-        fieldOptionId: z.string(),
-        options: z.array(selectOptionSchema),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      const service = fieldService(db);
-      const data = await service.saveSelectOptions(
-        input.fieldOptionId,
-        input.options,
-      );
+    .input(saveSelectOptionsRequestSchema)
+    .mutation(async ({ ctx, input }) => {
+      const data = await ctx.services.field.saveSelectOptions(input);
       return successResponse(data, 'Seçim seçenekleri başarıyla kaydedildi');
     }),
 
   updateFieldOptionValue: protectedProcedure
-    .input(
-      z.object({
-        fieldOptionId: z.string(),
-        value: z.string(),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      const service = fieldService(db);
-      const data = await service.updateFieldOptionValue(
-        input.fieldOptionId,
-        input.value,
-      );
+    .input(updateFieldOptionValueRequestSchema)
+    .mutation(async ({ ctx, input }) => {
+      const data = await ctx.services.field.updateFieldOptionValue(input);
       return successResponse(
         data,
         'Alan seçeneği değeri başarıyla güncellendi',
@@ -134,20 +106,9 @@ export const fieldsRouter = router({
     }),
 
   saveIssueTypeFields: protectedProcedure
-    .input(
-      z.object({
-        issueTypeId: z.string(),
-        fields: z.array(fieldWithDetailsSchema),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      const service = fieldService(db);
-      const data = await service.saveIssueTypeFields(
-        input.issueTypeId,
-        input.fields,
-      );
+    .input(saveIssueTypeFieldsRequestSchema)
+    .mutation(async ({ ctx, input }) => {
+      const data = await ctx.services.field.saveIssueTypeFields(input);
       return successResponse(data, 'Alanlar başarıyla kaydedildi');
     }),
 });
-
-export type FieldWithDetails = any;

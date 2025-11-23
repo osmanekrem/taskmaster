@@ -3,12 +3,28 @@ import { ticketTypeRepository } from '@/repositories/ticket-type-repository';
 import type {
   CreateTicketTypeSchema,
   EditTicketTypeSchema,
+  GetTicketTypeByIdRequestSchema,
+  DeleteTicketTypeRequestSchema,
+  GetFieldsForTicketTypeRequestSchema,
+  GetIssueTypeWithDetailsByIssueTypeIdRequestSchema,
 } from '@taskmaster/validation';
+import { throwNotFoundError } from '@/lib/errors';
+import type { DrizzleClient } from '@/lib/types/db';
 
-type DrizzleClient = typeof db;
+type IssueTypeFieldWithDetails = NonNullable<
+  Awaited<
+    ReturnType<
+      ReturnType<
+        typeof ticketTypeRepository
+      >['findIssueTypeWithDetailsByIssueTypeId']
+    >
+  >
+>['fields'][number];
 
 // Transform issue type field to match field structure for reusable components
-function transformIssueTypeFieldToFieldStructure(issueTypeField: any) {
+function transformIssueTypeFieldToFieldStructure(
+  issueTypeField: IssueTypeFieldWithDetails,
+) {
   if (!issueTypeField?.field) {
     return null;
   }
@@ -20,7 +36,7 @@ function transformIssueTypeFieldToFieldStructure(issueTypeField: any) {
     fieldTypeId: issueTypeField.field.fieldTypeId,
     fieldType: issueTypeField.field.fieldType,
     options:
-      issueTypeField.options?.map((option: any) => ({
+      issueTypeField.options?.map((option) => ({
         id: option.id,
         value: option.value,
         order: option.order,
@@ -39,39 +55,44 @@ export const ticketTypeService = (drizzle: DrizzleClient = db) => {
   return {
     getAllTicketTypes: () => repository.findMany(),
 
-    getTicketTypeById: (id: string) => repository.findById(id),
+    getTicketTypeById: (input: GetTicketTypeByIdRequestSchema) =>
+      repository.findById(input.ticketTypeId),
 
-    getFieldsForTicketType: (ticketTypeId: string) =>
-      repository.findFieldsForTicketType(ticketTypeId),
+    getFieldsForTicketType: (input: GetFieldsForTicketTypeRequestSchema) =>
+      repository.findFieldsForTicketType(input.ticketTypeId),
 
     createTicketType: async (data: CreateTicketTypeSchema) => {
       return await repository.create(data);
     },
 
-    updateTicketType: async (
-      id: string,
-      data: Omit<EditTicketTypeSchema, 'ticketTypeId'>,
+    updateTicketType: async (data: EditTicketTypeSchema) => {
+      const existingTicketType = await repository.findById(data.ticketTypeId);
+      if (!existingTicketType) {
+        throwNotFoundError('TICKET_TYPE_NOT_FOUND', {
+          ticketTypeId: data.ticketTypeId,
+        });
+      }
+
+      const { ticketTypeId, ...updateData } = data;
+      return await repository.update(ticketTypeId, updateData);
+    },
+
+    deleteTicketType: async (input: DeleteTicketTypeRequestSchema) => {
+      const existingTicketType = await repository.findById(input.ticketTypeId);
+      if (!existingTicketType) {
+        throwNotFoundError('TICKET_TYPE_NOT_FOUND', {
+          ticketTypeId: input.ticketTypeId,
+        });
+      }
+
+      return await repository.delete(input.ticketTypeId);
+    },
+
+    getIssueTypeWithDetailsByIssueTypeId: async (
+      input: GetIssueTypeWithDetailsByIssueTypeIdRequestSchema,
     ) => {
-      const existingTicketType = await repository.findById(id);
-      if (!existingTicketType) {
-        throw new Error('Bilet türü bulunamadı');
-      }
-
-      return await repository.update(id, data);
-    },
-
-    deleteTicketType: async (id: string) => {
-      const existingTicketType = await repository.findById(id);
-      if (!existingTicketType) {
-        throw new Error('Bilet türü bulunamadı');
-      }
-
-      return await repository.delete(id);
-    },
-
-    getIssueTypeWithDetailsByIssueTypeId: async (issueTypeId: string) => {
       const result = await repository.findIssueTypeWithDetailsByIssueTypeId(
-        issueTypeId,
+        input.issueTypeId,
       );
 
       if (!result) {

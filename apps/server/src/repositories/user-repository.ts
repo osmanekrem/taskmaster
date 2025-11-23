@@ -2,7 +2,8 @@ import { user } from '@/db/schema/auth';
 import { db } from '@/db';
 import { and, asc, count, desc, eq, ilike } from 'drizzle-orm';
 import type { GetUsersRequestSchema } from '@taskmaster/validation';
-type DrizzleClient = typeof db;
+import type { DrizzleClient } from '@/lib/types/db';
+import { PAGINATION } from '@/lib/constants';
 
 export const userRepository = (drizzle: DrizzleClient = db) => ({
   findMany: () => drizzle.select().from(user),
@@ -57,8 +58,8 @@ export const userRepository = (drizzle: DrizzleClient = db) => ({
         ),
       )
       .orderBy(sort ?? asc(user.createdAt))
-      .limit(limit ?? 10)
-      .offset(offset ?? 0);
+      .limit(limit ?? PAGINATION.DEFAULT_LIMIT)
+      .offset(offset ?? PAGINATION.DEFAULT_OFFSET);
 
     const countQuery = drizzle
       .select({ count: count() })

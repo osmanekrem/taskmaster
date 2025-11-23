@@ -12,8 +12,7 @@ import type {
 } from '@taskmaster/validation';
 import { fieldOptions, fields, selectOptions } from '@/db/schema/field';
 import { fieldTypes } from '@/db/schema/field-types';
-
-type DrizzleClient = typeof db;
+import type { DrizzleClient } from '@/lib/types/db';
 
 export const ticketTypeRepository = (drizzle: DrizzleClient = db) => ({
   findMany: () => drizzle.select().from(issueTypes),
@@ -60,7 +59,7 @@ export const ticketTypeRepository = (drizzle: DrizzleClient = db) => ({
         .select({
           fieldId: fieldOptions.fieldId,
           options: sql<
-            { id: string; value: string; selectOptions: any[] }[]
+            { id: string; value: string; selectOptions: { id: string; name: string; icon: string | null }[] }[]
           >`coalesce(json_agg(json_build_object('id',
                         ${fieldOptions.id},
                         'value',

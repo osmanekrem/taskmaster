@@ -2,8 +2,7 @@ import { fieldTypeOptions, fieldTypes } from "@/db/schema/field-types";
 import { db } from "@/db";
 import { asc, eq } from "drizzle-orm";
 import type { CreateFieldTypeSchema, EditFieldTypeSchema } from "@taskmaster/validation";
-
-type DrizzleClient = typeof db;
+import type { DrizzleClient } from "@/lib/types/db";
 
 export const fieldTypeRepository = (drizzle: DrizzleClient = db) => ({
     findMany: () => drizzle.select().from(fieldTypes),
