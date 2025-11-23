@@ -12,6 +12,7 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import '../index.css';
 import { authQueries } from '@/lib/queries';
 import { NuqsAdapter } from 'nuqs/adapters/tanstack-router';
+import { ErrorBoundary } from '@/components/error-boundary';
 
 export interface RouterAppContext {
   trpc: typeof trpc;
@@ -48,21 +49,23 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 
 function RootComponent() {
   return (
-    <NuqsAdapter>
-      <HeadContent />
-      <ThemeProvider
-        attribute='class'
-        defaultTheme='dark'
-        disableTransitionOnChange
-        storageKey='vite-ui-theme'
-      >
-        <div className='antialiased w-full h-svh'>
-          <Outlet />
-        </div>
-        <Toaster richColors />
-      </ThemeProvider>
-      <TanStackRouterDevtools position='bottom-left' />
-      <ReactQueryDevtools position='bottom' buttonPosition='bottom-right' />
-    </NuqsAdapter>
+    <ErrorBoundary>
+      <NuqsAdapter>
+        <HeadContent />
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='dark'
+          disableTransitionOnChange
+          storageKey='vite-ui-theme'
+        >
+          <div className='antialiased w-full h-svh'>
+            <Outlet />
+          </div>
+          <Toaster richColors />
+        </ThemeProvider>
+        <TanStackRouterDevtools position='bottom-left' />
+        <ReactQueryDevtools position='bottom' buttonPosition='bottom-right' />
+      </NuqsAdapter>
+    </ErrorBoundary>
   );
 }

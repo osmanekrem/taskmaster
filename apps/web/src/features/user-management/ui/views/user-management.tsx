@@ -84,7 +84,7 @@ export default function UserManagement() {
           new Date(row.original.createdAt).toLocaleDateString(),
       },
     ],
-    data: (data?.data?.users ?? []) as any[],
+    data: data?.data?.users ?? [],
     lazy: true,
     onLazyLoad: handleLazyLoad,
     pagination: {

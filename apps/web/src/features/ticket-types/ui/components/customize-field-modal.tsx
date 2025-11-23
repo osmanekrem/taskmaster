@@ -7,10 +7,14 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import CustomizeFieldFormIssueType from './customize-field-form-issue-type';
+import type {
+  UpdateFieldOptionValueRequest,
+  SaveSelectOptionsRequest,
+} from '@/types/api';
 
 interface CustomizeFieldModalProps {
-  updateFieldOptionValue: (data: any) => void;
-  saveSelectOptions: (data: any) => void;
+  updateFieldOptionValue: (data: UpdateFieldOptionValueRequest) => void;
+  saveSelectOptions: (data: SaveSelectOptionsRequest) => void;
   fields: FieldWithDetails[];
 }
 

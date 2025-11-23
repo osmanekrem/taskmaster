@@ -7,6 +7,8 @@ import type {
   CreateUserSchema,
   GetUsersRequestSchema,
 } from '@taskmaster/validation';
+import { handleError } from '@/lib/errors';
+import { userKeys } from '@/lib/queries/query-keys';
 
 export const getUserQuery = (userId: string) =>
   trpc.user.getUserById.queryOptions({ userId });
@@ -21,7 +23,12 @@ export const getUsersInfiniteQuery = (
   searchOperator: 'contains' | 'starts_with' | 'ends_with' = 'contains',
 ) =>
   infiniteQueryOptions({
-    queryKey: ['users', searchField, searchValue, limit, searchOperator],
+    queryKey: userKeys.infinite({
+      searchField,
+      searchValue,
+      limit,
+      searchOperator,
+    }),
     queryFn: async ({ pageParam }) => {
       const response = await authClient.admin.listUsers({
         query: {
@@ -48,9 +55,10 @@ export const deleteUserQuery = (userId: string) =>
       return deleteUser({ userId });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user', userId] });
+      queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) });
+      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
       queryClient.setQueryData(
-        ['user'],
+        userKeys.paginated(),
         (oldData: { data: { users: User[]; total: number } } | undefined) => {
           if (!oldData || !oldData.data) return { data: [], total: 0 };
           const updatedUsers = oldData.data.users.filter(
@@ -65,7 +73,7 @@ export const deleteUserQuery = (userId: string) =>
       toast.success('Kullanıcı başarıyla silindi');
     },
     onError: (error) => {
-      toast.error(`Kullanıcı silinirken hata oluştu: ${error.message}`);
+      handleError(error);
     },
   });
 
@@ -74,8 +82,9 @@ export const createUserQuery = mutationOptions({
     return createUser(data);
   },
   onSuccess: (user) => {
+    queryClient.invalidateQueries({ queryKey: userKeys.lists() });
     queryClient.setQueryData(
-      ['user'],
+      userKeys.paginated(),
       (oldData: { data: { users: User[]; total: number } } | undefined) => {
         if (!oldData || !oldData.data) return { data: [user], total: 1 };
         return {
@@ -95,10 +104,10 @@ export const editUserQuery = (userId: string) =>
     mutationFn: editUser,
     onSuccess: () => {
       toast.success('Kullanıcı başarıyla düzenlendi');
-      queryClient.invalidateQueries({ queryKey: ['user', userId] });
-      queryClient.invalidateQueries({ queryKey: ['user'] });
+      queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) });
+      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
     },
     onError: (error) => {
-      toast.error(error.message);
+      handleError(error);
     },
   });

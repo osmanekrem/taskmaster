@@ -3,12 +3,13 @@ import {
   BooleanFormElement,
   StaticSelectOptionsFormElement,
 } from '@/components/type-form-element';
+import type { FieldOption, SelectOptionsMap } from '@/types/fields';
 
 interface BooleanOptionRendererProps {
-  option: any;
-  selectOptionsData: any;
-  onChangeOption: (optionId: string, value: any) => void;
-  onChangeSelectOptions: (optionId: string, options: any[]) => void;
+  option: FieldOption;
+  selectOptionsData: SelectOptionsMap;
+  onChangeOption: (optionId: string, value: string | boolean | number) => void;
+  onChangeSelectOptions: (optionId: string, options: FieldOption['selectOptions']) => void;
 }
 
 export const BooleanOptionRenderer = ({
@@ -27,7 +28,7 @@ export const BooleanOptionRenderer = ({
           id={option.id}
           name={option.fieldTypeOption?.name}
           value={option.value}
-          onChange={(value: any) => onChangeOption(option.id, value)}
+          onChange={(value: boolean) => onChangeOption(option.id, value)}
         />
       </div>
       {isDynamicSelectOptions &&

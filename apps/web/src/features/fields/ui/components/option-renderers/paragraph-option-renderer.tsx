@@ -1,8 +1,9 @@
 import { ParagraphFormElement } from '@/components/type-form-element';
+import type { FieldOption } from '@/types/fields';
 
 interface ParagraphOptionRendererProps {
-  option: any;
-  onChangeOption: (optionId: string, value: any) => void;
+  option: FieldOption;
+  onChangeOption: (optionId: string, value: string) => void;
 }
 
 export const ParagraphOptionRenderer = ({
@@ -15,7 +16,7 @@ export const ParagraphOptionRenderer = ({
         value={option.value}
         name={option.fieldTypeOption?.name || ''}
         id={option.id}
-        onChange={(value: any) => onChangeOption(option.id, value)}
+        onChange={(value: string) => onChangeOption(option.id, value)}
       />
     </div>
   );

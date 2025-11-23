@@ -7,7 +7,13 @@ import {
   ItemMedia,
   ItemTitle,
 } from '@/components/ui/item';
-import { PencilIcon, PlusIcon, SaveIcon, TrashIcon } from 'lucide-react';
+import {
+  PencilIcon,
+  PlusIcon,
+  SaveIcon,
+  TrashIcon,
+  GripVertical,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { IconPicker, Icon, type IconName } from './ui/icon-picker';
@@ -22,30 +28,38 @@ import {
 } from './ui/select';
 import * as Sortable from '@/components/ui/sortable';
 import { Textarea } from '@/components/ui/textarea';
-import { GripVertical } from 'lucide-react';
 import { Field, FieldLabel } from './ui/field';
+import type { FormElementType, SelectOption } from '@/types/common';
 
-const types: Record<string, any> = {
-  boolean: BooleanFormElement,
-  static_select_options: StaticSelectOptionsFormElement,
-  text: TextFormElement,
-  default_option: SelectFormElement,
+type FormElementComponent = React.ComponentType<Record<string, unknown>>;
+
+const types: Partial<Record<FormElementType, FormElementComponent>> = {
+  boolean: BooleanFormElement as unknown as FormElementComponent,
+  static_select_options:
+    StaticSelectOptionsFormElement as unknown as FormElementComponent,
+  text: TextFormElement as unknown as FormElementComponent,
+  default_option: SelectFormElement as unknown as FormElementComponent,
 };
+
+export interface TypeFormElementProps {
+  type: FormElementType;
+  [key: string]: unknown;
+}
 
 export default function TypeFormElement({
   type,
   ...props
-}: { type: string } & any) {
+}: Readonly<TypeFormElementProps>) {
   const Component = types[type];
   if (!Component) return null;
   return <Component {...props} />;
 }
 
 export interface BooleanFormElementProps {
-  value: string;
-  onChange: (value: boolean) => void;
-  name: string;
-  id: string;
+  readonly value: string;
+  readonly onChange: (value: boolean) => void;
+  readonly name: string;
+  readonly id: string;
 }
 
 export function BooleanFormElement({
@@ -66,19 +80,11 @@ export function BooleanFormElement({
   );
 }
 
-export interface SelectOption {
-  id?: string;
-  name: string;
-  icon: string | null;
-  order: number;
-  [key: string]: string | number | null | undefined;
-}
-
 export interface SelectOptionsFormElementProps {
-  id: string;
-  value: SelectOption[];
-  onChange: (optionId: string, options: SelectOption[]) => void;
-  dataKey: string;
+  readonly id: string;
+  readonly value: SelectOption[];
+  readonly onChange: (optionId: string, options: SelectOption[]) => void;
+  readonly dataKey: string;
 }
 
 export function StaticSelectOptionsFormElement({
@@ -135,7 +141,7 @@ export function StaticSelectOptionsFormElement({
                     {editingOptionIndex === option.id ? (
                       <IconPicker
                         value={option.icon as IconName}
-                        onValueChange={(e: any) => {
+                        onValueChange={(e: IconName) => {
                           const newOptions = [...value];
                           const index = newOptions.findIndex(
                             (opt) => opt.id === option.id,
@@ -189,16 +195,14 @@ export function StaticSelectOptionsFormElement({
                         <SaveIcon className='size-3.5' />
                       </Button>
                     ) : (
-                      <>
-                        <Button
-                          onClick={() => setEditingOptionIndex(option.id)}
-                          variant='ghost'
-                          className='p-1.5'
-                          size='icon'
-                        >
-                          <PencilIcon className='size-3.5' />
-                        </Button>
-                      </>
+                      <Button
+                        onClick={() => setEditingOptionIndex(option.id)}
+                        variant='ghost'
+                        className='p-1.5'
+                        size='icon'
+                      >
+                        <PencilIcon className='size-3.5' />
+                      </Button>
                     )}
                     <Button
                       onClick={() => {
@@ -252,7 +256,7 @@ export function StaticSelectOptionsFormElement({
       <Button
         variant='outline'
         size='sm'
-        className='!w-full'
+        className='w-full!'
         onClick={() =>
           onChange(id, [
             ...value,
@@ -273,10 +277,10 @@ export function StaticSelectOptionsFormElement({
 }
 
 export interface TextFormElementProps {
-  value: string;
-  onChange: (value: string) => void;
-  name: string;
-  id: string;
+  readonly value: string;
+  readonly onChange: (value: string) => void;
+  readonly name: string;
+  readonly id: string;
 }
 
 export function TextFormElement({
@@ -300,11 +304,11 @@ export function TextFormElement({
 }
 
 export interface SelectFormElementProps {
-  value: string;
-  onChange: (value: string) => void;
-  options: SelectOption[];
-  name: string;
-  id: string;
+  readonly value: string;
+  readonly onChange: (value: string) => void;
+  readonly options: SelectOption[];
+  readonly name: string;
+  readonly id: string;
 }
 
 export function SelectFormElement({
@@ -326,10 +330,9 @@ export function SelectFormElement({
           {options?.map((option) => (
             <SelectItem key={option.id} value={option.id!}>
               <div className='flex items-center gap-2'>
-                <Icon
-                  name={(option.icon as IconName) ?? ''}
-                  className='size-4'
-                />
+                {option.icon && (
+                  <Icon name={option.icon as IconName} className='size-4' />
+                )}
                 {option.name}
               </div>
             </SelectItem>
@@ -341,10 +344,10 @@ export function SelectFormElement({
 }
 
 interface ParagraphFormElementProps {
-  value: string;
-  onChange: (value: string) => void;
-  name: string;
-  id: string;
+  readonly value: string;
+  readonly onChange: (value: string) => void;
+  readonly name: string;
+  readonly id: string;
 }
 
 export function ParagraphFormElement({

@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { getFieldsWithDetailsQuery } from '@/features/fields/lib/queries';
 import { FieldSelectorItem } from './field-selector-item';
+import type { FieldWithDetails } from '@/types/fields';
 
 interface FieldSelectorProps {
-  readonly fields: any[];
-  readonly setFields: React.Dispatch<React.SetStateAction<any[]>>;
+  readonly fields: FieldWithDetails[];
+  readonly setFields: React.Dispatch<React.SetStateAction<FieldWithDetails[]>>;
 }
 
 export default function FieldSelector({
@@ -13,7 +14,7 @@ export default function FieldSelector({
 }: FieldSelectorProps) {
   const { data } = useQuery(getFieldsWithDetailsQuery);
 
-  const handleToggleField = (field: any) => {
+  const handleToggleField = (field: FieldWithDetails) => {
     const isSelected = fields.some((item) => item.id === field.id);
     if (isSelected) {
       setFields((prevFields) =>

@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { queryClient, type RouterInput, trpc } from '@/utils/trpc';
 import { toast } from 'sonner';
+import { handleError } from '@/lib/errors';
 
 export type CreateFieldRequestType = RouterInput['fields']['createField'];
 
@@ -22,7 +23,7 @@ export const useCreateFieldMutation = () =>
         });
       },
       onError: (error) => {
-        toast.error(error.message || 'Bir hata oluştu');
+        handleError(error);
       },
     }),
   );
@@ -64,7 +65,7 @@ export const useEditFieldMutation = () =>
         }
       },
       onError: (error) => {
-        toast.error(error.message || 'Bir hata oluştu');
+        handleError(error);
       },
     }),
   );
@@ -106,7 +107,7 @@ export const useDeleteFieldMutation = () =>
         }
       },
       onError: (error) => {
-        toast.error(error.message || 'Bir hata oluştu');
+        handleError(error);
       },
     }),
   );
@@ -135,7 +136,7 @@ export const useUpdateFieldOptionValueMutation = () =>
         }
       },
       onError: (error) => {
-        toast.error(error.message || 'Bir hata oluştu');
+        handleError(error);
       },
     }),
   );
@@ -159,7 +160,7 @@ export const useSaveSelectOptionsMutation = () =>
         }
       },
       onError: (error) => {
-        toast.error(error.message || 'Bir hata oluştu');
+        handleError(error);
       },
     }),
   );

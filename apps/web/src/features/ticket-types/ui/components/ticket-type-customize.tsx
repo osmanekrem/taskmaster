@@ -10,10 +10,11 @@ import {
 } from '@/components/ui/item';
 import { useState } from 'react';
 import useCustomizeFieldModal from '../../hooks/use-customize-field-modal';
+import type { IssueTypeFieldWithDetails } from '@/types/fields';
 
 interface TicketTypeCustomizeProps {
-  fields: any[];
-  setFields: React.Dispatch<React.SetStateAction<any[]>>;
+  fields: IssueTypeFieldWithDetails[];
+  setFields: React.Dispatch<React.SetStateAction<IssueTypeFieldWithDetails[]>>;
   id: string;
 }
 
@@ -72,7 +73,7 @@ export default function TicketTypeCustomize({
 }
 
 interface OverlayItemProps {
-  field: any;
+  field: IssueTypeFieldWithDetails;
 }
 
 function OverlayItem({ field }: OverlayItemProps) {

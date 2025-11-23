@@ -1,13 +1,12 @@
-import {
-  SelectFormElement,
-  type SelectOption,
-} from '@/components/type-form-element';
+import { SelectFormElement } from '@/components/type-form-element';
+import type { FieldOption } from '@/types/fields';
+import type { SelectOption } from '@/types';
 
 interface SelectOptionRendererProps {
-  option: any;
-  optionsData: any[];
-  onChangeOption: (optionId: string, value: any) => void;
-  mapSelectOptions?: (options: any[]) => SelectOption[];
+  option: FieldOption;
+  optionsData: FieldOption[];
+  onChangeOption: (optionId: string, value: string) => void;
+  mapSelectOptions?: (options: SelectOption[]) => SelectOption[];
 }
 
 const GRANULARITY_OPTIONS: SelectOption[] = [
@@ -78,7 +77,7 @@ export const SelectOptionRenderer = ({
         id={option.id}
         key='fieldOption'
         value={option.value}
-        onChange={(value: any) => onChangeOption(option.id, value)}
+        onChange={(value: string) => onChangeOption(option.id, value)}
       />
     </div>
   );

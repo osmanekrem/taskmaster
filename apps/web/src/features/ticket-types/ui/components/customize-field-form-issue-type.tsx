@@ -33,7 +33,7 @@ export default function CustomizeFieldFormIssueType({
     saveSelectOptions,
   });
 
-  const mapSelectOptions = (options: any[]): SelectOption[] => {
+  const mapSelectOptions = (options: SelectOption[]): SelectOption[] => {
     return options.map((option) => ({
       id: option.id,
       name: option.name,

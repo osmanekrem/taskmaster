@@ -3,17 +3,7 @@ import type {
   SaveSelectOptionsRequest,
   UpdateFieldOptionValueRequest,
 } from '../mutations';
-
-interface FieldOption {
-  id: string;
-  value: string;
-  fieldTypeOption: {
-    key?: string;
-    type?: string;
-    name?: string;
-  };
-  selectOptions?: any[];
-}
+import type { FieldOption, SelectOptionsMap } from '@/types/fields';
 
 interface UseCustomizeFieldFormProps {
   options?: FieldOption[];
@@ -26,22 +16,34 @@ export const useCustomizeFieldForm = ({
   updateFieldOptionValue,
   saveSelectOptions,
 }: UseCustomizeFieldFormProps) => {
-  const [optionsData, setOptionsData] = useState(options || []);
-  const [originalOptionsData, setOriginalOptionsData] = useState<any>({});
-  const [selectOptionsData, setSelectOptionsData] = useState<any>({});
+  const [optionsData, setOptionsData] = useState<FieldOption[]>(options || []);
+  const [originalOptionsData, setOriginalOptionsData] =
+    useState<SelectOptionsMap>({});
+  const [selectOptionsData, setSelectOptionsData] = useState<SelectOptionsMap>(
+    {},
+  );
   const [isUpdated, setIsUpdated] = useState(false);
   const [optionsChanged, setOptionsChanged] = useState(false);
 
-  const onChangeOption = (optionId: string, newValue: any) => {
+  const onChangeOption = (
+    optionId: string,
+    newValue: string | boolean | number,
+  ) => {
     setOptionsData((prevOptions) =>
       prevOptions.map((option) =>
-        option.id === optionId ? { ...option, value: newValue } : option,
+        option.id === optionId
+          ? { ...option, value: String(newValue) }
+          : option,
       ),
     );
   };
 
-  const onChangeSelectOptions = (optionId: string, newOptions: any[]) => {
-    setSelectOptionsData((prev: any) => ({
+  const onChangeSelectOptions = (
+    optionId: string,
+    newOptions: FieldOption['selectOptions'],
+  ) => {
+    if (!newOptions) return;
+    setSelectOptionsData((prev: SelectOptionsMap) => ({
       ...prev,
       [optionId]: newOptions,
     }));
@@ -65,10 +67,10 @@ export const useCustomizeFieldForm = ({
       const selectOptions = selectOptionsData[dynamicOption.id] || [];
       saveSelectOptions({
         fieldOptionId: dynamicOption.id,
-        options: selectOptions.map((option: any) => ({
+        options: selectOptions.map((option) => ({
           fieldOptionId: dynamicOption.id,
           name: option.name,
-          icon: option.icon,
+          icon: option.icon || undefined,
           order: option.order,
           id: option.id,
         })),
@@ -86,13 +88,15 @@ export const useCustomizeFieldForm = ({
         (option) => option.fieldTypeOption?.key === 'is-dynamic-options',
       )
     ) {
-      const selectOptionsMap: any = {};
+      const selectOptionsMap: SelectOptionsMap = {};
       options
         .filter((opt) => opt.fieldTypeOption?.key === 'is-dynamic-options')
-        .forEach((option: any) => {
-          selectOptionsMap[option.id] = option.selectOptions?.filter(
-            (selectOption: any) => selectOption.fieldOptionId === option.id,
-          );
+        .forEach((option) => {
+          if (option.selectOptions) {
+            selectOptionsMap[option.id] = option.selectOptions.filter(
+              (selectOption) => selectOption.fieldOptionId === option.id,
+            );
+          }
         });
       setSelectOptionsData(selectOptionsMap);
       setOriginalOptionsData(selectOptionsMap);
@@ -147,4 +151,3 @@ export const useCustomizeFieldForm = ({
     onSave,
   };
 };
-

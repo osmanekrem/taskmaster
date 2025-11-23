@@ -1,17 +1,21 @@
+import type { SelectOption } from '@/types';
 import {
   BooleanOptionRenderer,
   TextOptionRenderer,
   SelectOptionRenderer,
   ParagraphOptionRenderer,
 } from './option-renderers';
-import type { SelectOption } from '@/components/type-form-element';
+import type { FieldOption, SelectOptionsMap } from '@/types/fields';
 
 interface FieldOptionsListProps {
-  optionsData: any[];
-  selectOptionsData: any;
-  onChangeOption: (optionId: string, value: any) => void;
-  onChangeSelectOptions: (optionId: string, options: any[]) => void;
-  mapSelectOptions?: (options: any[]) => SelectOption[];
+  optionsData: FieldOption[];
+  selectOptionsData: SelectOptionsMap;
+  onChangeOption: (optionId: string, value: string | boolean | number) => void;
+  onChangeSelectOptions: (
+    optionId: string,
+    options: FieldOption['selectOptions'],
+  ) => void;
+  mapSelectOptions?: (options: SelectOption[]) => SelectOption[];
 }
 
 export const FieldOptionsList = ({
@@ -70,4 +74,3 @@ export const FieldOptionsList = ({
     </div>
   );
 };
-

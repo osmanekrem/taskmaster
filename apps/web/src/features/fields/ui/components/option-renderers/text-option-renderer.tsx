@@ -1,8 +1,9 @@
 import { TextFormElement } from '@/components/type-form-element';
+import type { FieldOption } from '@/types/fields';
 
 interface TextOptionRendererProps {
-  option: any;
-  onChangeOption: (optionId: string, value: any) => void;
+  option: FieldOption;
+  onChangeOption: (optionId: string, value: string) => void;
 }
 
 export const TextOptionRenderer = ({
@@ -15,7 +16,7 @@ export const TextOptionRenderer = ({
         name={option.fieldTypeOption?.name || ''}
         id={option.id}
         value={option.value}
-        onChange={(value: any) => onChangeOption(option.id, value)}
+        onChange={(value: string) => onChangeOption(option.id, value)}
       />
     </div>
   );

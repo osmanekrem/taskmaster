@@ -2,6 +2,7 @@ import type { RouterInput } from '@/utils/trpc';
 import { queryClient, trpc } from '@/utils/trpc';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { handleError } from '@/lib/errors';
 
 export type CreateTicketTypeRequestType =
   RouterInput['ticketTypes']['createTicketType'];
@@ -25,7 +26,7 @@ export const useCreateTicketTypeMutation = () =>
         }
       },
       onError: (error) => {
-        toast.error(error.message || 'Bir hata oluştu');
+        handleError(error);
       },
     }),
   );
@@ -52,7 +53,7 @@ export const useEditTicketTypeMutation = () =>
         }
       },
       onError: (error) => {
-        toast.error(error.message || 'Bir hata oluştu');
+        handleError(error);
       },
     }),
   );
@@ -79,7 +80,7 @@ export const useDeleteTicketTypeMutation = () =>
         }
       },
       onError: (error) => {
-        toast.error(error.message || 'Bir hata oluştu');
+        handleError(error);
       },
     }),
   );
@@ -104,7 +105,7 @@ export const useSaveIssueTypeFieldsMutation = () =>
         }
       },
       onError: (error) => {
-        toast.error(error.message || 'Bir hata oluştu');
+        handleError(error);
       },
     }),
   );
