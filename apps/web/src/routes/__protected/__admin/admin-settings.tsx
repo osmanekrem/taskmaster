@@ -2,6 +2,7 @@ import { createFileRoute, Link, Outlet } from '@tanstack/react-router';
 import GoBackButton from '@/components/go-back-button';
 import { TextCursorInputIcon, TicketIcon } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
+import NotFound from '@/components/not-found';
 
 const routes = [
   {
@@ -23,6 +24,7 @@ const routes = [
 
 export const Route = createFileRoute('/__protected/__admin/admin-settings')({
   component: RouteComponent,
+  notFoundComponent: () => <NotFound />,
 });
 
 function RouteComponent() {

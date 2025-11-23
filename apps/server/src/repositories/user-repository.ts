@@ -1,6 +1,6 @@
 import { user } from '@/db/schema/auth';
 import { db } from '@/db';
-import { and, asc, count, desc, eq, ilike } from 'drizzle-orm';
+import { and, asc, count, desc, eq, ilike, or } from 'drizzle-orm';
 import type { GetUsersRequestSchema } from '@taskmaster/validation';
 import type { DrizzleClient } from '@/lib/types/db';
 import { PAGINATION } from '@/lib/constants';
@@ -46,12 +46,19 @@ export const userRepository = (drizzle: DrizzleClient = db) => ({
         : desc(user[sortBy])
       : undefined;
 
+    const globalSearchQuery = globalSearch
+      ? or(
+          ilike(user.name, `%${globalSearch}%`),
+          ilike(user.email, `%${globalSearch}%`),
+        )
+      : undefined;
+
     const resultQuery = drizzle
       .select()
       .from(user)
       .where(
         and(
-          globalSearch ? ilike(user.name, `%${globalSearch}%`) : undefined,
+          globalSearchQuery,
           name ? eq(user.name, name) : undefined,
           email ? eq(user.email, email) : undefined,
           role ? eq(user.role, role) : undefined,
@@ -66,7 +73,7 @@ export const userRepository = (drizzle: DrizzleClient = db) => ({
       .from(user)
       .where(
         and(
-          globalSearch ? ilike(user.name, `%${globalSearch}%`) : undefined,
+          globalSearchQuery,
           name ? eq(user.name, name) : undefined,
           email ? eq(user.email, email) : undefined,
           role ? eq(user.role, role) : undefined,

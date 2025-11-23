@@ -1,5 +1,11 @@
 import { z } from 'zod';
-import { emailSchema, passwordValidator, idSchema, roleSchema, sortOrderSchema } from './general';
+import {
+  emailSchema,
+  passwordValidator,
+  idSchema,
+  roleSchema,
+  sortOrderSchema,
+} from './general';
 
 // Create User Schema (from web)
 export const createUserSchema = z.object({
@@ -42,9 +48,8 @@ export const getUsersRequestSchema = z.object({
   name: z.string().optional(),
   email: emailSchema.optional(),
   role: roleSchema.optional(),
-  sortBy: z.enum(['name', 'email', 'role', 'createdAt']).optional(),
+  sortBy: z.string().optional(),
   sortOrder: sortOrderSchema.optional(),
 });
 
 export type GetUsersRequestSchema = z.infer<typeof getUsersRequestSchema>;
-

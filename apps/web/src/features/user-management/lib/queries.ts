@@ -1,46 +1,19 @@
-import {
-  infiniteQueryOptions,
-  mutationOptions,
-  queryOptions,
-} from '@tanstack/react-query';
+import { infiniteQueryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient, trpc } from '@/utils/trpc';
 import { authClient, type User } from '@/lib/auth-client';
 import { createUser, deleteUser, editUser } from './actions';
 import { toast } from 'sonner';
-import type { CreateUserSchema } from '@taskmaster/validation';
+import type {
+  CreateUserSchema,
+  GetUsersRequestSchema,
+} from '@taskmaster/validation';
 
 export const getUserQuery = (userId: string) =>
   trpc.user.getUserById.queryOptions({ userId });
 
-export const getUsersPaginatedQuery = ({
-  limit,
-  offset,
-  globalSearch,
-  name,
-  email,
-  role,
-  sortBy,
-  sortOrder,
-}: {
-  limit?: number;
-  offset?: number;
-  globalSearch?: string;
-  name?: string;
-  email?: string;
-  role?: 'user' | 'admin';
-  sortBy?: 'name' | 'email' | 'createdAt' | 'role';
-  sortOrder?: 'asc' | 'desc';
-}) =>
-  trpc.user.getUsersPaginated.queryOptions({
-    limit,
-    offset,
-    globalSearch,
-    name,
-    email,
-    role,
-    sortBy,
-    sortOrder,
-  });
+export const getUsersPaginatedQuery = (data: GetUsersRequestSchema) =>
+  trpc.user.getUsersPaginated.queryOptions(data);
+
 export const getUsersInfiniteQuery = (
   searchField: 'name' | 'email',
   searchValue: string,

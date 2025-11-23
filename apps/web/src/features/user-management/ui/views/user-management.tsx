@@ -4,6 +4,7 @@ import { PlusIcon } from 'lucide-react';
 import {
   DataTable,
   type LazyLoadEvent,
+  type SortingState,
   type TableOptions,
   turkishTranslations,
 } from 'tanstack-shadcn-table';
@@ -18,15 +19,28 @@ export default function UserManagement() {
   const [limit, setLimit] = useState<number>(20);
   const [offset, setOffset] = useState<number>(0);
   const [globalFilter, setGlobalFilter] = useState<string>('');
+  const [sorting, setSorting] = useState<SortingState[]>([]);
 
-  const handleLazyLoad = ({ first, rows, globalFilter }: LazyLoadEvent) => {
+  const handleLazyLoad = ({
+    first,
+    rows,
+    globalFilter,
+    sorting,
+  }: LazyLoadEvent) => {
     setOffset(first);
     setLimit(rows);
     setGlobalFilter(globalFilter);
+    setSorting(sorting);
   };
 
   const { data, isPending } = useQuery(
-    getUsersPaginatedQuery({ limit, offset, globalSearch: globalFilter }),
+    getUsersPaginatedQuery({
+      limit,
+      offset,
+      globalSearch: globalFilter,
+      sortBy: sorting[0]?.id,
+      sortOrder: sorting[0]?.desc ? 'desc' : 'asc',
+    }),
   );
 
   const tableOptions: TableOptions<User> = {
@@ -51,10 +65,12 @@ export default function UserManagement() {
             </div>
           );
         },
+        enableSorting: true,
       },
       {
         accessorKey: 'email',
         header: 'E-posta',
+        enableSorting: true,
       },
       {
         accessorKey: 'role',
@@ -62,6 +78,7 @@ export default function UserManagement() {
       },
       {
         accessorKey: 'createdAt',
+        enableSorting: true,
         header: 'Oluşturulma Tarihi',
         cell: ({ row }) =>
           new Date(row.original.createdAt).toLocaleDateString(),
@@ -77,6 +94,8 @@ export default function UserManagement() {
     translations: turkishTranslations,
     enableColumnResizing: true,
     columnResizeMode: 'onChange',
+    sorting,
+    onSortingChange: setSorting,
     globalFilter: {
       show: true,
       globalFilter,
