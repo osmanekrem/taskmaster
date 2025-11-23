@@ -1,6 +1,7 @@
 import {Resend} from "resend";
+import {env} from "@/config/env";
 
-export const resend = new Resend(process.env.RESEND_API_KEY as string)
+export const resend = new Resend(env.RESEND_API_KEY)
 
 const mailTemplate = (title: string, content: string) => `
             <!DOCTYPE html>
@@ -241,7 +242,7 @@ export const sendResetPasswordEmail = async ({username, url, email}: {
     email: string;
 }) => {
     resend.emails.send({
-        from: process.env.RESEND_SMTP_FROM || "onboarding@resend.dev",
+        from: env.RESEND_SMTP_FROM || "onboarding@resend.dev",
         to: email,
         subject: "Şifre Sıfırlama Talebi",
         html: mailTemplate('Şifre Sıfırlama Talebi', `<div class="welcome-message">

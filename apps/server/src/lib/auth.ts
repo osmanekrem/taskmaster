@@ -4,6 +4,7 @@ import {db} from "@/db";
 import * as schema from "../db/schema/auth";
 import {sendResetPasswordEmail} from "@/lib/mail";
 import {admin} from "better-auth/plugins";
+import {env} from "@/config/env";
 
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
@@ -12,7 +13,7 @@ export const auth = betterAuth({
         schema: schema,
     }),
     trustedOrigins: [
-        process.env.CORS_ORIGIN || "",
+        env.CORS_ORIGIN,
     ],
     user: {
         additionalFields: {
@@ -35,8 +36,8 @@ export const auth = betterAuth({
     plugins: [
         admin()
     ],
-    secret: process.env.BETTER_AUTH_SECRET,
-    baseURL: process.env.BETTER_AUTH_URL,
+    secret: env.BETTER_AUTH_SECRET,
+    baseURL: env.BETTER_AUTH_URL,
 });
 
 
