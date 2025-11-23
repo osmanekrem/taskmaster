@@ -1,4 +1,4 @@
-import type {CreateUserSchema, EditUserSchema} from "@/features/user-management/schemas";
+import type {CreateUserSchema, EditUserSchema} from "@taskmaster/validation";
 import {authClient} from "@/lib/auth-client";
 
 export async function createUser(data: CreateUserSchema) {

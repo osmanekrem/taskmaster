@@ -3,26 +3,31 @@ import { buttonVariants } from '@/components/ui/button';
 import { PlusIcon } from 'lucide-react';
 import {
   DataTable,
+  type LazyLoadEvent,
   type TableOptions,
   turkishTranslations,
 } from 'tanstack-shadcn-table';
 import UserAvatar from '@/components/user-avatar';
-import { authClient, type User } from '@/lib/auth-client';
+import type { User } from '@/lib/auth-client';
 import { useState } from 'react';
 import ActionMenu from '@/features/user-management/ui/components/action-menu';
 import { useQuery } from '@tanstack/react-query';
-import { getUsersQuery } from '@/features/user-management/lib/queries';
+import { getUsersPaginatedQuery } from '@/features/user-management/lib/queries';
 
 export default function UserManagement() {
   const [limit, setLimit] = useState<number>(20);
   const [offset, setOffset] = useState<number>(0);
+  const [globalFilter, setGlobalFilter] = useState<string>('');
 
-  const handleLazyLoad = ({ first, rows }: { first: number; rows: number }) => {
+  const handleLazyLoad = ({ first, rows, globalFilter }: LazyLoadEvent) => {
     setOffset(first);
     setLimit(rows);
+    setGlobalFilter(globalFilter);
   };
 
-  const { data, isPending } = useQuery(getUsersQuery({ limit, offset }));
+  const { data, isPending } = useQuery(
+    getUsersPaginatedQuery({ limit, offset, globalSearch: globalFilter }),
+  );
 
   const tableOptions: TableOptions<User> = {
     columns: [
@@ -33,7 +38,7 @@ export default function UserManagement() {
         minSize: 60,
         maxSize: 60,
         enableResizing: false,
-        cell: ({ row }) => <ActionMenu rowData={row.original} />,
+        cell: ({ row }) => <ActionMenu row={row} />,
       },
       {
         accessorKey: 'name',
@@ -62,7 +67,7 @@ export default function UserManagement() {
           new Date(row.original.createdAt).toLocaleDateString(),
       },
     ],
-    data: (data?.data?.users ?? []) as User[],
+    data: (data?.data?.users ?? []) as any[],
     lazy: true,
     onLazyLoad: handleLazyLoad,
     pagination: {
@@ -72,6 +77,11 @@ export default function UserManagement() {
     translations: turkishTranslations,
     enableColumnResizing: true,
     columnResizeMode: 'onChange',
+    globalFilter: {
+      show: true,
+      globalFilter,
+      onGlobalFilterChange: setGlobalFilter,
+    },
   };
   return (
     <div className='flex flex-col w-full h-full'>

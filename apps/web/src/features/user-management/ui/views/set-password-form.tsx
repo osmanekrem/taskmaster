@@ -1,5 +1,5 @@
 import { useForm } from '@tanstack/react-form';
-import { setPasswordSchema } from '@/features/user-management/schemas';
+import { setPasswordSchema } from '@taskmaster/validation';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { setUserPassword } from '@/features/user-management/lib/actions';

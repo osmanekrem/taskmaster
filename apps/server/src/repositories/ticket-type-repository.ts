@@ -7,9 +7,9 @@ import {
 import { db } from '@/db';
 import { asc, eq, sql } from 'drizzle-orm';
 import type {
-  CreateTicketTypeRequestSchema,
-  EditTicketTypeRequestSchema,
-} from '@/schemas/ticket-types';
+  CreateTicketTypeSchema,
+  EditTicketTypeSchema,
+} from '@taskmaster/validation';
 import { fieldOptions, fields, selectOptions } from '@/db/schema/field';
 import { fieldTypes } from '@/db/schema/field-types';
 
@@ -124,7 +124,7 @@ export const ticketTypeRepository = (drizzle: DrizzleClient = db) => ({
       .leftJoin(fieldsWithOptions, eq(fields.id, fieldsWithOptions.fieldId));
   },
 
-  create: async (values: CreateTicketTypeRequestSchema) => {
+  create: async (values: CreateTicketTypeSchema) => {
     const [result] = await drizzle
       .insert(issueTypes)
       .values(values)
@@ -134,7 +134,7 @@ export const ticketTypeRepository = (drizzle: DrizzleClient = db) => ({
 
   update: async (
     id: string,
-    values: Omit<EditTicketTypeRequestSchema, 'ticketTypeId'>,
+    values: Omit<EditTicketTypeSchema, 'ticketTypeId'>,
   ) => {
     const [result] = await drizzle
       .update(issueTypes)

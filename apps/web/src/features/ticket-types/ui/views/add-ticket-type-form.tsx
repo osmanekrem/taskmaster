@@ -1,5 +1,5 @@
 import { useForm } from '@tanstack/react-form';
-import { createTicketTypeSchema } from '@/features/ticket-types/schemas';
+import { createTicketTypeSchema } from '@taskmaster/validation';
 import { useCreateTicketTypeMutation } from '@/features/ticket-types/lib/mutations';
 import { Input } from '@/components/ui/input';
 import TicketTypeIconSelect from '../components/ticket-type-icon-select';

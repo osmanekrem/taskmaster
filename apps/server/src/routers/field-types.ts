@@ -1,7 +1,7 @@
 import { protectedProcedure, router } from "@/lib/trpc";
 import { successResponse } from "@/utils/response";
 import { z } from "zod";
-import { createFieldTypeSchema, editFieldTypeSchema } from "@/schemas/field-types";
+import { createFieldTypeSchema, editFieldTypeSchema } from "@taskmaster/validation";
 import { fieldTypeService } from "@/services/field-type-service";
 import { db } from "@/db";
 

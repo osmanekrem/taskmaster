@@ -1,5 +1,5 @@
 import { useForm } from '@tanstack/react-form';
-import { createUserSchema } from '@/features/user-management/schemas';
+import { createUserSchema } from '@taskmaster/validation';
 import { useCreateUser } from '@/features/user-management/lib/api';
 import { useNavigate } from '@tanstack/react-router';
 import { FieldSet } from '@/components/ui/field';

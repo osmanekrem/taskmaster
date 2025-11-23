@@ -6,7 +6,7 @@ import type {
   ForgotPasswordSchema,
   ResetPasswordSchema,
   SignInSchema,
-} from '@/features/auth/schemas';
+} from '@taskmaster/validation';
 
 export function useLogout() {
   const router = useRouter();

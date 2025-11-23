@@ -6,7 +6,7 @@ import {
   editFieldSchema,
   selectOptionSchema,
   fieldWithDetailsSchema,
-} from '@/schemas/fields';
+} from '@taskmaster/validation';
 import { fieldService } from '@/services/field-service';
 import { db } from '@/db';
 

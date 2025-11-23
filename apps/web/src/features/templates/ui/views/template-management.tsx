@@ -8,7 +8,7 @@ import {
 } from 'tanstack-shadcn-table';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getUsersQuery } from '@/features/user-management/lib/queries';
+import { getUsersPaginatedQuery } from '@/features/user-management/lib/queries';
 import type { User } from '@/lib/auth-client';
 import ActionMenu from '@/features/user-management/ui/components/action-menu';
 import UserAvatar from '@/components/user-avatar';
@@ -22,7 +22,9 @@ export default function TemplateManagement() {
     setLimit(rows);
   };
 
-  const { data, isPending } = useQuery(getUsersQuery({ limit, offset }));
+  const { data, isPending } = useQuery(
+    getUsersPaginatedQuery({ limit, offset }),
+  );
 
   const tableOptions: TableOptions<User> = {
     columns: [
@@ -33,7 +35,7 @@ export default function TemplateManagement() {
         minSize: 60,
         maxSize: 60,
         enableResizing: false,
-        cell: ({ row }) => <ActionMenu rowData={row.original} />,
+        cell: ({ row }) => <ActionMenu row={row} />,
       },
       {
         accessorKey: 'name',

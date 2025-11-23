@@ -2,7 +2,7 @@ import { useForm } from '@tanstack/react-form';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { signIn } from '@/features/auth/lib/actions';
-import { signInSchema } from '@/features/auth/schemas';
+import { signInSchema } from '@taskmaster/validation';
 import { useState } from 'react';
 import { FieldSet } from '@/components/ui/field';
 import { FormSubmitButton } from '@/components/form-elements/submit-button';

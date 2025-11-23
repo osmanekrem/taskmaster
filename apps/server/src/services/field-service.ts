@@ -5,7 +5,7 @@ import {
   type EditFieldSchema,
   type SelectOptionSchema,
   type FieldWithDetailsSchema,
-} from '@/schemas/fields';
+} from '@taskmaster/validation';
 
 export const fieldService = (
   drizzle: typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0] = db,

@@ -1,5 +1,5 @@
 import { useForm } from '@tanstack/react-form';
-import { editTicketTypeSchema } from '@/features/ticket-types/schemas';
+import { editTicketTypeSchema } from '@taskmaster/validation';
 import { useEditTicketTypeMutation } from '@/features/ticket-types/lib/mutations';
 import { useQuery } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';

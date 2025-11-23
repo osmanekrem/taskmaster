@@ -1,7 +1,7 @@
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { changePassword } from '@/features/auth/lib/actions';
-import { changePasswordSchema } from '@/features/auth/schemas';
+import { changePasswordSchema } from '@taskmaster/validation';
 import { toast } from 'sonner';
 import { FieldSet } from '@/components/ui/field';
 import { FormSubmitButton } from '@/components/form-elements/submit-button';

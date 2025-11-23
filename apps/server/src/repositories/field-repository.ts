@@ -1,7 +1,7 @@
 import { fieldOptions, fields, selectOptions } from '@/db/schema/field';
 import { db } from '@/db';
 import { and, asc, eq, inArray, notInArray } from 'drizzle-orm';
-import type { EditFieldSchema } from '@/schemas/fields';
+import type { EditFieldSchema } from '@taskmaster/validation';
 import { fieldTypeOptions } from '@/db/schema/field-types';
 import {
   issueTypeFieldOptions,

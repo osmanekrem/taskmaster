@@ -1,9 +1,9 @@
 import { db } from '@/db';
 import { ticketTypeRepository } from '@/repositories/ticket-type-repository';
 import type {
-  CreateTicketTypeRequestSchema,
-  EditTicketTypeRequestSchema,
-} from '@/schemas/ticket-types';
+  CreateTicketTypeSchema,
+  EditTicketTypeSchema,
+} from '@taskmaster/validation';
 
 type DrizzleClient = typeof db;
 
@@ -44,13 +44,13 @@ export const ticketTypeService = (drizzle: DrizzleClient = db) => {
     getFieldsForTicketType: (ticketTypeId: string) =>
       repository.findFieldsForTicketType(ticketTypeId),
 
-    createTicketType: async (data: CreateTicketTypeRequestSchema) => {
+    createTicketType: async (data: CreateTicketTypeSchema) => {
       return await repository.create(data);
     },
 
     updateTicketType: async (
       id: string,
-      data: Omit<EditTicketTypeRequestSchema, 'ticketTypeId'>,
+      data: Omit<EditTicketTypeSchema, 'ticketTypeId'>,
     ) => {
       const existingTicketType = await repository.findById(id);
       if (!existingTicketType) {

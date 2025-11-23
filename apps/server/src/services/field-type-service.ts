@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { fieldTypeRepository } from "@/repositories/field-type-repository";
-import type { CreateFieldTypeSchema, EditFieldTypeSchema } from "@/schemas/field-types";
+import type { CreateFieldTypeSchema, EditFieldTypeSchema } from "@taskmaster/validation";
 
 type DrizzleClient = typeof db;
 

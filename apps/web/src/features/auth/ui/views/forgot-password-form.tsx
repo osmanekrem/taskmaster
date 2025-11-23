@@ -2,7 +2,7 @@ import { useForm } from '@tanstack/react-form';
 import { Link } from '@tanstack/react-router';
 import { useMutation } from '@tanstack/react-query';
 import { forgotPassword } from '@/features/auth/lib/actions';
-import { forgotPasswordSchema } from '@/features/auth/schemas';
+import { forgotPasswordSchema } from '@taskmaster/validation';
 import { toast } from 'sonner';
 import { FieldSet } from '@/components/ui/field';
 import { FormSubmitButton } from '@/components/form-elements/submit-button';

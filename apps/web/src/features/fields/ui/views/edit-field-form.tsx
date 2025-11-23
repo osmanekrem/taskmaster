@@ -1,6 +1,6 @@
 import { useForm } from '@tanstack/react-form';
 import { useQuery } from '@tanstack/react-query';
-import { editFieldSchema } from '@/features/fields/schemas';
+import { editFieldSchema } from '@taskmaster/validation';
 import FieldTypeSelect from '@/features/fields/ui/components/field-type-select';
 import { useEditFieldMutation } from '@/features/fields/lib/mutations';
 import useEditFieldModal from '@/features/fields/hooks/use-edit-field-modal';

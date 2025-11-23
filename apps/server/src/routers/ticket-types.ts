@@ -1,9 +1,9 @@
 import { protectedProcedure, router } from '@/lib/trpc';
 import { successResponse } from '@/utils/response';
 import {
-  createTicketTypeRequestSchema,
-  editTicketTypeRequestSchema,
-} from '@/schemas/ticket-types';
+  createTicketTypeSchema,
+  editTicketTypeSchema,
+} from '@taskmaster/validation';
 import { z } from 'zod';
 import { ticketTypeService } from '@/services/ticket-type-service';
 import { db } from '@/db';
@@ -24,7 +24,7 @@ export const ticketTypesRouter = router({
     }),
 
   createTicketType: protectedProcedure
-    .input(createTicketTypeRequestSchema)
+    .input(createTicketTypeSchema)
     .mutation(async ({ input }) => {
       const service = ticketTypeService(db);
       const data = await service.createTicketType(input);
@@ -32,7 +32,7 @@ export const ticketTypesRouter = router({
     }),
 
   editTicketType: protectedProcedure
-    .input(editTicketTypeRequestSchema)
+    .input(editTicketTypeSchema)
     .mutation(async ({ input }) => {
       const service = ticketTypeService(db);
       const { ticketTypeId, ...rest } = input;

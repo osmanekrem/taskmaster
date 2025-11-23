@@ -1,5 +1,5 @@
 import { useForm } from '@tanstack/react-form';
-import { editUserSchema } from '@/features/user-management/schemas';
+import { editUserSchema } from '@taskmaster/validation';
 import { type RouterOutput } from '@/utils/trpc';
 import { useNavigate } from '@tanstack/react-router';
 import { useEditUser } from '@/features/user-management/lib/api';

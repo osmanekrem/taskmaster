@@ -7,39 +7,40 @@ import { queryClient, trpc } from '@/utils/trpc';
 import { authClient, type User } from '@/lib/auth-client';
 import { createUser, deleteUser, editUser } from './actions';
 import { toast } from 'sonner';
-import type { CreateUserSchema } from '@/features/user-management/schemas';
+import type { CreateUserSchema } from '@taskmaster/validation';
 
 export const getUserQuery = (userId: string) =>
   trpc.user.getUserById.queryOptions({ userId });
 
-export const getUsersQuery = ({
+export const getUsersPaginatedQuery = ({
   limit,
   offset,
-  searchField,
-  searchValue,
+  globalSearch,
+  name,
+  email,
+  role,
+  sortBy,
+  sortOrder,
 }: {
   limit?: number;
   offset?: number;
-  searchField?: 'name' | 'email';
-  searchValue?: string;
+  globalSearch?: string;
+  name?: string;
+  email?: string;
+  role?: 'user' | 'admin';
+  sortBy?: 'name' | 'email' | 'createdAt' | 'role';
+  sortOrder?: 'asc' | 'desc';
 }) =>
-  queryOptions({
-    queryKey: ['user'],
-    queryFn: () => {
-      if (limit && limit <= 0) {
-        throw new Error('Limit must be greater than 0');
-      }
-      return authClient.admin.listUsers({
-        query: {
-          limit,
-          offset,
-          searchField,
-          searchValue,
-        },
-      });
-    },
+  trpc.user.getUsersPaginated.queryOptions({
+    limit,
+    offset,
+    globalSearch,
+    name,
+    email,
+    role,
+    sortBy,
+    sortOrder,
   });
-
 export const getUsersInfiniteQuery = (
   searchField: 'name' | 'email',
   searchValue: string,

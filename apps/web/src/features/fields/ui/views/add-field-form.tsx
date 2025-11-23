@@ -1,6 +1,6 @@
 import { useForm } from '@tanstack/react-form';
 import { useQuery } from '@tanstack/react-query';
-import { addFieldSchema } from '@/features/fields/schemas';
+import { createFieldSchema } from '@taskmaster/validation';
 import FieldTypeSelect from '@/features/fields/ui/components/field-type-select';
 import { useCreateFieldMutation } from '@/features/fields/lib/mutations';
 import useAddFieldModal from '@/features/fields/hooks/use-add-field-modal';
@@ -30,7 +30,7 @@ export default function AddFieldForm() {
       });
     },
     validators: {
-      onSubmit: addFieldSchema,
+      onSubmit: createFieldSchema,
     },
   });
 
