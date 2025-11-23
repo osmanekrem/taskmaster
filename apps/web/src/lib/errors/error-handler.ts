@@ -5,7 +5,7 @@ import type {
   ValidationError,
   ErrorType,
 } from './error-types';
-import { ERROR_MESSAGES, getErrorMessage } from './error-messages';
+import { ERROR_MESSAGES, getErrorMessage } from '@taskmaster/constants';
 
 export const handleApiError = (error: unknown): AppError => {
   if (error instanceof Error) {

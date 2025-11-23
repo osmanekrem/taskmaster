@@ -3,7 +3,7 @@ import { db } from '@/db';
 import { and, asc, count, desc, eq, ilike, or } from 'drizzle-orm';
 import type { GetUsersRequestSchema } from '@taskmaster/validation';
 import type { DrizzleClient } from '@/lib/types/db';
-import { PAGINATION } from '@/lib/constants';
+import { PAGINATION } from '@taskmaster/constants';
 
 export const userRepository = (drizzle: DrizzleClient = db) => ({
   findMany: () => drizzle.select().from(user),

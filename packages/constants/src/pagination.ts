@@ -2,4 +2,6 @@ export const PAGINATION = {
   DEFAULT_PAGE_SIZE: 20,
   DEFAULT_LIMIT: 10,
   DEFAULT_OFFSET: 0,
+  MAX_LIMIT: 100,
 } as const;
+

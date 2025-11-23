@@ -3,7 +3,7 @@ import type { Context } from './context';
 import { z, ZodError } from 'zod';
 import { errorResponse } from '@/utils/response';
 import { toTRPCError } from '@/lib/errors';
-import { USER_ROLES } from '@/lib/constants';
+import { USER_ROLES } from '@taskmaster/constants';
 import { createHonoError } from '@osmanekrem/error-handler/hono';
 
 export const t = initTRPC.context<Context>().create({

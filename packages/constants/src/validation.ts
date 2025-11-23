@@ -6,3 +6,4 @@ export const VALIDATION_MESSAGES = {
   PASSWORD_MISMATCH: 'Şifreler eşleşmiyor',
   INVALID_EMAIL_OR_PASSWORD: 'Hatalı e-posta veya şifre',
 } as const;
+

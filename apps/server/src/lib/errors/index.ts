@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import { createHonoError } from '@osmanekrem/error-handler/hono';
 import { AppError } from '@osmanekrem/error-handler/core';
-import { ErrorMessages, type ErrorMessageKey } from './messages';
+import { ErrorMessages, type ErrorMessageKey } from '@taskmaster/constants';
 
 function appErrorToTRPCError(error: AppError): TRPCError {
   const trpcCodeMap: Record<number, TRPCError['code']> = {

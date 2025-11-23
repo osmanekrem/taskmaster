@@ -1,0 +1,6 @@
+export const DATABASE = {
+  MAX_CONNECTIONS: 20,
+  IDLE_TIMEOUT_MS: 30000,
+  CONNECTION_TIMEOUT_MS: 2000,
+} as const;
+
