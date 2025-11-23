@@ -22,10 +22,8 @@ import { Route as _protectedSettingsIndexRouteImport } from './routes/__protecte
 import { Route as _protectedSettingsProfileRouteImport } from './routes/__protected/settings/profile'
 import { Route as _protected_adminAdminSettingsRouteImport } from './routes/__protected/__admin/admin-settings'
 import { Route as _protected_adminUserManagementIndexRouteImport } from './routes/__protected/__admin/user-management/index'
-import { Route as _protected_adminTemplateManagementIndexRouteImport } from './routes/__protected/__admin/template-management/index'
 import { Route as _protected_adminAdminSettingsIndexRouteImport } from './routes/__protected/__admin/admin-settings/index'
 import { Route as _protected_adminUserManagementCreateUserRouteImport } from './routes/__protected/__admin/user-management/create-user'
-import { Route as _protected_adminTemplateManagementCreateTemplateRouteImport } from './routes/__protected/__admin/template-management/create-template'
 import { Route as _protected_adminAdminSettingsTicketTypesRouteImport } from './routes/__protected/__admin/admin-settings/ticket-types'
 import { Route as _protected_adminAdminSettingsFieldsRouteImport } from './routes/__protected/__admin/admin-settings/fields'
 import { Route as _protected_adminAdminSettingsTicketTypesIndexRouteImport } from './routes/__protected/__admin/admin-settings/ticket-types/index'
@@ -99,12 +97,6 @@ const _protected_adminUserManagementIndexRoute =
     path: '/user-management/',
     getParentRoute: () => _protected_adminRoute,
   } as any)
-const _protected_adminTemplateManagementIndexRoute =
-  _protected_adminTemplateManagementIndexRouteImport.update({
-    id: '/template-management/',
-    path: '/template-management/',
-    getParentRoute: () => _protected_adminRoute,
-  } as any)
 const _protected_adminAdminSettingsIndexRoute =
   _protected_adminAdminSettingsIndexRouteImport.update({
     id: '/',
@@ -115,12 +107,6 @@ const _protected_adminUserManagementCreateUserRoute =
   _protected_adminUserManagementCreateUserRouteImport.update({
     id: '/user-management/create-user',
     path: '/user-management/create-user',
-    getParentRoute: () => _protected_adminRoute,
-  } as any)
-const _protected_adminTemplateManagementCreateTemplateRoute =
-  _protected_adminTemplateManagementCreateTemplateRouteImport.update({
-    id: '/template-management/create-template',
-    path: '/template-management/create-template',
     getParentRoute: () => _protected_adminRoute,
   } as any)
 const _protected_adminAdminSettingsTicketTypesRoute =
@@ -178,10 +164,8 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof _protectedSettingsIndexRoute
   '/admin-settings/fields': typeof _protected_adminAdminSettingsFieldsRouteWithChildren
   '/admin-settings/ticket-types': typeof _protected_adminAdminSettingsTicketTypesRouteWithChildren
-  '/template-management/create-template': typeof _protected_adminTemplateManagementCreateTemplateRoute
   '/user-management/create-user': typeof _protected_adminUserManagementCreateUserRoute
   '/admin-settings/': typeof _protected_adminAdminSettingsIndexRoute
-  '/template-management': typeof _protected_adminTemplateManagementIndexRoute
   '/user-management': typeof _protected_adminUserManagementIndexRoute
   '/admin-settings/fields/$id': typeof _protected_adminAdminSettingsFieldsIdRoute
   '/admin-settings/ticket-types/$id': typeof _protected_adminAdminSettingsTicketTypesIdRoute
@@ -197,10 +181,8 @@ export interface FileRoutesByTo {
   '/': typeof _protectedIndexRoute
   '/settings/profile': typeof _protectedSettingsProfileRoute
   '/settings': typeof _protectedSettingsIndexRoute
-  '/template-management/create-template': typeof _protected_adminTemplateManagementCreateTemplateRoute
   '/user-management/create-user': typeof _protected_adminUserManagementCreateUserRoute
   '/admin-settings': typeof _protected_adminAdminSettingsIndexRoute
-  '/template-management': typeof _protected_adminTemplateManagementIndexRoute
   '/user-management': typeof _protected_adminUserManagementIndexRoute
   '/admin-settings/fields/$id': typeof _protected_adminAdminSettingsFieldsIdRoute
   '/admin-settings/ticket-types/$id': typeof _protected_adminAdminSettingsTicketTypesIdRoute
@@ -224,10 +206,8 @@ export interface FileRoutesById {
   '/__protected/settings/': typeof _protectedSettingsIndexRoute
   '/__protected/__admin/admin-settings/fields': typeof _protected_adminAdminSettingsFieldsRouteWithChildren
   '/__protected/__admin/admin-settings/ticket-types': typeof _protected_adminAdminSettingsTicketTypesRouteWithChildren
-  '/__protected/__admin/template-management/create-template': typeof _protected_adminTemplateManagementCreateTemplateRoute
   '/__protected/__admin/user-management/create-user': typeof _protected_adminUserManagementCreateUserRoute
   '/__protected/__admin/admin-settings/': typeof _protected_adminAdminSettingsIndexRoute
-  '/__protected/__admin/template-management/': typeof _protected_adminTemplateManagementIndexRoute
   '/__protected/__admin/user-management/': typeof _protected_adminUserManagementIndexRoute
   '/__protected/__admin/admin-settings/fields/$id': typeof _protected_adminAdminSettingsFieldsIdRoute
   '/__protected/__admin/admin-settings/ticket-types/$id': typeof _protected_adminAdminSettingsTicketTypesIdRoute
@@ -249,10 +229,8 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/admin-settings/fields'
     | '/admin-settings/ticket-types'
-    | '/template-management/create-template'
     | '/user-management/create-user'
     | '/admin-settings/'
-    | '/template-management'
     | '/user-management'
     | '/admin-settings/fields/$id'
     | '/admin-settings/ticket-types/$id'
@@ -268,10 +246,8 @@ export interface FileRouteTypes {
     | '/'
     | '/settings/profile'
     | '/settings'
-    | '/template-management/create-template'
     | '/user-management/create-user'
     | '/admin-settings'
-    | '/template-management'
     | '/user-management'
     | '/admin-settings/fields/$id'
     | '/admin-settings/ticket-types/$id'
@@ -294,10 +270,8 @@ export interface FileRouteTypes {
     | '/__protected/settings/'
     | '/__protected/__admin/admin-settings/fields'
     | '/__protected/__admin/admin-settings/ticket-types'
-    | '/__protected/__admin/template-management/create-template'
     | '/__protected/__admin/user-management/create-user'
     | '/__protected/__admin/admin-settings/'
-    | '/__protected/__admin/template-management/'
     | '/__protected/__admin/user-management/'
     | '/__protected/__admin/admin-settings/fields/$id'
     | '/__protected/__admin/admin-settings/ticket-types/$id'
@@ -404,13 +378,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof _protected_adminUserManagementIndexRouteImport
       parentRoute: typeof _protected_adminRoute
     }
-    '/__protected/__admin/template-management/': {
-      id: '/__protected/__admin/template-management/'
-      path: '/template-management'
-      fullPath: '/template-management'
-      preLoaderRoute: typeof _protected_adminTemplateManagementIndexRouteImport
-      parentRoute: typeof _protected_adminRoute
-    }
     '/__protected/__admin/admin-settings/': {
       id: '/__protected/__admin/admin-settings/'
       path: '/'
@@ -423,13 +390,6 @@ declare module '@tanstack/react-router' {
       path: '/user-management/create-user'
       fullPath: '/user-management/create-user'
       preLoaderRoute: typeof _protected_adminUserManagementCreateUserRouteImport
-      parentRoute: typeof _protected_adminRoute
-    }
-    '/__protected/__admin/template-management/create-template': {
-      id: '/__protected/__admin/template-management/create-template'
-      path: '/template-management/create-template'
-      fullPath: '/template-management/create-template'
-      preLoaderRoute: typeof _protected_adminTemplateManagementCreateTemplateRouteImport
       parentRoute: typeof _protected_adminRoute
     }
     '/__protected/__admin/admin-settings/ticket-types': {
@@ -557,9 +517,7 @@ const _protected_adminAdminSettingsRouteWithChildren =
 
 interface _protected_adminRouteChildren {
   _protected_adminAdminSettingsRoute: typeof _protected_adminAdminSettingsRouteWithChildren
-  _protected_adminTemplateManagementCreateTemplateRoute: typeof _protected_adminTemplateManagementCreateTemplateRoute
   _protected_adminUserManagementCreateUserRoute: typeof _protected_adminUserManagementCreateUserRoute
-  _protected_adminTemplateManagementIndexRoute: typeof _protected_adminTemplateManagementIndexRoute
   _protected_adminUserManagementIndexRoute: typeof _protected_adminUserManagementIndexRoute
   _protected_adminUserManagementEditUserIdRoute: typeof _protected_adminUserManagementEditUserIdRoute
 }
@@ -567,12 +525,8 @@ interface _protected_adminRouteChildren {
 const _protected_adminRouteChildren: _protected_adminRouteChildren = {
   _protected_adminAdminSettingsRoute:
     _protected_adminAdminSettingsRouteWithChildren,
-  _protected_adminTemplateManagementCreateTemplateRoute:
-    _protected_adminTemplateManagementCreateTemplateRoute,
   _protected_adminUserManagementCreateUserRoute:
     _protected_adminUserManagementCreateUserRoute,
-  _protected_adminTemplateManagementIndexRoute:
-    _protected_adminTemplateManagementIndexRoute,
   _protected_adminUserManagementIndexRoute:
     _protected_adminUserManagementIndexRoute,
   _protected_adminUserManagementEditUserIdRoute:
