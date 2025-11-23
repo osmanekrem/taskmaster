@@ -18,3 +18,26 @@ export const editFieldTypeSchema = z.object({
 
 export type EditFieldTypeSchema = z.infer<typeof editFieldTypeSchema>;
 
+export const getFieldTypeByIdRequestSchema = z.object({
+  fieldTypeId: idSchema,
+});
+
+export type GetFieldTypeByIdRequestSchema = z.infer<
+  typeof getFieldTypeByIdRequestSchema
+>;
+
+export const getFieldTypeWithOptionsByIdRequestSchema = z.object({
+  fieldTypeId: idSchema,
+});
+
+export type GetFieldTypeWithOptionsByIdRequestSchema = z.infer<
+  typeof getFieldTypeWithOptionsByIdRequestSchema
+>;
+
+export const deleteFieldTypeRequestSchema = z.object({
+  fieldTypeId: idSchema,
+});
+
+export type DeleteFieldTypeRequestSchema = z.infer<
+  typeof deleteFieldTypeRequestSchema
+>;

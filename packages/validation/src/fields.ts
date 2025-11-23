@@ -49,3 +49,67 @@ export const fieldWithDetailsSchema = z.object({
 
 export type FieldWithDetailsSchema = z.infer<typeof fieldWithDetailsSchema>;
 
+export const getFieldByIdRequestSchema = z.object({
+  fieldId: idSchema,
+});
+
+export type GetFieldByIdRequestSchema = z.infer<
+  typeof getFieldByIdRequestSchema
+>;
+
+export const deleteFieldRequestSchema = z.object({
+  fieldId: idSchema,
+});
+
+export type DeleteFieldRequestSchema = z.infer<typeof deleteFieldRequestSchema>;
+
+export const getSelectOptionsByFieldOptionIdRequestSchema = z.object({
+  fieldOptionId: idSchema,
+});
+
+export type GetSelectOptionsByFieldOptionIdRequestSchema = z.infer<
+  typeof getSelectOptionsByFieldOptionIdRequestSchema
+>;
+
+export const getSelectOptionsByFieldOptionIdsRequestSchema = z.object({
+  fieldOptionIds: z.array(idSchema),
+});
+
+export type GetSelectOptionsByFieldOptionIdsRequestSchema = z.infer<
+  typeof getSelectOptionsByFieldOptionIdsRequestSchema
+>;
+
+export const saveSelectOptionsRequestSchema = z.object({
+  fieldOptionId: idSchema,
+  options: z.array(selectOptionSchema),
+});
+
+export type SaveSelectOptionsRequestSchema = z.infer<
+  typeof saveSelectOptionsRequestSchema
+>;
+
+export const updateFieldOptionValueRequestSchema = z.object({
+  fieldOptionId: idSchema,
+  value: z.string(),
+});
+
+export type UpdateFieldOptionValueRequestSchema = z.infer<
+  typeof updateFieldOptionValueRequestSchema
+>;
+
+export const saveIssueTypeFieldsRequestSchema = z.object({
+  issueTypeId: idSchema,
+  fields: z.array(fieldWithDetailsSchema),
+});
+
+export type SaveIssueTypeFieldsRequestSchema = z.infer<
+  typeof saveIssueTypeFieldsRequestSchema
+>;
+
+export const getIssueTypeFieldsByIssueTypeIdRequestSchema = z.object({
+  issueTypeId: idSchema,
+});
+
+export type GetIssueTypeFieldsByIssueTypeIdRequestSchema = z.infer<
+  typeof getIssueTypeFieldsByIssueTypeIdRequestSchema
+>;
