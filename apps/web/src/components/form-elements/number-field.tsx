@@ -1,23 +1,27 @@
 import { FormField } from './form-field';
 import { Input } from '../ui/input';
+
 import type { FieldApi } from './types';
 
-type EmailFieldProps = {
+type NumberFieldProps = {
   field: FieldApi;
   label: string;
   [key: string]: any;
 };
 
-export const EmailField = ({ field, label, ...props }: EmailFieldProps) => {
+export const NumberField = ({ field, label, ...props }: NumberFieldProps) => {
   return (
     <FormField field={field} label={label}>
       <Input
         value={field.state.value}
-        onChange={(e) => field.handleChange(e.target.value)}
+        onChange={(e) => {
+          const value = e.target.value;
+          field.handleChange(value === '' ? '' : Number(value));
+        }}
         onBlur={field.handleBlur}
         name={field.name}
         id={field.name}
-        type='email'
+        type='number'
         {...props}
       />
     </FormField>

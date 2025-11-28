@@ -1,17 +1,6 @@
 import { FormField } from './form-field';
 import InputPassword from './input-password';
-
-type FieldApi = {
-  name: string;
-  state: {
-    value: string;
-    meta: {
-      errors: Array<{ message?: string } | undefined>;
-    };
-  };
-  handleBlur: () => void;
-  handleChange: (value: string) => void;
-};
+import type { FieldApi } from './types';
 
 type PasswordFieldProps = {
   field: FieldApi;

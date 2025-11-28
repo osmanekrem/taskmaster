@@ -1,17 +1,6 @@
 import { FormField } from './form-field';
 import { Textarea } from '../ui/textarea';
-
-type FieldApi = {
-  name: string;
-  state: {
-    value: string;
-    meta: {
-      errors: Array<{ message?: string } | undefined>;
-    };
-  };
-  handleBlur: () => void;
-  handleChange: (value: string) => void;
-};
+import type { FieldApi } from './types';
 
 type TextareaFieldProps = {
   field: FieldApi;

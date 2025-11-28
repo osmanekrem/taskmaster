@@ -1,17 +1,7 @@
 import { FormField } from './form-field';
 import { Input } from '../ui/input';
 
-type FieldApi = {
-  name: string;
-  state: {
-    value: string;
-    meta: {
-      errors: Array<{ message?: string } | undefined>;
-    };
-  };
-  handleBlur: () => void;
-  handleChange: (value: string) => void;
-};
+import type { FieldApi } from './types';
 
 type TextFieldProps = {
   field: FieldApi;
