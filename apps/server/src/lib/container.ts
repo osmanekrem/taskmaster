@@ -9,6 +9,8 @@ import { projectService } from '@/services/project-service';
 import { IssueService } from '@/services/issue-service';
 import { IssueRepository } from '@/repositories/issue-repository';
 import { ProjectRepository } from '@/repositories/project-repository';
+import { CommentService } from '@/services/comment-service';
+import { CommentRepository, AttachmentRepository } from '@/repositories/comment-repository';
 import type { DrizzleClient } from '@/lib/types/db';
 
 class Container {
@@ -21,6 +23,7 @@ class Container {
   private _workflowService: ReturnType<typeof workflowService> | null = null;
   private _projectService: ReturnType<typeof projectService> | null = null;
   private _issueService: IssueService | null = null;
+  private _commentService: CommentService | null = null;
 
   constructor(database: DrizzleClient = db) {
     this._db = database;
@@ -72,6 +75,16 @@ class Container {
       this._issueService = new IssueService(issueRepository, projectRepository);
     }
     return this._issueService;
+  }
+
+  get comment() {
+    if (!this._commentService) {
+      const commentRepository = new CommentRepository();
+      const attachmentRepository = new AttachmentRepository();
+      const issueRepository = new IssueRepository();
+      this._commentService = new CommentService(commentRepository, attachmentRepository, issueRepository);
+    }
+    return this._commentService;
   }
 
   static create(database?: DrizzleClient): Container {

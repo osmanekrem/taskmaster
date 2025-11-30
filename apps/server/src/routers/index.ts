@@ -7,6 +7,7 @@ import {statusesRouter} from "@/routers/statuses";
 import {workflowsRouter} from "@/routers/workflows";
 import {projectsRouter} from "@/routers/projects";
 import {issuesRouter} from "@/routers/issues";
+import {commentsRouter} from "@/routers/comments";
 
 export const appRouter = router({
     healthCheck: publicProcedure.query(() => {
@@ -26,5 +27,6 @@ export const appRouter = router({
     workflows: workflowsRouter,
     projects: projectsRouter,
     issues: issuesRouter,
+    comments: commentsRouter,
 });
 export type AppRouter = typeof appRouter;

@@ -23,6 +23,7 @@ export async function createContext({ context }: CreateContextOptions) {
       workflow: container.workflow,
       project: container.project,
       issue: container.issue,
+      comment: container.comment,
     },
   };
 }

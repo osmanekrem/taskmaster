@@ -67,6 +67,23 @@ export const ErrorMessages = {
   FIELD_VALUE_REQUIRED: 'Bu alan zorunludur',
   INVALID_FIELD_VALUE: 'Geçersiz alan değeri',
 
+  // Comment errors
+  COMMENT_NOT_FOUND: 'Yorum bulunamadı',
+  COMMENT_ALREADY_DELETED: 'Yorum zaten silinmiş',
+  CANNOT_EDIT_DELETED_COMMENT: 'Silinmiş yorum düzenlenemez',
+  CANNOT_REPLY_TO_DELETED_COMMENT: 'Silinmiş yoruma yanıt verilemez',
+  NOT_COMMENT_AUTHOR: 'Bu yorumu düzenleme yetkiniz yok',
+
+  // Attachment errors
+  ATTACHMENT_NOT_FOUND: 'Ek bulunamadı',
+  FILE_TOO_LARGE: 'Dosya boyutu çok büyük',
+  INVALID_FILE_TYPE: 'Geçersiz dosya türü',
+  UPLOAD_FAILED: 'Dosya yüklenemedi',
+
+  // Reaction errors
+  REACTION_ALREADY_EXISTS: 'Bu tepki zaten eklenmiş',
+  REACTION_NOT_FOUND: 'Tepki bulunamadı',
+
   NOT_FOUND: 'Kayıt bulunamadı',
   VALIDATION_ERROR: 'Geçersiz veri',
   CONFLICT: 'Çakışma hatası',
