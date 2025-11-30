@@ -15,6 +15,7 @@ import {
 import { user } from "./auth";
 import { issues } from "./issues";
 import { issueComments } from "./comments";
+import { projects } from "./projects";
 
 // =====================================================
 // ENUMS
@@ -45,6 +46,29 @@ export const notificationTypeEnum = pgEnum("notification_type", [
 	// Assignment events
 	"added_as_watcher",
 	"removed_as_watcher",
+	// Sprint events
+	"sprint_started",
+	"sprint_completed",
+	// Workflow events
+	"workflow_transition",
+]);
+
+/**
+ * Notification recipient types for notification schemes
+ * Defines WHO should receive notifications for each event
+ */
+export const notificationRecipientTypeEnum = pgEnum("notification_recipient_type", [
+	"current_assignee",       // User currently assigned to the issue
+	"reporter",               // User who created the issue
+	"project_lead",           // Project lead/owner
+	"component_lead",         // Component lead (future)
+	"all_watchers",           // All users watching the issue
+	"users_in_role",          // Users with a specific project role
+	"single_user",            // Specific named user
+	"group",                  // Specific user group
+	"custom_field_user",      // User stored in a custom field
+	"current_user",           // User who triggered the event (usually excluded)
+	"previous_assignee",      // Previously assigned user
 ]);
 
 /**
@@ -55,6 +79,177 @@ export const notificationChannelEnum = pgEnum("notification_channel", [
 	"email",
 	"push", // Future: mobile push notifications
 ]);
+
+// =====================================================
+// NOTIFICATION SCHEMES
+// =====================================================
+
+/**
+ * Notification Schemes Table
+ * Defines a reusable scheme that can be assigned to multiple projects
+ * Similar to Jira's Notification Schemes
+ */
+export const notificationSchemes = pgTable(
+	"notification_schemes",
+	{
+		id: uuid("id").primaryKey().defaultRandom(),
+
+		/**
+		 * Name of the notification scheme
+		 */
+		name: text("name").notNull(),
+
+		/**
+		 * Description of what this scheme is for
+		 */
+		description: text("description"),
+
+		/**
+		 * Whether this is the default scheme for new projects
+		 */
+		isDefault: boolean("is_default").notNull().default(false),
+
+		/**
+		 * System schemes cannot be deleted
+		 */
+		isSystem: boolean("is_system").notNull().default(false),
+
+		createdAt: timestamp("created_at").notNull().defaultNow(),
+		updatedAt: timestamp("updated_at").notNull().defaultNow(),
+	},
+	(table) => [
+		// Find default scheme quickly
+		index("notification_schemes_default_idx").on(table.isDefault),
+	],
+);
+
+/**
+ * Notification Scheme Events Table
+ * Defines which events trigger notifications and to whom
+ * Each row maps an event type to a set of recipients
+ */
+export const notificationSchemeEvents = pgTable(
+	"notification_scheme_events",
+	{
+		id: uuid("id").primaryKey().defaultRandom(),
+
+		/**
+		 * Parent notification scheme
+		 */
+		schemeId: uuid("scheme_id")
+			.notNull()
+			.references(() => notificationSchemes.id, { onDelete: "cascade" }),
+
+		/**
+		 * The event that triggers this notification
+		 */
+		eventType: notificationTypeEnum("event_type").notNull(),
+
+		/**
+		 * Type of recipient for this event
+		 */
+		recipientType: notificationRecipientTypeEnum("recipient_type").notNull(),
+
+		/**
+		 * Additional parameters for the recipient type:
+		 * - For 'single_user': { userId: 'xxx' }
+		 * - For 'users_in_role': { roleId: 'xxx' }
+		 * - For 'group': { groupId: 'xxx' }
+		 * - For 'custom_field_user': { fieldId: 'xxx' }
+		 */
+		recipientParams: jsonb("recipient_params").$type<RecipientParams>().default({}),
+
+		/**
+		 * Notification channels to use
+		 */
+		channels: jsonb("channels").$type<NotificationChannel[]>().notNull().default(["in_app"]),
+
+		/**
+		 * Whether this specific event mapping is enabled
+		 */
+		isEnabled: boolean("is_enabled").notNull().default(true),
+
+		createdAt: timestamp("created_at").notNull().defaultNow(),
+	},
+	(table) => [
+		// Find all event mappings for a scheme
+		index("notification_scheme_events_scheme_idx").on(table.schemeId),
+		// Find mappings by event type within a scheme
+		index("notification_scheme_events_event_idx").on(table.schemeId, table.eventType),
+		// Unique: each scheme can have multiple recipients for an event, but not duplicate recipient types
+		unique("notification_scheme_events_unique").on(
+			table.schemeId,
+			table.eventType,
+			table.recipientType,
+		),
+	],
+);
+
+export const notificationSchemesRelations = relations(notificationSchemes, ({ many }) => ({
+	events: many(notificationSchemeEvents),
+	projectAssignments: many(projectNotificationSchemes),
+}));
+
+export const notificationSchemeEventsRelations = relations(
+	notificationSchemeEvents,
+	({ one }) => ({
+		scheme: one(notificationSchemes, {
+			fields: [notificationSchemeEvents.schemeId],
+			references: [notificationSchemes.id],
+		}),
+	}),
+);
+
+// =====================================================
+// PROJECT NOTIFICATION SCHEMES (Junction)
+// =====================================================
+
+/**
+ * Project Notification Schemes Junction Table
+ * Links projects to their notification scheme
+ */
+export const projectNotificationSchemes = pgTable(
+	"project_notification_schemes",
+	{
+		id: uuid("id").primaryKey().defaultRandom(),
+
+		/**
+		 * Project that uses this scheme
+		 */
+		projectId: text("project_id")
+			.notNull()
+			.references(() => projects.id, { onDelete: "cascade" }),
+
+		/**
+		 * Notification scheme assigned to this project
+		 */
+		schemeId: uuid("scheme_id")
+			.notNull()
+			.references(() => notificationSchemes.id, { onDelete: "restrict" }),
+
+		createdAt: timestamp("created_at").notNull().defaultNow(),
+	},
+	(table) => [
+		// Each project can only have one notification scheme
+		unique("project_notification_schemes_project_unique").on(table.projectId),
+		// Find all projects using a scheme
+		index("project_notification_schemes_scheme_idx").on(table.schemeId),
+	],
+);
+
+export const projectNotificationSchemesRelations = relations(
+	projectNotificationSchemes,
+	({ one }) => ({
+		project: one(projects, {
+			fields: [projectNotificationSchemes.projectId],
+			references: [projects.id],
+		}),
+		scheme: one(notificationSchemes, {
+			fields: [projectNotificationSchemes.schemeId],
+			references: [notificationSchemes.id],
+		}),
+	}),
+);
 
 // =====================================================
 // ISSUE WATCHERS
@@ -427,3 +622,23 @@ export type NotificationChannel =
  * Digest frequency
  */
 export type DigestFrequency = "none" | "daily" | "weekly";
+
+/**
+ * Notification recipient type values
+ */
+export type NotificationRecipientType =
+	(typeof notificationRecipientTypeEnum.enumValues)[number];
+
+/**
+ * Parameters for recipient types that need additional configuration
+ */
+export interface RecipientParams {
+	// For 'single_user' recipient type
+	userId?: string;
+	// For 'users_in_role' recipient type
+	roleId?: string;
+	// For 'group' recipient type
+	groupId?: string;
+	// For 'custom_field_user' recipient type
+	fieldId?: string;
+}

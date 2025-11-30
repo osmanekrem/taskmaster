@@ -10,6 +10,13 @@ const envSchema = z.object({
   BETTER_AUTH_URL: z.string().min(1, 'BETTER_AUTH_URL must be a valid URL'),
   RESEND_API_KEY: z.string().min(1, 'RESEND_API_KEY is required'),
   RESEND_SMTP_FROM: z.string().optional(),
+  
+  // Redis configuration
+  REDIS_HOST: z.string().default('localhost'),
+  REDIS_PORT: z.coerce.number().default(6379),
+  REDIS_PASSWORD: z.string().optional(),
+  REDIS_DB: z.coerce.number().default(0),
+  REDIS_URL: z.string().optional(), // Alternative: full connection string
 });
 
 function validateEnv() {

@@ -1,0 +1,167 @@
+version: '3.8'
+
+services:
+  # =============================================================================
+  # PostgreSQL Database
+  # =============================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: taskmaster-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-taskmaster}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-taskmaster_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-taskmaster}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-taskmaster} -d ${POSTGRES_DB:-taskmaster}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - taskmaster-network
+
+  # =============================================================================
+  # Redis (for BullMQ job queues, caching, sessions)
+  # =============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: taskmaster-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      ${REDIS_PASSWORD:+--requirepass ${REDIS_PASSWORD}}
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - taskmaster-network
+
+  # =============================================================================
+  # TaskMaster Server (development)
+  # =============================================================================
+  server:
+    build:
+      context: .
+      dockerfile: apps/server/Dockerfile
+    container_name: taskmaster-server
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-taskmaster}:${POSTGRES_PASSWORD:-taskmaster_secret}@postgres:5432/${POSTGRES_DB:-taskmaster}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      REDIS_DB: 0
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3001}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+    ports:
+      - "${SERVER_PORT:-3001}:3001"
+    volumes:
+      # Development: mount source for hot reload
+      - ./apps/server/src:/app/apps/server/src:ro
+      - ./packages:/app/packages:ro
+    networks:
+      - taskmaster-network
+    profiles:
+      - development
+
+  # =============================================================================
+  # TaskMaster Web (development)
+  # =============================================================================
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: taskmaster-web
+    restart: unless-stopped
+    depends_on:
+      - server
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:3001}
+    ports:
+      - "${WEB_PORT:-5173}:5173"
+    volumes:
+      - ./apps/web/src:/app/apps/web/src:ro
+    networks:
+      - taskmaster-network
+    profiles:
+      - development
+
+  # =============================================================================
+  # Redis Commander (optional - for Redis debugging)
+  # =============================================================================
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: taskmaster-redis-commander
+    restart: unless-stopped
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOSTS: local:redis:6379${REDIS_PASSWORD:+:${REDIS_PASSWORD}}
+    ports:
+      - "${REDIS_COMMANDER_PORT:-8081}:8081"
+    networks:
+      - taskmaster-network
+    profiles:
+      - tools
+
+  # =============================================================================
+  # pgAdmin (optional - for PostgreSQL debugging)
+  # =============================================================================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: taskmaster-pgadmin
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@taskmaster.local}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "${PGADMIN_PORT:-8082}:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - taskmaster-network
+    profiles:
+      - tools
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  taskmaster-network:
+    driver: bridge
+
+# =============================================================================
+# Volumes
+# =============================================================================
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  pgadmin_data:
+    driver: local

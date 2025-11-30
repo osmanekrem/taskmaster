@@ -9,6 +9,7 @@ import {projectsRouter} from "@/routers/projects";
 import {issuesRouter} from "@/routers/issues";
 import {commentsRouter} from "@/routers/comments";
 import {notificationsRouter} from "@/routers/notifications";
+import {notificationSchemesRouter} from "@/routers/notification-schemes";
 import {permissionsRouter} from "@/routers/permissions";
 import {sprintsRouter} from "@/routers/sprints";
 
@@ -32,6 +33,7 @@ export const appRouter = router({
     issues: issuesRouter,
     comments: commentsRouter,
     notifications: notificationsRouter,
+    notificationSchemes: notificationSchemesRouter,
     permissions: permissionsRouter,
     sprints: sprintsRouter,
 });
