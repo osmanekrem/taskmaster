@@ -84,6 +84,14 @@ export const ErrorMessages = {
   REACTION_ALREADY_EXISTS: 'Bu tepki zaten eklenmiş',
   REACTION_NOT_FOUND: 'Tepki bulunamadı',
 
+  // Sprint errors
+  SPRINT_NOT_FOUND: 'Sprint bulunamadı',
+  SPRINT_ALREADY_ACTIVE: 'Bu projede zaten aktif bir sprint var',
+  CANNOT_START_SPRINT: 'Sadece planlanan sprint\'ler başlatılabilir',
+  CANNOT_COMPLETE_SPRINT: 'Sadece aktif sprint\'ler tamamlanabilir',
+  CANNOT_DELETE_ACTIVE_SPRINT: 'Aktif sprint silinemez',
+  ISSUE_ALREADY_IN_SPRINT: 'Bu issue zaten bir sprint\'te',
+
   NOT_FOUND: 'Kayıt bulunamadı',
   VALIDATION_ERROR: 'Geçersiz veri',
   CONFLICT: 'Çakışma hatası',
@@ -103,6 +111,9 @@ export const ERROR_MESSAGES = {
   SERVER_ERROR: 'Sunucu hatası. Lütfen daha sonra tekrar deneyin.',
   VALIDATION: 'Girdiğiniz bilgileri kontrol edin.',
   TIMEOUT: 'İstek zaman aşımına uğradı. Lütfen tekrar deneyin.',
+  
+  // Sprint errors
+  SPRINT_NOT_FOUND: 'Sprint bulunamadı',
 } as const;
 
 export const getErrorMessage = (error: unknown): string => {

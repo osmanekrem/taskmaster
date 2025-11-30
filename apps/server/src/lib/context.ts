@@ -1,7 +1,7 @@
 import type { Context as HonoContext } from "hono";
 import { auth } from "./auth";
 import { db } from "@/db";
-import { container } from "./container";
+import { container, Container } from "./container";
 
 export type CreateContextOptions = {
   context: HonoContext;
@@ -26,6 +26,10 @@ export async function createContext({ context }: CreateContextOptions) {
       comment: container.comment,
     },
   };
+}
+
+export function getContainer(): Container {
+  return container;
 }
 
 export type Context = Awaited<ReturnType<typeof createContext>>;

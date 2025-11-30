@@ -10,6 +10,7 @@ import {issuesRouter} from "@/routers/issues";
 import {commentsRouter} from "@/routers/comments";
 import {notificationsRouter} from "@/routers/notifications";
 import {permissionsRouter} from "@/routers/permissions";
+import {sprintsRouter} from "@/routers/sprints";
 
 export const appRouter = router({
     healthCheck: publicProcedure.query(() => {
@@ -32,5 +33,6 @@ export const appRouter = router({
     comments: commentsRouter,
     notifications: notificationsRouter,
     permissions: permissionsRouter,
+    sprints: sprintsRouter,
 });
 export type AppRouter = typeof appRouter;

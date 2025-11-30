@@ -515,6 +515,7 @@ export class IssueService {
     });
 
     const configuredFieldIds = new Set(configuredFields.map(cf => cf.fieldId));
+    const fieldSlugMap = new Map(configuredFields.map(cf => [cf.fieldId, cf.field?.slug]));
 
     // Validate all provided fields are configured for this issue type
     for (const fv of fieldValues) {
@@ -527,7 +528,33 @@ export class IssueService {
       // TODO: Add field value type validation based on field.fieldType
     }
 
-    // Set the values
+    // Set the field values in field_values table
     await this.issueRepository.setFieldValues(issueId, fieldValues);
+
+    // Sync cached fields (summary, story_points, priority)
+    const cacheUpdate: Record<string, unknown> = {};
+    const CACHED_FIELD_SLUGS = {
+      summary: 'summary',
+      story_points: 'storyPoints',
+      priority: 'priority',
+    } as const;
+
+    for (const fv of fieldValues) {
+      const slug = fieldSlugMap.get(fv.fieldId);
+      if (slug && slug in CACHED_FIELD_SLUGS) {
+        const cacheKey = CACHED_FIELD_SLUGS[slug as keyof typeof CACHED_FIELD_SLUGS];
+        // Story points should be number, others are strings
+        if (slug === 'story_points') {
+          cacheUpdate[cacheKey] = typeof fv.value === 'number' ? fv.value : null;
+        } else {
+          cacheUpdate[cacheKey] = typeof fv.value === 'string' ? fv.value : null;
+        }
+      }
+    }
+
+    // Update cached columns if any cached fields changed
+    if (Object.keys(cacheUpdate).length > 0) {
+      await this.issueRepository.update(issueId, cacheUpdate);
+    }
   }
 }

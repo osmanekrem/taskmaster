@@ -25,6 +25,7 @@ import {
   RoleMemberRepository,
   PermissionSchemeRepository,
 } from '@/repositories/permission-repository';
+import { SprintService } from '@/services/sprint-service';
 import type { DrizzleClient } from '@/lib/types/db';
 
 class Container {
@@ -40,6 +41,7 @@ class Container {
   private _commentService: CommentService | null = null;
   private _notificationService: NotificationService | null = null;
   private _permissionService: PermissionService | null = null;
+  private _sprintService: SprintService | null = null;
 
   constructor(database: DrizzleClient = db) {
     this._db = database;
@@ -133,6 +135,13 @@ class Container {
       );
     }
     return this._permissionService;
+  }
+
+  get sprint() {
+    if (!this._sprintService) {
+      this._sprintService = new SprintService();
+    }
+    return this._sprintService;
   }
 
   static create(database?: DrizzleClient): Container {

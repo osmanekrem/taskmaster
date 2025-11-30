@@ -185,6 +185,7 @@ async function seed() {
     .values([
       {
         name: 'Başlık',
+        slug: 'summary', // Critical: used for cache sync
         fieldType: 'text-input',
         icon: 'type',
         config: {
@@ -197,6 +198,7 @@ async function seed() {
       },
       {
         name: 'Açıklama',
+        slug: 'description',
         fieldType: 'text-area',
         icon: 'align-left',
         config: {
@@ -209,6 +211,7 @@ async function seed() {
       },
       {
         name: 'Öncelik',
+        slug: 'priority', // Critical: used for cache sync
         fieldType: 'single-select',
         icon: 'circle-alert',
         config: {
@@ -224,6 +227,7 @@ async function seed() {
       },
       {
         name: 'Durum',
+        slug: 'status_field',
         fieldType: 'single-select',
         icon: 'circle-check',
         config: {
@@ -239,6 +243,7 @@ async function seed() {
       },
       {
         name: 'Etiketler',
+        slug: 'labels',
         fieldType: 'multi-select',
         icon: 'tags',
         config: {
@@ -253,6 +258,7 @@ async function seed() {
       },
       {
         name: 'Atanan Kişi',
+        slug: 'assignee',
         fieldType: 'user-picker',
         icon: 'user',
         config: {
@@ -262,6 +268,7 @@ async function seed() {
       },
       {
         name: 'Tahmini Süre (saat)',
+        slug: 'estimated_hours',
         fieldType: 'number-input',
         icon: 'clock',
         config: {
@@ -273,7 +280,21 @@ async function seed() {
         options: [],
       },
       {
+        name: 'Story Points',
+        slug: 'story_points', // Critical: used for sprint analytics
+        fieldType: 'number-input',
+        icon: 'target',
+        config: {
+          ...getDefaultConfig('number-input'),
+          min: 0,
+          max: 100,
+          step: 1,
+        },
+        options: [],
+      },
+      {
         name: 'Bitiş Tarihi',
+        slug: 'due_date',
         fieldType: 'date-picker',
         icon: 'calendar',
         config: {
@@ -283,6 +304,7 @@ async function seed() {
       },
       {
         name: 'Aktif Mi?',
+        slug: 'is_active',
         fieldType: 'checkbox',
         icon: 'square-check',
         config: {
@@ -292,6 +314,7 @@ async function seed() {
       },
       {
         name: 'Referans URL',
+        slug: 'reference_url',
         fieldType: 'url-input',
         icon: 'link',
         config: {

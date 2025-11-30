@@ -60,6 +60,7 @@ export const fieldService = (drizzle: DrizzleClientOrTransaction = db) => {
 
       return await repository.create({
         name: data.name,
+        slug: data.slug,
         fieldType: data.fieldType,
         icon: data.icon,
         config: data.config ?? defaultConfig,

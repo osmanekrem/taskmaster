@@ -19,6 +19,7 @@ export type FieldSelectOptionSchema = z.infer<typeof fieldSelectOptionSchema>;
 // Create Field Schema
 export const createFieldSchema = z.object({
   name: z.string().min(1, 'Alan adı zorunludur'),
+  slug: z.string().min(1, 'Slug zorunludur').regex(/^[a-z][a-z0-9_]*$/, 'Slug sadece küçük harf, rakam ve alt çizgi içerebilir'),
   fieldType: z.string().min(1, 'Alan türü zorunludur'),
   icon: z.string().optional(),
   config: fieldConfigSchema,

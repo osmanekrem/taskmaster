@@ -1,4 +1,4 @@
-import { pgTable, text, jsonb, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, text, jsonb, timestamp, index } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { issueTypeFields } from './issue-type-fields';
 
@@ -6,6 +6,7 @@ import { issueTypeFields } from './issue-type-fields';
  * Fields - Global field tanımları
  * 
  * Her field tek bir kaynak olarak burada tanımlanır.
+ * slug: Field'ın unique identifier'ı (örn: 'summary', 'story_points', 'priority')
  * config: Field'ın varsayılan konfigürasyonu (isRequired, placeholder, vb.)
  * options: Select tipi field'lar için varsayılan seçenekler
  */
@@ -14,6 +15,7 @@ export const fields = pgTable('fields', {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: text('name').notNull(),
+  slug: text('slug').notNull().unique(), // Unique identifier for cache sync
   fieldType: text('field_type').notNull(), // 'text-input', 'single-select', etc.
   icon: text('icon'),
 
@@ -27,7 +29,9 @@ export const fields = pgTable('fields', {
 
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
-});
+}, (table) => ({
+  slugIdx: index('fields_slug_idx').on(table.slug),
+}));
 
 export const fieldsRelations = relations(fields, ({ many }) => ({
   issueTypeFields: many(issueTypeFields),

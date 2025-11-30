@@ -47,6 +47,20 @@ export const issues = pgTable('issues', {
   epicId: text('epic_id')
     .references((): any => issues.id, { onDelete: 'set null' }),
 
+  // =============================================================================
+  // DENORMALIZED CACHE FIELDS (synced from field_values for performance)
+  // =============================================================================
+  // These fields are cached copies of dynamic field values for:
+  // 1. Fast queries (no JOIN needed)
+  // 2. Sprint analytics (SUM, COUNT operations)
+  // 3. List/Board views (frequently accessed)
+  // Source of truth is still field_values - these are auto-synced
+  summary: text('summary'), // Cache: "Summary" field
+  description: text('description'), // Cache: "Description" field
+  storyPoints: integer('story_points'), // Cache: "Story Points" field
+  priority: text('priority'), // Cache: "Priority" field (e.g., "highest", "high", "medium", "low", "lowest")
+  labels: jsonb('labels').$type<string[]>(), // Cache: "Labels" field
+
   // Timestamps
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -63,6 +77,9 @@ export const issues = pgTable('issues', {
   // Composite indexes for common queries
   projectStatusIdx: index('issues_project_status_idx').on(table.projectId, table.statusId),
   projectTypeIdx: index('issues_project_type_idx').on(table.projectId, table.issueTypeId),
+  // Cache field indexes
+  storyPointsIdx: index('issues_story_points_idx').on(table.storyPoints),
+  priorityIdx: index('issues_priority_idx').on(table.priority),
   // Unique constraint: issue number per project
   uniqueProjectIssueNumber: unique('issues_project_number_unique').on(table.projectId, table.issueNumber),
 }));

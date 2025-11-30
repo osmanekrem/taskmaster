@@ -34,6 +34,7 @@ export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
       .insert(fields)
       .values({
         name: input.name,
+        slug: input.slug,
         fieldType: input.fieldType,
         icon: input.icon,
         config: input.config ?? {},
