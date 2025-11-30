@@ -42,6 +42,9 @@ export const ErrorMessages = {
   // Transition errors
   TRANSITION_NOT_FOUND: 'Transition bulunamadı',
   INVALID_TRANSITION: 'Bu geçiş izin verilmiyor',
+  TRANSITION_FAILED: 'Transition başarısız oldu',
+  TRANSITION_CONDITION_FAILED: 'Transition koşulu sağlanamadı',
+  TRANSITION_VALIDATION_FAILED: 'Transition doğrulaması başarısız',
 
   // Project errors
   PROJECT_NOT_FOUND: 'Proje bulunamadı',

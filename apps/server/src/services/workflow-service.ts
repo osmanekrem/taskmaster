@@ -1,6 +1,7 @@
 import { db } from '@/db';
 import { workflowRepository } from '@/repositories/workflow-repository';
 import { statusRepository } from '@/repositories/status-repository';
+import { IssueRepository } from '@/repositories/issue-repository';
 import type {
   CreateWorkflowSchema,
   UpdateWorkflowSchema,
@@ -19,6 +20,16 @@ import type {
 } from '@taskmaster/validation';
 import { throwNotFoundError, throwValidationError, throwConflictError } from '@/lib/errors';
 import type { DrizzleClientOrTransaction } from '@/lib/types/db';
+import {
+  WorkflowEngine,
+  createWorkflowEngine,
+  type WorkflowTransition,
+  type WorkflowContext,
+  type TransitionRequest,
+  type Condition,
+  type Validator,
+  type PostFunction,
+} from '@/engine/workflow';
 
 export const workflowService = (drizzle: DrizzleClientOrTransaction = db) => {
   const repository = workflowRepository(drizzle);
@@ -381,6 +392,192 @@ export const workflowService = (drizzle: DrizzleClientOrTransaction = db) => {
       }
 
       return validTransition;
+    },
+
+    // =============================================================================
+    // WORKFLOW ENGINE INTEGRATION
+    // =============================================================================
+
+    /**
+     * Create a WorkflowEngine instance loaded with transitions for a workflow
+     */
+    createEngineForWorkflow: async (workflowId: string): Promise<WorkflowEngine> => {
+      const transitions = await repository.findTransitionsByWorkflow(workflowId);
+      const engine = createWorkflowEngine();
+      
+      // Map DB transitions to engine format
+      const engineTransitions: WorkflowTransition[] = transitions.map(t => ({
+        id: t.id,
+        name: t.name,
+        fromStatusId: t.fromStatusId,
+        toStatusId: t.toStatusId,
+        conditions: (t.conditions || []) as Condition[],
+        validators: (t.validators || []) as Validator[],
+        postFunctions: (t.postFunctions || []) as PostFunction[],
+        screenId: t.screenId ?? undefined,
+      }));
+      
+      engine.loadTransitions(engineTransitions);
+      return engine;
+    },
+
+    /**
+     * Get available transitions for an issue using the workflow engine
+     * Evaluates conditions to determine which transitions the user can execute
+     */
+    getAvailableTransitionsForIssue: async (input: {
+      issueId: string;
+      userId: string;
+      workflowId: string;
+    }) => {
+      const { issueId, userId, workflowId } = input;
+      const issueRepo = new IssueRepository();
+      
+      // Get issue
+      const issue = await issueRepo.findById(issueId);
+      if (!issue) {
+        throwNotFoundError('ISSUE_NOT_FOUND', { issueId });
+      }
+      
+      // Create engine
+      const engine = await workflowService(drizzle).createEngineForWorkflow(workflowId);
+      
+      // Build context
+      const context: Omit<WorkflowContext, 'transitionId' | 'toStatusId'> = {
+        userId,
+        issue: issue as any, // Type will be properly aligned
+        projectId: issue.projectId,
+        fromStatusId: issue.statusId,
+      };
+      
+      // Get available transitions
+      const available = await engine.getAvailableTransitions(context);
+      
+      // Enrich with status names
+      const statusesMap = new Map<string, string>();
+      const statuses = await repository.findWorkflowStatuses(workflowId);
+      for (const ws of statuses) {
+        if (ws.status) {
+          statusesMap.set(ws.statusId, ws.status.name);
+        }
+      }
+      
+      return available.map(t => ({
+        ...t,
+        toStatusName: statusesMap.get(t.toStatusId),
+      }));
+    },
+
+    /**
+     * Execute a workflow transition on an issue
+     * Validates conditions and validators, then executes post-functions
+     */
+    executeTransition: async (input: {
+      issueId: string;
+      userId: string;
+      workflowId: string;
+      transitionId: string;
+      screenData?: Record<string, unknown>;
+      fieldValues?: Record<string, unknown>;
+      resolutionId?: string | null;
+      comment?: string;
+    }) => {
+      const { issueId, userId, workflowId, transitionId, ...rest } = input;
+      const issueRepo = new IssueRepository();
+      
+      // Get issue
+      const issue = await issueRepo.findById(issueId);
+      if (!issue) {
+        throwNotFoundError('ISSUE_NOT_FOUND', { issueId });
+      }
+      
+      // Create engine
+      const engine = await workflowService(drizzle).createEngineForWorkflow(workflowId);
+      
+      // Build context
+      const baseContext: Omit<WorkflowContext, 'transitionId' | 'toStatusId' | 'screenData' | 'fieldValues' | 'resolutionId' | 'comment'> = {
+        userId,
+        issue: issue as any,
+        projectId: issue.projectId,
+        fromStatusId: issue.statusId,
+      };
+      
+      // Build request
+      const request: TransitionRequest = {
+        transitionId,
+        screenData: rest.screenData,
+        fieldValues: rest.fieldValues,
+        resolutionId: rest.resolutionId,
+        comment: rest.comment,
+      };
+      
+      // Execute transition
+      const result = await engine.executeTransition(request, baseContext);
+      
+      if (!result.success) {
+        throwValidationError('TRANSITION_FAILED', {
+          errors: result.errors,
+          conditionFailures: result.conditionResults.filter(r => !r.passed),
+          validationFailures: result.validatorResults.filter(r => !r.valid),
+        });
+      }
+      
+      // Get transition to know target status
+      const transition = engine.getTransition(transitionId);
+      
+      return {
+        success: true,
+        toStatusId: transition?.toStatusId,
+        changes: result.changes,
+        postFunctionChanges: (result as any).issueUpdates || {},
+        comments: (result as any).comments || [],
+        notifications: (result as any).notifications || [],
+        events: (result as any).events || [],
+      };
+    },
+
+    /**
+     * Validate a transition without executing it
+     */
+    validateTransitionRequest: async (input: {
+      issueId: string;
+      userId: string;
+      workflowId: string;
+      transitionId: string;
+      screenData?: Record<string, unknown>;
+      fieldValues?: Record<string, unknown>;
+      resolutionId?: string | null;
+    }) => {
+      const { issueId, userId, workflowId, transitionId, ...rest } = input;
+      const issueRepo = new IssueRepository();
+      
+      // Get issue
+      const issue = await issueRepo.findById(issueId);
+      if (!issue) {
+        throwNotFoundError('ISSUE_NOT_FOUND', { issueId });
+      }
+      
+      // Create engine
+      const engine = await workflowService(drizzle).createEngineForWorkflow(workflowId);
+      
+      // Build context
+      const baseContext: Omit<WorkflowContext, 'transitionId' | 'toStatusId' | 'screenData' | 'fieldValues' | 'resolutionId' | 'comment'> = {
+        userId,
+        issue: issue as any,
+        projectId: issue.projectId,
+        fromStatusId: issue.statusId,
+      };
+      
+      // Build request
+      const request: TransitionRequest = {
+        transitionId,
+        screenData: rest.screenData,
+        fieldValues: rest.fieldValues,
+        resolutionId: rest.resolutionId,
+      };
+      
+      // Validate
+      return await engine.validateTransitionRequest(request, baseContext);
     },
   };
 };

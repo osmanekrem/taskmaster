@@ -15,6 +15,9 @@ import {
   deleteTransitionSchema,
   getTransitionsByWorkflowSchema,
   getAvailableTransitionsSchema,
+  getAvailableTransitionsForIssueSchema,
+  executeTransitionSchema,
+  validateTransitionRequestSchema,
 } from '@taskmaster/validation';
 import { requirePermission } from '@/lib/middleware/permission';
 
@@ -203,5 +206,52 @@ export const workflowsRouter = router({
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.workflow.deleteTransition(input);
       return successResponse(data, 'Transition başarıyla silindi');
+    }),
+
+  // =============================================================================
+  // WORKFLOW ENGINE ENDPOINTS
+  // =============================================================================
+
+  /**
+   * Get available transitions for an issue using the workflow engine
+   * Evaluates conditions to determine which transitions the user can execute
+   */
+  getAvailableTransitionsForIssue: protectedProcedure
+    .input(getAvailableTransitionsForIssueSchema)
+    .use(requirePermission('issue:view'))
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.services.workflow.getAvailableTransitionsForIssue({
+        ...input,
+        userId: ctx.session!.user.id,
+      });
+      return successResponse(data, 'Mevcut transition\'lar başarıyla getirildi');
+    }),
+
+  /**
+   * Execute a workflow transition on an issue
+   */
+  executeTransition: protectedProcedure
+    .input(executeTransitionSchema)
+    .use(requirePermission('issue:edit'))
+    .mutation(async ({ ctx, input }) => {
+      const data = await ctx.services.workflow.executeTransition({
+        ...input,
+        userId: ctx.session!.user.id,
+      });
+      return successResponse(data, 'Transition başarıyla çalıştırıldı');
+    }),
+
+  /**
+   * Validate a transition without executing it
+   */
+  validateTransitionRequest: protectedProcedure
+    .input(validateTransitionRequestSchema)
+    .use(requirePermission('issue:view'))
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.services.workflow.validateTransitionRequest({
+        ...input,
+        userId: ctx.session!.user.id,
+      });
+      return successResponse(data, 'Transition doğrulaması tamamlandı');
     }),
 });

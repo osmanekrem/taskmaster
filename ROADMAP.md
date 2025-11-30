@@ -91,44 +91,71 @@
 
 ---
 
-### Phase 3: Workflow Engine (7-8 gün)
+### Phase 3: Workflow Engine (7-8 gün) ✅ TAMAMLANDI
 > **Jira: 30% → 42%** | **Öncelik: YÜKSEK**
 
-- [ ] Engine yapısı (`/engine/workflow/`)
-- [ ] **Typed conditions:**
-  - [ ] `user_in_project_role`
-  - [ ] `user_is_assignee`
-  - [ ] `user_is_reporter`
-  - [ ] `field_has_value`
-  - [ ] `field_is_empty`
-  - [ ] `issue_in_sprint`
-  - [ ] `issue_has_subtasks`
-  - [ ] `all_subtasks_resolved`
-  - [ ] `permission_check`
-  - [ ] `separation_of_duties`
-- [ ] **Typed validators:**
-  - [ ] `field_required`
-  - [ ] `resolution_set`
-  - [ ] `field_changed`
-  - [ ] `date_comparison`
-  - [ ] `regex_check`
-  - [ ] `previous_status`
-  - [ ] `parent_status`
-  - [ ] `numeric_range`
-- [ ] **Typed post-functions:**
-  - [ ] `set_field`
-  - [ ] `clear_field`
-  - [ ] `assign_to_reporter`
-  - [ ] `assign_to_lead`
-  - [ ] `assign_to_current_user`
-  - [ ] `trigger_notification`
-  - [ ] `add_comment`
-  - [ ] `copy_field_value`
-  - [ ] `create_linked_issue`
-  - [ ] `fire_event`
-  - [ ] `update_change_history`
-- [ ] Field value validation servisi
-- [ ] Draft workflows support
+- [x] Engine yapısı (`/engine/workflow/`)
+  - [x] `/engine/workflow/types.ts` - WorkflowContext, Condition, Validator, PostFunction types
+  - [x] `/engine/workflow/conditions.ts` - Condition handlers with registry
+  - [x] `/engine/workflow/validators.ts` - Validator handlers with registry
+  - [x] `/engine/workflow/post-functions.ts` - PostFunction handlers with registry
+  - [x] `/engine/workflow/engine.ts` - WorkflowEngine class
+  - [x] `/engine/workflow/index.ts` - Public API exports
+- [x] **Typed conditions:**
+  - [x] `user_in_project_role`
+  - [x] `user_is_assignee`
+  - [x] `user_is_reporter`
+  - [x] `user_has_permission`
+  - [x] `only_subtasks`
+  - [x] `only_standard_issues`
+  - [x] `parent_status`
+  - [x] `separation_of_duties`
+- [x] **Typed validators:**
+  - [x] `field_required`
+  - [x] `field_is_empty`
+  - [x] `field_has_value`
+  - [x] `field_changed`
+  - [x] `resolution_set`
+  - [x] `date_comparison`
+  - [x] `regex_check`
+  - [x] `numeric_range`
+  - [x] `previous_status`
+  - [x] `all_subtasks_resolved`
+  - [x] `parent_status_check`
+  - [x] `linked_issues_resolved`
+- [x] **Typed post-functions:**
+  - [x] `set_field`
+  - [x] `clear_field`
+  - [x] `copy_field_value`
+  - [x] `assign_to_reporter`
+  - [x] `assign_to_lead`
+  - [x] `assign_to_current_user`
+  - [x] `unassign`
+  - [x] `set_resolution`
+  - [x] `clear_resolution`
+  - [x] `add_comment`
+  - [x] `add_watcher`
+  - [x] `remove_watcher`
+  - [x] `trigger_notification`
+  - [x] `fire_event`
+  - [x] `update_change_history`
+  - [x] `set_due_date`
+  - [x] `move_to_sprint`
+- [x] Service entegrasyonu
+  - [x] `workflowService.createEngineForWorkflow()` 
+  - [x] `workflowService.getAvailableTransitionsForIssue()`
+  - [x] `workflowService.executeTransition()`
+  - [x] `workflowService.validateTransitionRequest()`
+- [x] Router endpoint'leri
+  - [x] `getAvailableTransitionsForIssue` - Issue için mevcut transition'ları getir
+  - [x] `executeTransition` - Transition çalıştır
+  - [x] `validateTransitionRequest` - Transition'ı doğrula
+- [x] Validation schema'ları
+  - [x] `executeTransitionSchema`
+  - [x] `validateTransitionRequestSchema`
+  - [x] `getAvailableTransitionsForIssueSchema`
+- [ ] Field value validation servisi (**Ertelendi:** Gerçek custom field entegrasyonu ile)
+- [ ] Draft workflows support (**Ertelendi:** Advanced phases)
 
 ---
 

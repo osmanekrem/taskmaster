@@ -206,3 +206,47 @@ export const getAvailableTransitionsSchema = z.object({
 });
 
 export type GetAvailableTransitionsSchema = z.infer<typeof getAvailableTransitionsSchema>;
+
+// =============================================================================
+// WORKFLOW ENGINE SCHEMAS
+// =============================================================================
+
+/**
+ * Get available transitions for an issue using the workflow engine
+ * This evaluates conditions to determine which transitions the user can execute
+ */
+export const getAvailableTransitionsForIssueSchema = z.object({
+  issueId: idSchema,
+  workflowId: idSchema,
+});
+
+export type GetAvailableTransitionsForIssueSchema = z.infer<typeof getAvailableTransitionsForIssueSchema>;
+
+/**
+ * Execute a workflow transition on an issue
+ */
+export const executeTransitionSchema = z.object({
+  issueId: idSchema,
+  workflowId: idSchema,
+  transitionId: idSchema,
+  screenData: z.record(z.string(), z.unknown()).optional(),
+  fieldValues: z.record(z.string(), z.unknown()).optional(),
+  resolutionId: idSchema.optional().nullable(),
+  comment: z.string().max(10000).optional(),
+});
+
+export type ExecuteTransitionSchema = z.infer<typeof executeTransitionSchema>;
+
+/**
+ * Validate a transition without executing it
+ */
+export const validateTransitionRequestSchema = z.object({
+  issueId: idSchema,
+  workflowId: idSchema,
+  transitionId: idSchema,
+  screenData: z.record(z.string(), z.unknown()).optional(),
+  fieldValues: z.record(z.string(), z.unknown()).optional(),
+  resolutionId: idSchema.optional().nullable(),
+});
+
+export type ValidateTransitionRequestSchema = z.infer<typeof validateTransitionRequestSchema>;
