@@ -1,4 +1,4 @@
-import { fields, type FieldConfig, type FieldSelectOption } from '@/db/schema/field';
+import { fields } from '@/db/schema/field';
 import { issueTypeFields } from '@/db/schema/issue-type-fields';
 import { db } from '@/db';
 import { and, asc, eq } from 'drizzle-orm';
@@ -43,7 +43,7 @@ export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
     return result;
   },
 
-  update: async (id: string, input: Omit<EditFieldSchema, 'fieldId'>) => {
+  update: async (input: EditFieldSchema) => {
     const updateData: Record<string, unknown> = {
       updatedAt: new Date(),
     };
@@ -56,7 +56,7 @@ export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
     const [result] = await drizzle
       .update(fields)
       .set(updateData)
-      .where(eq(fields.id, id))
+      .where(eq(fields.id, input.fieldId))
       .returning();
     return result;
   },
@@ -99,18 +99,17 @@ export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
     }),
 
   addFieldToIssueType: async (
-    issueTypeId: string, 
-    fieldId: string, 
-    options?: Omit<AddFieldToIssueTypeRequestSchema, 'issueTypeId' | 'fieldId'>
+    input: AddFieldToIssueTypeRequestSchema
   ) => {
+    const { issueTypeId, fieldId, order, configOverride, optionsOverride } = input;
     const [result] = await drizzle
       .insert(issueTypeFields)
       .values({
         issueTypeId,
         fieldId,
-        order: options?.order ?? 0,
-        configOverride: options?.configOverride,
-        optionsOverride: options?.optionsOverride,
+        order: order ?? 0,
+        configOverride,
+        optionsOverride,
       })
       .returning();
     return result;

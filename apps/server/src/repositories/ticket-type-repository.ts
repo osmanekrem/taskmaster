@@ -37,12 +37,12 @@ export const ticketTypeRepository = (drizzle: DrizzleClient = db) => ({
   },
 
   update: async (
-    id: string,
-    values: Omit<EditTicketTypeSchema, 'ticketTypeId'>,
+    input: EditTicketTypeSchema,  
   ) => {
+    const { ticketTypeId: id, ...data } = input;
     const [result] = await drizzle
       .update(issueTypes)
-      .set(values)
+      .set(data)
       .where(eq(issueTypes.id, id))
       .returning();
     return result;

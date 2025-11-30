@@ -76,8 +76,7 @@ export const fieldService = (drizzle: DrizzleClientOrTransaction = db) => {
         throwNotFoundError('FIELD_NOT_FOUND', { fieldId: data.fieldId });
       }
 
-      const { fieldId, ...updateData } = data;
-      return await repository.update(fieldId, updateData);
+      return await repository.update(data);
     },
 
     /**
@@ -153,7 +152,9 @@ export const fieldService = (drizzle: DrizzleClientOrTransaction = db) => {
             });
           } else {
             // Add new field
-            await repo.addFieldToIssueType(input.issueTypeId, field.fieldId, {
+            await repo.addFieldToIssueType({
+              issueTypeId: input.issueTypeId,
+              fieldId: field.fieldId,
               order,
               configOverride: field.configOverride,
               optionsOverride: field.optionsOverride,
@@ -214,7 +215,9 @@ export const fieldService = (drizzle: DrizzleClientOrTransaction = db) => {
         throw new Error('Field is already assigned to this issue type');
       }
 
-      return await repository.addFieldToIssueType(issueTypeId, fieldId, {
+      return await repository.addFieldToIssueType({
+        issueTypeId,
+        fieldId,
         order,
         configOverride,
         optionsOverride,

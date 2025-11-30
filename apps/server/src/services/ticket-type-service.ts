@@ -48,8 +48,7 @@ export const ticketTypeService = (drizzle: DrizzleClient = db) => {
         });
       }
 
-      const { ticketTypeId, ...updateData } = data;
-      return await repository.update(ticketTypeId, updateData);
+      return await repository.update(data);
     },
 
     deleteTicketType: async (input: DeleteTicketTypeRequestSchema) => {
