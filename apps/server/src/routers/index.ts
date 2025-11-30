@@ -8,6 +8,7 @@ import {workflowsRouter} from "@/routers/workflows";
 import {projectsRouter} from "@/routers/projects";
 import {issuesRouter} from "@/routers/issues";
 import {commentsRouter} from "@/routers/comments";
+import {notificationsRouter} from "@/routers/notifications";
 
 export const appRouter = router({
     healthCheck: publicProcedure.query(() => {
@@ -28,5 +29,6 @@ export const appRouter = router({
     projects: projectsRouter,
     issues: issuesRouter,
     comments: commentsRouter,
+    notifications: notificationsRouter,
 });
 export type AppRouter = typeof appRouter;

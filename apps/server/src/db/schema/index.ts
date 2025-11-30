@@ -8,3 +8,4 @@ export * from './projects';
 export * from './workflows';
 export * from './issues';
 export * from './comments';
+export * from './notifications';

@@ -11,6 +11,13 @@ import { IssueRepository } from '@/repositories/issue-repository';
 import { ProjectRepository } from '@/repositories/project-repository';
 import { CommentService } from '@/services/comment-service';
 import { CommentRepository, AttachmentRepository } from '@/repositories/comment-repository';
+import { NotificationService } from '@/services/notification-service';
+import {
+  WatcherRepository,
+  NotificationRepository,
+  NotificationPreferencesRepository,
+  DigestSettingsRepository,
+} from '@/repositories/notification-repository';
 import type { DrizzleClient } from '@/lib/types/db';
 
 class Container {
@@ -24,6 +31,7 @@ class Container {
   private _projectService: ReturnType<typeof projectService> | null = null;
   private _issueService: IssueService | null = null;
   private _commentService: CommentService | null = null;
+  private _notificationService: NotificationService | null = null;
 
   constructor(database: DrizzleClient = db) {
     this._db = database;
@@ -85,6 +93,22 @@ class Container {
       this._commentService = new CommentService(commentRepository, attachmentRepository, issueRepository);
     }
     return this._commentService;
+  }
+
+  get notification() {
+    if (!this._notificationService) {
+      const notificationRepo = new NotificationRepository();
+      const watcherRepo = new WatcherRepository();
+      const preferencesRepo = new NotificationPreferencesRepository();
+      const digestRepo = new DigestSettingsRepository();
+      this._notificationService = new NotificationService(
+        notificationRepo,
+        watcherRepo,
+        preferencesRepo,
+        digestRepo,
+      );
+    }
+    return this._notificationService;
   }
 
   static create(database?: DrizzleClient): Container {
