@@ -18,6 +18,13 @@ import {
   NotificationPreferencesRepository,
   DigestSettingsRepository,
 } from '@/repositories/notification-repository';
+import { PermissionService } from '@/services/permission-service';
+import {
+  RoleRepository,
+  RolePermissionRepository,
+  RoleMemberRepository,
+  PermissionSchemeRepository,
+} from '@/repositories/permission-repository';
 import type { DrizzleClient } from '@/lib/types/db';
 
 class Container {
@@ -32,6 +39,7 @@ class Container {
   private _issueService: IssueService | null = null;
   private _commentService: CommentService | null = null;
   private _notificationService: NotificationService | null = null;
+  private _permissionService: PermissionService | null = null;
 
   constructor(database: DrizzleClient = db) {
     this._db = database;
@@ -109,6 +117,22 @@ class Container {
       );
     }
     return this._notificationService;
+  }
+
+  get permission() {
+    if (!this._permissionService) {
+      const roleRepo = new RoleRepository();
+      const permissionRepo = new RolePermissionRepository();
+      const memberRepo = new RoleMemberRepository();
+      const schemeRepo = new PermissionSchemeRepository();
+      this._permissionService = new PermissionService(
+        roleRepo,
+        permissionRepo,
+        memberRepo,
+        schemeRepo,
+      );
+    }
+    return this._permissionService;
   }
 
   static create(database?: DrizzleClient): Container {

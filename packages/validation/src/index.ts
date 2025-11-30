@@ -11,4 +11,5 @@ export * from './projects';
 export * from './issues';
 export * from './comments';
 export * from './notifications';
+export * from './permissions';
 export * from './response';
