@@ -159,59 +159,91 @@
 
 ---
 
-### Phase 4: Queue & Notifications (5-6 gün)
+### Phase 4: Queue & Notifications (5-6 gün) ✅ TAMAMLANDI
 > **Jira: 42% → 48%** | **Öncelik: ORTA**
 
-- [ ] BullMQ + Redis kurulum
-- [ ] Docker Compose (PostgreSQL + Redis + App)
-- [ ] Job queues:
-  - [ ] Notification queue
-  - [ ] Email queue
-- [ ] Event bus → Queue entegrasyonu
-- [ ] **Notification schemes:**
-  - [ ] `notification_schemes` tablosu
-  - [ ] `notification_scheme_events` (scheme_id, event_type, recipients)
-  - [ ] Project → Scheme assignment
-- [ ] **Recipient types:**
-  - [ ] Current Assignee
-  - [ ] Reporter
-  - [ ] Project Lead
-  - [ ] Component Lead
-  - [ ] All Watchers
-  - [ ] Users in Role
-  - [ ] Single User
-  - [ ] Group Custom Field Value
-- [ ] User notification preferences:
-  - [ ] Per-project preferences
-  - [ ] Batch/digest settings
+- [x] BullMQ + Redis kurulum
+  - [x] `bun add bullmq@5.65.0 ioredis@5.8.2`
+  - [x] `/lib/redis.ts` - Redis connection management
+- [x] Docker Compose (PostgreSQL + Redis + App)
+  - [x] PostgreSQL, Redis, pgAdmin, Redis Commander
+- [x] Job queues:
+  - [x] `/lib/queue/index.ts` - Queue infrastructure
+  - [x] NotificationQueue (19 notification types)
+  - [x] EmailQueue
+- [x] Workers:
+  - [x] `/workers/notification-worker.ts` - In-app notification processor
+  - [x] `/workers/email-worker.ts` - Email processor via Resend
+- [x] Event bus → Queue entegrasyonu
+  - [x] `/lib/events/event-to-queue.ts` - EventBus → Queue bridge
+- [x] **Notification schemes:**
+  - [x] `notification_schemes` tablosu
+  - [x] `notification_scheme_events` (scheme_id, event_type, recipient_type, channels)
+  - [x] `project_notification_schemes` - Project → Scheme assignment
+  - [x] Default/Minimal/Aggressive scheme seeds
+- [x] **Recipient types:**
+  - [x] Current Assignee
+  - [x] Reporter
+  - [x] Project Lead
+  - [x] Component Lead
+  - [x] All Watchers
+  - [x] Users in Role
+  - [x] Single User
+  - [x] Group Custom Field Value
+  - [x] Previous Assignee
+  - [x] Sprint Team Members
+  - [x] Mentioned Users
+  - [x] All Project Members
+- [x] Repository + Service + Router
+  - [x] `notification-scheme-repository.ts` (12 methods)
+  - [x] `notificationSchemesRouter` (12 endpoints)
 
 ---
 
-### Phase 5: Core Schemas (6-7 gün)
+### Phase 5: Core Schemas (6-7 gün) ✅ TAMAMLANDI
 > **Jira: 48% → 58%** | **Öncelik: ORTA**
 
-- [ ] **Issue Links:**
-  - [ ] `issue_link_types` (name, inward_name, outward_name)
-  - [ ] Default types: Blocks, Clones, Duplicates, Relates to, Causes
-  - [ ] `issue_links` (source, target, type)
-  - [ ] Service + Router + Validation
-- [ ] **Components:**
-  - [ ] `components` (project_id, name, lead_id, description, default_assignee)
-  - [ ] `issue_components` junction
-  - [ ] Archive components
-- [ ] **Versions:**
-  - [ ] `versions` (project_id, name, description, start_date, release_date, released, archived)
-  - [ ] `issue_fix_versions` junction
-  - [ ] `issue_affected_versions` junction
-  - [ ] Merge versions
-- [ ] **Labels (proper entity):**
-  - [ ] `labels` (project_id, name, color)
-  - [ ] `issue_labels` junction
-- [ ] **Issue operations:**
+- [x] **Issue Links:**
+  - [x] `issue_link_types` (name, inward_name, outward_name)
+  - [x] Default types: Blocks, Clones, Duplicates, Relates to, Causes, Parent-Child
+  - [x] `issue_links` (source, target, type, created_by)
+  - [x] `IssueLinkRepository` + `IssueLinkService` + `issueLinksRouter` (10 endpoints)
+  - [x] Blocking issues queries
+- [x] **Components:**
+  - [x] `components` (project_id, name, lead_id, description, default_assignee)
+  - [x] `issue_components` junction
+  - [x] `ComponentRepository` + `ComponentService` + `componentsRouter` (12 endpoints)
+- [x] **Versions:**
+  - [x] `versions` (project_id, name, description, start_date, release_date, status: unreleased/released/archived)
+  - [x] `issue_fix_versions` junction
+  - [x] `issue_affected_versions` junction
+  - [x] `VersionRepository` + `VersionService` + `versionsRouter` (18 endpoints)
+  - [x] Release/unrelease/archive workflows
+- [x] **Labels (proper entity):**
+  - [x] `labels` (project_id, name, color, description)
+  - [x] `issue_labels` junction
+  - [x] 18 preset colors, 12 default label templates
+  - [x] `LabelRepository` + `LabelService` + `labelsRouter` (16 endpoints)
+- [x] **Custom Fields genişletme:**
+  - [x] `cascading-select` - Bağımlı seçim
+  - [x] `user-multi-picker` - Çoklu kullanıcı
+  - [x] `version-picker` - Versiyon seçici
+  - [x] `component-picker` - Bileşen seçici
+  - [x] `label-picker` - Etiket seçici
+  - [x] `sprint-picker` - Sprint seçici
+  - [x] `issue-picker` - Issue seçici
+  - [x] `rating` - Derecelendirme
+  - [x] `color-picker` - Renk seçici
+  - [x] `time-tracking` - Zaman takibi
+  - [x] `rich-text` - Zengin metin editörü
+  - [x] `attachment` - Dosya eki
+- [x] Validation schemas (`issue-associations.ts`)
+- [x] Migration: `0026_phase5-core-schemas.sql` (52 tablo)
+- [ ] **Issue operations:** (Ertelendi: Phase 8)
   - [ ] Clone issue
   - [ ] Move issue (change project)
   - [ ] Archive issue
-- [ ] **Voting system:**
+- [ ] **Voting system:** (Ertelendi: Phase 8)
   - [ ] `issue_votes` (issue_id, user_id)
   - [ ] Vote count caching
 
@@ -579,19 +611,19 @@
 | Phase 0 | ✅ Completed | 29 Kas | 29 Kas | Bug fix, security, in-use checks |
 | Phase 1 | ✅ Completed | 30 Kas | 30 Kas | Event Bus, indexes, transaction |
 | Phase 2 | ✅ Completed | 30 Kas | 30 Kas | Change history, LexoRank, reorder |
-| Phase 3 | ⏳ Not Started | | | |
-| Phase 4 | ⏳ Not Started | | | |
-| Phase 5 | ⏳ Not Started | | | |
-| Phase 6 | ⏳ Not Started | | | |
-| Phase 7 | ⏳ Not Started | | | |
-| Phase 8 | ⏳ Not Started | | | |
-| Phase 9 | ⏳ Not Started | | | |
-| Phase 10 | ⏳ Not Started | | | |
-| Phase 11 | ⏳ Not Started | | | |
-| Phase 12 | ⏳ Not Started | | | |
-| Phase 13 | ⏳ Not Started | | | |
-| Phase 14 | ⏳ Not Started | | | |
-| Phase 15 | ⏳ Not Started | | | |
+| Phase 3 | ✅ Completed | 30 Kas | 30 Kas | Workflow Engine, conditions, validators, post-functions |
+| Phase 4 | ✅ Completed | 30 Kas | 30 Kas | BullMQ, Redis, workers, notification schemes |
+| Phase 5 | ✅ Completed | 30 Kas | 30 Kas | Issue links, components, versions, labels, custom fields |
+| Phase 6 | ⏳ Not Started | | | Time Tracking |
+| Phase 7 | ⏳ Not Started | | | Board System |
+| Phase 8 | ⏳ Not Started | | | Frontend Core |
+| Phase 9 | ⏳ Not Started | | | Sprint & Reports |
+| Phase 10 | ⏳ Not Started | | | Advanced Search |
+| Phase 11 | ⏳ Not Started | | | Dashboards & Gadgets |
+| Phase 12 | ⏳ Not Started | | | Automation Rules |
+| Phase 13 | ⏳ Not Started | | | Screens System |
+| Phase 14 | ⏳ Not Started | | | Advanced Permissions |
+| Phase 15 | ⏳ Not Started | | | Integrations & API |
 
 ---
 

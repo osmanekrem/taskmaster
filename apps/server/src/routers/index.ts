@@ -12,15 +12,22 @@ import {notificationsRouter} from "@/routers/notifications";
 import {notificationSchemesRouter} from "@/routers/notification-schemes";
 import {permissionsRouter} from "@/routers/permissions";
 import {sprintsRouter} from "@/routers/sprints";
+import {issueLinksRouter} from "@/routers/issue-links";
+import {componentsRouter} from "@/routers/components";
+import {versionsRouter} from "@/routers/versions";
+import {labelsRouter} from "@/routers/labels";
+import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 
-export const appRouter = router({
+// Router definition - explicit any to avoid TypeScript serialization limits
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const appRouterDef: any = router({
     healthCheck: publicProcedure.query(() => {
         return "OK";
     }),
     privateData: protectedProcedure.query(({ctx}) => {
         return {
             message: "This is private",
-            user: ctx.session.user,
+            user: ctx.session?.user,
         };
     }),
     user: userRouter,
@@ -36,5 +43,13 @@ export const appRouter = router({
     notificationSchemes: notificationSchemesRouter,
     permissions: permissionsRouter,
     sprints: sprintsRouter,
+    issueLinks: issueLinksRouter,
+    components: componentsRouter,
+    versions: versionsRouter,
+    labels: labelsRouter,
 });
-export type AppRouter = typeof appRouter;
+
+export const appRouter = appRouterDef;
+export type AppRouter = typeof appRouterDef;
+export type RouterInputs = inferRouterInputs<AppRouter>;
+export type RouterOutputs = inferRouterOutputs<AppRouter>;

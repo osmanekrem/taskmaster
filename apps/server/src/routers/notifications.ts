@@ -49,7 +49,7 @@ getIssueWatchers: protectedProcedure
 		.input(getWatchedIssuesSchema)
 		.use(requirePermission('issue:view'))
 		.query(async ({ ctx, input }) => {
-			const userId = input.userId ?? ctx.session.user.id;
+			const userId = input.userId ?? ctx.session!.user.id;
 			return ctx.services.notification.getWatchedIssues(userId, {
 page: input.page,
 limit: input.limit,
@@ -66,7 +66,7 @@ includeIssueDetails: input.includeIssueDetails,
 		.query(async ({ ctx, input }) => {
 			const isWatching = await ctx.services.notification.isWatching(
 input.issueId,
-ctx.session.user.id,
+ctx.session!.user.id,
 );
 			return { isWatching };
 		}),
@@ -78,7 +78,7 @@ ctx.session.user.id,
 		.input(addWatcherSchema)
 		.use(requirePermission('issue:view'))
 		.mutation(async ({ ctx, input }) => {
-			const userId = input.userId ?? ctx.session.user.id;
+			const userId = input.userId ?? ctx.session!.user.id;
 			const watcher = await ctx.services.notification.watchIssue(
 input.issueId,
 userId,
@@ -94,7 +94,7 @@ input.reason,
 		.input(removeWatcherSchema)
 		.use(requirePermission('issue:view'))
 		.mutation(async ({ ctx, input }) => {
-			const userId = input.userId ?? ctx.session.user.id;
+			const userId = input.userId ?? ctx.session!.user.id;
 			const removed = await ctx.services.notification.unwatchIssue(
 input.issueId,
 userId,
@@ -109,7 +109,7 @@ userId,
 		.input(z.object({ issueId: z.string().uuid() }))
 		.use(requirePermission('issue:view'))
 		.mutation(async ({ ctx, input }) => {
-			return ctx.services.notification.toggleWatch(input.issueId, ctx.session.user.id);
+			return ctx.services.notification.toggleWatch(input.issueId, ctx.session!.user.id);
 		}),
 
 	/**
@@ -121,7 +121,7 @@ userId,
 		.mutation(async ({ ctx, input }) => {
 			const updated = await ctx.services.notification.toggleMute(
 input.issueId,
-ctx.session.user.id,
+ctx.session!.user.id,
 input.isMuted,
 );
 
@@ -144,7 +144,7 @@ message: "Watch not found",
 		.mutation(async ({ ctx, input }) => {
 			return ctx.services.notification.bulkWatch(
 input.issueIds,
-ctx.session.user.id,
+ctx.session!.user.id,
 input.action,
 );
 		}),
@@ -157,7 +157,7 @@ input.action,
 	getNotifications: protectedProcedure
 		.input(getNotificationsSchema)
 		.query(async ({ ctx, input }) => {
-			return ctx.services.notification.getNotifications(ctx.session.user.id, {
+			return ctx.services.notification.getNotifications(ctx.session!.user.id, {
 page: input.page,
 limit: input.limit,
 isRead: input.isRead,

@@ -11,3 +11,7 @@ export * from './comments';
 export * from './notifications';
 export * from './permissions';
 export * from './sprints';
+export * from './issue-links';
+export * from './components';
+export * from './versions';
+export * from './labels';

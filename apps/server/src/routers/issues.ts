@@ -67,7 +67,7 @@ export const issuesRouter = router({
     .input(createIssueSchema)
     .use(requirePermission('issue:create', extractProjectId.fromProjectId))
     .mutation(async ({ ctx, input }) => {
-      const issue = await ctx.services.issue.createIssue(input, ctx.session.user.id);
+      const issue = await ctx.services.issue.createIssue(input, ctx.session!.user.id);
       return successResponse(issue, 'Issue created');
     }),
 
@@ -82,7 +82,7 @@ export const issuesRouter = router({
     }))
     .use(requireAnyPermission(['issue:edit', 'issue:edit_own']))
     .mutation(async ({ ctx, input }) => {
-      const issue = await ctx.services.issue.updateIssue(input.id, input.data, ctx.session.user.id);
+      const issue = await ctx.services.issue.updateIssue(input.id, input.data, ctx.session!.user.id);
       return successResponse(issue, 'Issue updated');
     }),
 
@@ -101,7 +101,7 @@ export const issuesRouter = router({
       const issue = await ctx.services.issue.updateFieldValues(
         issueId,
         fieldValues,
-        ctx.session.user.id
+        ctx.session!.user.id
       );
       return successResponse(issue, 'Field values updated');
     }),
@@ -118,7 +118,7 @@ export const issuesRouter = router({
     .use(requirePermission('issue:transition'))
     .mutation(async ({ ctx, input }) => {
       const { id, ...transitionData } = input;
-      const issue = await ctx.services.issue.transitionIssue(id, transitionData, ctx.session.user.id);
+      const issue = await ctx.services.issue.transitionIssue(id, transitionData, ctx.session!.user.id);
       return successResponse(issue, 'Issue transitioned');
     }),
 
@@ -171,7 +171,7 @@ export const issuesRouter = router({
         input.issueId,
         input.afterIssueId ?? null,
         input.beforeIssueId ?? null,
-        ctx.session.user.id
+        ctx.session!.user.id
       );
       return successResponse(result, 'Issue reordered');
     }),
@@ -187,7 +187,7 @@ export const issuesRouter = router({
       const result = await ctx.services.issue.bulkReorderIssues(
         input.projectId,
         input.issueIds,
-        ctx.session.user.id
+        ctx.session!.user.id
       );
       return successResponse(result, 'Issues reordered');
     }),

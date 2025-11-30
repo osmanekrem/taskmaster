@@ -234,15 +234,3 @@ export const reorderSprintIssueSchema = z.object({
 );
 
 export type ReorderSprintIssueInput = z.infer<typeof reorderSprintIssueSchema>;
-
-/**
- * Move issue between sprints with position
- */
-export const moveIssueToSprintSchema = z.object({
-  issueId: z.string().uuid(),
-  targetSprintId: z.string().uuid().nullable(), // null = move to backlog
-  afterIssueId: z.string().uuid().nullable().optional(),
-  beforeIssueId: z.string().uuid().nullable().optional(),
-});
-
-export type MoveIssueToSprintInput = z.infer<typeof moveIssueToSprintSchema>;

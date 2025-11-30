@@ -249,6 +249,7 @@ export async function addBulkJobs<T = JobData>(
   jobs: { name: string; data: T; opts?: JobsOptions }[]
 ): Promise<Job<T>[]> {
   const queue = getQueue<T>(name);
+  // @ts-expect-error - BullMQ type inference issue with generic jobs
   return queue.addBulk(jobs) as unknown as Promise<Job<T>[]>;
 }
 

@@ -34,7 +34,7 @@ export const sprintsRouter = router({
 		.input(createSprintSchema)
 		.use(requirePermission('sprint:create', extractProjectId.fromProjectId))
 		.mutation(async ({ctx, input}) => {
-			return ctx.services.sprint.createSprint(input, ctx.session.user.id);
+			return ctx.services.sprint.createSprint(input, ctx.session!.user.id);
 		}),
 
 	/**
@@ -75,7 +75,7 @@ export const sprintsRouter = router({
 		.use(requirePermission('sprint:edit'))
 		.mutation(async ({ctx, input}) => {
 			const {id, ...data} = input;
-			return ctx.services.sprint.updateSprint(id, data, ctx.session.user.id);
+			return ctx.services.sprint.updateSprint(id, data, ctx.session!.user.id);
 		}),
 
 	/**
@@ -85,7 +85,7 @@ export const sprintsRouter = router({
 		.input(startSprintSchema)
 		.use(requirePermission('sprint:edit'))
 		.mutation(async ({ctx, input}) => {
-			return ctx.services.sprint.startSprint(input, ctx.session.user.id);
+			return ctx.services.sprint.startSprint(input, ctx.session!.user.id);
 		}),
 
 	/**
@@ -95,7 +95,7 @@ export const sprintsRouter = router({
 		.input(completeSprintSchema)
 		.use(requirePermission('sprint:edit'))
 		.mutation(async ({ctx, input}) => {
-			return ctx.services.sprint.completeSprint(input, ctx.session.user.id);
+			return ctx.services.sprint.completeSprint(input, ctx.session!.user.id);
 		}),
 
 	/**
@@ -105,7 +105,7 @@ export const sprintsRouter = router({
 		.input(z.object({id: z.string(), reason: z.string().optional()}))
 		.use(requirePermission('sprint:edit'))
 		.mutation(async ({ctx, input}) => {
-			return ctx.services.sprint.cancelSprint(input.id, ctx.session.user.id, input.reason);
+			return ctx.services.sprint.cancelSprint(input.id, ctx.session!.user.id, input.reason);
 		}),
 
 	/**
@@ -153,7 +153,7 @@ export const sprintsRouter = router({
 		.input(addIssueToSprintSchema)
 		.use(requirePermission('sprint:manage_issues'))
 		.mutation(async ({ctx, input}) => {
-			return ctx.services.sprint.addIssueToSprint(input, ctx.session.user.id);
+			return ctx.services.sprint.addIssueToSprint(input, ctx.session!.user.id);
 		}),
 
 	/**
@@ -163,7 +163,7 @@ export const sprintsRouter = router({
 		.input(addIssuesToSprintSchema)
 		.use(requirePermission('sprint:manage_issues'))
 		.mutation(async ({ctx, input}) => {
-			return ctx.services.sprint.addIssuesToSprint(input, ctx.session.user.id);
+			return ctx.services.sprint.addIssuesToSprint(input, ctx.session!.user.id);
 		}),
 
 	/**
@@ -173,7 +173,7 @@ export const sprintsRouter = router({
 		.input(removeIssueFromSprintSchema)
 		.use(requirePermission('sprint:manage_issues'))
 		.mutation(async ({ctx, input}) => {
-			return ctx.services.sprint.removeIssueFromSprint(input.issueId, ctx.session.user.id);
+			return ctx.services.sprint.removeIssueFromSprint(input.issueId, ctx.session!.user.id);
 		}),
 
 	/**
@@ -183,7 +183,7 @@ export const sprintsRouter = router({
 		.input(moveIssueToSprintSchema)
 		.use(requirePermission('sprint:manage_issues'))
 		.mutation(async ({ctx, input}) => {
-			return ctx.services.sprint.moveIssueToSprint(input, ctx.session.user.id);
+			return ctx.services.sprint.moveIssueToSprint(input, ctx.session!.user.id);
 		}),
 
 	/**

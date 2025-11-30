@@ -14,3 +14,4 @@ export * from './notifications';
 export * from './permissions';
 export * from './sprints';
 export * from './response';
+export * from './issue-associations';
