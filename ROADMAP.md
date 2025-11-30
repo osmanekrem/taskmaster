@@ -1,672 +1,1321 @@
-# TaskMaster → Jira-Seviyesi Tam Yol Haritası
+# TaskMaster → Jira Full Feature Parity Roadmap
 
-> **Hedef:** %97+ Jira Core Parity
-> **Tahmini Süre:** ~6 ay (full parity)
-> **MVP Süresi:** ~10-12 hafta (%85 Jira)
+> Single-Tenant Deployment Model - Her kurulum = 1 şirket
 
 ---
 
-## 📊 Hedef Seviyeleri
+## 📊 Özet Timeline
 
-| Milestone | Jira % | Linear % | Açıklama |
-|-----------|--------|----------|----------|
-| **MVP (Phase 0-9)** | 85% | 100%+ | Production-ready Agile tracker |
-| **Advanced (Phase 10-12)** | 94% | - | Enterprise-lite |
-| **Enterprise (Phase 13-15)** | 97.5% | - | Full Jira parity |
-| **Polish (Phase 16-20)** | 98-99% | - | Mobile, multi-tenant |
-
----
-
-## 📋 MVP Phases
-
-### Phase 0: Bug Fix & Security (3-4 gün) ✅ TAMAMLANDI
-> **Jira: 15% → 20%** | **Öncelik: KRİTİK**
-
-- [x] Permission middleware → tüm router'lara ekle
-  - [x] `/lib/middleware/permission.ts` oluşturuldu
-  - [x] issues, projects, sprints, workflows, comments router'larına eklendi
-  - [x] statuses, ticket-types, fields, user, field-types, notifications router'larına eklendi
-- [x] Context tutarlılığı → tüm servisleri context'e ekle
-  - [x] notification, permission, sprint servisleri context'e eklendi
-- [x] Bug fix'ler:
-  - [x] Search'e `summary`, `description` eklendi
-  - [x] `setFieldValues()` batch upsert yapıldı (onConflictDoUpdate ile)
-  - [x] `sprint_issues` cascade delete zaten mevcuttu
-- [x] In-use check'leri implement edildi:
-  - [x] Workflow in-use check (countWorkflowUsage)
-  - [x] Status in-use check (countByStatusId, countStatusUsageInWorkflows)
-  - [x] Resolution in-use check (countByResolutionId)
-  - [x] Issue type in-use check (countByIssueTypeId)
-- [x] Yeni permission tipleri eklendi:
-  - [x] status:view, issue_type:view, field:view, user:view
-  - [x] admin:manage_statuses, admin:manage_resolutions
-
-**NOT:** permissions router hala `container` kullanıyor - ctx.services'e migrate edilmeli
+| Phase | Süre | Kümülatif | Jira % | Milestone |
+|-------|------|-----------|--------|-----------|
+| **0** | 1-2 hafta | 1-2 hafta | 68% | Stable |
+| **1** | 2-3 hafta | 4-5 hafta | 72% | Clean Code |
+| **2** | 2-3 hafta | 7-8 hafta | 76% | Data Integrity |
+| **3** | 3-4 hafta | 11-12 hafta | 82% | **MVP** ✅ |
+| **4** | 5-6 hafta | 17-18 hafta | 88% | Boards & Time |
+| **5** | 5-6 hafta | 23-24 hafta | 93% | JQL & Dashboards |
+| **6** | 6-8 hafta | 31-32 hafta | 96% | Automation |
+| **7** | 4-5 hafta | 36-37 hafta | 98% | Enterprise Security |
+| **8** | 8-12 hafta | 47-49 hafta | **100%** | Full Platform |
 
 ---
 
-### Phase 1: Mimari Temizlik (4-5 gün) ✅ TAMAMLANDI
-> **Jira: 20% → 25%** | **Öncelik: YÜKSEK**
+## 🔴 Phase 0: Kritik Hatalar (1-2 Hafta)
 
-- [x] Event Bus oluştur (`EventEmitter`)
-  - [x] `/lib/events/event-bus.ts` - Typed event sistemi
-  - [x] Issue, Sprint, Project, Comment, Workflow, User event tipleri
-  - [x] Typed payloads, convenience emit fonksiyonları
-  - [x] Wildcard listener desteği
-- [x] Missing indexes ekle:
-  - [x] `workflow_transitions.workflow_id`, `from_status_id`, `to_status_id`
-  - [x] `workflow_statuses.workflow_id`
-  - [x] `projects.is_archived`, `projects.lead_id`, composite index
-  - [x] `issues.summary`, `created_at`, `due_date`
-  - [x] `notifications` - zaten mevcut (user_unread, user_type, issue_id, group_key, archived)
-- [x] Transaction wrapper utility
-  - [x] `/lib/transaction.ts` - withTransaction, withOptionalTransaction
-  - [x] withRetryableTransaction (serialization failure retry + exponential backoff)
-  - [x] DbOrTx type for service flexibility
-- [x] permissions router'ı ctx.services'e migrate et
-  - [x] Tüm `container.permission` → `ctx.services.permission`
-- [ ] Service pattern birleştir (factory pattern) - **Ertelendi: İhtiyaç duyulduğunda**
+> **Hedef**: Stabilite - Devam etmeden ÖNCE şart
 
----
+### 0.1 Schema Tutarsızlıkları
+- [ ] ID type standardizasyonu (`text()` + `crypto.randomUUID()` everywhere)
+  - `issue-links.ts` → `uuid()` yerine `text()`
+  - `history.ts` → `uuid()` yerine `text()`
+  - `workflow-transitions.ts` → `uuid()` yerine `text()`
+  - `watchers.ts` → `uuid()` yerine `text()`
+- [ ] Missing foreign keys in junction tables
+  - `issue_components.issueId` → `.references(() => issues.id)`
+  - `issue_labels.issueId` → `.references(() => issues.id)`
+  - `issue_versions.issueId` → `.references(() => issues.id)`
+- [ ] `issueLinkTypes.isSystem` type fix (`text` → `boolean`)
+- [ ] Timestamp `.notNull()` consistency (workflows, statuses)
 
-### Phase 2: History & Ranking (3-4 gün) ✅ TAMAMLANDI
-> **Jira: 25% → 30%** | **Öncelik: YÜKSEK**
+### 0.2 Workflow Engine Critical
+- [ ] Global `pendingChanges` state → WorkflowEngine instance'a taşı
+  - Dosya: `apps/server/src/engine/workflow/post-functions.ts` L41-45
+  - Problem: Concurrent request'lerde race condition
+- [ ] Thread-safe execution context
 
-- [x] `change_groups` + `change_items` schema (JSONB history yerine)
-  - [x] `change_groups` tablosu (issue_id, user_id, action, created_at)
-  - [x] `change_items` tablosu (change_group_id, field, old_string, new_string, old_value, new_value)
-  - [x] ChangeActionType enum (created, updated, transitioned, assigned, etc.)
-  - [x] Legacy `issue_history` tablosu korundu (backwards compat)
-- [x] LexoRank ekleme:
-  - [x] `issues.rank` kolonu (backlog ordering)
-  - [x] `sprint_issues.rank` kolonu (sprint ordering)
-  - [x] `bun add lexorank`
-  - [x] `/utils/lexorank.ts` - generateInitialRank, generateRankBefore, generateRankAfter, generateRankBetween, generateRanks
-- [x] Reorder endpoints:
-  - [x] `reorderIssue` - Tek issue'yu afterIssueId/beforeIssueId ile taşı
-  - [x] `bulkReorderIssues` - Birden fazla issue'yu sırala
-  - [x] `getBacklogIssues` - Rank'e göre sıralı backlog
-  - [x] Repository metodları: updateRank, getFirstRankInProject, getLastRankInProject, bulkUpdateRanks
-  - [x] Sprint issue ranking repository eklendi
+### 0.3 Storage
+- [ ] Attachment file deletion implement
+  - Dosya: `apps/server/src/routers/comments.ts` L241
+  - `// TODO: Delete actual file from storage`
+
+### 0.4 Production Foundations
+- [ ] Health check endpoint (`/health`, `/ready`)
+- [ ] Graceful shutdown handling
+- [ ] Structured JSON logging (pino)
+- [ ] Environment validation on startup
+
+**✅ Phase 0 Tamamlandı Kriteri**: Zero critical bugs, schema consistent, health checks working
 
 ---
 
-### Phase 3: Workflow Engine (7-8 gün) ✅ TAMAMLANDI
-> **Jira: 30% → 42%** | **Öncelik: YÜKSEK**
+## 🔴 Phase 1: Pattern Standardizasyonu (2-3 Hafta)
 
-- [x] Engine yapısı (`/engine/workflow/`)
-  - [x] `/engine/workflow/types.ts` - WorkflowContext, Condition, Validator, PostFunction types
-  - [x] `/engine/workflow/conditions.ts` - Condition handlers with registry
-  - [x] `/engine/workflow/validators.ts` - Validator handlers with registry
-  - [x] `/engine/workflow/post-functions.ts` - PostFunction handlers with registry
-  - [x] `/engine/workflow/engine.ts` - WorkflowEngine class
-  - [x] `/engine/workflow/index.ts` - Public API exports
-- [x] **Typed conditions:**
-  - [x] `user_in_project_role`
-  - [x] `user_is_assignee`
-  - [x] `user_is_reporter`
-  - [x] `user_has_permission`
-  - [x] `only_subtasks`
-  - [x] `only_standard_issues`
-  - [x] `parent_status`
-  - [x] `separation_of_duties`
-- [x] **Typed validators:**
-  - [x] `field_required`
-  - [x] `field_is_empty`
-  - [x] `field_has_value`
-  - [x] `field_changed`
-  - [x] `resolution_set`
-  - [x] `date_comparison`
-  - [x] `regex_check`
-  - [x] `numeric_range`
-  - [x] `previous_status`
-  - [x] `all_subtasks_resolved`
-  - [x] `parent_status_check`
-  - [x] `linked_issues_resolved`
-- [x] **Typed post-functions:**
-  - [x] `set_field`
-  - [x] `clear_field`
-  - [x] `copy_field_value`
-  - [x] `assign_to_reporter`
-  - [x] `assign_to_lead`
-  - [x] `assign_to_current_user`
-  - [x] `unassign`
-  - [x] `set_resolution`
-  - [x] `clear_resolution`
-  - [x] `add_comment`
-  - [x] `add_watcher`
-  - [x] `remove_watcher`
-  - [x] `trigger_notification`
-  - [x] `fire_event`
-  - [x] `update_change_history`
-  - [x] `set_due_date`
-  - [x] `move_to_sprint`
-- [x] Service entegrasyonu
-  - [x] `workflowService.createEngineForWorkflow()` 
-  - [x] `workflowService.getAvailableTransitionsForIssue()`
-  - [x] `workflowService.executeTransition()`
-  - [x] `workflowService.validateTransitionRequest()`
-- [x] Router endpoint'leri
-  - [x] `getAvailableTransitionsForIssue` - Issue için mevcut transition'ları getir
-  - [x] `executeTransition` - Transition çalıştır
-  - [x] `validateTransitionRequest` - Transition'ı doğrula
-- [x] Validation schema'ları
-  - [x] `executeTransitionSchema`
-  - [x] `validateTransitionRequestSchema`
-  - [x] `getAvailableTransitionsForIssueSchema`
-- [ ] Field value validation servisi (**Ertelendi:** Gerçek custom field entegrasyonu ile)
-- [ ] Draft workflows support (**Ertelendi:** Advanced phases)
+> **Hedef**: Maintainability - Gelecek geliştirmeler için şart
 
----
+### 1.1 Repository Pattern
+- [ ] Base repository class oluştur:
+  ```typescript
+  // apps/server/src/repositories/base-repository.ts
+  abstract class BaseRepository<T> {
+    findById(id: string): Promise<T | null>
+    create(data: CreateInput): Promise<T>
+    update(id: string, data: UpdateInput): Promise<T>
+    softDelete(id: string): Promise<void>
+    count(where?: SQL): Promise<number>
+  }
+  ```
+- [ ] `workflowRepository` → class'a çevir (şu an factory function)
+- [ ] `commentRepository` → class'a çevir
+- [ ] `labelRepository` → class'a çevir
+- [ ] `componentRepository` → class'a çevir
+- [ ] Transaction support tüm repository'lerde
 
-### Phase 4: Queue & Notifications (5-6 gün) ✅ TAMAMLANDI
-> **Jira: 42% → 48%** | **Öncelik: ORTA**
+### 1.2 Permission Fixes
+- [ ] `issue-links.ts` L262 → delete permission check ekle
+- [ ] `fields.ts` → project context ekle
+- [ ] `versions.ts` → project ownership check ekle
+- [ ] `statuses.ts` → getById project check
 
-- [x] BullMQ + Redis kurulum
-  - [x] `bun add bullmq@5.65.0 ioredis@5.8.2`
-  - [x] `/lib/redis.ts` - Redis connection management
-- [x] Docker Compose (PostgreSQL + Redis + App)
-  - [x] PostgreSQL, Redis, pgAdmin, Redis Commander
-- [x] Job queues:
-  - [x] `/lib/queue/index.ts` - Queue infrastructure
-  - [x] NotificationQueue (19 notification types)
-  - [x] EmailQueue
-- [x] Workers:
-  - [x] `/workers/notification-worker.ts` - In-app notification processor
-  - [x] `/workers/email-worker.ts` - Email processor via Resend
-- [x] Event bus → Queue entegrasyonu
-  - [x] `/lib/events/event-to-queue.ts` - EventBus → Queue bridge
-- [x] **Notification schemes:**
-  - [x] `notification_schemes` tablosu
-  - [x] `notification_scheme_events` (scheme_id, event_type, recipient_type, channels)
-  - [x] `project_notification_schemes` - Project → Scheme assignment
-  - [x] Default/Minimal/Aggressive scheme seeds
-- [x] **Recipient types:**
-  - [x] Current Assignee
-  - [x] Reporter
-  - [x] Project Lead
-  - [x] Component Lead
-  - [x] All Watchers
-  - [x] Users in Role
-  - [x] Single User
-  - [x] Group Custom Field Value
-  - [x] Previous Assignee
-  - [x] Sprint Team Members
-  - [x] Mentioned Users
-  - [x] All Project Members
-- [x] Repository + Service + Router
-  - [x] `notification-scheme-repository.ts` (12 methods)
-  - [x] `notificationSchemesRouter` (12 endpoints)
+### 1.3 Workflow Handlers (10+ TODO)
+- [ ] `userInProjectRoleHandler` (conditions.ts L26-35)
+  - PermissionService inject et
+  - `return { passed: false }` → gerçek kontrol
+- [ ] `userHasPermissionHandler` (conditions.ts L63-72)
+  - PermissionService inject et
+- [ ] `previousStatusHandler` (conditions.ts L102-117)
+  - IssueRepository inject et
+- [ ] `separationOfDutiesHandler` (conditions.ts L119-129)
+  - History query implement et
+- [ ] `triggerWebhookHandler` (post-functions.ts L348-357)
+  - HTTP client implement et
+- [ ] `sendNotificationHandler` (post-functions.ts L359-374)
+  - NotificationService inject et
+- [ ] `updateParentStatusHandler` (post-functions.ts L376-395)
+  - Parent lookup logic
+- [ ] `createSubtaskHandler` (post-functions.ts L397-408)
+  - IssueService inject et
+
+### 1.4 Deletion Validations
+- [ ] `projects.ts` L135 → `// TODO: Check if project has issues`
+- [ ] `projects.ts` L257 → `// TODO: Check if issue type has issues`
+
+### 1.5 Field Value Validation
+- [ ] `issues.ts` L529 → `validateFieldValueByType()` implement
+  - Her field type için validation rules
+  - Config'e göre required/optional check
+
+### 1.6 Infrastructure Middleware
+- [ ] Rate limiting middleware (per user, per IP)
+  ```typescript
+  // Configurable limits
+  { windowMs: 60000, max: 100 } // 100 req/min default
+  { windowMs: 60000, max: 1000 } // authenticated users
+  ```
+- [ ] Request logging middleware (method, path, duration, status)
+- [ ] Error tracking integration (Sentry)
+- [ ] Request ID propagation (X-Request-ID header)
+
+**✅ Phase 1 Tamamlandı Kriteri**: All patterns consistent, no TODO in critical paths, rate limiting active
 
 ---
 
-### Phase 5: Core Schemas (6-7 gün) ✅ TAMAMLANDI
-> **Jira: 48% → 58%** | **Öncelik: ORTA**
+## 🟠 Phase 2: Data Integrity (2-3 Hafta)
 
-- [x] **Issue Links:**
-  - [x] `issue_link_types` (name, inward_name, outward_name)
-  - [x] Default types: Blocks, Clones, Duplicates, Relates to, Causes, Parent-Child
-  - [x] `issue_links` (source, target, type, created_by)
-  - [x] `IssueLinkRepository` + `IssueLinkService` + `issueLinksRouter` (10 endpoints)
-  - [x] Blocking issues queries
-- [x] **Components:**
-  - [x] `components` (project_id, name, lead_id, description, default_assignee)
-  - [x] `issue_components` junction
-  - [x] `ComponentRepository` + `ComponentService` + `componentsRouter` (12 endpoints)
-- [x] **Versions:**
-  - [x] `versions` (project_id, name, description, start_date, release_date, status: unreleased/released/archived)
-  - [x] `issue_fix_versions` junction
-  - [x] `issue_affected_versions` junction
-  - [x] `VersionRepository` + `VersionService` + `versionsRouter` (18 endpoints)
-  - [x] Release/unrelease/archive workflows
-- [x] **Labels (proper entity):**
-  - [x] `labels` (project_id, name, color, description)
-  - [x] `issue_labels` junction
-  - [x] 18 preset colors, 12 default label templates
-  - [x] `LabelRepository` + `LabelService` + `labelsRouter` (16 endpoints)
-- [x] **Custom Fields genişletme:**
-  - [x] `cascading-select` - Bağımlı seçim
-  - [x] `user-multi-picker` - Çoklu kullanıcı
-  - [x] `version-picker` - Versiyon seçici
-  - [x] `component-picker` - Bileşen seçici
-  - [x] `label-picker` - Etiket seçici
-  - [x] `sprint-picker` - Sprint seçici
-  - [x] `issue-picker` - Issue seçici
-  - [x] `rating` - Derecelendirme
-  - [x] `color-picker` - Renk seçici
-  - [x] `time-tracking` - Zaman takibi
-  - [x] `rich-text` - Zengin metin editörü
-  - [x] `attachment` - Dosya eki
-- [x] Validation schemas (`issue-associations.ts`)
-- [x] Migration: `0026_phase5-core-schemas.sql` (52 tablo)
-- [ ] **Issue operations:** (Ertelendi: Phase 8)
-  - [ ] Clone issue
-  - [ ] Move issue (change project)
-  - [ ] Archive issue
-- [ ] **Voting system:** (Ertelendi: Phase 8)
-  - [ ] `issue_votes` (issue_id, user_id)
-  - [ ] Vote count caching
+> **Hedef**: Enterprise-grade data layer
 
----
+### 2.1 Soft Delete & Archive Pattern
+- [ ] Migration: `deletedAt` column tüm tablolara
+  ```sql
+  ALTER TABLE issues ADD COLUMN deleted_at TIMESTAMP;
+  ALTER TABLE projects ADD COLUMN deleted_at TIMESTAMP;
+  ALTER TABLE comments ADD COLUMN deleted_at TIMESTAMP;
+  -- ... tüm tablolar
+  ```
+- [ ] Migration: `archivedAt` column (issues, projects)
+  ```sql
+  ALTER TABLE issues ADD COLUMN archived_at TIMESTAMP;
+  ALTER TABLE projects ADD COLUMN archived_at TIMESTAMP;
+  ```
+- [ ] Base repository `softDelete()` method
+- [ ] Query middleware: auto `WHERE deleted_at IS NULL`
+- [ ] Archive vs Delete UI distinction
 
-### Phase 6: Time Tracking (4-5 gün)
-> **Jira: 58% → 63%** | **Öncelik: ORTA**
+### 2.2 Audit Fields
+- [ ] Migration: `createdBy`, `updatedBy` tüm tablolara
+- [ ] `issue_types` → timestamps ekle
+- [ ] `templates` → `createdById` ekle
+- [ ] Auto-populate middleware for audit fields
 
-- [ ] **Work logs:**
-  - [ ] `work_logs` (issue_id, user_id, time_spent, started_at, description)
-- [ ] **Estimate fields:**
-  - [ ] `issues.original_estimate`
-  - [ ] `issues.remaining_estimate`
-  - [ ] `issues.time_spent`
-- [ ] **Remaining estimate behavior:**
-  - [ ] Auto-reduce
-  - [ ] Set to specific value
-  - [ ] Leave unchanged
-- [ ] **Time tracking config:**
-  - [ ] Working hours per day
-  - [ ] Working days per week
-  - [ ] Time display format
-- [ ] Subtask time aggregation
+### 2.3 Indexes
+```sql
+-- apps/server/src/db/migrations/add-indexes.sql
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_change_items_group ON change_items(change_group_id);
+CREATE INDEX idx_notifications_user_read ON notifications(user_id, is_read);
+CREATE INDEX idx_project_role_members ON project_role_members(project_id, user_id);
+CREATE INDEX idx_issue_field_values_gin ON issue_field_values USING GIN(value);
+CREATE INDEX idx_issues_summary_trgm ON issues USING GIN(summary gin_trgm_ops);
+```
+
+### 2.4 User Groups
+```sql
+-- Schema
+user_groups: id, name, description, createdAt, updatedAt
+user_group_members: id, groupId, userId, addedAt, addedBy
+```
+- [ ] `apps/server/src/db/schema/groups.ts` oluştur
+- [ ] `apps/server/src/repositories/group-repository.ts`
+- [ ] `apps/server/src/routers/groups.ts`
+- [ ] Permission assignment via groups
+
+### 2.5 Notification Worker Fixes
+- [ ] `notification-worker.ts` L170 → user email preferences check
+- [ ] i18n support (en, tr locale files)
+- [ ] HTML templates → `apps/server/src/templates/email/`
+
+**✅ Phase 2 Tamamlandı Kriteri**: Full audit trail, groups working, soft delete active
 
 ---
 
-### Phase 7: Board System (6-7 gün)
-> **Jira: 63% → 72%** | **Öncelik: ORTA**
+## 🟠 Phase 3: API & Issue Completeness (3-4 Hafta)
 
-- [ ] **Board schema:**
-  - [ ] `boards` (project_id, name, type: scrum/kanban, filter_jql)
-  - [ ] `board_columns` (board_id, name, position)
-  - [ ] `board_column_statuses` (column_id, status_id)
-- [ ] **Swimlanes:**
-  - [ ] `board_swimlanes` (board_id, type: none/epic/assignee/jql, config)
-- [ ] **Quick filters:**
-  - [ ] `board_quick_filters` (board_id, name, jql)
-- [ ] **Card layout config:**
-  - [ ] `board_card_config` (board_id, visible_fields[], card_colors)
+> **Hedef**: Full feature API - **MVP READY**
+
+### 3.1 Missing Endpoints
+- [ ] `cloneIssue`
+  ```typescript
+  // Input: { issueId, options: { includeSubtasks, includeLinks, includeAttachments } }
+  // 1. Deep copy issue
+  // 2. New key generation
+  // 3. Optional: clone subtasks, links, attachments
+  ```
+- [ ] `moveIssueToProject`
+  ```typescript
+  // Input: { issueId, targetProjectId, fieldMapping }
+  // 1. Validate target project
+  // 2. Map fields (status, issue type, custom fields)
+  // 3. Update issue
+  // 4. Handle subtasks
+  ```
+- [ ] `bulkUpdateIssues`
+- [ ] `bulkTransitionIssues`
+- [ ] `bulkDeleteIssues`
+- [ ] `getProjectMembers`
+- [ ] `reorderSprints`
+
+### 3.2 Issue Voting
+```sql
+-- Schema
+issue_votes: id, issueId, userId, createdAt
+issues += voteCount (denormalized cache)
+```
+- [ ] `apps/server/src/db/schema/votes.ts`
+- [ ] Vote/unvote endpoints
+- [ ] Vote count sync trigger
+- [ ] "Most voted" filter in issue queries
+
+### 3.3 Issue Templates
+```sql
+-- Schema
+issue_templates: id, projectId, name, issueTypeId, summary, description, fieldValues (JSONB), isDefault, createdBy, createdAt
+```
+- [ ] Template CRUD
+- [ ] Create issue from template endpoint
+- [ ] Default template per issue type
+
+### 3.4 Priority Entity
+```sql
+-- Schema (replace custom field approach)
+priorities: id, name, description, color, iconUrl, sortOrder, isDefault, createdAt
+issues.priorityId → priorities.id (migration from custom field)
+```
+- [ ] Priority CRUD
+- [ ] Migration: existing priority field → priorities table
+- [ ] Default priorities seed (Highest, High, Medium, Low, Lowest)
+
+### 3.5 Event System Expansion
+- [ ] `FieldValueChanged` → `{ issueId, fieldId, oldValue, newValue, userId }`
+- [ ] `IssueMovedToEpic` → `{ issueId, oldEpicId, newEpicId, userId }`
+- [ ] `ParentChanged` → `{ issueId, oldParentId, newParentId, userId }`
+- [ ] `UserMentioned` → `{ issueId, commentId, mentionedUserId, mentionerId }`
+- [ ] `IssueVoted` → `{ issueId, userId, action: 'vote' | 'unvote' }`
+
+### 3.6 Error Handling Standardization
+```typescript
+// apps/server/src/lib/errors/index.ts
+export const throwNotFoundError = (code: string, meta?: object) => {...}
+export const throwForbiddenError = (code: string, meta?: object) => {...}
+export const throwConflictError = (code: string, meta?: object) => {...}
+export const throwValidationError = (code: string, meta?: object) => {...}
+export const throwBusinessError = (code: string, meta?: object) => {...}
+```
+- [ ] Migrate all `createAppError` calls to helpers
+- [ ] Add missing error codes to constants
+
+### 3.7 Repository Methods
+- [ ] `IssueRepository.findByAssignee(userId, filters)`
+- [ ] `IssueRepository.findOverdue(projectId?)`
+- [ ] `ProjectRepository.findByMember(userId)`
+- [ ] `SprintRepository.getVelocityHistory(projectId, count)`
+- [ ] `IssueRepository.findMostVoted(projectId, limit)`
+- [ ] `NotificationRepository.deleteOldNotifications(olderThan)`
+
+**✅ Phase 3 Tamamlandı Kriteri**: All CRUD complete, voting/templates working = **MVP** 🎉
+
+---
+
+## 🟡 Phase 4: Boards & Time Tracking (5-6 Hafta)
+
+> **Hedef**: Jira-level agile boards
+
+### 4.1 Board System
+
+#### Schema
+```sql
+-- apps/server/src/db/schema/boards.ts
+
+boards:
+  id, projectId, name, type ('scrum' | 'kanban'),
+  filterJql, isDefault, settings (JSONB), createdBy, createdAt
+
+board_columns:
+  id, boardId, name, statusIds (text[]), position,
+  minLimit (WIP min), maxLimit (WIP max)
+
+board_swimlanes:
+  id, boardId, type ('none' | 'assignee' | 'epic' | 'priority' | 'issueType' | 'custom'),
+  customFieldId (nullable), defaultCollapsed
+
+board_quick_filters:
+  id, boardId, name, jql, isDefault, position
+
+board_card_layout:
+  id, boardId, fields (text[]), showDaysInColumn, showEstimate, showPriority
+```
+
+#### Implementation
+- [ ] Board CRUD router
+- [ ] Column management
+  - [ ] Status mapping (multiple statuses per column)
+  - [ ] Column reordering
+  - [ ] WIP limit enforcement (warning/block)
+- [ ] Swimlane configuration
+  - [ ] By assignee
+  - [ ] By epic
+  - [ ] By priority
+  - [ ] By custom field
+- [ ] Quick filters
+  - [ ] JQL-based filters
+  - [ ] Toggle on/off
+- [ ] Card layout
+  - [ ] Configurable fields
   - [ ] Days in column indicator
-- [ ] **WIP limits (Kanban):**
-  - [ ] Column constraint (issue count / story points)
-  - [ ] Visual warning when exceeded
-- [ ] Board CRUD service & router
+- [ ] Card colors
+  - [ ] By priority
+  - [ ] By issue type
+  - [ ] Custom rules
+- [ ] Board views
+  - [ ] Backlog view (Scrum)
+  - [ ] Active sprint view (Scrum)
+  - [ ] Kanban continuous flow
+
+### 4.2 Time Tracking
+
+#### Schema
+```sql
+-- apps/server/src/db/schema/worklogs.ts
+
+worklogs:
+  id, issueId, userId, timeSpentSeconds, startedAt,
+  description, createdAt, updatedAt, deletedAt
+
+-- Add to issues table
+issues += originalEstimateSeconds, remainingEstimateSeconds, timeSpentSeconds
+```
+
+#### Implementation
+- [ ] Worklog CRUD
+  - [ ] Log work (time, date, description)
+  - [ ] Edit worklog (own only or admin)
+  - [ ] Delete worklog
+- [ ] Time calculations
+  - [ ] Auto-update `timeSpentSeconds` on issue
+  - [ ] Auto-adjust `remainingEstimateSeconds` option
+- [ ] Time tracking reports
+  - [ ] By user
+  - [ ] By project
+  - [ ] By date range
+  - [ ] Export to CSV
+
+### 4.3 Screens System
+
+#### Schema
+```sql
+screens:
+  id, name, description, createdAt
+
+screen_tabs:
+  id, screenId, name, position
+
+screen_tab_fields:
+  id, tabId, fieldId, position, isRequired
+
+screen_schemes:
+  id, name, description
+
+screen_scheme_items:
+  id, schemeId, issueTypeId, operationType ('create' | 'edit' | 'view'),
+  screenId
+```
+
+#### Implementation
+- [ ] Screen builder
+- [ ] Screen schemes per issue type
+- [ ] Transition screen assignment (workflow_transitions.screenId)
+
+### 4.4 Sprint Enhancements
+
+#### Schema
+```sql
+sprint_retrospectives:
+  id, sprintId, wentWell (text), needsImprovement (text),
+  actionItems (JSONB), createdBy, createdAt
+```
+
+#### Implementation
+- [ ] Retrospective notes CRUD
+- [ ] Sprint comparison report
+- [ ] Velocity chart endpoint
+  - [ ] Committed vs completed points
+  - [ ] Historical trend
+
+### 4.5 Field Additions
+- [ ] Radio button field type
+- [ ] Field context per project (not just issue type)
+  - [ ] `field_contexts` table
+  - [ ] Context-specific configuration
+
+**✅ Phase 4 Tamamlandı Kriteri**: Full boards, time tracking, screens working
 
 ---
 
-### Phase 8: Frontend Core (4-5 hafta)
-> **Jira: 72% → 78%** | **Öncelik: YÜKSEK**
+## 🟡 Phase 5: Search, Filters & Dashboards (5-6 Hafta)
 
-- [ ] **Project Pages:**
-  - [ ] `/projects` - List
-  - [ ] `/projects/:key` - Detail with tabs
-  - [ ] `/projects/:key/settings` - Settings
-- [ ] **Issue Pages:**
-  - [ ] Issue list view (table)
-  - [ ] Issue detail modal/page
-  - [ ] Issue create modal
-- [ ] **Board Views:**
-  - [ ] Kanban board (drag-drop)
-  - [ ] Backlog view
-  - [ ] Sprint board
-- [ ] **Shared Components:**
-  - [ ] Issue card
-  - [ ] Field renderer (all types)
-  - [ ] Status badge
-  - [ ] User picker
-  - [ ] Priority icon
-- [ ] **Issue operations UI:**
-  - [ ] Clone modal
-  - [ ] Move modal
-  - [ ] Convert to subtask / Convert to issue
-  - [ ] Archive/restore
-- [ ] **Bulk operations:**
-  - [ ] Multi-select in list/board
-  - [ ] Bulk edit modal
-  - [ ] Bulk transition
-  - [ ] Bulk delete
-- [ ] **Voting UI:**
-  - [ ] Vote button on issue
-  - [ ] Voters list popover
+> **Hedef**: Jira-level search and reporting
 
----
+### 5.1 Query Language (JQL)
 
-### Phase 9: Sprint & Reports (4-5 hafta)
-> **Jira: 78% → 85%** | **Öncelik: ORTA**
+#### Package Structure
+```
+packages/query-language/
+├── src/
+│   ├── lexer.ts          # Tokenization
+│   ├── parser.ts         # Chevrotain grammar
+│   ├── ast.ts            # AST type definitions
+│   ├── transformer.ts    # AST → Drizzle SQL
+│   ├── validator.ts      # Field/value validation
+│   ├── autocomplete.ts   # Suggestions for UI
+│   ├── functions.ts      # Built-in functions
+│   └── index.ts
+├── package.json
+└── tsconfig.json
+```
 
-- [ ] **Sprint views:**
-  - [ ] Sprint planning view
-  - [ ] Active sprint board
-  - [ ] Sprint completion modal
-- [ ] **Sprint features:**
-  - [ ] Sprint goal editing
-  - [ ] Scope change tracking
-  - [ ] Reopen sprint
-- [ ] **Reports:**
-  - [ ] Burndown chart
-  - [ ] Burnup chart
-  - [ ] Velocity chart
-  - [ ] Control chart (cycle time)
-  - [ ] Cumulative flow diagram
-  - [ ] Sprint report (completed/incomplete/added)
-  - [ ] Epic burndown
-  - [ ] Version report
-- [ ] **Backlog features:**
-  - [ ] Epic panel (collapse/expand)
-  - [ ] Version panel
-  - [ ] Quick filters
-- [ ] **Notification center UI:**
-  - [ ] Notification list
-  - [ ] Mark read/unread
-  - [ ] Preferences page
+#### Supported Syntax
+```
+# Basic
+project = "PROJ"
+status = "In Progress"
+assignee = john@example.com
 
----
+# Operators
+priority IN (High, Critical)
+created >= -7d
+storyPoints > 5
 
-## 🚀 Advanced Phases (Phase 10-12)
+# Functions
+assignee = currentUser()
+sprint IN openSprints()
+created >= startOfMonth()
+updated <= now()
 
-### Phase 10: Advanced Search (3-4 hafta)
-> **Jira: 85% → 88%**
+# Logical
+project = "PROJ" AND status != "Done"
+priority = High OR priority = Critical
+NOT status = "Done"
 
-- [ ] **Structured Filter Builder:**
-  - [ ] Field-based filters
-  - [ ] AND/OR logic
-  - [ ] Date range filters
-- [ ] **Full JQL:**
-  - [ ] Parser (PEG.js/chevrotain)
-  - [ ] All operators: `=`, `!=`, `>`, `<`, `IN`, `NOT IN`, `~`, `IS`, `IS NOT`
-  - [ ] Historical operators: `WAS`, `WAS IN`, `WAS NOT`, `CHANGED`
-  - [ ] Boolean: `AND`, `OR`, `NOT`
-  - [ ] `ORDER BY`
-- [ ] **JQL functions:**
-  - [ ] `currentUser()`, `membersOf()`
-  - [ ] `now()`, `startOfDay()`, `endOfDay()`, `startOfWeek()`, etc.
+# Ordering
+ORDER BY created DESC, priority ASC
+
+# Text search
+summary ~ "bug"
+description ~ "error*"
+```
+
+#### Implementation
+- [ ] Lexer (tokenize JQL string)
+- [ ] Parser (Chevrotain grammar → AST)
+- [ ] Transformer (AST → Drizzle query)
+- [ ] Validator (field existence, type checking)
+- [ ] Autocomplete (suggestions for UI)
+- [ ] Built-in functions
+  - [ ] `currentUser()`
   - [ ] `openSprints()`, `closedSprints()`, `futureSprints()`
-  - [ ] `linkedIssues()`, `votedIssues()`, `watchedIssues()`
-  - [ ] `projectsLeadByUser()`, `componentsLeadByUser()`
-- [ ] **Saved filters:**
-  - [ ] Filter CRUD
-  - [ ] Share with groups/projects/global
-  - [ ] Favorite filters
-- [ ] **Filter subscriptions:**
-  - [ ] Email results on schedule
-  - [ ] Cron-based delivery
-- [ ] **Search UI:**
-  - [ ] Syntax autocomplete
-  - [ ] Field/value autocomplete
-  - [ ] Column selection in results
-  - [ ] Export (CSV, Excel)
+  - [ ] `now()`, `startOfDay()`, `startOfWeek()`, `startOfMonth()`
+  - [ ] `membersOf(role)`
+
+### 5.2 Saved Filters
+
+#### Schema
+```sql
+saved_filters:
+  id, ownerId, name, jql, description,
+  isFavorite, shareType ('private' | 'project' | 'global'),
+  createdAt, updatedAt
+
+filter_shares:
+  id, filterId, projectId (nullable), userId (nullable)
+  -- projectId set = shared with project
+  -- userId set = shared with user
+
+filter_subscriptions:
+  id, filterId, userId, frequency ('daily' | 'weekly'),
+  lastSentAt, nextScheduledAt
+
+user_recent_filters:
+  id visibleUserId, filterId, accessedAt
+```
+
+#### Implementation
+- [ ] Filter CRUD
+- [ ] Filter sharing
+  - [ ] Private (owner only)
+  - [ ] Project (all project members)
+  - [ ] Global (all users)
+- [ ] Filter subscriptions
+  - [ ] Email when results change
+  - [ ] Daily/weekly schedule
+- [ ] Favorite filters
+- [ ] Recent filters tracking
+- [ ] Filter result count preview
+
+### 5.3 Dashboards
+
+#### Schema
+```sql
+dashboards:
+  id, ownerId, name, description, isDefault,
+  shareType ('private' | 'project' | 'global'),
+  layout (JSONB), createdAt, updatedAt
+
+dashboard_gadgets:
+  id, dashboardId, gadgetType, title,
+  positionX, positionY, width, height,
+  config (JSONB), createdAt
+```
+
+#### Layout Format
+```json
+{
+  "columns": 12,
+  "gadgets": [
+    { "id": "g1", "x": 0, "y": 0, "w": 6, "h": 4 },
+    { "id": "g2", "x": 6, "y": 0, "w": 6, "h": 4 }
+  ]
+}
+```
+
+#### Built-in Gadgets (10)
+
+| Gadget | Config | Description |
+|--------|--------|-------------|
+| `filter-results` | `{ filterId, columns, maxResults }` | Issue list from filter |
+| `assigned-to-me` | `{ maxResults, showProject }` | Current user's issues |
+| `activity-stream` | `{ projectId?, maxResults }` | Recent activity |
+| `pie-chart` | `{ filterId, field }` | Distribution by field |
+| `created-vs-resolved` | `{ projectId, period }` | Issue flow chart |
+| `sprint-burndown` | `{ sprintId }` | Burndown chart |
+| `sprint-health` | `{ sprintId }` | Sprint progress |
+| `watched-issues` | `{ maxResults }` | Watched issues |
+| `voted-issues` | `{ maxResults }` | Voted issues |
+| `two-dimensional` | `{ filterId, xAxis, yAxis }` | Heat map |
+
+#### Implementation
+- [ ] Dashboard CRUD
+- [ ] Dashboard sharing
+- [ ] Gadget library
+- [ ] Gadget drag-drop layout (react-grid-layout)
+- [ ] Gadget configuration modal
+- [ ] Default dashboard setting
+
+### 5.4 Advanced Notifications
+
+#### Schema
+```sql
+notification_digests:
+  id, userId, frequency ('daily' | 'weekly'),
+  preferredTime, timezone, lastSentAt, nextScheduledAt
+```
+
+#### Implementation
+- [ ] Email digest job (BullMQ scheduled)
+  - [ ] Aggregate notifications since last digest
+  - [ ] Group by project/issue
+  - [ ] HTML email template
+- [ ] Real-time WebSocket
+  - [ ] Socket.io or native WebSocket
+  - [ ] Notification badge update
+  - [ ] Toast notifications
+- [ ] Notification batching
+  - [ ] Group similar notifications
+  - [ ] "5 comments on PROJ-123"
+
+### 5.5 Search Enhancements
+- [ ] Full-text search with `pg_trgm`
+  ```sql
+  CREATE EXTENSION IF NOT EXISTS pg_trgm;
+  CREATE INDEX idx_issues_search ON issues 
+    USING GIN((summary || ' ' || COALESCE(description, '')) gin_trgm_ops);
+  ```
+- [ ] Search autocomplete
+  - [ ] Recent searches
+  - [ ] Popular filters
+  - [ ] Field suggestions
+- [ ] Search result highlighting
+
+**✅ Phase 5 Tamamlandı Kriteri**: JQL working, dashboards with 10 gadgets, real-time notifications
 
 ---
 
-### Phase 11: Dashboards & Gadgets (3 hafta)
-> **Jira: 88% → 91%**
+## 🟢 Phase 6: Automation & Admin (6-8 Hafta)
 
-- [ ] **Dashboard schema:**
-  - [ ] `dashboards` (name, owner_id, layout, is_default)
-  - [ ] `dashboard_gadgets` (dashboard_id, gadget_type, position, config)
-- [ ] **Dashboard features:**
-  - [ ] Multiple layouts (1/2/3 columns)
-  - [ ] Resize gadgets
-  - [ ] Reorder gadgets (drag & drop)
-  - [ ] Share dashboard
-  - [ ] Favorite dashboards
-  - [ ] Default dashboard per user
-  - [ ] System dashboard
-  - [ ] Wallboard mode
-- [ ] **Gadgets:**
-  - [ ] Activity Stream
-  - [ ] Assigned to Me
-  - [ ] Created vs Resolved Chart
-  - [ ] Average Age Chart
-  - [ ] Pie Chart (status/priority/assignee)
-  - [ ] Filter Results
-  - [ ] Heat Map
-  - [ ] Resolution Time
-  - [ ] Road Map
-  - [ ] Sprint Burndown
-  - [ ] Sprint Health
-  - [ ] Two Dimensional Filter Statistics
-  - [ ] Voted Issues
-  - [ ] Watched Issues
-  - [ ] Quick Links
-  - [ ] Text/Markdown
+> **Hedef**: No-code automation, full audit
+
+### 6.1 Automation Engine
+
+#### Schema
+```sql
+automation_rules:
+  id, projectId (nullable = global), name, description,
+  isEnabled, trigger (JSONB), conditions (JSONB), actions (JSONB),
+  createdBy, createdAt, updatedAt
+
+automation_executions:
+  id, ruleId, issueId (nullable), status ('success' | 'failed' | 'skipped'),
+  executedAt, durationMs, errorMessage
+
+automation_execution_logs:
+  id, executionId, step, type ('trigger' | 'condition' | 'action'),
+  status, message, data (JSONB), timestamp
+```
+
+#### Trigger Types
+```typescript
+type AutomationTrigger =
+  | { type: 'issue_created' }
+  | { type: 'issue_updated', fields?: string[] }
+  | { type: 'issue_transitioned', from?: string[], to?: string[] }
+  | { type: 'field_changed', fieldId: string }
+  | { type: 'comment_added' }
+  | { type: 'sprint_started' }
+  | { type: 'sprint_completed' }
+  | { type: 'scheduled', cron: string }
+  | { type: 'manual' }
+```
+
+#### Condition Types
+```typescript
+type AutomationCondition =
+  | { type: 'field_equals', fieldId: string, value: any }
+  | { type: 'field_changed_to', fieldId: string, value: any }
+  | { type: 'user_in_role', roleId: string }
+  | { type: 'issue_type_is', issueTypeId: string }
+  | { type: 'jql_matches', jql: string }
+  | { type: 'and', conditions: AutomationCondition[] }
+  | { type: 'or', conditions: AutomationCondition[] }
+```
+
+#### Action Types
+```typescript
+type AutomationAction =
+  | { type: 'set_field', fieldId: string, value: any }
+  | { type: 'transition_issue', statusId: string }
+  | { type: 'assign_issue', userId: string | 'reporter' | 'lead' }
+  | { type: 'add_comment', content: string }
+  | { type: 'send_email', to: string[], subject: string, body: string }
+  | { type: 'trigger_webhook', url: string, method: string, body?: object }
+  | { type: 'create_subtask', summary: string, issueTypeId: string }
+  | { type: 'link_issues', targetIssueId: string, linkTypeId: string }
+  | { type: 'add_label', labelId: string }
+  | { type: 'log_work', timeSpent: number, description?: string }
+```
+
+#### Implementation
+- [ ] Rule CRUD
+- [ ] Rule builder UI components
+- [ ] Trigger listener integration (event system)
+- [ ] Condition evaluator
+- [ ] Action executor
+- [ ] Execution history view
+- [ ] Detailed logs per execution
+- [ ] Rule testing (dry run)
+- [ ] Scheduled trigger (cron via BullMQ)
+- [ ] Manual trigger button on issues
+
+### 6.2 Audit Log
+
+#### Schema
+```sql
+audit_logs:
+  id, userId, action, entityType, entityId, entityName,
+  oldValue (JSONB), newValue (JSONB),
+  ipAddress, userAgent, sessionId,
+  createdAt
+
+-- Partitioned by month for performance
+-- CREATE TABLE audit_logs_2025_01 PARTITION OF audit_logs ...
+```
+
+#### Implementation
+- [ ] Audit middleware/interceptor
+- [ ] Logged operations:
+  - [ ] All CRUD (create, update, delete)
+  - [ ] Permission changes
+  - [ ] Role assignments
+  - [ ] Login/logout
+  - [ ] Configuration changes
+  - [ ] Failed login attempts
+- [ ] Audit log viewer
+  - [ ] Filter by user, entity, action, date
+  - [ ] Search in changes
+- [ ] Export to CSV
+- [ ] Retention policy (configurable)
+
+### 6.3 API Tokens
+
+#### Schema
+```sql
+api_tokens:
+  id visibleUserId, name, tokenHash, tokenPrefix (first 8 chars for display),
+  scopes (text[]), -- ['read', 'write', 'admin']
+  lastUsedAt, lastUsedIp,
+  expiresAt, createdAt, revokedAt
+```
+
+#### Implementation
+- [ ] Token generation (show once)
+- [ ] Token listing (masked)
+- [ ] Token revocation
+- [ ] Scope-based authorization
+- [ ] Rate limiting per token
+- [ ] Usage statistics
+
+### 6.4 Webhooks
+
+#### Schema
+```sql
+webhooks:
+  id, projectId (nullable = global), name, url,
+  secret, events (text[]), isActive,
+  createdBy, createdAt
+
+webhook_deliveries:
+  id, webhookId, event, payload (JSONB),
+  requestHeaders (JSONB), responseCode,
+  responseBody (text), responseHeaders (JSONB),
+  deliveredAt, durationMs, retryCount, nextRetryAt
+```
+
+#### Implementation
+- [ ] Webhook CRUD UI
+- [ ] Event selection (checkboxes)
+- [ ] Secret generation
+- [ ] Signature header (HMAC-SHA256)
+- [ ] Delivery logs
+- [ ] Retry logic (exponential backoff, max 5 retries)
+- [ ] Manual retry button
+- [ ] Webhook testing (send test payload)
+
+### 6.5 System Settings
+
+#### Schema
+```sql
+system_settings:
+  id, key, value (JSONB), description,
+  updatedBy, updatedAt
+
+-- Example keys:
+-- 'default.project.notificationScheme'
+-- 'default.project.permissionScheme'
+-- 'upload.maxFileSizeMb'
+-- 'session.timeoutMinutes'
+-- 'password.minLength'
+-- 'password.requireSpecialChar'
+```
+
+#### Implementation
+- [ ] Settings CRUD (admin only)
+- [ ] Settings UI grouped by category
+- [ ] Settings validation
+- [ ] Settings cache (Redis)
+
+### 6.6 Project Types & Categories
+
+#### Schema
+```sql
+project_types:
+  id, name, description, icon,
+  defaultWorkflowId, defaultIssueTypeSchemeId,
+  defaultScreenSchemeId, defaultNotificationSchemeId,
+  createdAt
+
+project_categories:
+  id, name, description, color, createdAt
+
+-- Add to projects table
+projects += typeId, categoryId
+```
+
+#### Implementation
+- [ ] Project type CRUD
+- [ ] Project category CRUD
+- [ ] Filter projects by category
+- [ ] Type-specific defaults when creating project
+
+### 6.7 Caching & Performance
+- [ ] Redis caching layer
+  - [ ] Permission cache (user permissions per project)
+  - [ ] System settings cache
+  - [ ] Session cache
+- [ ] Cache invalidation strategy
+- [ ] Database query logging (slow query detection)
+- [ ] Connection pool monitoring
+
+### 6.8 Monitoring & Observability
+- [ ] Prometheus metrics endpoint (`/metrics`)
+  ```typescript
+  // Metrics to track
+  - http_requests_total
+  - http_request_duration_seconds
+  - db_query_duration_seconds
+  - queue_jobs_total
+  - active_users_gauge
+  ```
+- [ ] Custom business metrics
+  - [ ] Issues created per day
+  - [ ] Active sprints
+  - [ ] Automation rule executions
+- [ ] Grafana dashboard templates
+
+**✅ Phase 6 Tamamlandı Kriteri**: Automation rules working, full audit trail, webhooks active, caching operational, metrics exposed
 
 ---
 
-### Phase 12: Automation Rules (4 hafta)
-> **Jira: 91% → 94%**
+## 🟢 Phase 7: Enterprise Security (4-5 Hafta)
 
-- [ ] **Schema:**
-  - [ ] `automation_rules` (project_id, name, trigger, conditions, actions, enabled)
-  - [ ] `automation_logs` (rule_id, issue_id, status, executed_at, details)
-- [ ] **Triggers:**
+> **Hedef**: Enterprise-grade security features
+
+### 7.1 SSO Integration
+
+#### Schema
+```sql
+sso_configuration:
+  id, provider ('saml' | 'oidc'),
+  displayName, config (JSONB),
+  isEnabled, isEnforced, -- enforced = SSO only, no password login
+  createdAt, updatedAt
+
+-- SAML config:
+{
+  "entityId": "https://taskmaster.example.com",
+  "assertionConsumerServiceUrl": "https://taskmaster.example.com/auth/saml/callback",
+  "idpMetadataUrl": "https://idp.example.com/metadata",
+  "idpCertificate": "-----BEGIN CERTIFICATE-----...",
+  "attributeMapping": {
+    "email": "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
+    "firstName": "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname",
+    "lastName": "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"
+  }
+}
+
+-- OIDC config:
+{
+  "issuer": "https://accounts.google.com",
+  "clientId": "xxx.apps.googleusercontent.com",
+  "clientSecret": "xxx",
+  "scopes": ["openid", "email", "profile"],
+  "attributeMapping": { ... }
+}
+```
+
+#### Implementation
+- [ ] SSO configuration UI
+- [ ] SAML 2.0 implementation
+  - [ ] SP metadata generation
+  - [ ] IdP metadata import
+  - [ ] Assertion validation
+- [ ] OIDC implementation
+  - [ ] Discovery document fetch
+  - [ ] Authorization code flow
+  - [ ] Token validation
+- [ ] Just-in-time provisioning
+  - [ ] Create user on first SSO login
+  - [ ] Update user attributes on login
+- [ ] SSO enforcement option
+- [ ] Multiple IdP support (for different user groups)
+
+### 7.2 Issue Security Levels
+
+#### Schema
+```sql
+issue_security_schemes:
+  id, name, description, createdAt
+
+security_levels:
+  id, schemeId, name, description, sortOrder
+
+security_level_members:
+  id, levelId, type ('user' | 'group' | 'role' | 'reporter' | 'assignee' | 'lead'),
+  userId (nullable), groupId (nullable), roleId (nullable)
+
+-- Add to issues
+issues += securityLevelId
+
+-- Add to projects
+projects += issueSecuritySchemeId
+```
+
+#### Implementation
+- [ ] Security scheme CRUD
+- [ ] Security level CRUD
+- [ ] Level member management
+- [ ] Issue visibility check middleware
+- [ ] Set security level on issue
+- [ ] Default security level per issue type
+
+### 7.3 Advanced Permissions
+- [ ] Object-level permission checks
+  ```typescript
+  // Before: Can user edit ANY issue?
+  hasPermission(userId, 'issue:edit', projectId)
+  
+  // After: Can user edit THIS issue?
+  canEditIssue(userId, issueId) // checks security level, ownership, etc.
+  ```
+- [ ] Permission inheritance
+  - [ ] Project → Issue type → Issue
+- [ ] Custom permission creation
+- [ ] IP allowlisting
+  ```sql
+  ip_allowlist:
+    id, cidr, description, isEnabled, createdAt
+  ```
+
+### 7.4 Backup & Restore
+
+#### Implementation
+- [ ] Database backup endpoint (admin)
+  - [ ] pg_dump wrapper
+  - [ ] Attachments inclusion option
+- [ ] Scheduled backups (cron)
+- [ ] Backup storage (local / S3)
+- [ ] Restore from backup
+- [ ] Backup encryption option
+
+### 7.5 Storage Abstraction
+- [ ] File storage provider interface
+  ```typescript
+  interface StorageProvider {
+    upload(key: string, data: Buffer): Promise<string>
+    download(key: string): Promise<Buffer>
+    delete(key: string): Promise<void>
+    getSignedUrl(key: string, expiresIn: number): Promise<string>
+  }
+  ```
+- [ ] Local filesystem provider
+- [ ] AWS S3 provider
+- [ ] Google Cloud Storage provider (optional)
+- [ ] Storage provider selection via config
+
+### 7.6 Email Provider Abstraction
+- [ ] Email provider interface
+  ```typescript
+  interface EmailProvider {
+    send(options: EmailOptions): Promise<void>
+  }
+  ```
+- [ ] Resend provider (current)
+- [ ] AWS SES provider
+- [ ] SMTP provider (generic)
+- [ ] Provider selection via config
+
+### 7.7 API Layer
+- [ ] REST/OpenAPI public API layer
+  - [ ] `/api/v1/issues` - Issue CRUD
+  - [ ] `/api/v1/projects` - Project CRUD
+  - [ ] `/api/v1/users` - User management
+  - [ ] `/api/v1/webhooks` - Webhook management
+- [ ] OpenAPI spec generation
+- [ ] API documentation (Swagger UI)
+- [ ] API versioning strategy
+
+**✅ Phase 7 Tamamlandı Kriteri**: SSO working, security levels enforced, backups automated, storage/email abstracted, public API available
+
+---
+
+## 🔵 Phase 8: Ecosystem (8-12 Hafta)
+
+> **Hedef**: Full platform with integrations
+
+### 8.1 Git Integration
+
+#### Schema
+```sql
+git_repositories:
+  id, projectId, provider ('github' | 'gitlab' | 'bitbucket'),
+  repoFullName, -- 'owner/repo'
+  accessToken (encrypted), webhookSecret,
+  isEnabled, createdAt
+
+git_branches:
+  id, repoId, issueId, branchName,
+  status ('open' | 'merged' | 'deleted'),
+  createdAt, updatedAt
+
+git_commits:
+  id, repoId, issueId,
+  sha, message, authorName, authorEmail,
+  committedAt, createdAt
+
+git_pull_requests:
+  id, repoId, issueId,
+  prNumber, title, description,
+  status ('open' | 'merged' | 'closed'),
+  sourceBranch, targetBranch,
+  url, authorName,
+  createdAt, updatedAt
+```
+
+#### Implementation
+- [ ] Repository connection OAuth
+  - [ ] GitHub App
+  - [ ] GitLab OAuth
+  - [ ] Bitbucket OAuth
+- [ ] Webhook receiver
+  - [ ] Push events → commit linking
+  - [ ] PR events → PR tracking
+- [ ] Branch creation from issue
+  - [ ] `git checkout -b PROJ-123-issue-summary`
+- [ ] Commit linking (via issue key in message)
+  - [ ] Parse `PROJ-123` from commit message
+- [ ] Development panel on issue
+  - [ ] Linked branches
+  - [ ] Linked commits
+  - [ ] Linked PRs with status
+
+### 8.2 Slack Integration
+
+#### Schema
+```sql
+slack_installation:
+  id, teamId, teamName,
+  accessToken (encrypted), botToken (encrypted),
+  installedBy, createdAt
+
+slack_channel_links:
+  id, installationId, projectId,
+  channelId, channelName,
+  events (text[]), -- ['issue_created', 'comment_added', ...]
+  createdAt
+```
+
+#### Implementation
+- [ ] Slack App configuration
+- [ ] OAuth installation flow
+- [ ] Channel linking
+- [ ] Event notifications
   - [ ] Issue created
-  - [ ] Issue updated
   - [ ] Issue transitioned
-  - [ ] Issue commented
-  - [ ] Field value changed
-  - [ ] Work logged
-  - [ ] Sprint started/completed
-  - [ ] Version released
-  - [ ] Scheduled (cron)
-  - [ ] Incoming webhook
-  - [ ] Manual trigger
-- [ ] **Conditions:**
-  - [ ] Issue fields condition
-  - [ ] JQL condition
-  - [ ] User condition
-  - [ ] If/else blocks
-  - [ ] Related issues condition
-- [ ] **Actions:**
-  - [ ] Create issue
-  - [ ] Edit issue fields
-  - [ ] Clone issue
-  - [ ] Delete issue
-  - [ ] Transition issue
-  - [ ] Assign issue
-  - [ ] Link issues
-  - [ ] Add comment
-  - [ ] Send email
-  - [ ] Send Slack/Teams message
-  - [ ] Create version
-  - [ ] Release version
-  - [ ] Create sprint
-  - [ ] Log work
-  - [ ] Lookup issues (batch action)
-  - [ ] Create variable
-  - [ ] Delay action
-- [ ] **Smart values:**
-  - [ ] `{{issue.key}}`, `{{issue.summary}}`
-  - [ ] `{{now}}`, `{{now.plusDays(7)}}`
-  - [ ] `{{triggerUser.displayName}}`
-  - [ ] Text manipulation
-  - [ ] Math functions
-- [ ] **UI:**
-  - [ ] Rule builder
-  - [ ] Rule logs viewer
-  - [ ] Enable/disable toggle
-  - [ ] Rule templates
+  - [ ] Comment added
+  - [ ] Mention in Slack → comment in TaskMaster
+- [ ] Slash commands
+  - [ ] `/taskmaster create` → create issue modal
+  - [ ] `/taskmaster search <query>` → search issues
+- [ ] Issue unfurling (paste link → preview)
 
----
+### 8.3 Import/Export
 
-## 🏢 Enterprise Phases (Phase 13-15)
+#### CSV Import
+- [ ] File upload
+- [ ] Column mapping UI
+  - [ ] TaskMaster field ↔ CSV column
+  - [ ] Value mapping (status names, etc.)
+- [ ] Validation preview
+- [ ] Error handling (partial import)
+- [ ] Import history
 
-### Phase 13: Screens System (2-3 hafta)
-> **Jira: 94% → 95.5%**
+#### Jira Import
+- [ ] Jira Cloud API connection
+- [ ] Project selection
+- [ ] Field mapping
+  - [ ] Standard fields
+  - [ ] Custom fields
+  - [ ] Status mapping
+- [ ] Attachment migration
+- [ ] Comment migration
+- [ ] History migration (optional)
+- [ ] Progress tracking
 
-- [ ] **Screen schema:**
-  - [ ] `screens` (id, name, description)
-  - [ ] `screen_tabs` (screen_id, name, position)
-  - [ ] `screen_fields` (tab_id, field_id, position)
-- [ ] **Screen types:**
-  - [ ] Create screen
-  - [ ] Edit screen
-  - [ ] View screen
-  - [ ] Transition screen
-- [ ] **Screen schemes:**
-  - [ ] `screen_schemes` (id, name)
-  - [ ] `screen_scheme_items` (scheme_id, operation, screen_id)
-- [ ] **Issue type screen schemes:**
-  - [ ] `issue_type_screen_schemes` (id, name)
-  - [ ] `issue_type_screen_scheme_items` (scheme_id, issue_type_id, screen_scheme_id)
-- [ ] **Field configuration:**
-  - [ ] Required/optional per screen
-  - [ ] Hidden fields
-  - [ ] Field descriptions
-  - [ ] Default values
-- [ ] **UI:**
-  - [ ] Screen editor
-  - [ ] Scheme management
+#### Export
+- [ ] Project export (JSON)
+  - [ ] Configuration
+  - [ ] Issues
+  - [ ] Attachments (optional)
+  - [ ] History (optional)
+- [ ] Issue export
+  - [ ] CSV (configurable columns)
+  - [ ] Excel
+  - [ ] PDF (single issue view)
 
----
+### 8.4 Advanced Reporting
 
-### Phase 14: Advanced Permissions (1-2 hafta)
-> **Jira: 95.5% → 96.5%**
+#### Velocity Chart
+```typescript
+// Data structure
+{
+  sprints: [
+    { name: 'Sprint 1', committed: 21, completed: 18 },
+    { name: 'Sprint 2', committed: 24, completed: 22 },
+    // ...
+  ],
+  averageVelocity: 20
+}
+```
 
-- [ ] **Issue security levels:**
-  - [ ] `security_schemes` (id, name, default_level_id)
-  - [ ] `security_levels` (scheme_id, name, description)
-  - [ ] `security_level_members` (level_id, type, value)
-  - [ ] Issue → security_level assignment
-  - [ ] Filter by security access
-- [ ] **Extended permission types:**
-  - [ ] Set Issue Security
-  - [ ] Schedule Issues
-  - [ ] View Voters and Watchers
-  - [ ] Manage Watchers
-- [ ] **Permission conditions:**
-  - [ ] Reporter-only
-  - [ ] Assignee-only
-  - [ ] Group custom field value
-  - [ ] User custom field value
+#### Cumulative Flow Diagram
+```typescript
+// Data per day
+{
+  dates: ['2025-01-01', '2025-01-02', ...],
+  series: {
+    'To Do': [10, 12, 11, ...],
+    'In Progress': [5, 4, 6, ...],
+    'Done': [2, 4, 5, ...]
+  }
+}
+```
 
----
+#### Control Chart
+```typescript
+// Per issue
+{
+  issues: [
+    { key: 'PROJ-1', cycleTime: 3.5, leadTime: 5.2 },
+    { key: 'PROJ-2', cycleTime: 2.1, leadTime: 4.0 },
+    // ...
+  ],
+  rollingAverage: {
+    cycleTime: [3.2, 3.1, 3.0, ...],
+    leadTime: [4.8, 4.7, 4.6, ...]
+  }
+}
+```
 
-### Phase 15: Integrations & API (2-3 hafta)
-> **Jira: 96.5% → 97.5%**
+#### Custom Report Builder
+- [ ] Dimension selection (x-axis: project, assignee, type, etc.)
+- [ ] Metric selection (count, sum of points, avg cycle time, etc.)
+- [ ] Filter (JQL)
+- [ ] Chart type (bar, line, pie, table)
+- [ ] Save report
+- [ ] Share report
 
-- [ ] **Enhanced Webhooks:**
-  - [ ] JQL filtering
-  - [ ] Secret token (HMAC)
-  - [ ] Retry policy
-  - [ ] All events (sprint, board, version, user)
-  - [ ] Webhook logs UI
-- [ ] **REST API enhancements:**
-  - [ ] OpenAPI 3.0 spec
-  - [ ] API explorer UI (Swagger)
-  - [ ] Cursor-based pagination
-  - [ ] Field expansion
-  - [ ] Rate limiting
-- [ ] **API authentication:**
-  - [ ] Personal access tokens
-  - [ ] Token scopes
-  - [ ] Token management UI
-  - [ ] OAuth 2.0
-- [ ] **Git integration:**
-  - [ ] `commits` table
-  - [ ] `branches` table
-  - [ ] `pull_requests` table
-  - [ ] Smart commits parsing
-  - [ ] GitHub/GitLab/Bitbucket webhooks
-  - [ ] Development panel in issue view
+### 8.5 Mobile App
 
----
+#### Technology
+- React Native with Expo
+- React Query for data fetching
+- Same tRPC client
 
-## 📊 Bonus Phases (Phase 16-20)
-
-### Phase 16: Additional Reports (1-2 hafta)
-- [ ] Resolution time report
-- [ ] Time tracking report
-- [ ] User workload report
-- [ ] Deployment frequency
-- [ ] Cycle time report
-
-### Phase 17: Advanced Issue Operations (1 hafta)
-- [ ] Split issue
-- [ ] Convert issue type
-- [ ] Merge issues
-- [ ] Issue templates
-
-### Phase 18: Advanced Board Features (1 hafta)
-- [ ] Estimation poker
-- [ ] Board wallboard mode
-- [ ] Multi-project boards
-- [ ] Personal boards
-
-### Phase 19: Multi-tenancy (2-3 hafta)
-- [ ] Organizations/Workspaces
-- [ ] Cross-project dashboards
-- [ ] Global automation rules
-- [ ] Site-wide settings
-
-### Phase 20: Mobile App (4-6 hafta)
-- [ ] React Native app
-- [ ] Offline support
+#### Features
+- [ ] Authentication
+- [ ] Project list
+- [ ] Issue list with filters
+- [ ] Issue detail & edit
+- [ ] Board view (swipe to transition)
+- [ ] Comments & mentions
 - [ ] Push notifications
-- [ ] Quick actions
+- [ ] Offline read support
+- [ ] Quick actions (log work, transition, assign)
+
+### 8.6 UI/UX Enhancements
+
+#### Keyboard Shortcuts
+| Key | Action |
+|-----|--------|
+| `c` | Create issue |
+| `g b` | Go to board |
+| `g p` | Go to projects |
+| `g d` | Go to dashboard |
+| `/` | Focus search |
+| `?` | Show shortcuts |
+| `j/k` | Navigate list |
+| `Enter` | Open selected |
+| `Esc` | Close modal |
+
+#### Other Enhancements
+- [ ] Inline editing on issue list
+- [ ] Quick actions dropdown
+- [ ] Attachment preview (images, PDFs)
+- [ ] Drag-drop file upload
+- [ ] Keyboard navigation in lists
+- [ ] Command palette (`Cmd+K`)
+
+### 8.7 Service Desk Module (Opsiyonel)
+
+#### Schema
+```sql
+service_desk_config:
+  id, projectId, portalName, portalDescription,
+  portalLogo, primaryColor,
+  allowAnonymousRequests, createdAt
+
+request_types:
+  id, projectId, name, description, issueTypeId,
+  icon, fields (JSONB), helpText, sortOrder
+
+sla_policies:
+  id, projectId, name, description,
+  conditions (JSONB), -- when does this SLA apply
+  goals (JSONB), -- { firstResponse: 4h, resolution: 24h }
+  calendar ('24x7' | 'business_hours')
+
+sla_tracking:
+  id, issueId, policyId,
+  firstResponseAt, breachedFirstResponse,
+  resolvedAt, breachedResolution,
+  pausedDuration, -- time while paused
+
+customer_portal_users:
+  id, email, name, company, isVerified, createdAt
+```
+
+#### Implementation
+- [ ] Customer portal (separate frontend)
+- [ ] Request type configuration
+- [ ] SLA policy configuration
+- [ ] SLA tracking on issues
+- [ ] SLA breach notifications
+- [ ] Queue management view
+- [ ] Customer organizations
+
+**✅ Phase 8 Tamamlandı Kriteri**: Git integration, Slack, import/export, mobile app = **100% Jira** 🎉
 
 ---
 
-## 📈 Progress Tracker
+## 📋 Phase Tamamlama Checklist
 
-| Phase | Status | Start | End | Notes |
-|-------|--------|-------|-----|-------|
-| Phase 0 | ✅ Completed | 29 Kas | 29 Kas | Bug fix, security, in-use checks |
-| Phase 1 | ✅ Completed | 30 Kas | 30 Kas | Event Bus, indexes, transaction |
-| Phase 2 | ✅ Completed | 30 Kas | 30 Kas | Change history, LexoRank, reorder |
-| Phase 3 | ✅ Completed | 30 Kas | 30 Kas | Workflow Engine, conditions, validators, post-functions |
-| Phase 4 | ✅ Completed | 30 Kas | 30 Kas | BullMQ, Redis, workers, notification schemes |
-| Phase 5 | ✅ Completed | 30 Kas | 30 Kas | Issue links, components, versions, labels, custom fields |
-| Phase 6 | ⏳ Not Started | | | Time Tracking |
-| Phase 7 | ⏳ Not Started | | | Board System |
-| Phase 8 | ⏳ Not Started | | | Frontend Core |
-| Phase 9 | ⏳ Not Started | | | Sprint & Reports |
-| Phase 10 | ⏳ Not Started | | | Advanced Search |
-| Phase 11 | ⏳ Not Started | | | Dashboards & Gadgets |
-| Phase 12 | ⏳ Not Started | | | Automation Rules |
-| Phase 13 | ⏳ Not Started | | | Screens System |
-| Phase 14 | ⏳ Not Started | | | Advanced Permissions |
-| Phase 15 | ⏳ Not Started | | | Integrations & API |
+### Phase 0 ✅
+- [ ] All IDs use `text()` pattern
+- [ ] All foreign keys defined
+- [ ] No critical race conditions
+- [ ] Attachment storage working
+- [ ] Health check endpoints responding
+- [ ] Graceful shutdown implemented
+
+### Phase 1 ✅
+- [ ] All repositories use class pattern
+- [ ] Base repository in use
+- [ ] All permission checks implemented
+- [ ] All workflow handlers working
+- [ ] Rate limiting active
+- [ ] Request logging operational
+- [ ] Error tracking configured
+
+### Phase 2 ✅
+- [ ] Soft delete on all tables
+- [ ] Archive functionality working
+- [ ] All audit fields populated
+- [ ] User groups functional
+
+### Phase 3 ✅ (MVP)
+- [ ] Clone/move/bulk operations working
+- [ ] Voting system working
+- [ ] Issue templates working
+- [ ] Priority entity working
+
+### Phase 4 ✅
+- [ ] Boards with columns, swimlanes, WIP
+- [ ] Time tracking with worklogs
+- [ ] Screens system working
+- [ ] Sprint retrospectives
+
+### Phase 5 ✅
+- [ ] JQL parser working
+- [ ] Saved filters with sharing
+- [ ] Dashboards with 10 gadgets
+- [ ] Real-time notifications
+
+### Phase 6 ✅
+- [ ] Automation rules executing
+- [ ] Full audit log
+- [ ] API tokens working
+- [ ] Webhooks delivering
+- [ ] Redis caching operational
+- [ ] Prometheus metrics exposed
+- [ ] Slow query logging active
+
+### Phase 7 ✅
+- [ ] SSO (SAML/OIDC) working
+- [ ] Security levels enforced
+- [ ] Backups automated
+- [ ] Storage abstraction (S3/Local) working
+- [ ] Email provider abstraction working
+- [ ] Public REST API documented
+
+### Phase 8 ✅
+- [ ] Git integration active
+- [ ] Slack notifications working
+- [ ] Import from Jira working
+- [ ] Mobile app published
 
 ---
 
-## 🎯 Karar Noktaları
+## 🎯 Milestone Markers
 
-| Milestone | Karar |
-|-----------|-------|
-| **Phase 9 sonrası** | MVP yeterli mi, yoksa Advanced'a devam mı? |
-| **Phase 10 sonrası** | Full JQL gerekli mi, structured filter yeterli mi? |
-| **Phase 12 sonrası** | Enterprise features gerekli mi? |
-| **Phase 15 sonrası** | Mobile app, multi-tenancy gibi büyük özellikler? |
-
----
-
-## 📅 Timeline Özeti
-
-| Phase | Süre | Kümülatif |
-|-------|------|-----------|
-| Phase 0-4 | 3-4 hafta | 48% |
-| Phase 5-7 | 2.5-3 hafta | 72% |
-| Phase 8-9 | 8-10 hafta | **85% (MVP)** |
-| Phase 10-12 | 10-11 hafta | **94%** |
-| Phase 13-15 | 5-6 hafta | **97.5%** |
-| Phase 16-20 | 8-12 hafta | **98-99%** |
-
-**MVP:** ~10-12 hafta
-**Full Parity:** ~6 ay
+| Milestone | Phase | Target Users |
+|-----------|-------|--------------|
+| **Alpha** | 0-1 | Internal testing |
+| **Beta** | 2-3 | Early adopters |
+| **v1.0 GA** | 4 | Small teams |
+| **v2.0** | 5-6 | Growing teams |
+| **Enterprise** | 7 | Security-conscious orgs |
+| **Platform** | 8 | Full market |
 
 ---
 
-## 🔧 Teknik Kararlar
+---
 
-| Karar | Seçim | Neden |
-|-------|-------|-------|
-| Custom Fields | Hybrid EAV + JSONB + Cache | Esneklik + performans |
-| Workflow Engine | Interpreter Pattern | Type-safe, extensible |
-| Permissions | Hierarchical RBAC | Jira model, kanıtlanmış |
-| History | ChangeGroups + ChangeItems | Field-level query |
-| Ranking | LexoRank | No rebalancing |
-| Notifications | Event Bus + BullMQ | Decoupled, async |
-| Transactions | TX injection | Explicit, testable |
-| DI | Lazy singleton factory | Simple, no deps |
+## 🔧 Backend Completeness Summary
+
+| Kategori | Roadmap Sonrası |
+|----------|----------------|
+| **Feature Completeness** | %100 |
+| **Production Infrastructure** | %100 |
+| **Monitoring & Observability** | %100 |
+| **Security & Compliance** | %100 |
+| **API & Integrations** | %100 |
+| **Overall Backend** | **%100** ✅ |
 
 ---
 
-*Son güncelleme: 30 Kasım 2025*
+*Son güncelleme: 1 Aralık 2025*
