@@ -3,6 +3,8 @@ import {userRouter} from "@/routers/user";
 import {ticketTypesRouter} from "@/routers/ticket-types";
 import {fieldTypesRouter} from "@/routers/field-types";
 import {fieldsRouter} from "@/routers/fields";
+import {statusesRouter} from "@/routers/statuses";
+import {workflowsRouter} from "@/routers/workflows";
 
 export const appRouter = router({
     healthCheck: publicProcedure.query(() => {
@@ -18,5 +20,7 @@ export const appRouter = router({
     ticketTypes: ticketTypesRouter,
     fieldTypes: fieldTypesRouter,
     fields: fieldsRouter,
+    statuses: statusesRouter,
+    workflows: workflowsRouter,
 });
 export type AppRouter = typeof appRouter;

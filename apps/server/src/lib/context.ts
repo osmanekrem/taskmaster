@@ -19,6 +19,8 @@ export async function createContext({ context }: CreateContextOptions) {
       field: container.field,
       fieldType: container.fieldType,
       ticketType: container.ticketType,
+      status: container.status,
+      workflow: container.workflow,
     },
   };
 }

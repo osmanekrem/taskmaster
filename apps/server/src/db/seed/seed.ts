@@ -2,16 +2,177 @@ import { db } from '@/db';
 import { fields } from '@/db/schema/field';
 import { issueTypes } from '@/db/schema/issue-types';
 import { issueTypeFields } from '@/db/schema/issue-type-fields';
-import { getDefaultConfig } from '@taskmaster/constants';
+import { statuses, resolutions } from '@/db/schema/statuses';
+import { workflows, workflowStatuses, workflowTransitions } from '@/db/schema/workflows';
+import { getDefaultConfig, DEFAULT_STATUSES, DEFAULT_RESOLUTIONS, ISSUE_TYPE_HIERARCHY } from '@taskmaster/constants';
 
 async function seed() {
   console.log('🌱 Starting seed...');
 
-  // Clear existing data
+  // Clear existing data (order matters due to foreign keys)
+  await db.delete(workflowTransitions);
+  await db.delete(workflowStatuses);
+  await db.delete(workflows);
   await db.delete(issueTypeFields);
   await db.delete(fields);
   await db.delete(issueTypes);
+  await db.delete(resolutions);
+  await db.delete(statuses);
 
+  // ========================================
+  // STATUSES
+  // ========================================
+  console.log('📦 Creating statuses...');
+
+  const createdStatuses = await db
+    .insert(statuses)
+    .values(
+      DEFAULT_STATUSES.map((s) => ({
+        name: s.name,
+        description: s.description,
+        category: s.category,
+        color: s.color,
+        icon: s.icon,
+        isSystem: s.isSystem,
+      })),
+    )
+    .returning();
+
+  console.log(`✅ Created ${createdStatuses.length} statuses`);
+
+  // Map status names to IDs
+  const statusMap = Object.fromEntries(
+    createdStatuses.map((s) => [s.name, s.id]),
+  );
+
+  // ========================================
+  // RESOLUTIONS
+  // ========================================
+  console.log('📦 Creating resolutions...');
+
+  const createdResolutions = await db
+    .insert(resolutions)
+    .values(
+      DEFAULT_RESOLUTIONS.map((r) => ({
+        name: r.name,
+        description: r.description,
+        isDefault: r.isDefault,
+        isSystem: r.isSystem,
+      })),
+    )
+    .returning();
+
+  console.log(`✅ Created ${createdResolutions.length} resolutions`);
+
+  // ========================================
+  // WORKFLOWS
+  // ========================================
+  console.log('📦 Creating default workflow...');
+
+  const [defaultWorkflow] = await db
+    .insert(workflows)
+    .values({
+      name: 'Varsayılan Workflow',
+      description: 'Temel issue workflow\'u - Open, In Progress, Done',
+      isDefault: true,
+    })
+    .returning();
+
+  console.log(`✅ Created workflow: ${defaultWorkflow.name}`);
+
+  // Add statuses to workflow
+  console.log('📦 Adding statuses to workflow...');
+
+  await db.insert(workflowStatuses).values([
+    { workflowId: defaultWorkflow.id, statusId: statusMap['Açık'], isInitial: true, sortOrder: 0 },
+    { workflowId: defaultWorkflow.id, statusId: statusMap['Devam Ediyor'], isInitial: false, sortOrder: 1 },
+    { workflowId: defaultWorkflow.id, statusId: statusMap['İncelemede'], isInitial: false, sortOrder: 2 },
+    { workflowId: defaultWorkflow.id, statusId: statusMap['Tamamlandı'], isInitial: false, sortOrder: 3 },
+    { workflowId: defaultWorkflow.id, statusId: statusMap['İptal Edildi'], isInitial: false, sortOrder: 4 },
+  ]);
+
+  console.log('✅ Added statuses to workflow');
+
+  // Add transitions
+  console.log('📦 Creating workflow transitions...');
+
+  await db.insert(workflowTransitions).values([
+    // From Open
+    {
+      workflowId: defaultWorkflow.id,
+      name: 'Başlat',
+      description: 'Issue üzerinde çalışmaya başla',
+      fromStatusId: statusMap['Açık'],
+      toStatusId: statusMap['Devam Ediyor'],
+      sortOrder: 0,
+    },
+    // From In Progress
+    {
+      workflowId: defaultWorkflow.id,
+      name: 'İncelemeye Gönder',
+      description: 'İnceleme için hazır',
+      fromStatusId: statusMap['Devam Ediyor'],
+      toStatusId: statusMap['İncelemede'],
+      sortOrder: 1,
+    },
+    {
+      workflowId: defaultWorkflow.id,
+      name: 'Tamamla',
+      description: 'İşi bitir',
+      fromStatusId: statusMap['Devam Ediyor'],
+      toStatusId: statusMap['Tamamlandı'],
+      sortOrder: 2,
+    },
+    // From In Review
+    {
+      workflowId: defaultWorkflow.id,
+      name: 'Değişiklik İste',
+      description: 'Düzeltme gerekiyor',
+      fromStatusId: statusMap['İncelemede'],
+      toStatusId: statusMap['Devam Ediyor'],
+      sortOrder: 3,
+    },
+    {
+      workflowId: defaultWorkflow.id,
+      name: 'Onayla',
+      description: 'İnceleme tamamlandı',
+      fromStatusId: statusMap['İncelemede'],
+      toStatusId: statusMap['Tamamlandı'],
+      sortOrder: 4,
+    },
+    // From Done
+    {
+      workflowId: defaultWorkflow.id,
+      name: 'İptal Et',
+      description: 'Issue\'yu iptal et',
+      fromStatusId: statusMap['Tamamlandı'],
+      toStatusId: statusMap['İptal Edildi'],
+      sortOrder: 5,
+    },
+    {
+      workflowId: defaultWorkflow.id,
+      name: 'Yeniden Aç',
+      description: 'İşi tekrar aç',
+      fromStatusId: statusMap['Tamamlandı'],
+      toStatusId: statusMap['Açık'],
+      sortOrder: 6,
+    },
+    // Global transitions (from any status)
+    {
+      workflowId: defaultWorkflow.id,
+      name: 'Hızlı İptal',
+      description: 'Issue\'yu herhangi bir yerden iptal et',
+      fromStatusId: null, // Global transition
+      toStatusId: statusMap['İptal Edildi'],
+      sortOrder: 7,
+    },
+  ]);
+
+  console.log('✅ Created workflow transitions');
+
+  // ========================================
+  // FIELDS
+  // ========================================
   console.log('📦 Creating fields...');
 
   // Create sample fields
@@ -147,19 +308,34 @@ async function seed() {
     .insert(issueTypes)
     .values([
       {
+        name: 'Epic',
+        description: 'Büyük özellik veya proje',
+        icon: 'zap',
+        hierarchyLevel: ISSUE_TYPE_HIERARCHY.EPIC,
+      },
+      {
         name: 'Görev',
         description: 'Standart görev türü',
         icon: 'square-check',
+        hierarchyLevel: ISSUE_TYPE_HIERARCHY.STANDARD,
       },
       {
         name: 'Bug',
         description: 'Hata bildirimi',
         icon: 'bug',
+        hierarchyLevel: ISSUE_TYPE_HIERARCHY.STANDARD,
       },
       {
-        name: 'Özellik İsteği',
-        description: 'Yeni özellik talebi',
-        icon: 'lightbulb',
+        name: 'Story',
+        description: 'Kullanıcı hikayesi',
+        icon: 'book-open',
+        hierarchyLevel: ISSUE_TYPE_HIERARCHY.STANDARD,
+      },
+      {
+        name: 'Alt Görev',
+        description: 'Bir görevin alt parçası',
+        icon: 'list-checks',
+        hierarchyLevel: ISSUE_TYPE_HIERARCHY.SUBTASK,
       },
     ])
     .returning();
@@ -174,19 +350,29 @@ async function seed() {
   // Assign fields to ticket types
   console.log('📦 Assigning fields to ticket types...');
 
+  const epicType = createdTicketTypes.find((t) => t.name === 'Epic')!;
   const gorevType = createdTicketTypes.find((t) => t.name === 'Görev')!;
   const bugType = createdTicketTypes.find((t) => t.name === 'Bug')!;
-  const featureType = createdTicketTypes.find((t) => t.name === 'Özellik İsteği')!;
+  const storyType = createdTicketTypes.find((t) => t.name === 'Story')!;
+  const subtaskType = createdTicketTypes.find((t) => t.name === 'Alt Görev')!;
+
+  // Epic type fields
+  await db.insert(issueTypeFields).values([
+    { issueTypeId: epicType.id, fieldId: fieldMap['Başlık'], order: 0 },
+    { issueTypeId: epicType.id, fieldId: fieldMap['Açıklama'], order: 1 },
+    { issueTypeId: epicType.id, fieldId: fieldMap['Öncelik'], order: 2 },
+    { issueTypeId: epicType.id, fieldId: fieldMap['Atanan Kişi'], order: 3 },
+    { issueTypeId: epicType.id, fieldId: fieldMap['Bitiş Tarihi'], order: 4 },
+  ]);
 
   // Görev type fields
   await db.insert(issueTypeFields).values([
     { issueTypeId: gorevType.id, fieldId: fieldMap['Başlık'], order: 0 },
     { issueTypeId: gorevType.id, fieldId: fieldMap['Açıklama'], order: 1 },
     { issueTypeId: gorevType.id, fieldId: fieldMap['Öncelik'], order: 2 },
-    { issueTypeId: gorevType.id, fieldId: fieldMap['Durum'], order: 3 },
-    { issueTypeId: gorevType.id, fieldId: fieldMap['Atanan Kişi'], order: 4 },
-    { issueTypeId: gorevType.id, fieldId: fieldMap['Tahmini Süre (saat)'], order: 5 },
-    { issueTypeId: gorevType.id, fieldId: fieldMap['Bitiş Tarihi'], order: 6 },
+    { issueTypeId: gorevType.id, fieldId: fieldMap['Atanan Kişi'], order: 3 },
+    { issueTypeId: gorevType.id, fieldId: fieldMap['Tahmini Süre (saat)'], order: 4 },
+    { issueTypeId: gorevType.id, fieldId: fieldMap['Bitiş Tarihi'], order: 5 },
   ]);
 
   // Bug type fields (with override for priority)
@@ -205,38 +391,41 @@ async function seed() {
         { id: 'bug-blocker', name: 'Blocker', icon: 'ban', order: 3 },
       ],
     },
-    { issueTypeId: bugType.id, fieldId: fieldMap['Durum'], order: 3 },
-    { issueTypeId: bugType.id, fieldId: fieldMap['Atanan Kişi'], order: 4 },
-    { issueTypeId: bugType.id, fieldId: fieldMap['Etiketler'], order: 5 },
-    { issueTypeId: bugType.id, fieldId: fieldMap['Referans URL'], order: 6 },
+    { issueTypeId: bugType.id, fieldId: fieldMap['Atanan Kişi'], order: 3 },
+    { issueTypeId: bugType.id, fieldId: fieldMap['Etiketler'], order: 4 },
+    { issueTypeId: bugType.id, fieldId: fieldMap['Referans URL'], order: 5 },
   ]);
 
-  // Feature Request type fields
+  // Story type fields
   await db.insert(issueTypeFields).values([
     {
-      issueTypeId: featureType.id,
+      issueTypeId: storyType.id,
       fieldId: fieldMap['Başlık'],
       order: 0,
-      // Override: Feature requests need longer titles
       configOverride: {
-        maxLength: 500,
-        placeholder: 'Özellik isteğinizi kısaca özetleyin',
+        placeholder: 'Kullanıcı olarak, ... istiyorum',
       },
     },
     {
-      issueTypeId: featureType.id,
+      issueTypeId: storyType.id,
       fieldId: fieldMap['Açıklama'],
       order: 1,
       configOverride: {
-        isRequired: true, // Override: Description is required for features
-        placeholder: 'Özelliğin ne yapması gerektiğini detaylı açıklayın',
+        isRequired: true,
+        placeholder: 'Kabul kriterleri ve detaylar',
       },
     },
-    { issueTypeId: featureType.id, fieldId: fieldMap['Öncelik'], order: 2 },
-    { issueTypeId: featureType.id, fieldId: fieldMap['Durum'], order: 3 },
-    { issueTypeId: featureType.id, fieldId: fieldMap['Etiketler'], order: 4 },
-    { issueTypeId: featureType.id, fieldId: fieldMap['Tahmini Süre (saat)'], order: 5 },
-    { issueTypeId: featureType.id, fieldId: fieldMap['Aktif Mi?'], order: 6 },
+    { issueTypeId: storyType.id, fieldId: fieldMap['Öncelik'], order: 2 },
+    { issueTypeId: storyType.id, fieldId: fieldMap['Atanan Kişi'], order: 3 },
+    { issueTypeId: storyType.id, fieldId: fieldMap['Tahmini Süre (saat)'], order: 4 },
+  ]);
+
+  // Subtask type fields (minimal)
+  await db.insert(issueTypeFields).values([
+    { issueTypeId: subtaskType.id, fieldId: fieldMap['Başlık'], order: 0 },
+    { issueTypeId: subtaskType.id, fieldId: fieldMap['Açıklama'], order: 1 },
+    { issueTypeId: subtaskType.id, fieldId: fieldMap['Atanan Kişi'], order: 2 },
+    { issueTypeId: subtaskType.id, fieldId: fieldMap['Tahmini Süre (saat)'], order: 3 },
   ]);
 
   console.log('✅ Assigned fields to ticket types');

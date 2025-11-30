@@ -11,6 +11,34 @@ export const ErrorMessages = {
 
   ISSUE_TYPE_FIELD_NOT_FOUND: 'Bu alan bilet türüne atanmamış',
 
+  // Status errors
+  STATUS_NOT_FOUND: 'Status bulunamadı',
+  STATUS_NAME_EXISTS: 'Bu isimde bir status zaten mevcut',
+  CANNOT_MODIFY_SYSTEM_STATUS: 'Sistem statusleri değiştirilemez',
+  CANNOT_DELETE_SYSTEM_STATUS: 'Sistem statusleri silinemez',
+
+  // Resolution errors
+  RESOLUTION_NOT_FOUND: 'Resolution bulunamadı',
+  RESOLUTION_NAME_EXISTS: 'Bu isimde bir resolution zaten mevcut',
+  CANNOT_MODIFY_SYSTEM_RESOLUTION: 'Sistem resolution\'ları değiştirilemez',
+  CANNOT_DELETE_SYSTEM_RESOLUTION: 'Sistem resolution\'ları silinemez',
+  CANNOT_DELETE_DEFAULT_RESOLUTION: 'Varsayılan resolution silinemez',
+
+  // Workflow errors
+  WORKFLOW_NOT_FOUND: 'Workflow bulunamadı',
+  WORKFLOW_NAME_EXISTS: 'Bu isimde bir workflow zaten mevcut',
+  CANNOT_DELETE_DEFAULT_WORKFLOW: 'Varsayılan workflow silinemez',
+  
+  // Workflow status errors
+  WORKFLOW_STATUS_NOT_FOUND: 'Workflow status bulunamadı',
+  STATUS_ALREADY_IN_WORKFLOW: 'Bu status zaten workflow\'da mevcut',
+  STATUS_NOT_IN_WORKFLOW: 'Bu status workflow\'da mevcut değil',
+  CANNOT_REMOVE_ONLY_STATUS: 'Workflow\'daki tek status silinemez',
+
+  // Transition errors
+  TRANSITION_NOT_FOUND: 'Transition bulunamadı',
+  INVALID_TRANSITION: 'Bu geçiş izin verilmiyor',
+
   NOT_FOUND: 'Kayıt bulunamadı',
   VALIDATION_ERROR: 'Geçersiz veri',
   CONFLICT: 'Çakışma hatası',
