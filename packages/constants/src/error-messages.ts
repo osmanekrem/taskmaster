@@ -51,6 +51,22 @@ export const ErrorMessages = {
   ISSUE_TYPE_ALREADY_IN_PROJECT: 'Bu issue type zaten projede mevcut',
   CANNOT_REMOVE_ISSUE_TYPE_WITH_ISSUES: 'Bu issue type\'da issue\'lar var, önce issue\'ları silin veya taşıyın',
 
+  // Issue errors
+  ISSUE_NOT_FOUND: 'Issue bulunamadı',
+  INVALID_ISSUE_KEY: 'Geçersiz issue key formatı',
+  ISSUE_TYPE_NOT_IN_PROJECT: 'Bu issue type bu projede kullanılamaz',
+  INVALID_STATUS_TRANSITION: 'Bu status geçişi izin verilmiyor',
+  RESOLUTION_REQUIRED: 'Bu status için resolution gerekli',
+  CANNOT_SET_RESOLUTION: 'Bu status için resolution atanamaz',
+  PARENT_ISSUE_NOT_FOUND: 'Üst issue bulunamadı',
+  EPIC_NOT_FOUND: 'Epic bulunamadı',
+  INVALID_PARENT_HIERARCHY: 'Geçersiz üst issue ilişkisi',
+  INVALID_EPIC_HIERARCHY: 'Sadece epic türündeki issue\'lara bağlanabilir',
+  CIRCULAR_HIERARCHY: 'Döngüsel bağımlılık tespit edildi',
+  CANNOT_MOVE_ISSUE_WITH_SUBTASKS: 'Alt görevleri olan issue taşınamaz',
+  FIELD_VALUE_REQUIRED: 'Bu alan zorunludur',
+  INVALID_FIELD_VALUE: 'Geçersiz alan değeri',
+
   NOT_FOUND: 'Kayıt bulunamadı',
   VALIDATION_ERROR: 'Geçersiz veri',
   CONFLICT: 'Çakışma hatası',

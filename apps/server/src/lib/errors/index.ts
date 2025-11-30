@@ -3,6 +3,15 @@ import { createHonoError } from '@osmanekrem/error-handler/hono';
 import { AppError } from '@osmanekrem/error-handler/core';
 import { ErrorMessages, type ErrorMessageKey } from '@taskmaster/constants';
 
+// Create an AppError with custom options
+export function createAppError(
+  message: string,
+  options?: { statusCode?: number; code?: string; context?: Record<string, unknown> }
+): AppError {
+  const { statusCode = 500, code = 'INTERNAL_SERVER_ERROR', context } = options || {};
+  return createHonoError(code, message, statusCode, context) as AppError;
+}
+
 function appErrorToTRPCError(error: AppError): TRPCError {
   const trpcCodeMap: Record<number, TRPCError['code']> = {
     400: 'BAD_REQUEST',

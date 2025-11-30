@@ -20,3 +20,9 @@ export type RoleSchema = z.infer<typeof roleSchema>;
 export const sortOrderSchema = z.enum(['asc', 'desc']);
 export type SortOrderSchema = z.infer<typeof sortOrderSchema>;
 
+// Pagination Schema
+export const paginationSchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+});
+export type PaginationInput = z.infer<typeof paginationSchema>;

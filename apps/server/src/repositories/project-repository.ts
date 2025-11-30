@@ -11,6 +11,51 @@ import type {
   ListProjectsSchema,
 } from '@taskmaster/validation';
 
+// =============================================================================
+// CLASS-BASED REPOSITORY (for DI)
+// =============================================================================
+
+export class ProjectRepository {
+  constructor(private drizzle: DrizzleClientOrTransaction = db) {}
+
+  findById(id: string) {
+    return this.drizzle.query.projects.findFirst({
+      where: eq(projects.id, id),
+      with: {
+        lead: true,
+        defaultWorkflow: true,
+      },
+    });
+  }
+
+  findByKey(key: string) {
+    return this.drizzle.query.projects.findFirst({
+      where: eq(projects.key, key.toUpperCase()),
+      with: {
+        lead: true,
+        defaultWorkflow: true,
+      },
+    });
+  }
+
+  getProjectIssueType(projectId: string, issueTypeId: string) {
+    return this.drizzle.query.projectIssueTypes.findFirst({
+      where: and(
+        eq(projectIssueTypes.projectId, projectId),
+        eq(projectIssueTypes.issueTypeId, issueTypeId),
+      ),
+      with: {
+        issueType: true,
+        workflow: true,
+      },
+    });
+  }
+}
+
+// =============================================================================
+// FUNCTION-BASED REPOSITORY (for services)
+// =============================================================================
+
 export const projectRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
   // =============================================================================
   // PROJECTS

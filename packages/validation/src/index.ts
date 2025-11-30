@@ -8,5 +8,5 @@ export * from './ticket-types';
 export * from './statuses';
 export * from './workflows';
 export * from './projects';
+export * from './issues';
 export * from './response';
-

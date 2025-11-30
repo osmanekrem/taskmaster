@@ -6,3 +6,4 @@ export * from './issue-type-junctions';
 export * from './issue-type-fields';
 export * from './projects';
 export * from './workflows';
+export * from './issues';
