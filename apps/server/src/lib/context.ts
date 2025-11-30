@@ -21,6 +21,7 @@ export async function createContext({ context }: CreateContextOptions) {
       ticketType: container.ticketType,
       status: container.status,
       workflow: container.workflow,
+      project: container.project,
     },
   };
 }

@@ -5,6 +5,7 @@ import { fieldTypeService } from '@/services/field-type-service';
 import { ticketTypeService } from '@/services/ticket-type-service';
 import { statusService } from '@/services/status-service';
 import { workflowService } from '@/services/workflow-service';
+import { projectService } from '@/services/project-service';
 import type { DrizzleClient } from '@/lib/types/db';
 
 class Container {
@@ -15,6 +16,7 @@ class Container {
   private _ticketTypeService: ReturnType<typeof ticketTypeService> | null = null;
   private _statusService: ReturnType<typeof statusService> | null = null;
   private _workflowService: ReturnType<typeof workflowService> | null = null;
+  private _projectService: ReturnType<typeof projectService> | null = null;
 
   constructor(database: DrizzleClient = db) {
     this._db = database;
@@ -52,6 +54,11 @@ class Container {
   get workflow() {
     this._workflowService ??= workflowService(this._db);
     return this._workflowService;
+  }
+
+  get project() {
+    this._projectService ??= projectService(this._db);
+    return this._projectService;
   }
 
   static create(database?: DrizzleClient): Container {

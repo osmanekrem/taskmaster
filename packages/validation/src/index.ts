@@ -7,5 +7,6 @@ export * from './users';
 export * from './ticket-types';
 export * from './statuses';
 export * from './workflows';
+export * from './projects';
 export * from './response';
 

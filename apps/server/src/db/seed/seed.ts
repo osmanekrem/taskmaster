@@ -4,12 +4,16 @@ import { issueTypes } from '@/db/schema/issue-types';
 import { issueTypeFields } from '@/db/schema/issue-type-fields';
 import { statuses, resolutions } from '@/db/schema/statuses';
 import { workflows, workflowStatuses, workflowTransitions } from '@/db/schema/workflows';
+import { projects } from '@/db/schema/projects';
+import { projectIssueTypes } from '@/db/schema/issue-type-junctions';
 import { getDefaultConfig, DEFAULT_STATUSES, DEFAULT_RESOLUTIONS, ISSUE_TYPE_HIERARCHY } from '@taskmaster/constants';
 
 async function seed() {
   console.log('🌱 Starting seed...');
 
   // Clear existing data (order matters due to foreign keys)
+  await db.delete(projectIssueTypes);
+  await db.delete(projects);
   await db.delete(workflowTransitions);
   await db.delete(workflowStatuses);
   await db.delete(workflows);
@@ -429,6 +433,43 @@ async function seed() {
   ]);
 
   console.log('✅ Assigned fields to ticket types');
+
+  // ========================================
+  // PROJECTS
+  // ========================================
+  console.log('📦 Creating sample project...');
+
+  const [demoProject] = await db
+    .insert(projects)
+    .values({
+      name: 'Demo Proje',
+      key: 'DEMO',
+      description: 'Örnek proje - tüm issue türlerini içerir',
+      defaultWorkflowId: defaultWorkflow.id,
+      settings: {
+        issueKeyPrefix: 'DEMO',
+        nextIssueNumber: 1,
+        enableSprints: true,
+        enableTimeTracking: true,
+        defaultAssigneeRule: 'unassigned',
+      },
+    })
+    .returning();
+
+  console.log(`✅ Created project: ${demoProject.name} (${demoProject.key})`);
+
+  // Add issue types to project
+  console.log('📦 Adding issue types to project...');
+
+  await db.insert(projectIssueTypes).values([
+    { projectId: demoProject.id, issueTypeId: epicType.id, workflowId: null }, // Uses project default
+    { projectId: demoProject.id, issueTypeId: gorevType.id, workflowId: null },
+    { projectId: demoProject.id, issueTypeId: bugType.id, workflowId: null },
+    { projectId: demoProject.id, issueTypeId: storyType.id, workflowId: null },
+    { projectId: demoProject.id, issueTypeId: subtaskType.id, workflowId: null },
+  ]);
+
+  console.log('✅ Added issue types to project');
 
   console.log('🎉 Seed completed successfully!');
 }

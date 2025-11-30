@@ -39,6 +39,18 @@ export const ErrorMessages = {
   TRANSITION_NOT_FOUND: 'Transition bulunamadı',
   INVALID_TRANSITION: 'Bu geçiş izin verilmiyor',
 
+  // Project errors
+  PROJECT_NOT_FOUND: 'Proje bulunamadı',
+  PROJECT_KEY_EXISTS: 'Bu proje anahtarı zaten kullanılıyor',
+  PROJECT_NAME_EXISTS: 'Bu isimde bir proje zaten mevcut',
+  CANNOT_DELETE_ARCHIVED_PROJECT: 'Arşivlenmiş proje silinemez, önce arşivden çıkarın',
+  PROJECT_HAS_ISSUES: 'Bu projede issue\'lar var, önce issue\'ları silin veya taşıyın',
+  
+  // Project issue type errors
+  PROJECT_ISSUE_TYPE_NOT_FOUND: 'Bu issue type projede bulunamadı',
+  ISSUE_TYPE_ALREADY_IN_PROJECT: 'Bu issue type zaten projede mevcut',
+  CANNOT_REMOVE_ISSUE_TYPE_WITH_ISSUES: 'Bu issue type\'da issue\'lar var, önce issue\'ları silin veya taşıyın',
+
   NOT_FOUND: 'Kayıt bulunamadı',
   VALIDATION_ERROR: 'Geçersiz veri',
   CONFLICT: 'Çakışma hatası',
