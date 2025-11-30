@@ -97,7 +97,10 @@ export const useSaveIssueTypeFieldsMutation = () =>
         });
         // Invalidate all issue type detail queries
         queryClient.invalidateQueries({
-          queryKey: ['ticketTypes', 'getIssueTypeWithDetailsByIssueTypeId'],
+          predicate: (query) =>
+            Array.isArray(query.queryKey[0]) &&
+            query.queryKey[0][0] === 'ticketTypes' &&
+            query.queryKey[0][1] === 'getIssueTypeWithDetailsByIssueTypeId',
         });
       },
       onError: (error) => {

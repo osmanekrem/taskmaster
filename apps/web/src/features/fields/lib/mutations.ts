@@ -98,10 +98,9 @@ export const useSaveIssueTypeFieldsMutation = () =>
         }
         // Invalidate issue type fields queries
         queryClient.invalidateQueries({
-          queryKey: ['fields', 'issueTypeFields'],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['ticketTypes'],
+          predicate: (query) =>
+            Array.isArray(query.queryKey[0]) &&
+            query.queryKey[0][0] === 'ticketTypes',
         });
       },
       onError: (error) => {
@@ -121,10 +120,9 @@ export const useAddFieldToIssueTypeMutation = () =>
           toast.success(res.message);
         }
         queryClient.invalidateQueries({
-          queryKey: ['fields', 'issueTypeFields'],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['ticketTypes'],
+          predicate: (query) =>
+            Array.isArray(query.queryKey[0]) &&
+            query.queryKey[0][0] === 'ticketTypes',
         });
       },
       onError: (error) => {
@@ -144,10 +142,9 @@ export const useRemoveFieldFromIssueTypeMutation = () =>
           toast.success(res.message);
         }
         queryClient.invalidateQueries({
-          queryKey: ['fields', 'issueTypeFields'],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['ticketTypes'],
+          predicate: (query) =>
+            Array.isArray(query.queryKey[0]) &&
+            query.queryKey[0][0] === 'ticketTypes',
         });
       },
       onError: (error) => {
@@ -167,10 +164,9 @@ export const useUpdateIssueTypeFieldOverrideMutation = () =>
           toast.success(res.message);
         }
         queryClient.invalidateQueries({
-          queryKey: ['fields', 'issueTypeFields'],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['ticketTypes'],
+          predicate: (query) =>
+            Array.isArray(query.queryKey[0]) &&
+            query.queryKey[0][0] === 'ticketTypes',
         });
       },
       onError: (error) => {
