@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { DateValue } from 'react-aria-components';
 import UserSelector from '@/components/user-selector';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -47,6 +47,18 @@ export function FieldRendererPreviewComponent({ field }: FieldRendererProps) {
   const [date, setDate] = useState<DateValue | null>(null);
   const [user, setUser] = useState<string | undefined>();
   const [checked, setChecked] = useState<boolean>(false);
+  const [textValue, setTextValue] = useState<string>('');
+  const [numberValue, setNumberValue] = useState<string>('');
+
+  // Reset state when field changes
+  useEffect(() => {
+    setOption(defaultOption);
+    setDate(null);
+    setUser(undefined);
+    setChecked(false);
+    setTextValue('');
+    setNumberValue('');
+  }, [field.id, defaultOption]);
 
   if (!field.fieldType) return null;
 
@@ -78,6 +90,8 @@ export function FieldRendererPreviewComponent({ field }: FieldRendererProps) {
       <Input
         type='text'
         placeholder={placeholder}
+        value={textValue}
+        onChange={(e) => setTextValue(e.target.value)}
         minLength={config?.minLength as number | undefined}
         maxLength={config?.maxLength as number | undefined}
       />
@@ -90,6 +104,8 @@ export function FieldRendererPreviewComponent({ field }: FieldRendererProps) {
       <Input
         type='url'
         placeholder={placeholder || 'https://example.com'}
+        value={textValue}
+        onChange={(e) => setTextValue(e.target.value)}
         minLength={config?.minLength as number | undefined}
         maxLength={config?.maxLength as number | undefined}
       />
@@ -102,6 +118,8 @@ export function FieldRendererPreviewComponent({ field }: FieldRendererProps) {
       <Input
         type='email'
         placeholder={placeholder || 'email@example.com'}
+        value={textValue}
+        onChange={(e) => setTextValue(e.target.value)}
         minLength={config?.minLength as number | undefined}
         maxLength={config?.maxLength as number | undefined}
       />
@@ -113,6 +131,8 @@ export function FieldRendererPreviewComponent({ field }: FieldRendererProps) {
     return (
       <Textarea
         placeholder={placeholder}
+        value={textValue}
+        onChange={(e) => setTextValue(e.target.value)}
         minLength={config?.minLength as number | undefined}
         maxLength={config?.maxLength as number | undefined}
       />
@@ -125,6 +145,8 @@ export function FieldRendererPreviewComponent({ field }: FieldRendererProps) {
       <Input
         type='number'
         placeholder={placeholder}
+        value={numberValue}
+        onChange={(e) => setNumberValue(e.target.value)}
         min={config?.min as number | undefined}
         max={config?.max as number | undefined}
         step={config?.step as number | undefined}

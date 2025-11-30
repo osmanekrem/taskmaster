@@ -6,7 +6,6 @@ import type {
   CreateTicketTypeSchema,
   EditTicketTypeSchema,
 } from '@taskmaster/validation';
-import { fields } from '@/db/schema/field';
 import type { DrizzleClient } from '@/lib/types/db';
 
 export const ticketTypeRepository = (drizzle: DrizzleClient = db) => ({

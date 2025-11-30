@@ -51,7 +51,8 @@ export type SelectOptionSchema = z.infer<typeof selectOptionSchema>;
 
 // Issue Type Field Schema (for saving fields to issue type)
 export const issueTypeFieldSchema = z.object({
-  id: idSchema, // Field ID
+  fieldId: idSchema, // Field ID
+  order: z.number().min(0).optional(),
   configOverride: fieldConfigSchema,
   optionsOverride: z.array(fieldSelectOptionSchema).optional().nullable(),
 });
@@ -124,4 +125,15 @@ export const removeFieldFromIssueTypeRequestSchema = z.object({
 
 export type RemoveFieldFromIssueTypeRequestSchema = z.infer<
   typeof removeFieldFromIssueTypeRequestSchema
+>;
+
+// Update Issue Type Field Schema (for repository)
+export const updateIssueTypeFieldSchema = z.object({
+  order: z.number().min(0).optional(),
+  configOverride: fieldConfigSchema,
+  optionsOverride: z.array(fieldSelectOptionSchema).optional().nullable(),
+});
+
+export type UpdateIssueTypeFieldSchema = z.infer<
+  typeof updateIssueTypeFieldSchema
 >;

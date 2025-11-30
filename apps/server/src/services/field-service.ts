@@ -5,37 +5,20 @@ import type {
   EditFieldSchema,
   GetFieldByIdRequestSchema,
   DeleteFieldRequestSchema,
+  SaveIssueTypeFieldsRequestSchema,
+  UpdateIssueTypeFieldOverrideRequestSchema,
+  GetIssueTypeFieldsByIssueTypeIdRequestSchema,
+  AddFieldToIssueTypeRequestSchema,
+  RemoveFieldFromIssueTypeRequestSchema,
 } from '@taskmaster/validation';
 import { throwNotFoundError } from '@/lib/errors';
 import type { DrizzleClientOrTransaction } from '@/lib/types/db';
-import type { FieldConfig, FieldSelectOption } from '@/db/schema/field';
 import {
   resolveFieldConfig,
   resolveFieldsForIssueType,
   type ResolvedField,
 } from './field-config-resolver';
 import { getDefaultConfig } from '@taskmaster/constants';
-
-// Input types for service methods - exported for type inference
-export interface SaveIssueTypeFieldsInput {
-  issueTypeId: string;
-  fields: Array<{
-    id: string;
-    configOverride?: FieldConfig | null;
-    optionsOverride?: FieldSelectOption[] | null;
-  }>;
-}
-
-export interface UpdateIssueTypeFieldInput {
-  issueTypeId: string;
-  fieldId: string;
-  configOverride?: FieldConfig | null;
-  optionsOverride?: FieldSelectOption[] | null;
-}
-
-export interface GetIssueTypeFieldsInput {
-  issueTypeId: string;
-}
 
 export const fieldService = (drizzle: DrizzleClientOrTransaction = db) => {
   const repository = fieldRepository(drizzle);
@@ -114,7 +97,7 @@ export const fieldService = (drizzle: DrizzleClientOrTransaction = db) => {
      * Returns fields with merged config (base + override)
      */
     getResolvedFieldsForIssueType: async (
-      input: GetIssueTypeFieldsInput,
+      input: GetIssueTypeFieldsByIssueTypeIdRequestSchema,
     ): Promise<ResolvedField[]> => {
       const issueTypeFields =
         await repository.findIssueTypeFieldsWithFieldByIssueTypeId(
@@ -127,7 +110,7 @@ export const fieldService = (drizzle: DrizzleClientOrTransaction = db) => {
     /**
      * Get raw issue type fields (without resolved config)
      */
-    getIssueTypeFieldsByIssueTypeId: async (input: GetIssueTypeFieldsInput) => {
+    getIssueTypeFieldsByIssueTypeId: async (input: GetIssueTypeFieldsByIssueTypeIdRequestSchema) => {
       return await repository.findIssueTypeFieldsByIssueTypeId(input.issueTypeId);
     },
 
@@ -135,7 +118,7 @@ export const fieldService = (drizzle: DrizzleClientOrTransaction = db) => {
      * Save fields for an issue type
      * Handles adding new fields and removing fields not in the list
      */
-    saveIssueTypeFields: async (input: SaveIssueTypeFieldsInput) => {
+    saveIssueTypeFields: async (input: SaveIssueTypeFieldsRequestSchema) => {
       return await drizzle.transaction(async (tx) => {
         const repo = fieldRepository(tx);
 
@@ -146,7 +129,7 @@ export const fieldService = (drizzle: DrizzleClientOrTransaction = db) => {
         const existingFieldIds = new Set(
           existingIssueTypeFields.map((f) => f.fieldId),
         );
-        const incomingFieldIds = new Set(input.fields.map((f) => f.id));
+        const incomingFieldIds = new Set(input.fields.map((f) => f.fieldId));
 
         // Remove fields not in incoming list
         const fieldsToRemove = existingIssueTypeFields.filter(
@@ -159,18 +142,19 @@ export const fieldService = (drizzle: DrizzleClientOrTransaction = db) => {
         // Add new fields or update existing ones
         for (let index = 0; index < input.fields.length; index++) {
           const field = input.fields[index];
+          const order = field.order ?? index;
 
-          if (existingFieldIds.has(field.id)) {
+          if (existingFieldIds.has(field.fieldId)) {
             // Update existing field
-            await repo.updateIssueTypeField(input.issueTypeId, field.id, {
-              order: index,
+            await repo.updateIssueTypeField(input.issueTypeId, field.fieldId, {
+              order,
               configOverride: field.configOverride,
               optionsOverride: field.optionsOverride,
             });
           } else {
             // Add new field
-            await repo.addFieldToIssueType(input.issueTypeId, field.id, {
-              order: index,
+            await repo.addFieldToIssueType(input.issueTypeId, field.fieldId, {
+              order,
               configOverride: field.configOverride,
               optionsOverride: field.optionsOverride,
             });
@@ -188,7 +172,7 @@ export const fieldService = (drizzle: DrizzleClientOrTransaction = db) => {
     /**
      * Update a single issue type field's override config
      */
-    updateIssueTypeFieldOverride: async (input: UpdateIssueTypeFieldInput) => {
+    updateIssueTypeFieldOverride: async (input: UpdateIssueTypeFieldOverrideRequestSchema) => {
       const issueTypeField = await repository.findIssueTypeField(
         input.issueTypeId,
         input.fieldId,
@@ -215,12 +199,9 @@ export const fieldService = (drizzle: DrizzleClientOrTransaction = db) => {
      * Add a field to an issue type
      */
     addFieldToIssueType: async (
-      issueTypeId: string,
-      fieldId: string,
-      order: number,
-      configOverride?: FieldConfig | null,
-      optionsOverride?: FieldSelectOption[] | null,
+      input: AddFieldToIssueTypeRequestSchema,
     ) => {
+      const { issueTypeId, fieldId, order = 0, configOverride, optionsOverride } = input;
       // Check if field exists
       const field = await repository.findById(fieldId);
       if (!field) {
@@ -243,7 +224,8 @@ export const fieldService = (drizzle: DrizzleClientOrTransaction = db) => {
     /**
      * Remove a field from an issue type
      */
-    removeFieldFromIssueType: async (issueTypeId: string, fieldId: string) => {
+    removeFieldFromIssueType: async (input: RemoveFieldFromIssueTypeRequestSchema) => {
+      const { issueTypeId, fieldId } = input;
       const issueTypeField = await repository.findIssueTypeField(
         issueTypeId,
         fieldId,

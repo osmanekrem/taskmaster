@@ -114,13 +114,7 @@ export const fieldsRouter = router({
   addFieldToIssueType: protectedProcedure
     .input(addFieldToIssueTypeRequestSchema)
     .mutation(async ({ ctx, input }) => {
-      const data = await ctx.services.field.addFieldToIssueType(
-        input.issueTypeId,
-        input.fieldId,
-        input.order ?? 0,
-        input.configOverride,
-        input.optionsOverride,
-      );
+      const data = await ctx.services.field.addFieldToIssueType(input);
       return successResponse(data, 'Alan issue type\'a başarıyla eklendi');
     }),
 
@@ -130,10 +124,7 @@ export const fieldsRouter = router({
   removeFieldFromIssueType: protectedProcedure
     .input(removeFieldFromIssueTypeRequestSchema)
     .mutation(async ({ ctx, input }) => {
-      const data = await ctx.services.field.removeFieldFromIssueType(
-        input.issueTypeId,
-        input.fieldId,
-      );
+      const data = await ctx.services.field.removeFieldFromIssueType(input);
       return successResponse(data, 'Alan issue type\'dan başarıyla kaldırıldı');
     }),
 });

@@ -1,7 +1,7 @@
 import { protectedProcedure, router } from '@/lib/trpc';
 import { successResponse } from '@/utils/response';
 import { getFieldTypeList, getFieldType, getDefaultConfig, FIELD_TYPES } from '@taskmaster/constants';
-import { z } from 'zod';
+import { getFieldTypeByIdRequestSchema } from '@taskmaster/validation';
 
 export const fieldTypesRouter = router({
   /**
@@ -16,7 +16,7 @@ export const fieldTypesRouter = router({
    * Get a field type by ID with its config schema
    */
   getFieldTypeById: protectedProcedure
-    .input(z.object({ fieldTypeId: z.string() }))
+    .input(getFieldTypeByIdRequestSchema)
     .query(async ({ input }) => {
       const fieldType = getFieldType(input.fieldTypeId);
       if (!fieldType) {

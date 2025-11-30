@@ -3,36 +3,12 @@ import { issueTypeFields } from '@/db/schema/issue-type-fields';
 import { db } from '@/db';
 import { and, asc, eq } from 'drizzle-orm';
 import type { DrizzleClientOrTransaction } from '@/lib/types/db';
-
-// Input types
-export interface CreateFieldInput {
-  name: string;
-  fieldType: string;
-  icon?: string;
-  config?: FieldConfig;
-  options?: FieldSelectOption[];
-}
-
-export interface UpdateFieldInput {
-  name?: string;
-  icon?: string;
-  config?: FieldConfig;
-  options?: FieldSelectOption[];
-}
-
-export interface AddFieldToIssueTypeInput {
-  issueTypeId: string;
-  fieldId: string;
-  order?: number;
-  configOverride?: FieldConfig | null;
-  optionsOverride?: FieldSelectOption[] | null;
-}
-
-export interface UpdateIssueTypeFieldInput {
-  configOverride?: FieldConfig | null;
-  optionsOverride?: FieldSelectOption[] | null;
-  order?: number;
-}
+import type {
+  CreateFieldSchema,
+  EditFieldSchema,
+  AddFieldToIssueTypeRequestSchema,
+  UpdateIssueTypeFieldSchema,
+} from '@taskmaster/validation';
 
 export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
   // ==================== FIELDS ====================
@@ -53,7 +29,7 @@ export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
       where: (fields, { inArray }) => inArray(fields.id, ids),
     }),
 
-  create: async (input: CreateFieldInput) => {
+  create: async (input: CreateFieldSchema) => {
     const [result] = await drizzle
       .insert(fields)
       .values({
@@ -67,7 +43,7 @@ export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
     return result;
   },
 
-  update: async (id: string, input: UpdateFieldInput) => {
+  update: async (id: string, input: Omit<EditFieldSchema, 'fieldId'>) => {
     const updateData: Record<string, unknown> = {
       updatedAt: new Date(),
     };
@@ -125,7 +101,7 @@ export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
   addFieldToIssueType: async (
     issueTypeId: string, 
     fieldId: string, 
-    options?: Omit<AddFieldToIssueTypeInput, 'issueTypeId' | 'fieldId'>
+    options?: Omit<AddFieldToIssueTypeRequestSchema, 'issueTypeId' | 'fieldId'>
   ) => {
     const [result] = await drizzle
       .insert(issueTypeFields)
@@ -143,7 +119,7 @@ export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
   updateIssueTypeField: async (
     issueTypeId: string, 
     fieldId: string, 
-    input: UpdateIssueTypeFieldInput
+    input: UpdateIssueTypeFieldSchema
   ) => {
     const updateData: Record<string, unknown> = {};
     

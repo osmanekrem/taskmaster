@@ -1,4 +1,5 @@
 import { getFieldTypeList, getFieldType, getDefaultConfig, FIELD_TYPES } from '@taskmaster/constants';
+import type { GetFieldTypeByIdRequestSchema, GetFieldTypeWithOptionsByIdRequestSchema } from '@taskmaster/validation';
 import type { DrizzleClient } from '@/lib/types/db';
 import { db } from '@/db';
 
@@ -16,7 +17,7 @@ export const fieldTypeService = (_drizzle: DrizzleClient = db) => {
     /**
      * Get a field type by ID
      */
-    getFieldTypeById: (input: { fieldTypeId: string }) => {
+    getFieldTypeById: (input: GetFieldTypeByIdRequestSchema) => {
       const fieldType = getFieldType(input.fieldTypeId);
       return fieldType || null;
     },
@@ -35,7 +36,7 @@ export const fieldTypeService = (_drizzle: DrizzleClient = db) => {
     /**
      * Get a field type by ID with its config schema
      */
-    getFieldTypeWithOptionsById: (input: { fieldTypeId: string }) => {
+    getFieldTypeWithOptionsById: (input: GetFieldTypeWithOptionsByIdRequestSchema) => {
       const fieldType = getFieldType(input.fieldTypeId);
       if (!fieldType) return null;
 
