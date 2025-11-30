@@ -2,7 +2,6 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "@/lib/trpc";
-import { container } from "@/lib/container";
 import {
 	addWatcherSchema,
 	removeWatcherSchema,
@@ -23,21 +22,23 @@ import {
 	toggleChannelPreferencesSchema,
 	updateDigestSettingsSchema,
 } from "@taskmaster/validation";
+import { requirePermission } from "@/lib/middleware/permission";
 
 // =====================================================
 // NOTIFICATIONS ROUTER
 // =====================================================
 
 export const notificationsRouter = router({
-	// ===== WATCHER ENDPOINTS =====
+// ===== WATCHER ENDPOINTS =====
 
-	/**
-	 * Get all watchers for an issue
-	 */
-	getIssueWatchers: protectedProcedure
-		.input(getIssueWatchersSchema)
-		.query(async ({ input }) => {
-			const watchers = await container.notification.getIssueWatchers(input.issueId);
+/**
+ * Get all watchers for an issue
+ */
+getIssueWatchers: protectedProcedure
+.input(getIssueWatchersSchema)
+.use(requirePermission('issue:view'))
+.query(async ({ ctx, input }) => {
+			const watchers = await ctx.services.notification.getIssueWatchers(input.issueId);
 			return watchers;
 		}),
 
@@ -46,13 +47,14 @@ export const notificationsRouter = router({
 	 */
 	getWatchedIssues: protectedProcedure
 		.input(getWatchedIssuesSchema)
+		.use(requirePermission('issue:view'))
 		.query(async ({ ctx, input }) => {
 			const userId = input.userId ?? ctx.session.user.id;
-			return container.notification.getWatchedIssues(userId, {
-				page: input.page,
-				limit: input.limit,
-				includeIssueDetails: input.includeIssueDetails,
-			});
+			return ctx.services.notification.getWatchedIssues(userId, {
+page: input.page,
+limit: input.limit,
+includeIssueDetails: input.includeIssueDetails,
+});
 		}),
 
 	/**
@@ -60,11 +62,12 @@ export const notificationsRouter = router({
 	 */
 	isWatching: protectedProcedure
 		.input(z.object({ issueId: z.string().uuid() }))
+		.use(requirePermission('issue:view'))
 		.query(async ({ ctx, input }) => {
-			const isWatching = await container.notification.isWatching(
-				input.issueId,
-				ctx.session.user.id,
-			);
+			const isWatching = await ctx.services.notification.isWatching(
+input.issueId,
+ctx.session.user.id,
+);
 			return { isWatching };
 		}),
 
@@ -73,13 +76,14 @@ export const notificationsRouter = router({
 	 */
 	watchIssue: protectedProcedure
 		.input(addWatcherSchema)
+		.use(requirePermission('issue:view'))
 		.mutation(async ({ ctx, input }) => {
 			const userId = input.userId ?? ctx.session.user.id;
-			const watcher = await container.notification.watchIssue(
-				input.issueId,
-				userId,
-				input.reason,
-			);
+			const watcher = await ctx.services.notification.watchIssue(
+input.issueId,
+userId,
+input.reason,
+);
 			return watcher;
 		}),
 
@@ -88,12 +92,13 @@ export const notificationsRouter = router({
 	 */
 	unwatchIssue: protectedProcedure
 		.input(removeWatcherSchema)
+		.use(requirePermission('issue:view'))
 		.mutation(async ({ ctx, input }) => {
 			const userId = input.userId ?? ctx.session.user.id;
-			const removed = await container.notification.unwatchIssue(
-				input.issueId,
-				userId,
-			);
+			const removed = await ctx.services.notification.unwatchIssue(
+input.issueId,
+userId,
+);
 			return { success: !!removed };
 		}),
 
@@ -102,8 +107,9 @@ export const notificationsRouter = router({
 	 */
 	toggleWatch: protectedProcedure
 		.input(z.object({ issueId: z.string().uuid() }))
+		.use(requirePermission('issue:view'))
 		.mutation(async ({ ctx, input }) => {
-			return container.notification.toggleWatch(input.issueId, ctx.session.user.id);
+			return ctx.services.notification.toggleWatch(input.issueId, ctx.session.user.id);
 		}),
 
 	/**
@@ -111,18 +117,19 @@ export const notificationsRouter = router({
 	 */
 	toggleMute: protectedProcedure
 		.input(toggleMuteWatcherSchema)
+		.use(requirePermission('issue:view'))
 		.mutation(async ({ ctx, input }) => {
-			const updated = await container.notification.toggleMute(
-				input.issueId,
-				ctx.session.user.id,
-				input.isMuted,
-			);
+			const updated = await ctx.services.notification.toggleMute(
+input.issueId,
+ctx.session.user.id,
+input.isMuted,
+);
 
 			if (!updated) {
 				throw new TRPCError({
-					code: "NOT_FOUND",
-					message: "Watch not found",
-				});
+code: "NOT_FOUND",
+message: "Watch not found",
+});
 			}
 
 			return updated;
@@ -133,12 +140,13 @@ export const notificationsRouter = router({
 	 */
 	bulkWatch: protectedProcedure
 		.input(bulkWatchSchema)
+		.use(requirePermission('issue:view'))
 		.mutation(async ({ ctx, input }) => {
-			return container.notification.bulkWatch(
-				input.issueIds,
-				ctx.session.user.id,
-				input.action,
-			);
+			return ctx.services.notification.bulkWatch(
+input.issueIds,
+ctx.session.user.id,
+input.action,
+);
 		}),
 
 	// ===== NOTIFICATION ENDPOINTS =====
@@ -149,15 +157,15 @@ export const notificationsRouter = router({
 	getNotifications: protectedProcedure
 		.input(getNotificationsSchema)
 		.query(async ({ ctx, input }) => {
-			return container.notification.getNotifications(ctx.session.user.id, {
-				page: input.page,
-				limit: input.limit,
-				isRead: input.isRead,
-				type: input.type,
-				issueId: input.issueId,
-				includeArchived: input.includeArchived,
-				since: input.since,
-			});
+			return ctx.services.notification.getNotifications(ctx.session.user.id, {
+page: input.page,
+limit: input.limit,
+isRead: input.isRead,
+type: input.type,
+issueId: input.issueId,
+includeArchived: input.includeArchived,
+since: input.since,
+});
 		}),
 
 	/**
@@ -166,15 +174,15 @@ export const notificationsRouter = router({
 	getNotificationById: protectedProcedure
 		.input(z.object({ notificationId: z.string().uuid() }))
 		.query(async ({ ctx, input }) => {
-			const notification = await container.notification.getNotificationById(
-				input.notificationId,
-			);
+			const notification = await ctx.services.notification.getNotificationById(
+input.notificationId,
+);
 
 			if (!notification || notification.userId !== ctx.session.user.id) {
 				throw new TRPCError({
-					code: "NOT_FOUND",
-					message: "Notification not found",
-				});
+code: "NOT_FOUND",
+message: "Notification not found",
+});
 			}
 
 			return notification;
@@ -186,7 +194,7 @@ export const notificationsRouter = router({
 	getUnreadCount: protectedProcedure
 		.input(getUnreadCountSchema)
 		.query(async ({ ctx, input }) => {
-			return container.notification.getUnreadCount(ctx.session.user.id, input.byType);
+			return ctx.services.notification.getUnreadCount(ctx.session.user.id, input.byType);
 		}),
 
 	/**
@@ -195,16 +203,16 @@ export const notificationsRouter = router({
 	markAsRead: protectedProcedure
 		.input(markNotificationReadSchema)
 		.mutation(async ({ ctx, input }) => {
-			const updated = await container.notification.markAsRead(
-				input.notificationId,
-				ctx.session.user.id,
-			);
+			const updated = await ctx.services.notification.markAsRead(
+input.notificationId,
+ctx.session.user.id,
+);
 
 			if (!updated) {
 				throw new TRPCError({
-					code: "NOT_FOUND",
-					message: "Notification not found",
-				});
+code: "NOT_FOUND",
+message: "Notification not found",
+});
 			}
 
 			return updated;
@@ -216,10 +224,10 @@ export const notificationsRouter = router({
 	markManyAsRead: protectedProcedure
 		.input(markNotificationsReadSchema)
 		.mutation(async ({ ctx, input }) => {
-			return container.notification.markManyAsRead(
-				input.notificationIds,
-				ctx.session.user.id,
-			);
+			return ctx.services.notification.markManyAsRead(
+input.notificationIds,
+ctx.session.user.id,
+);
 		}),
 
 	/**
@@ -228,11 +236,11 @@ export const notificationsRouter = router({
 	markAllAsRead: protectedProcedure
 		.input(markAllNotificationsReadSchema)
 		.mutation(async ({ ctx, input }) => {
-			return container.notification.markAllAsRead(ctx.session.user.id, {
-				type: input.type,
-				issueId: input.issueId,
-				before: input.before,
-			});
+			return ctx.services.notification.markAllAsRead(ctx.session.user.id, {
+type: input.type,
+issueId: input.issueId,
+before: input.before,
+});
 		}),
 
 	/**
@@ -241,16 +249,16 @@ export const notificationsRouter = router({
 	archiveNotification: protectedProcedure
 		.input(archiveNotificationSchema)
 		.mutation(async ({ ctx, input }) => {
-			const archived = await container.notification.archiveNotification(
-				input.notificationId,
-				ctx.session.user.id,
-			);
+			const archived = await ctx.services.notification.archiveNotification(
+input.notificationId,
+ctx.session.user.id,
+);
 
 			if (!archived) {
 				throw new TRPCError({
-					code: "NOT_FOUND",
-					message: "Notification not found",
-				});
+code: "NOT_FOUND",
+message: "Notification not found",
+});
 			}
 
 			return archived;
@@ -262,10 +270,10 @@ export const notificationsRouter = router({
 	archiveNotifications: protectedProcedure
 		.input(archiveNotificationsSchema)
 		.mutation(async ({ ctx, input }) => {
-			return container.notification.archiveNotifications(
-				input.notificationIds,
-				ctx.session.user.id,
-			);
+			return ctx.services.notification.archiveNotifications(
+input.notificationIds,
+ctx.session.user.id,
+);
 		}),
 
 	// ===== PREFERENCE ENDPOINTS =====
@@ -276,7 +284,7 @@ export const notificationsRouter = router({
 	getPreferences: protectedProcedure
 		.input(getUserPreferencesSchema)
 		.query(async ({ ctx, input }) => {
-			return container.notification.getPreferences(ctx.session.user.id, input.channel);
+			return ctx.services.notification.getPreferences(ctx.session.user.id, input.channel);
 		}),
 
 	/**
@@ -285,12 +293,12 @@ export const notificationsRouter = router({
 	updatePreference: protectedProcedure
 		.input(updatePreferenceSchema)
 		.mutation(async ({ ctx, input }) => {
-			return container.notification.updatePreference(
-				ctx.session.user.id,
-				input.channel,
-				input.eventType,
-				input.isEnabled,
-			);
+			return ctx.services.notification.updatePreference(
+ctx.session.user.id,
+input.channel,
+input.eventType,
+input.isEnabled,
+);
 		}),
 
 	/**
@@ -299,10 +307,10 @@ export const notificationsRouter = router({
 	bulkUpdatePreferences: protectedProcedure
 		.input(bulkUpdatePreferencesSchema)
 		.mutation(async ({ ctx, input }) => {
-			return container.notification.bulkUpdatePreferences(
-				ctx.session.user.id,
-				input.preferences,
-			);
+			return ctx.services.notification.bulkUpdatePreferences(
+ctx.session.user.id,
+input.preferences,
+);
 		}),
 
 	/**
@@ -311,11 +319,11 @@ export const notificationsRouter = router({
 	toggleChannelPreferences: protectedProcedure
 		.input(toggleChannelPreferencesSchema)
 		.mutation(async ({ ctx, input }) => {
-			return container.notification.toggleChannelPreferences(
-				ctx.session.user.id,
-				input.channel,
-				input.isEnabled,
-			);
+			return ctx.services.notification.toggleChannelPreferences(
+ctx.session.user.id,
+input.channel,
+input.isEnabled,
+);
 		}),
 
 	// ===== DIGEST SETTINGS ENDPOINTS =====
@@ -324,7 +332,7 @@ export const notificationsRouter = router({
 	 * Get user digest settings
 	 */
 	getDigestSettings: protectedProcedure.query(async ({ ctx }) => {
-		return container.notification.getDigestSettings(ctx.session.user.id);
+		return ctx.services.notification.getDigestSettings(ctx.session.user.id);
 	}),
 
 	/**
@@ -333,7 +341,7 @@ export const notificationsRouter = router({
 	updateDigestSettings: protectedProcedure
 		.input(updateDigestSettingsSchema)
 		.mutation(async ({ ctx, input }) => {
-			return container.notification.updateDigestSettings(ctx.session.user.id, input);
+			return ctx.services.notification.updateDigestSettings(ctx.session.user.id, input);
 		}),
 });
 

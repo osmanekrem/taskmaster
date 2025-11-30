@@ -10,6 +10,7 @@ import {
   issueHistoryFiltersSchema,
 } from '@taskmaster/validation';
 import { successResponse, paginatedResponse } from '@/utils/response';
+import { requirePermission, requireAnyPermission, extractProjectId } from '@/lib/middleware/permission';
 
 export const issuesRouter = router({
   // ==========================================================================
@@ -18,6 +19,7 @@ export const issuesRouter = router({
   
   getIssues: protectedProcedure
     .input(issueFiltersSchema)
+    .use(requirePermission('issue:view', extractProjectId.fromProjectId))
     .query(async ({ ctx, input }) => {
       const result = await ctx.services.issue.getIssues(input);
       return paginatedResponse(result.data, result.pagination);
@@ -25,6 +27,7 @@ export const issuesRouter = router({
 
   getIssueById: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
+    .use(requirePermission('issue:view'))
     .query(async ({ ctx, input }) => {
       const issue = await ctx.services.issue.getIssueById(input.id);
       return successResponse(issue, 'Issue retrieved');
@@ -32,6 +35,7 @@ export const issuesRouter = router({
 
   getIssueByKey: protectedProcedure
     .input(z.object({ key: z.string() }))
+    .use(requirePermission('issue:view'))
     .query(async ({ ctx, input }) => {
       const issue = await ctx.services.issue.getIssueByKey(input.key);
       return successResponse(issue, 'Issue retrieved');
@@ -39,6 +43,7 @@ export const issuesRouter = router({
 
   getSubtasks: protectedProcedure
     .input(z.object({ parentId: z.string().uuid() }))
+    .use(requirePermission('issue:view'))
     .query(async ({ ctx, input }) => {
       const subtasks = await ctx.services.issue.getSubtasks(input.parentId);
       return successResponse(subtasks, 'Subtasks retrieved');
@@ -46,6 +51,7 @@ export const issuesRouter = router({
 
   getEpicChildren: protectedProcedure
     .input(z.object({ epicId: z.string().uuid() }))
+    .use(requirePermission('issue:view'))
     .query(async ({ ctx, input }) => {
       const children = await ctx.services.issue.getEpicChildren(input.epicId);
       return successResponse(children, 'Epic children retrieved');
@@ -57,6 +63,7 @@ export const issuesRouter = router({
 
   createIssue: protectedProcedure
     .input(createIssueSchema)
+    .use(requirePermission('issue:create', extractProjectId.fromProjectId))
     .mutation(async ({ ctx, input }) => {
       const issue = await ctx.services.issue.createIssue(input, ctx.session.user.id);
       return successResponse(issue, 'Issue created');
@@ -71,6 +78,7 @@ export const issuesRouter = router({
       id: z.string().uuid(),
       data: updateIssueSchema,
     }))
+    .use(requireAnyPermission(['issue:edit', 'issue:edit_own']))
     .mutation(async ({ ctx, input }) => {
       const issue = await ctx.services.issue.updateIssue(input.id, input.data, ctx.session.user.id);
       return successResponse(issue, 'Issue updated');
@@ -85,6 +93,7 @@ export const issuesRouter = router({
       issueId: z.string().uuid(),
       ...updateFieldValuesSchema.shape,
     }))
+    .use(requireAnyPermission(['issue:edit', 'issue:edit_own']))
     .mutation(async ({ ctx, input }) => {
       const { issueId, fieldValues } = input;
       const issue = await ctx.services.issue.updateFieldValues(
@@ -104,6 +113,7 @@ export const issuesRouter = router({
       id: z.string().uuid(),
       ...transitionIssueSchema.shape,
     }))
+    .use(requirePermission('issue:transition'))
     .mutation(async ({ ctx, input }) => {
       const { id, ...transitionData } = input;
       const issue = await ctx.services.issue.transitionIssue(id, transitionData, ctx.session.user.id);
@@ -112,6 +122,7 @@ export const issuesRouter = router({
 
   getAvailableTransitions: protectedProcedure
     .input(z.object({ issueId: z.string().uuid() }))
+    .use(requirePermission('issue:view'))
     .query(async ({ ctx, input }) => {
       const transitions = await ctx.services.issue.getAvailableTransitions(input.issueId);
       return successResponse(transitions, 'Transitions retrieved');
@@ -123,6 +134,7 @@ export const issuesRouter = router({
 
   deleteIssue: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
+    .use(requireAnyPermission(['issue:delete', 'issue:delete_own']))
     .mutation(async ({ ctx, input }) => {
       await ctx.services.issue.deleteIssue(input.id);
       return successResponse(null, 'Issue deleted');
@@ -134,6 +146,7 @@ export const issuesRouter = router({
 
   getIssueHistory: protectedProcedure
     .input(issueHistoryFiltersSchema)
+    .use(requirePermission('issue:view'))
     .query(async ({ ctx, input }) => {
       const { issueId, page, limit } = input;
       const result = await ctx.services.issue.getIssueHistory(issueId, page, limit);

@@ -10,6 +10,7 @@ import {
   getResolutionByIdSchema,
   deleteResolutionSchema,
 } from '@taskmaster/validation';
+import { requirePermission } from '@/lib/middleware/permission';
 
 export const statusesRouter = router({
   // =============================================================================
@@ -19,16 +20,19 @@ export const statusesRouter = router({
   /**
    * Get all statuses
    */
-  getStatuses: protectedProcedure.query(async ({ ctx }) => {
-    const data = await ctx.services.status.getAllStatuses();
-    return successResponse(data, 'Statusler başarıyla getirildi');
-  }),
+  getStatuses: protectedProcedure
+    .use(requirePermission('status:view'))
+    .query(async ({ ctx }) => {
+      const data = await ctx.services.status.getAllStatuses();
+      return successResponse(data, 'Statusler başarıyla getirildi');
+    }),
 
   /**
    * Get a status by ID
    */
   getStatusById: protectedProcedure
     .input(getStatusByIdSchema)
+    .use(requirePermission('status:view'))
     .query(async ({ ctx, input }) => {
       const data = await ctx.services.status.getStatusById(input);
       return successResponse(data, 'Status başarıyla getirildi');
@@ -39,6 +43,7 @@ export const statusesRouter = router({
    */
   createStatus: protectedProcedure
     .input(createStatusSchema)
+    .use(requirePermission('admin:manage_statuses'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.status.createStatus(input);
       return successResponse(data, 'Status başarıyla oluşturuldu');
@@ -49,6 +54,7 @@ export const statusesRouter = router({
    */
   updateStatus: protectedProcedure
     .input(updateStatusSchema)
+    .use(requirePermission('admin:manage_statuses'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.status.updateStatus(input);
       return successResponse(data, 'Status başarıyla güncellendi');
@@ -59,6 +65,7 @@ export const statusesRouter = router({
    */
   deleteStatus: protectedProcedure
     .input(deleteStatusSchema)
+    .use(requirePermission('admin:manage_statuses'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.status.deleteStatus(input);
       return successResponse(data, 'Status başarıyla silindi');
@@ -71,16 +78,19 @@ export const statusesRouter = router({
   /**
    * Get all resolutions
    */
-  getResolutions: protectedProcedure.query(async ({ ctx }) => {
-    const data = await ctx.services.status.getAllResolutions();
-    return successResponse(data, 'Resolution\'lar başarıyla getirildi');
-  }),
+  getResolutions: protectedProcedure
+    .use(requirePermission('status:view'))
+    .query(async ({ ctx }) => {
+      const data = await ctx.services.status.getAllResolutions();
+      return successResponse(data, 'Resolution\'lar başarıyla getirildi');
+    }),
 
   /**
    * Get a resolution by ID
    */
   getResolutionById: protectedProcedure
     .input(getResolutionByIdSchema)
+    .use(requirePermission('status:view'))
     .query(async ({ ctx, input }) => {
       const data = await ctx.services.status.getResolutionById(input);
       return successResponse(data, 'Resolution başarıyla getirildi');
@@ -89,16 +99,19 @@ export const statusesRouter = router({
   /**
    * Get default resolution
    */
-  getDefaultResolution: protectedProcedure.query(async ({ ctx }) => {
-    const data = await ctx.services.status.getDefaultResolution();
-    return successResponse(data, 'Varsayılan resolution başarıyla getirildi');
-  }),
+  getDefaultResolution: protectedProcedure
+    .use(requirePermission('status:view'))
+    .query(async ({ ctx }) => {
+      const data = await ctx.services.status.getDefaultResolution();
+      return successResponse(data, 'Varsayılan resolution başarıyla getirildi');
+    }),
 
   /**
    * Create a new resolution
    */
   createResolution: protectedProcedure
     .input(createResolutionSchema)
+    .use(requirePermission('admin:manage_resolutions'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.status.createResolution(input);
       return successResponse(data, 'Resolution başarıyla oluşturuldu');
@@ -109,6 +122,7 @@ export const statusesRouter = router({
    */
   updateResolution: protectedProcedure
     .input(updateResolutionSchema)
+    .use(requirePermission('admin:manage_resolutions'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.status.updateResolution(input);
       return successResponse(data, 'Resolution başarıyla güncellendi');
@@ -119,6 +133,7 @@ export const statusesRouter = router({
    */
   deleteResolution: protectedProcedure
     .input(deleteResolutionSchema)
+    .use(requirePermission('admin:manage_resolutions'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.status.deleteResolution(input);
       return successResponse(data, 'Resolution başarıyla silindi');

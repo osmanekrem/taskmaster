@@ -314,4 +314,45 @@ export const workflowRepository = (drizzle: DrizzleClientOrTransaction = db) => 
         ),
       );
   },
+
+  // =============================================================================
+  // IN-USE CHECKS
+  // =============================================================================
+
+  // Check if workflow is in use by any project or issue type
+  countWorkflowUsage: async (workflowId: string) => {
+    const { projects: projectsTable } = await import('@/db/schema/projects');
+    const { projectIssueTypes } = await import('@/db/schema/issue-type-junctions');
+    const { sql } = await import('drizzle-orm');
+
+    // Check projects using this workflow as default
+    const [projectCount] = await drizzle
+      .select({ count: sql<number>`count(*)` })
+      .from(projectsTable)
+      .where(eq(projectsTable.defaultWorkflowId, workflowId));
+
+    // Check project issue types using this workflow
+    const [issueTypeCount] = await drizzle
+      .select({ count: sql<number>`count(*)` })
+      .from(projectIssueTypes)
+      .where(eq(projectIssueTypes.workflowId, workflowId));
+
+    return {
+      projectCount: Number(projectCount?.count || 0),
+      issueTypeCount: Number(issueTypeCount?.count || 0),
+      total: Number(projectCount?.count || 0) + Number(issueTypeCount?.count || 0),
+    };
+  },
+
+  // Check if status is used in any workflow
+  countStatusUsageInWorkflows: async (statusId: string) => {
+    const { sql } = await import('drizzle-orm');
+
+    const [result] = await drizzle
+      .select({ count: sql<number>`count(*)` })
+      .from(workflowStatuses)
+      .where(eq(workflowStatuses.statusId, statusId));
+
+    return Number(result?.count || 0);
+  },
 });

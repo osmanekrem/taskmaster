@@ -1,5 +1,7 @@
 import { db } from '@/db';
 import { statusRepository } from '@/repositories/status-repository';
+import { workflowRepository } from '@/repositories/workflow-repository';
+import { IssueRepository } from '@/repositories/issue-repository';
 import type {
   CreateStatusSchema,
   UpdateStatusSchema,
@@ -10,11 +12,13 @@ import type {
   GetResolutionByIdSchema,
   DeleteResolutionSchema,
 } from '@taskmaster/validation';
-import { throwNotFoundError, throwValidationError } from '@/lib/errors';
+import { throwNotFoundError, throwValidationError, throwConflictError } from '@/lib/errors';
 import type { DrizzleClientOrTransaction } from '@/lib/types/db';
 
 export const statusService = (drizzle: DrizzleClientOrTransaction = db) => {
   const repository = statusRepository(drizzle);
+  const workflowRepo = workflowRepository(drizzle);
+  const issueRepository = new IssueRepository();
 
   return {
     // =============================================================================
@@ -97,8 +101,25 @@ export const statusService = (drizzle: DrizzleClientOrTransaction = db) => {
         throwValidationError('CANNOT_DELETE_SYSTEM_STATUS', { statusId: input.statusId });
       }
 
-      // TODO: Check if status is in use by any workflow or issue
-      // This will be implemented when we have issues
+      // Check if status is in use by any issue
+      const issueCount = await issueRepository.countByStatusId(input.statusId);
+      if (issueCount > 0) {
+        throwConflictError('STATUS_IN_USE', { 
+          statusId: input.statusId, 
+          issueCount,
+          message: `Status is used by ${issueCount} issue(s)` 
+        });
+      }
+
+      // Check if status is used in any workflow
+      const workflowUsageCount = await workflowRepo.countStatusUsageInWorkflows(input.statusId);
+      if (workflowUsageCount > 0) {
+        throwConflictError('STATUS_IN_WORKFLOW', { 
+          statusId: input.statusId, 
+          workflowCount: workflowUsageCount,
+          message: `Status is used in ${workflowUsageCount} workflow(s)` 
+        });
+      }
 
       return await repository.deleteStatus(input.statusId);
     },
@@ -197,7 +218,15 @@ export const statusService = (drizzle: DrizzleClientOrTransaction = db) => {
         throwValidationError('CANNOT_DELETE_DEFAULT_RESOLUTION', { resolutionId: input.resolutionId });
       }
 
-      // TODO: Check if resolution is in use by any issue
+      // Check if resolution is in use by any issue
+      const issueCount = await issueRepository.countByResolutionId(input.resolutionId);
+      if (issueCount > 0) {
+        throwConflictError('RESOLUTION_IN_USE', { 
+          resolutionId: input.resolutionId, 
+          issueCount,
+          message: `Resolution is used by ${issueCount} issue(s)` 
+        });
+      }
 
       return await repository.deleteResolution(input.resolutionId);
     },

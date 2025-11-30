@@ -11,29 +11,35 @@ import {
   addFieldToIssueTypeRequestSchema,
   removeFieldFromIssueTypeRequestSchema,
 } from '@taskmaster/validation';
+import { requirePermission } from '@/lib/middleware/permission';
 
 export const fieldsRouter = router({
   /**
    * Get all fields (global field definitions)
    */
-  getFields: protectedProcedure.query(async ({ ctx }) => {
-    const data = await ctx.services.field.getAllFields();
-    return successResponse(data, 'Alanlar başarıyla getirildi');
-  }),
+  getFields: protectedProcedure
+    .use(requirePermission('field:view'))
+    .query(async ({ ctx }) => {
+      const data = await ctx.services.field.getAllFields();
+      return successResponse(data, 'Alanlar başarıyla getirildi');
+    }),
 
   /**
    * Get all fields with resolved default config
    */
-  getFieldsWithDefaults: protectedProcedure.query(async ({ ctx }) => {
-    const data = await ctx.services.field.getAllFieldsWithDefaults();
-    return successResponse(data, 'Alanlar başarıyla getirildi');
-  }),
+  getFieldsWithDefaults: protectedProcedure
+    .use(requirePermission('field:view'))
+    .query(async ({ ctx }) => {
+      const data = await ctx.services.field.getAllFieldsWithDefaults();
+      return successResponse(data, 'Alanlar başarıyla getirildi');
+    }),
 
   /**
    * Get a field by ID
    */
   getFieldById: protectedProcedure
     .input(getFieldByIdRequestSchema)
+    .use(requirePermission('field:view'))
     .query(async ({ ctx, input }) => {
       const data = await ctx.services.field.getFieldById(input);
       return successResponse(data, 'Alan başarıyla getirildi');
@@ -44,6 +50,7 @@ export const fieldsRouter = router({
    */
   createField: protectedProcedure
     .input(createFieldSchema)
+    .use(requirePermission('admin:manage_fields'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.field.createField(input);
       return successResponse(data, 'Alan başarıyla oluşturuldu');
@@ -54,6 +61,7 @@ export const fieldsRouter = router({
    */
   editField: protectedProcedure
     .input(editFieldSchema)
+    .use(requirePermission('admin:manage_fields'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.field.updateField(input);
       return successResponse(data, 'Alan başarıyla güncellendi');
@@ -64,6 +72,7 @@ export const fieldsRouter = router({
    */
   deleteField: protectedProcedure
     .input(deleteFieldRequestSchema)
+    .use(requirePermission('admin:manage_fields'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.field.deleteField(input);
       return successResponse(data, 'Alan başarıyla silindi');
@@ -77,6 +86,7 @@ export const fieldsRouter = router({
    */
   getIssueTypeFields: protectedProcedure
     .input(getIssueTypeFieldsByIssueTypeIdRequestSchema)
+    .use(requirePermission('issue_type:view'))
     .query(async ({ ctx, input }) => {
       const data = await ctx.services.field.getResolvedFieldsForIssueType({
         issueTypeId: input.issueTypeId,
@@ -90,6 +100,7 @@ export const fieldsRouter = router({
    */
   saveIssueTypeFields: protectedProcedure
     .input(saveIssueTypeFieldsRequestSchema)
+    .use(requirePermission('admin:manage_issue_types'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.field.saveIssueTypeFields({
         issueTypeId: input.issueTypeId,
@@ -103,6 +114,7 @@ export const fieldsRouter = router({
    */
   updateIssueTypeFieldOverride: protectedProcedure
     .input(updateIssueTypeFieldOverrideRequestSchema)
+    .use(requirePermission('admin:manage_issue_types'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.field.updateIssueTypeFieldOverride(input);
       return successResponse(data, 'Alan override başarıyla güncellendi');
@@ -113,6 +125,7 @@ export const fieldsRouter = router({
    */
   addFieldToIssueType: protectedProcedure
     .input(addFieldToIssueTypeRequestSchema)
+    .use(requirePermission('admin:manage_issue_types'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.field.addFieldToIssueType(input);
       return successResponse(data, 'Alan issue type\'a başarıyla eklendi');
@@ -123,8 +136,10 @@ export const fieldsRouter = router({
    */
   removeFieldFromIssueType: protectedProcedure
     .input(removeFieldFromIssueTypeRequestSchema)
+    .use(requirePermission('admin:manage_issue_types'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.field.removeFieldFromIssueType(input);
       return successResponse(data, 'Alan issue type\'dan başarıyla kaldırıldı');
     }),
 });
+

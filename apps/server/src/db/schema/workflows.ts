@@ -1,4 +1,4 @@
-import { integer, pgTable, text, boolean, timestamp, jsonb, unique } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, boolean, timestamp, jsonb, unique, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { projects, templates } from "./projects";
 import { statuses } from "./statuses";
@@ -64,6 +64,7 @@ export const workflowStatuses = pgTable("workflow_statuses", {
     sortOrder: integer("sort_order").notNull().default(0),
 }, (table) => ({
     uniqueWorkflowStatus: unique("workflow_statuses_unique").on(table.workflowId, table.statusId),
+    workflowIdIdx: index("workflow_statuses_workflow_id_idx").on(table.workflowId),
 }));
 
 // =============================================================================
@@ -106,6 +107,9 @@ export const workflowTransitions = pgTable("workflow_transitions", {
     sortOrder: integer("sort_order").notNull().default(0),
 }, (table) => ({
     uniqueTransition: unique("workflow_transitions_unique").on(table.workflowId, table.fromStatusId, table.toStatusId),
+    workflowIdIdx: index("workflow_transitions_workflow_id_idx").on(table.workflowId),
+    fromStatusIdIdx: index("workflow_transitions_from_status_idx").on(table.fromStatusId),
+    toStatusIdIdx: index("workflow_transitions_to_status_idx").on(table.toStatusId),
 }));
 
 // =============================================================================

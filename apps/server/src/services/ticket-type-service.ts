@@ -1,6 +1,7 @@
 import { db } from '@/db';
 import { ticketTypeRepository } from '@/repositories/ticket-type-repository';
 import { fieldRepository } from '@/repositories/field-repository';
+import { IssueRepository } from '@/repositories/issue-repository';
 import type {
   CreateTicketTypeSchema,
   EditTicketTypeSchema,
@@ -9,13 +10,14 @@ import type {
   GetFieldsForTicketTypeRequestSchema,
   GetIssueTypeWithDetailsByIssueTypeIdRequestSchema,
 } from '@taskmaster/validation';
-import { throwNotFoundError } from '@/lib/errors';
+import { throwNotFoundError, throwConflictError } from '@/lib/errors';
 import type { DrizzleClient } from '@/lib/types/db';
 import { resolveFieldsForIssueType, type ResolvedField } from './field-config-resolver';
 
 export const ticketTypeService = (drizzle: DrizzleClient = db) => {
   const repository = ticketTypeRepository(drizzle);
   const fieldRepo = fieldRepository(drizzle);
+  const issueRepository = new IssueRepository();
 
   return {
     getAllTicketTypes: () => repository.findMany(),
@@ -56,6 +58,16 @@ export const ticketTypeService = (drizzle: DrizzleClient = db) => {
       if (!existingTicketType) {
         throwNotFoundError('TICKET_TYPE_NOT_FOUND', {
           ticketTypeId: input.ticketTypeId,
+        });
+      }
+
+      // Check if issue type is in use by any issue
+      const issueCount = await issueRepository.countByIssueTypeId(input.ticketTypeId);
+      if (issueCount > 0) {
+        throwConflictError('ISSUE_TYPE_IN_USE', {
+          ticketTypeId: input.ticketTypeId,
+          issueCount,
+          message: `Issue type is used by ${issueCount} issue(s)`,
         });
       }
 

@@ -1,5 +1,4 @@
 import {router, protectedProcedure} from "@/lib/trpc";
-import {getContainer} from "@/lib/context";
 import {
 	createSprintSchema,
 	updateSprintSchema,
@@ -21,6 +20,7 @@ import {
 	getActiveSprintSchema,
 } from "@taskmaster/validation";
 import {z} from "zod";
+import { requirePermission, extractProjectId } from '@/lib/middleware/permission';
 
 export const sprintsRouter = router({
 	// =====================================================
@@ -30,83 +30,97 @@ export const sprintsRouter = router({
 	/**
 	 * Create a new sprint
 	 */
-	create: protectedProcedure.input(createSprintSchema).mutation(async ({ctx, input}) => {
-		const container = getContainer();
-		return container.sprint.createSprint(input, ctx.session.user.id);
-	}),
+	create: protectedProcedure
+		.input(createSprintSchema)
+		.use(requirePermission('sprint:create', extractProjectId.fromProjectId))
+		.mutation(async ({ctx, input}) => {
+			return ctx.services.sprint.createSprint(input, ctx.session.user.id);
+		}),
 
 	/**
 	 * Get sprint by ID
 	 */
-	getById: protectedProcedure.input(getSprintByIdSchema).query(async ({input}) => {
-		const container = getContainer();
-		return container.sprint.getSprintById(input.id);
-	}),
+	getById: protectedProcedure
+		.input(getSprintByIdSchema)
+		.use(requirePermission('sprint:view'))
+		.query(async ({ctx, input}) => {
+			return ctx.services.sprint.getSprintById(input.id);
+		}),
 
 	/**
 	 * Get sprints with filtering
 	 */
-	getMany: protectedProcedure.input(getSprintsSchema).query(async ({input}) => {
-		const container = getContainer();
-		return container.sprint.getSprints(input);
-	}),
+	getMany: protectedProcedure
+		.input(getSprintsSchema)
+		.use(requirePermission('sprint:view', extractProjectId.fromProjectId))
+		.query(async ({ctx, input}) => {
+			return ctx.services.sprint.getSprints(input);
+		}),
 
 	/**
 	 * Get active sprint for a project
 	 */
-	getActive: protectedProcedure.input(getActiveSprintSchema).query(async ({input}) => {
-		const container = getContainer();
-		return container.sprint.getActiveSprint(input.projectId);
-	}),
+	getActive: protectedProcedure
+		.input(getActiveSprintSchema)
+		.use(requirePermission('sprint:view', extractProjectId.fromProjectId))
+		.query(async ({ctx, input}) => {
+			return ctx.services.sprint.getActiveSprint(input.projectId);
+		}),
 
 	/**
 	 * Update sprint
 	 */
 	update: protectedProcedure
 		.input(z.object({id: z.string()}).merge(updateSprintSchema))
+		.use(requirePermission('sprint:edit'))
 		.mutation(async ({ctx, input}) => {
-			const container = getContainer();
 			const {id, ...data} = input;
-			return container.sprint.updateSprint(id, data, ctx.session.user.id);
+			return ctx.services.sprint.updateSprint(id, data, ctx.session.user.id);
 		}),
 
 	/**
 	 * Start a sprint
 	 */
-	start: protectedProcedure.input(startSprintSchema).mutation(async ({ctx, input}) => {
-		const container = getContainer();
-		return container.sprint.startSprint(input, ctx.session.user.id);
-	}),
+	start: protectedProcedure
+		.input(startSprintSchema)
+		.use(requirePermission('sprint:edit'))
+		.mutation(async ({ctx, input}) => {
+			return ctx.services.sprint.startSprint(input, ctx.session.user.id);
+		}),
 
 	/**
 	 * Complete a sprint
 	 */
-	complete: protectedProcedure.input(completeSprintSchema).mutation(async ({ctx, input}) => {
-		const container = getContainer();
-		return container.sprint.completeSprint(input, ctx.session.user.id);
-	}),
+	complete: protectedProcedure
+		.input(completeSprintSchema)
+		.use(requirePermission('sprint:edit'))
+		.mutation(async ({ctx, input}) => {
+			return ctx.services.sprint.completeSprint(input, ctx.session.user.id);
+		}),
 
 	/**
 	 * Cancel a sprint
 	 */
 	cancel: protectedProcedure
 		.input(z.object({id: z.string(), reason: z.string().optional()}))
+		.use(requirePermission('sprint:edit'))
 		.mutation(async ({ctx, input}) => {
-			const container = getContainer();
-			return container.sprint.cancelSprint(input.id, ctx.session.user.id, input.reason);
+			return ctx.services.sprint.cancelSprint(input.id, ctx.session.user.id, input.reason);
 		}),
 
 	/**
 	 * Delete a sprint
 	 */
-	delete: protectedProcedure.input(deleteSprintSchema).mutation(async ({input}) => {
-		const container = getContainer();
-		return container.sprint.deleteSprint(
-			input.id,
-			input.moveIssuesTo,
-			input.targetSprintId
-		);
-	}),
+	delete: protectedProcedure
+		.input(deleteSprintSchema)
+		.use(requirePermission('sprint:delete'))
+		.mutation(async ({ctx, input}) => {
+			return ctx.services.sprint.deleteSprint(
+				input.id,
+				input.moveIssuesTo,
+				input.targetSprintId
+			);
+		}),
 
 	// =====================================================
 	// SPRINT ISSUES
@@ -115,61 +129,71 @@ export const sprintsRouter = router({
 	/**
 	 * Get sprint issues
 	 */
-	getIssues: protectedProcedure.input(getSprintIssuesSchema).query(async ({input}) => {
-		const container = getContainer();
-		return container.sprint.getSprintIssues(input);
-	}),
+	getIssues: protectedProcedure
+		.input(getSprintIssuesSchema)
+		.use(requirePermission('sprint:view'))
+		.query(async ({ctx, input}) => {
+			return ctx.services.sprint.getSprintIssues(input);
+		}),
 
 	/**
 	 * Get backlog issues (not in any sprint)
 	 */
-	getBacklog: protectedProcedure.input(getBacklogIssuesSchema).query(async ({input}) => {
-		const container = getContainer();
-		return container.sprint.getBacklogIssues(input);
-	}),
+	getBacklog: protectedProcedure
+		.input(getBacklogIssuesSchema)
+		.use(requirePermission('sprint:view', extractProjectId.fromProjectId))
+		.query(async ({ctx, input}) => {
+			return ctx.services.sprint.getBacklogIssues(input);
+		}),
 
 	/**
 	 * Add issue to sprint
 	 */
-	addIssue: protectedProcedure.input(addIssueToSprintSchema).mutation(async ({ctx, input}) => {
-		const container = getContainer();
-		return container.sprint.addIssueToSprint(input, ctx.session.user.id);
-	}),
+	addIssue: protectedProcedure
+		.input(addIssueToSprintSchema)
+		.use(requirePermission('sprint:manage_issues'))
+		.mutation(async ({ctx, input}) => {
+			return ctx.services.sprint.addIssueToSprint(input, ctx.session.user.id);
+		}),
 
 	/**
 	 * Add multiple issues to sprint
 	 */
-	addIssues: protectedProcedure.input(addIssuesToSprintSchema).mutation(async ({ctx, input}) => {
-		const container = getContainer();
-		return container.sprint.addIssuesToSprint(input, ctx.session.user.id);
-	}),
+	addIssues: protectedProcedure
+		.input(addIssuesToSprintSchema)
+		.use(requirePermission('sprint:manage_issues'))
+		.mutation(async ({ctx, input}) => {
+			return ctx.services.sprint.addIssuesToSprint(input, ctx.session.user.id);
+		}),
 
 	/**
 	 * Remove issue from sprint (move to backlog)
 	 */
 	removeIssue: protectedProcedure
 		.input(removeIssueFromSprintSchema)
+		.use(requirePermission('sprint:manage_issues'))
 		.mutation(async ({ctx, input}) => {
-			const container = getContainer();
-			return container.sprint.removeIssueFromSprint(input.issueId, ctx.session.user.id);
+			return ctx.services.sprint.removeIssueFromSprint(input.issueId, ctx.session.user.id);
 		}),
 
 	/**
 	 * Move issue between sprints
 	 */
-	moveIssue: protectedProcedure.input(moveIssueToSprintSchema).mutation(async ({ctx, input}) => {
-		const container = getContainer();
-		return container.sprint.moveIssueToSprint(input, ctx.session.user.id);
-	}),
+	moveIssue: protectedProcedure
+		.input(moveIssueToSprintSchema)
+		.use(requirePermission('sprint:manage_issues'))
+		.mutation(async ({ctx, input}) => {
+			return ctx.services.sprint.moveIssueToSprint(input, ctx.session.user.id);
+		}),
 
 	/**
 	 * Reorder issues within sprint
 	 */
 	reorderIssues: protectedProcedure
 		.input(reorderSprintIssuesSchema)
-		.mutation(async ({input}) => {
-			const container = getContainer();
-			return container.sprint.reorderSprintIssues(input);
+		.use(requirePermission('sprint:manage_issues'))
+		.mutation(async ({ctx, input}) => {
+			return ctx.services.sprint.reorderSprintIssues(input);
 		}),
 
 	// =====================================================
@@ -181,42 +205,48 @@ export const sprintsRouter = router({
 	 */
 	getBoard: protectedProcedure
 		.input(z.object({sprintId: z.string()}))
-		.query(async ({input}) => {
-			const container = getContainer();
-			return container.sprint.getSprintBoard(input.sprintId);
+		.use(requirePermission('sprint:view'))
+		.query(async ({ctx, input}) => {
+			return ctx.services.sprint.getSprintBoard(input.sprintId);
 		}),
 
 	/**
 	 * Get sprint history
 	 */
-	getHistory: protectedProcedure.input(getSprintHistorySchema).query(async ({input}) => {
-		const container = getContainer();
-		return container.sprint.getSprintHistory(input);
-	}),
+	getHistory: protectedProcedure
+		.input(getSprintHistorySchema)
+		.use(requirePermission('sprint:view'))
+		.query(async ({ctx, input}) => {
+			return ctx.services.sprint.getSprintHistory(input);
+		}),
 
 	/**
 	 * Get burndown chart data
 	 */
-	getBurndown: protectedProcedure.input(getBurndownSchema).query(async ({input}) => {
-		const container = getContainer();
-		return container.sprint.getBurndownChart(input.sprintId);
-	}),
+	getBurndown: protectedProcedure
+		.input(getBurndownSchema)
+		.use(requirePermission('sprint:view'))
+		.query(async ({ctx, input}) => {
+			return ctx.services.sprint.getBurndownChart(input.sprintId);
+		}),
 
 	/**
 	 * Get velocity chart data
 	 */
-	getVelocity: protectedProcedure.input(getVelocitySchema).query(async ({input}) => {
-		const container = getContainer();
-		return container.sprint.getVelocityChart(input.projectId, input.sprintCount);
-	}),
+	getVelocity: protectedProcedure
+		.input(getVelocitySchema)
+		.use(requirePermission('sprint:view', extractProjectId.fromProjectId))
+		.query(async ({ctx, input}) => {
+			return ctx.services.sprint.getVelocityChart(input.projectId, input.sprintCount);
+		}),
 
 	/**
 	 * Record burndown data point (for cron job or manual trigger)
 	 */
 	recordBurndown: protectedProcedure
 		.input(z.object({sprintId: z.string()}))
-		.mutation(async ({input}) => {
-			const container = getContainer();
-			return container.sprint.recordBurndownData(input.sprintId);
+		.use(requirePermission('sprint:edit'))
+		.mutation(async ({ctx, input}) => {
+			return ctx.services.sprint.recordBurndownData(input.sprintId);
 		}),
 });

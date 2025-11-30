@@ -17,7 +17,7 @@ import type {
   GetTransitionsByWorkflowSchema,
   GetAvailableTransitionsSchema,
 } from '@taskmaster/validation';
-import { throwNotFoundError, throwValidationError } from '@/lib/errors';
+import { throwNotFoundError, throwValidationError, throwConflictError } from '@/lib/errors';
 import type { DrizzleClientOrTransaction } from '@/lib/types/db';
 
 export const workflowService = (drizzle: DrizzleClientOrTransaction = db) => {
@@ -107,7 +107,16 @@ export const workflowService = (drizzle: DrizzleClientOrTransaction = db) => {
         throwValidationError('CANNOT_DELETE_DEFAULT_WORKFLOW', { workflowId: input.workflowId });
       }
 
-      // TODO: Check if workflow is in use by any project/template
+      // Check if workflow is in use by any project or issue type
+      const usage = await repository.countWorkflowUsage(input.workflowId);
+      if (usage.total > 0) {
+        throwConflictError('WORKFLOW_IN_USE', { 
+          workflowId: input.workflowId,
+          projectCount: usage.projectCount,
+          issueTypeCount: usage.issueTypeCount,
+          message: `Workflow is used by ${usage.projectCount} project(s) and ${usage.issueTypeCount} issue type(s)`,
+        });
+      }
 
       return await repository.deleteWorkflow(input.workflowId);
     },

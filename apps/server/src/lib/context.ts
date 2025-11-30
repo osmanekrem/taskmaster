@@ -24,6 +24,9 @@ export async function createContext({ context }: CreateContextOptions) {
       project: container.project,
       issue: container.issue,
       comment: container.comment,
+      notification: container.notification,
+      permission: container.permission,
+      sprint: container.sprint,
     },
   };
 }

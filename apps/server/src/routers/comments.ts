@@ -10,6 +10,7 @@ import {
   attachmentFiltersSchema,
 } from '@taskmaster/validation';
 import { successResponse, paginatedResponse } from '@/utils/response';
+import { requirePermission, requireAnyPermission } from '@/lib/middleware/permission';
 
 export const commentsRouter = router({
   // ==========================================================================
@@ -18,6 +19,7 @@ export const commentsRouter = router({
 
   getComments: protectedProcedure
     .input(commentFiltersSchema)
+    .use(requirePermission('issue:view'))
     .query(async ({ ctx, input }) => {
       const result = await ctx.services.comment.getComments(input);
       return paginatedResponse(result.data, result.pagination);
@@ -25,6 +27,7 @@ export const commentsRouter = router({
 
   getCommentById: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
+    .use(requirePermission('issue:view'))
     .query(async ({ ctx, input }) => {
       const comment = await ctx.services.comment.getCommentById(input.id);
       return successResponse(comment, 'Comment retrieved');
@@ -32,6 +35,7 @@ export const commentsRouter = router({
 
   createComment: protectedProcedure
     .input(createCommentSchema)
+    .use(requirePermission('comment:create'))
     .mutation(async ({ ctx, input }) => {
       const comment = await ctx.services.comment.createComment(input, ctx.session.user.id);
       return successResponse(comment, 'Comment created');
@@ -42,6 +46,7 @@ export const commentsRouter = router({
       id: z.string().uuid(),
       data: updateCommentSchema,
     }))
+    .use(requireAnyPermission(['comment:edit', 'comment:edit_own']))
     .mutation(async ({ ctx, input }) => {
       const comment = await ctx.services.comment.updateComment(
         input.id,
@@ -56,6 +61,7 @@ export const commentsRouter = router({
       id: z.string().uuid(),
       hardDelete: z.boolean().optional().default(false),
     }))
+    .use(requireAnyPermission(['comment:delete', 'comment:delete_own']))
     .mutation(async ({ ctx, input }) => {
       await ctx.services.comment.deleteComment(input.id, ctx.session.user.id, input.hardDelete);
       return successResponse(null, 'Comment deleted');
@@ -67,6 +73,7 @@ export const commentsRouter = router({
 
   addReaction: protectedProcedure
     .input(addReactionSchema)
+    .use(requirePermission('comment:create'))
     .mutation(async ({ ctx, input }) => {
       const reaction = await ctx.services.comment.addReaction(
         input.commentId,
@@ -78,6 +85,7 @@ export const commentsRouter = router({
 
   removeReaction: protectedProcedure
     .input(removeReactionSchema)
+    .use(requirePermission('comment:create'))
     .mutation(async ({ ctx, input }) => {
       await ctx.services.comment.removeReaction(
         input.commentId,
@@ -89,6 +97,7 @@ export const commentsRouter = router({
 
   getReactionCounts: protectedProcedure
     .input(z.object({ commentId: z.string().uuid() }))
+    .use(requirePermission('issue:view'))
     .query(async ({ ctx, input }) => {
       const counts = await ctx.services.comment.getReactionCounts(input.commentId);
       return successResponse(counts, 'Reaction counts retrieved');
@@ -100,6 +109,7 @@ export const commentsRouter = router({
 
   getAttachments: protectedProcedure
     .input(attachmentFiltersSchema)
+    .use(requirePermission('issue:view'))
     .query(async ({ ctx, input }) => {
       const result = await ctx.services.comment.getAttachments(input);
       return paginatedResponse(result.data, result.pagination);
@@ -107,6 +117,7 @@ export const commentsRouter = router({
 
   getAttachmentById: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
+    .use(requirePermission('issue:view'))
     .query(async ({ ctx, input }) => {
       const attachment = await ctx.services.comment.getAttachmentById(input.id);
       return successResponse(attachment, 'Attachment retrieved');
@@ -114,6 +125,7 @@ export const commentsRouter = router({
 
   createAttachment: protectedProcedure
     .input(createAttachmentSchema)
+    .use(requirePermission('attachment:create'))
     .mutation(async ({ ctx, input }) => {
       const attachment = await ctx.services.comment.createAttachment(input, ctx.session.user.id);
       return successResponse(attachment, 'Attachment created');
@@ -121,6 +133,7 @@ export const commentsRouter = router({
 
   deleteAttachment: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
+    .use(requireAnyPermission(['attachment:delete', 'attachment:delete_own']))
     .mutation(async ({ ctx, input }) => {
       await ctx.services.comment.deleteAttachment(input.id, ctx.session.user.id);
       return successResponse(null, 'Attachment deleted');

@@ -8,15 +8,19 @@ import {
   getFieldsForTicketTypeRequestSchema,
   getIssueTypeWithDetailsByIssueTypeIdRequestSchema,
 } from '@taskmaster/validation';
+import { requirePermission } from '@/lib/middleware/permission';
 
 export const ticketTypesRouter = router({
-  getTicketTypes: protectedProcedure.query(async ({ ctx }) => {
-    const data = await ctx.services.ticketType.getAllTicketTypes();
-    return successResponse(data, 'Bilet türleri başarıyla getirildi');
-  }),
+  getTicketTypes: protectedProcedure
+    .use(requirePermission('issue_type:view'))
+    .query(async ({ ctx }) => {
+      const data = await ctx.services.ticketType.getAllTicketTypes();
+      return successResponse(data, 'Bilet türleri başarıyla getirildi');
+    }),
 
   getTicketTypeById: protectedProcedure
     .input(getTicketTypeByIdRequestSchema)
+    .use(requirePermission('issue_type:view'))
     .query(async ({ ctx, input }) => {
       const data = await ctx.services.ticketType.getTicketTypeById(input);
       return successResponse(data, 'Bilet türü başarıyla getirildi');
@@ -24,6 +28,7 @@ export const ticketTypesRouter = router({
 
   createTicketType: protectedProcedure
     .input(createTicketTypeSchema)
+    .use(requirePermission('admin:manage_issue_types'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.ticketType.createTicketType(input);
       return successResponse(data, 'Bilet türü başarıyla oluşturuldu');
@@ -31,6 +36,7 @@ export const ticketTypesRouter = router({
 
   editTicketType: protectedProcedure
     .input(editTicketTypeSchema)
+    .use(requirePermission('admin:manage_issue_types'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.ticketType.updateTicketType(input);
       return successResponse(data, 'Bilet türü başarıyla düzenlendi');
@@ -38,6 +44,7 @@ export const ticketTypesRouter = router({
 
   deleteTicketType: protectedProcedure
     .input(deleteTicketTypeRequestSchema)
+    .use(requirePermission('admin:manage_issue_types'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.ticketType.deleteTicketType(input);
       return successResponse(data, 'Bilet türü başarıyla silindi');
@@ -49,6 +56,7 @@ export const ticketTypesRouter = router({
    */
   getFieldsForTicketType: protectedProcedure
     .input(getFieldsForTicketTypeRequestSchema)
+    .use(requirePermission('issue_type:view'))
     .query(async ({ ctx, input }) => {
       const data = await ctx.services.ticketType.getFieldsForTicketType(input);
       return successResponse(data, 'Bilet türü alanları başarıyla getirildi');
@@ -59,6 +67,7 @@ export const ticketTypesRouter = router({
    */
   getIssueTypeWithDetailsByIssueTypeId: protectedProcedure
     .input(getIssueTypeWithDetailsByIssueTypeIdRequestSchema)
+    .use(requirePermission('issue_type:view'))
     .query(async ({ ctx, input }) => {
       const data = await ctx.services.ticketType.getIssueTypeWithDetailsByIssueTypeId(
         input,

@@ -72,12 +72,20 @@ export const permissions = [
 	"board:edit", // Edit boards
 	"board:delete", // Delete boards
 
+	// Configuration view permissions
+	"status:view", // View statuses and resolutions
+	"issue_type:view", // View issue types
+	"field:view", // View fields
+	"user:view", // View users
+
 	// Admin permissions
 	"admin:manage_users", // System-wide user management
 	"admin:manage_projects", // System-wide project management
 	"admin:manage_workflows", // System-wide workflow management
 	"admin:manage_issue_types", // System-wide issue type management
 	"admin:manage_fields", // System-wide field management
+	"admin:manage_statuses", // System-wide status management
+	"admin:manage_resolutions", // System-wide resolution management
 	"admin:view_audit_log", // View audit logs
 ] as const;
 

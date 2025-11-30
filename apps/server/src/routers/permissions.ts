@@ -2,7 +2,6 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "@/lib/trpc";
-import { container } from "@/lib/container";
 import {
 	createRoleSchema,
 	updateRoleSchema,
@@ -36,8 +35,8 @@ export const permissionsRouter = router({
 	 */
 	getRoles: protectedProcedure
 		.input(getRolesSchema)
-		.query(async ({ input }) => {
-			return container.permission.getRoles(input);
+		.query(async ({ ctx, input }) => {
+			return ctx.services.permission.getRoles(input);
 		}),
 
 	/**
@@ -45,8 +44,8 @@ export const permissionsRouter = router({
 	 */
 	getRoleById: protectedProcedure
 		.input(z.object({ roleId: z.string() }))
-		.query(async ({ input }) => {
-			return container.permission.getRoleById(input.roleId);
+		.query(async ({ ctx, input }) => {
+			return ctx.services.permission.getRoleById(input.roleId);
 		}),
 
 	/**
@@ -57,7 +56,7 @@ export const permissionsRouter = router({
 		.mutation(async ({ ctx, input }) => {
 			// Check admin permissions for global roles
 			if (!input.projectId) {
-				const hasAdmin = await container.permission.hasPermission(
+				const hasAdmin = await ctx.services.permission.hasPermission(
 					ctx.session.user.id,
 					"admin:manage_projects",
 				);
@@ -69,7 +68,7 @@ export const permissionsRouter = router({
 				}
 			} else {
 				// Check project manage_roles permission
-				const hasPermission = await container.permission.hasPermission(
+				const hasPermission = await ctx.services.permission.hasPermission(
 					ctx.session.user.id,
 					"project:manage_roles",
 					input.projectId,
@@ -82,7 +81,7 @@ export const permissionsRouter = router({
 				}
 			}
 
-			return container.permission.createRole(input, ctx.session.user.id);
+			return ctx.services.permission.createRole(input, ctx.session.user.id);
 		}),
 
 	/**
@@ -91,23 +90,23 @@ export const permissionsRouter = router({
 	updateRole: protectedProcedure
 		.input(z.object({ roleId: z.string(), data: updateRoleSchema }))
 		.mutation(async ({ ctx, input }) => {
-			const role = await container.permission.getRoleById(input.roleId);
+			const role = await ctx.services.permission.getRoleById(input.roleId);
 
 			// Check appropriate permission
 			if (role.scope === "global") {
-				await container.permission.requirePermission(
+				await ctx.services.permission.requirePermission(
 					ctx.session.user.id,
 					"admin:manage_projects",
 				);
 			} else if (role.projectId) {
-				await container.permission.requirePermission(
+				await ctx.services.permission.requirePermission(
 					ctx.session.user.id,
 					"project:manage_roles",
 					role.projectId,
 				);
 			}
 
-			return container.permission.updateRole(input.roleId, input.data);
+			return ctx.services.permission.updateRole(input.roleId, input.data);
 		}),
 
 	/**
@@ -116,22 +115,22 @@ export const permissionsRouter = router({
 	deleteRole: protectedProcedure
 		.input(z.object({ roleId: z.string() }))
 		.mutation(async ({ ctx, input }) => {
-			const role = await container.permission.getRoleById(input.roleId);
+			const role = await ctx.services.permission.getRoleById(input.roleId);
 
 			if (role.scope === "global") {
-				await container.permission.requirePermission(
+				await ctx.services.permission.requirePermission(
 					ctx.session.user.id,
 					"admin:manage_projects",
 				);
 			} else if (role.projectId) {
-				await container.permission.requirePermission(
+				await ctx.services.permission.requirePermission(
 					ctx.session.user.id,
 					"project:manage_roles",
 					role.projectId,
 				);
 			}
 
-			return container.permission.deleteRole(input.roleId);
+			return ctx.services.permission.deleteRole(input.roleId);
 		}),
 
 	// ===== ROLE PERMISSION ENDPOINTS =====
@@ -141,8 +140,8 @@ export const permissionsRouter = router({
 	 */
 	getRolePermissions: protectedProcedure
 		.input(getRolePermissionsSchema)
-		.query(async ({ input }) => {
-			return container.permission.getRolePermissions(input.roleId);
+		.query(async ({ ctx, input }) => {
+			return ctx.services.permission.getRolePermissions(input.roleId);
 		}),
 
 	/**
@@ -151,22 +150,22 @@ export const permissionsRouter = router({
 	addRolePermission: protectedProcedure
 		.input(addRolePermissionSchema)
 		.mutation(async ({ ctx, input }) => {
-			const role = await container.permission.getRoleById(input.roleId);
+			const role = await ctx.services.permission.getRoleById(input.roleId);
 
 			if (role.scope === "global") {
-				await container.permission.requirePermission(
+				await ctx.services.permission.requirePermission(
 					ctx.session.user.id,
 					"admin:manage_projects",
 				);
 			} else if (role.projectId) {
-				await container.permission.requirePermission(
+				await ctx.services.permission.requirePermission(
 					ctx.session.user.id,
 					"project:manage_roles",
 					role.projectId,
 				);
 			}
 
-			return container.permission.addRolePermission(
+			return ctx.services.permission.addRolePermission(
 				input.roleId,
 				input.permission,
 			);
@@ -178,22 +177,22 @@ export const permissionsRouter = router({
 	removeRolePermission: protectedProcedure
 		.input(removeRolePermissionSchema)
 		.mutation(async ({ ctx, input }) => {
-			const role = await container.permission.getRoleById(input.roleId);
+			const role = await ctx.services.permission.getRoleById(input.roleId);
 
 			if (role.scope === "global") {
-				await container.permission.requirePermission(
+				await ctx.services.permission.requirePermission(
 					ctx.session.user.id,
 					"admin:manage_projects",
 				);
 			} else if (role.projectId) {
-				await container.permission.requirePermission(
+				await ctx.services.permission.requirePermission(
 					ctx.session.user.id,
 					"project:manage_roles",
 					role.projectId,
 				);
 			}
 
-			return container.permission.removeRolePermission(
+			return ctx.services.permission.removeRolePermission(
 				input.roleId,
 				input.permission,
 			);
@@ -205,22 +204,22 @@ export const permissionsRouter = router({
 	setRolePermissions: protectedProcedure
 		.input(setRolePermissionsSchema)
 		.mutation(async ({ ctx, input }) => {
-			const role = await container.permission.getRoleById(input.roleId);
+			const role = await ctx.services.permission.getRoleById(input.roleId);
 
 			if (role.scope === "global") {
-				await container.permission.requirePermission(
+				await ctx.services.permission.requirePermission(
 					ctx.session.user.id,
 					"admin:manage_projects",
 				);
 			} else if (role.projectId) {
-				await container.permission.requirePermission(
+				await ctx.services.permission.requirePermission(
 					ctx.session.user.id,
 					"project:manage_roles",
 					role.projectId,
 				);
 			}
 
-			return container.permission.setRolePermissions(
+			return ctx.services.permission.setRolePermissions(
 				input.roleId,
 				input.permissions,
 			);
@@ -233,8 +232,8 @@ export const permissionsRouter = router({
 	 */
 	getRoleMembers: protectedProcedure
 		.input(getRoleMembersSchema)
-		.query(async ({ input }) => {
-			return container.permission.getRoleMembers(input.roleId, input.projectId);
+		.query(async ({ ctx, input }) => {
+			return ctx.services.permission.getRoleMembers(input.roleId, input.projectId);
 		}),
 
 	/**
@@ -245,19 +244,19 @@ export const permissionsRouter = router({
 		.mutation(async ({ ctx, input }) => {
 			// Check manage_members permission
 			if (input.projectId) {
-				await container.permission.requirePermission(
+				await ctx.services.permission.requirePermission(
 					ctx.session.user.id,
 					"project:manage_members",
 					input.projectId,
 				);
 			} else {
-				await container.permission.requirePermission(
+				await ctx.services.permission.requirePermission(
 					ctx.session.user.id,
 					"admin:manage_users",
 				);
 			}
 
-			return container.permission.addRoleMember(
+			return ctx.services.permission.addRoleMember(
 				input.roleId,
 				input.userId,
 				input.projectId,
@@ -272,19 +271,19 @@ export const permissionsRouter = router({
 		.input(removeRoleMemberSchema)
 		.mutation(async ({ ctx, input }) => {
 			if (input.projectId) {
-				await container.permission.requirePermission(
+				await ctx.services.permission.requirePermission(
 					ctx.session.user.id,
 					"project:manage_members",
 					input.projectId,
 				);
 			} else {
-				await container.permission.requirePermission(
+				await ctx.services.permission.requirePermission(
 					ctx.session.user.id,
 					"admin:manage_users",
 				);
 			}
 
-			return container.permission.removeRoleMember(
+			return ctx.services.permission.removeRoleMember(
 				input.roleId,
 				input.userId,
 				input.projectId,
@@ -296,8 +295,8 @@ export const permissionsRouter = router({
 	 */
 	getUserRoles: protectedProcedure
 		.input(getUserRolesSchema)
-		.query(async ({ input }) => {
-			return container.permission.getUserRoles(input.userId, input.projectId);
+		.query(async ({ ctx, input }) => {
+			return ctx.services.permission.getUserRoles(input.userId, input.projectId);
 		}),
 
 	/**
@@ -307,12 +306,12 @@ export const permissionsRouter = router({
 		.input(getProjectMembersSchema)
 		.query(async ({ ctx, input }) => {
 			// User must have project access to see members
-			await container.permission.requireProjectAccess(
+			await ctx.services.permission.requireProjectAccess(
 				ctx.session.user.id,
 				input.projectId,
 			);
 
-			return container.permission.getProjectMembers(
+			return ctx.services.permission.getProjectMembers(
 				input.projectId,
 				input.roleId,
 			);
@@ -329,7 +328,7 @@ export const permissionsRouter = router({
 			projectId: z.string().optional(),
 		}))
 		.query(async ({ ctx, input }) => {
-			const hasPermission = await container.permission.hasPermission(
+			const hasPermission = await ctx.services.permission.hasPermission(
 				ctx.session.user.id,
 				input.permission as any,
 				input.projectId,
@@ -343,7 +342,7 @@ export const permissionsRouter = router({
 	getMyPermissions: protectedProcedure
 		.input(z.object({ projectId: z.string().optional() }))
 		.query(async ({ ctx, input }) => {
-			return container.permission.getUserPermissions(
+			return ctx.services.permission.getUserPermissions(
 				ctx.session.user.id,
 				input.projectId,
 			);
@@ -355,7 +354,7 @@ export const permissionsRouter = router({
 	hasProjectAccess: protectedProcedure
 		.input(z.object({ projectId: z.string() }))
 		.query(async ({ ctx, input }) => {
-			const hasAccess = await container.permission.hasProjectAccess(
+			const hasAccess = await ctx.services.permission.hasProjectAccess(
 				ctx.session.user.id,
 				input.projectId,
 			);
@@ -369,12 +368,12 @@ export const permissionsRouter = router({
 	 */
 	getPermissionSchemes: protectedProcedure.query(async ({ ctx }) => {
 		// Only admins can view permission schemes
-		await container.permission.requirePermission(
+		await ctx.services.permission.requirePermission(
 			ctx.session.user.id,
 			"admin:manage_projects",
 		);
 
-		return container.permission.getPermissionSchemes();
+		return ctx.services.permission.getPermissionSchemes();
 	}),
 
 	/**
@@ -383,12 +382,12 @@ export const permissionsRouter = router({
 	getPermissionSchemeById: protectedProcedure
 		.input(z.object({ schemeId: z.string() }))
 		.query(async ({ ctx, input }) => {
-			await container.permission.requirePermission(
+			await ctx.services.permission.requirePermission(
 				ctx.session.user.id,
 				"admin:manage_projects",
 			);
 
-			return container.permission.getPermissionSchemeById(input.schemeId);
+			return ctx.services.permission.getPermissionSchemeById(input.schemeId);
 		}),
 
 	/**
@@ -397,12 +396,12 @@ export const permissionsRouter = router({
 	createPermissionScheme: protectedProcedure
 		.input(createPermissionSchemeSchema)
 		.mutation(async ({ ctx, input }) => {
-			await container.permission.requirePermission(
+			await ctx.services.permission.requirePermission(
 				ctx.session.user.id,
 				"admin:manage_projects",
 			);
 
-			return container.permission.createPermissionScheme(input);
+			return ctx.services.permission.createPermissionScheme(input);
 		}),
 
 	/**
@@ -412,13 +411,13 @@ export const permissionsRouter = router({
 		.input(applyPermissionSchemeSchema)
 		.mutation(async ({ ctx, input }) => {
 			// Need both project edit and scheme access
-			await container.permission.requirePermission(
+			await ctx.services.permission.requirePermission(
 				ctx.session.user.id,
 				"project:manage_roles",
 				input.projectId,
 			);
 
-			return container.permission.applyPermissionScheme(
+			return ctx.services.permission.applyPermissionScheme(
 				input.projectId,
 				input.schemeId,
 			);
@@ -434,13 +433,13 @@ export const permissionsRouter = router({
 		.input(z.object({ projectId: z.string() }))
 		.mutation(async ({ ctx, input }) => {
 			// Only project creator or admin can setup roles
-			await container.permission.requireAnyPermission(
+			await ctx.services.permission.requireAnyPermission(
 				ctx.session.user.id,
 				["project:manage_roles", "admin:manage_projects"],
 				input.projectId,
 			);
 
-			return container.permission.setupProjectDefaultRoles(
+			return ctx.services.permission.setupProjectDefaultRoles(
 				input.projectId,
 				ctx.session.user.id,
 			);

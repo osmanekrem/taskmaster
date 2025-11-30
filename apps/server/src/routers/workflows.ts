@@ -16,6 +16,7 @@ import {
   getTransitionsByWorkflowSchema,
   getAvailableTransitionsSchema,
 } from '@taskmaster/validation';
+import { requirePermission } from '@/lib/middleware/permission';
 
 export const workflowsRouter = router({
   // =============================================================================
@@ -25,16 +26,19 @@ export const workflowsRouter = router({
   /**
    * Get all workflows
    */
-  getWorkflows: protectedProcedure.query(async ({ ctx }) => {
-    const data = await ctx.services.workflow.getAllWorkflows();
-    return successResponse(data, 'Workflow\'lar başarıyla getirildi');
-  }),
+  getWorkflows: protectedProcedure
+    .use(requirePermission('workflow:view'))
+    .query(async ({ ctx }) => {
+      const data = await ctx.services.workflow.getAllWorkflows();
+      return successResponse(data, 'Workflow\'lar başarıyla getirildi');
+    }),
 
   /**
    * Get a workflow by ID with full details
    */
   getWorkflowById: protectedProcedure
     .input(getWorkflowByIdSchema)
+    .use(requirePermission('workflow:view'))
     .query(async ({ ctx, input }) => {
       const data = await ctx.services.workflow.getWorkflowById(input);
       return successResponse(data, 'Workflow başarıyla getirildi');
@@ -43,16 +47,19 @@ export const workflowsRouter = router({
   /**
    * Get default workflow
    */
-  getDefaultWorkflow: protectedProcedure.query(async ({ ctx }) => {
-    const data = await ctx.services.workflow.getDefaultWorkflow();
-    return successResponse(data, 'Varsayılan workflow başarıyla getirildi');
-  }),
+  getDefaultWorkflow: protectedProcedure
+    .use(requirePermission('workflow:view'))
+    .query(async ({ ctx }) => {
+      const data = await ctx.services.workflow.getDefaultWorkflow();
+      return successResponse(data, 'Varsayılan workflow başarıyla getirildi');
+    }),
 
   /**
    * Create a new workflow
    */
   createWorkflow: protectedProcedure
     .input(createWorkflowSchema)
+    .use(requirePermission('admin:manage_workflows'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.workflow.createWorkflow(input);
       return successResponse(data, 'Workflow başarıyla oluşturuldu');
@@ -63,6 +70,7 @@ export const workflowsRouter = router({
    */
   updateWorkflow: protectedProcedure
     .input(updateWorkflowSchema)
+    .use(requirePermission('workflow:edit'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.workflow.updateWorkflow(input);
       return successResponse(data, 'Workflow başarıyla güncellendi');
@@ -73,6 +81,7 @@ export const workflowsRouter = router({
    */
   deleteWorkflow: protectedProcedure
     .input(deleteWorkflowSchema)
+    .use(requirePermission('admin:manage_workflows'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.workflow.deleteWorkflow(input);
       return successResponse(data, 'Workflow başarıyla silindi');
@@ -87,6 +96,7 @@ export const workflowsRouter = router({
    */
   getWorkflowStatuses: protectedProcedure
     .input(getWorkflowStatusesSchema)
+    .use(requirePermission('workflow:view'))
     .query(async ({ ctx, input }) => {
       const data = await ctx.services.workflow.getWorkflowStatuses(input);
       return successResponse(data, 'Workflow statusleri başarıyla getirildi');
@@ -97,6 +107,7 @@ export const workflowsRouter = router({
    */
   addStatusToWorkflow: protectedProcedure
     .input(addStatusToWorkflowSchema)
+    .use(requirePermission('workflow:edit'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.workflow.addStatusToWorkflow(input);
       return successResponse(data, 'Status workflow\'a başarıyla eklendi');
@@ -107,6 +118,7 @@ export const workflowsRouter = router({
    */
   updateWorkflowStatus: protectedProcedure
     .input(updateWorkflowStatusSchema)
+    .use(requirePermission('workflow:edit'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.workflow.updateWorkflowStatus(input);
       return successResponse(data, 'Workflow status başarıyla güncellendi');
@@ -117,6 +129,7 @@ export const workflowsRouter = router({
    */
   removeStatusFromWorkflow: protectedProcedure
     .input(removeStatusFromWorkflowSchema)
+    .use(requirePermission('workflow:edit'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.workflow.removeStatusFromWorkflow(input);
       return successResponse(data, 'Status workflow\'dan başarıyla kaldırıldı');
@@ -127,6 +140,7 @@ export const workflowsRouter = router({
    */
   reorderWorkflowStatuses: protectedProcedure
     .input(reorderWorkflowStatusesSchema)
+    .use(requirePermission('workflow:edit'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.workflow.reorderWorkflowStatuses(input);
       return successResponse(data, 'Workflow statusleri başarıyla sıralandı');
@@ -141,6 +155,7 @@ export const workflowsRouter = router({
    */
   getTransitions: protectedProcedure
     .input(getTransitionsByWorkflowSchema)
+    .use(requirePermission('workflow:view'))
     .query(async ({ ctx, input }) => {
       const data = await ctx.services.workflow.getTransitionsByWorkflow(input);
       return successResponse(data, 'Transition\'lar başarıyla getirildi');
@@ -151,6 +166,7 @@ export const workflowsRouter = router({
    */
   getAvailableTransitions: protectedProcedure
     .input(getAvailableTransitionsSchema)
+    .use(requirePermission('workflow:view'))
     .query(async ({ ctx, input }) => {
       const data = await ctx.services.workflow.getAvailableTransitions(input);
       return successResponse(data, 'Mevcut transition\'lar başarıyla getirildi');
@@ -161,6 +177,7 @@ export const workflowsRouter = router({
    */
   createTransition: protectedProcedure
     .input(createTransitionSchema)
+    .use(requirePermission('workflow:edit'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.workflow.createTransition(input);
       return successResponse(data, 'Transition başarıyla oluşturuldu');
@@ -171,6 +188,7 @@ export const workflowsRouter = router({
    */
   updateTransition: protectedProcedure
     .input(updateTransitionSchema)
+    .use(requirePermission('workflow:edit'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.workflow.updateTransition(input);
       return successResponse(data, 'Transition başarıyla güncellendi');
@@ -181,6 +199,7 @@ export const workflowsRouter = router({
    */
   deleteTransition: protectedProcedure
     .input(deleteTransitionSchema)
+    .use(requirePermission('workflow:edit'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.workflow.deleteTransition(input);
       return successResponse(data, 'Transition başarıyla silindi');

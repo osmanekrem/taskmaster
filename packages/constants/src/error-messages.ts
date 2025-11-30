@@ -16,6 +16,8 @@ export const ErrorMessages = {
   STATUS_NAME_EXISTS: 'Bu isimde bir status zaten mevcut',
   CANNOT_MODIFY_SYSTEM_STATUS: 'Sistem statusleri değiştirilemez',
   CANNOT_DELETE_SYSTEM_STATUS: 'Sistem statusleri silinemez',
+  STATUS_IN_USE: 'Status issue\'lar tarafından kullanılıyor, silinemez',
+  STATUS_IN_WORKFLOW: 'Status workflow\'larda kullanılıyor, silinemez',
 
   // Resolution errors
   RESOLUTION_NOT_FOUND: 'Resolution bulunamadı',
@@ -23,11 +25,13 @@ export const ErrorMessages = {
   CANNOT_MODIFY_SYSTEM_RESOLUTION: 'Sistem resolution\'ları değiştirilemez',
   CANNOT_DELETE_SYSTEM_RESOLUTION: 'Sistem resolution\'ları silinemez',
   CANNOT_DELETE_DEFAULT_RESOLUTION: 'Varsayılan resolution silinemez',
+  RESOLUTION_IN_USE: 'Resolution issue\'lar tarafından kullanılıyor, silinemez',
 
   // Workflow errors
   WORKFLOW_NOT_FOUND: 'Workflow bulunamadı',
   WORKFLOW_NAME_EXISTS: 'Bu isimde bir workflow zaten mevcut',
   CANNOT_DELETE_DEFAULT_WORKFLOW: 'Varsayılan workflow silinemez',
+  WORKFLOW_IN_USE: 'Workflow kullanımda, silinemez',
   
   // Workflow status errors
   WORKFLOW_STATUS_NOT_FOUND: 'Workflow status bulunamadı',
@@ -97,6 +101,11 @@ export const ErrorMessages = {
   CONFLICT: 'Çakışma hatası',
   UNAUTHORIZED: 'Yetkilendirme gerekli',
   FORBIDDEN: 'Bu işlem için yetki gerekli',
+  PERMISSION_DENIED: 'Bu işlem için yetkiniz yok',
+  
+  // Issue type errors
+  ISSUE_TYPE_NOT_FOUND: 'Issue type bulunamadı',
+  ISSUE_TYPE_IN_USE: 'Issue type kullanımda, silinemez',
 } as const;
 
 export type ErrorMessageKey = keyof typeof ErrorMessages;

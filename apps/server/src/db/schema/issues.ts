@@ -82,6 +82,10 @@ export const issues = pgTable('issues', {
   priorityIdx: index('issues_priority_idx').on(table.priority),
   // Unique constraint: issue number per project
   uniqueProjectIssueNumber: unique('issues_project_number_unique').on(table.projectId, table.issueNumber),
+  // Text search indexes (using btree for ILIKE, GIN would need pg_trgm extension)
+  summaryIdx: index('issues_summary_idx').on(table.summary),
+  createdAtIdx: index('issues_created_at_idx').on(table.createdAt),
+  dueDateIdx: index('issues_due_date_idx').on(table.dueDate),
 }));
 
 // =============================================================================

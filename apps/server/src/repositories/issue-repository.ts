@@ -130,7 +130,8 @@ export class IssueRepository {
       conditions.push(
         or(
           ilike(issues.key, `%${filters.search}%`),
-          // Search in field values would require a join - simplified for now
+          ilike(issues.summary, `%${filters.search}%`),
+          ilike(issues.description, `%${filters.search}%`),
         )
       );
     }
@@ -345,36 +346,43 @@ export class IssueRepository {
   }
 
   async setFieldValue(issueId: string, fieldId: string, value: FieldValue) {
-    // Upsert: insert or update
-    const existing = await db.query.issueFieldValues.findFirst({
-      where: and(
-        eq(issueFieldValues.issueId, issueId),
-        eq(issueFieldValues.fieldId, fieldId)
-      ),
-    });
-
-    if (existing) {
-      const [updated] = await db
-        .update(issueFieldValues)
-        .set({ value, updatedAt: new Date() })
-        .where(eq(issueFieldValues.id, existing.id))
-        .returning();
-      return updated;
-    } else {
-      const [created] = await db
-        .insert(issueFieldValues)
-        .values({ issueId, fieldId, value })
-        .returning();
-      return created;
-    }
+    // Upsert: insert or update using onConflictDoUpdate
+    const [result] = await db
+      .insert(issueFieldValues)
+      .values({ issueId, fieldId, value })
+      .onConflictDoUpdate({
+        target: [issueFieldValues.issueId, issueFieldValues.fieldId],
+        set: { 
+          value, 
+          updatedAt: new Date() 
+        },
+      })
+      .returning();
+    return result;
   }
 
   async setFieldValues(issueId: string, fieldValues: { fieldId: string; value: FieldValue }[]) {
-    const results = [];
-    for (const fv of fieldValues) {
-      const result = await this.setFieldValue(issueId, fv.fieldId, fv.value);
-      results.push(result);
-    }
+    if (fieldValues.length === 0) return [];
+
+    // Batch upsert: insert all values in one query
+    const valuesToInsert = fieldValues.map(fv => ({
+      issueId,
+      fieldId: fv.fieldId,
+      value: fv.value,
+    }));
+
+    const results = await db
+      .insert(issueFieldValues)
+      .values(valuesToInsert)
+      .onConflictDoUpdate({
+        target: [issueFieldValues.issueId, issueFieldValues.fieldId],
+        set: { 
+          value: sql`excluded.value`, 
+          updatedAt: new Date() 
+        },
+      })
+      .returning();
+
     return results;
   }
 
@@ -454,5 +462,41 @@ export class IssueRepository {
     }
 
     return false;
+  }
+
+  // ==========================================================================
+  // IN-USE CHECKS (for delete validation)
+  // ==========================================================================
+
+  async countByStatusId(statusId: string): Promise<number> {
+    const [result] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(issues)
+      .where(eq(issues.statusId, statusId));
+    return Number(result?.count || 0);
+  }
+
+  async countByResolutionId(resolutionId: string): Promise<number> {
+    const [result] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(issues)
+      .where(eq(issues.resolutionId, resolutionId));
+    return Number(result?.count || 0);
+  }
+
+  async countByProjectId(projectId: string): Promise<number> {
+    const [result] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(issues)
+      .where(eq(issues.projectId, projectId));
+    return Number(result?.count || 0);
+  }
+
+  async countByIssueTypeId(issueTypeId: string): Promise<number> {
+    const [result] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(issues)
+      .where(eq(issues.issueTypeId, issueTypeId));
+    return Number(result?.count || 0);
   }
 }

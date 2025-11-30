@@ -16,6 +16,7 @@ import {
   listProjectsSchema,
 } from '@taskmaster/validation';
 import { z } from 'zod';
+import { requirePermission, requireAnyPermission, extractProjectId } from '@/lib/middleware/permission';
 
 export const projectsRouter = router({
   // =============================================================================
@@ -27,6 +28,7 @@ export const projectsRouter = router({
    */
   getProjects: protectedProcedure
     .input(listProjectsSchema.optional())
+    .use(requirePermission('project:view'))
     .query(async ({ ctx, input }) => {
       const data = await ctx.services.project.getAllProjects(input);
       return successResponse(data, 'Projeler başarıyla getirildi');
@@ -37,6 +39,7 @@ export const projectsRouter = router({
    */
   getProjectById: protectedProcedure
     .input(getProjectByIdSchema)
+    .use(requirePermission('project:view', extractProjectId.fromId))
     .query(async ({ ctx, input }) => {
       const data = await ctx.services.project.getProjectById(input);
       return successResponse(data, 'Proje başarıyla getirildi');
@@ -47,6 +50,7 @@ export const projectsRouter = router({
    */
   getProjectByKey: protectedProcedure
     .input(getProjectByKeySchema)
+    .use(requirePermission('project:view'))
     .query(async ({ ctx, input }) => {
       const data = await ctx.services.project.getProjectByKey(input);
       return successResponse(data, 'Proje başarıyla getirildi');
@@ -57,6 +61,7 @@ export const projectsRouter = router({
    */
   createProject: protectedProcedure
     .input(createProjectSchema)
+    .use(requirePermission('admin:manage_projects'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.project.createProject(input);
       return successResponse(data, 'Proje başarıyla oluşturuldu');
@@ -67,6 +72,7 @@ export const projectsRouter = router({
    */
   updateProject: protectedProcedure
     .input(updateProjectSchema)
+    .use(requirePermission('project:edit', extractProjectId.fromId))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.project.updateProject(input);
       return successResponse(data, 'Proje başarıyla güncellendi');
@@ -77,6 +83,7 @@ export const projectsRouter = router({
    */
   deleteProject: protectedProcedure
     .input(deleteProjectSchema)
+    .use(requirePermission('project:delete', extractProjectId.fromId))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.project.deleteProject(input);
       return successResponse(data, 'Proje başarıyla silindi');
@@ -87,6 +94,7 @@ export const projectsRouter = router({
    */
   archiveProject: protectedProcedure
     .input(archiveProjectSchema)
+    .use(requirePermission('project:edit', extractProjectId.fromId))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.project.archiveProject(input);
       const message = input.isArchived
@@ -100,6 +108,7 @@ export const projectsRouter = router({
    */
   updateProjectSettings: protectedProcedure
     .input(updateProjectSettingsSchema)
+    .use(requirePermission('project:edit', extractProjectId.fromId))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.project.updateProjectSettings(input);
       return successResponse(data, 'Proje ayarları başarıyla güncellendi');
@@ -114,6 +123,7 @@ export const projectsRouter = router({
    */
   getProjectIssueTypes: protectedProcedure
     .input(getProjectIssueTypesSchema)
+    .use(requirePermission('project:view', extractProjectId.fromProjectId))
     .query(async ({ ctx, input }) => {
       const data = await ctx.services.project.getProjectIssueTypes(input);
       return successResponse(data, 'Proje issue type\'ları başarıyla getirildi');
@@ -124,6 +134,7 @@ export const projectsRouter = router({
    */
   addIssueTypeToProject: protectedProcedure
     .input(addIssueTypeToProjectSchema)
+    .use(requirePermission('project:edit', extractProjectId.fromProjectId))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.project.addIssueTypeToProject(input);
       return successResponse(data, 'Issue type projeye başarıyla eklendi');
@@ -134,6 +145,7 @@ export const projectsRouter = router({
    */
   updateProjectIssueTypeWorkflow: protectedProcedure
     .input(updateProjectIssueTypeWorkflowSchema)
+    .use(requirePermission('project:edit', extractProjectId.fromProjectId))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.project.updateProjectIssueTypeWorkflow(input);
       return successResponse(data, 'Issue type workflow\'u başarıyla güncellendi');
@@ -144,6 +156,7 @@ export const projectsRouter = router({
    */
   removeIssueTypeFromProject: protectedProcedure
     .input(removeIssueTypeFromProjectSchema)
+    .use(requirePermission('project:edit', extractProjectId.fromProjectId))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.project.removeIssueTypeFromProject(input);
       return successResponse(data, 'Issue type projeden başarıyla kaldırıldı');
@@ -154,6 +167,7 @@ export const projectsRouter = router({
    */
   bulkAddIssueTypesToProject: protectedProcedure
     .input(bulkAddIssueTypesToProjectSchema)
+    .use(requirePermission('project:edit', extractProjectId.fromProjectId))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.project.bulkAddIssueTypesToProject(input);
       return successResponse(data, 'Issue type\'lar projeye başarıyla eklendi');
@@ -167,6 +181,7 @@ export const projectsRouter = router({
       projectId: z.string(),
       issueTypeId: z.string(),
     }))
+    .use(requirePermission('project:view', extractProjectId.fromProjectId))
     .query(async ({ ctx, input }) => {
       const data = await ctx.services.project.getWorkflowForIssueType(
         input.projectId,
@@ -182,10 +197,12 @@ export const projectsRouter = router({
   /**
    * Get all templates
    */
-  getTemplates: protectedProcedure.query(async ({ ctx }) => {
-    const data = await ctx.services.project.getAllTemplates();
-    return successResponse(data, 'Template\'ler başarıyla getirildi');
-  }),
+  getTemplates: protectedProcedure
+    .use(requirePermission('project:view'))
+    .query(async ({ ctx }) => {
+      const data = await ctx.services.project.getAllTemplates();
+      return successResponse(data, 'Template\'ler başarıyla getirildi');
+    }),
 
   /**
    * Create project from template
@@ -195,6 +212,7 @@ export const projectsRouter = router({
       templateId: z.string(),
       project: createProjectSchema,
     }))
+    .use(requirePermission('admin:manage_projects'))
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.services.project.createProjectFromTemplate(
         input.templateId,
