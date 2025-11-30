@@ -162,6 +162,20 @@
       "when": 1764448641356,
       "tag": "0022_rainy_wonder_man",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1764502821758,
+      "tag": "0023_fair_wrecker",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1764504480239,
+      "tag": "0024_dizzy_titanium_man",
+      "breakpoints": true
     }
   ]
 }
