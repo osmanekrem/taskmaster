@@ -48,6 +48,13 @@ export const issues = pgTable('issues', {
     .references((): any => issues.id, { onDelete: 'set null' }),
 
   // =============================================================================
+  // RANKING - LexoRank for ordering
+  // =============================================================================
+  // LexoRank format: "0|hzzzzz:" - allows insertion between any two items
+  // without rebalancing the entire list
+  rank: text('rank'), // Global backlog rank within project
+
+  // =============================================================================
   // DENORMALIZED CACHE FIELDS (synced from field_values for performance)
   // =============================================================================
   // These fields are cached copies of dynamic field values for:
@@ -74,6 +81,9 @@ export const issues = pgTable('issues', {
   reporterIdx: index('issues_reporter_idx').on(table.reporterId),
   parentIdx: index('issues_parent_idx').on(table.parentId),
   epicIdx: index('issues_epic_idx').on(table.epicId),
+  // Rank index for ordering
+  rankIdx: index('issues_rank_idx').on(table.rank),
+  projectRankIdx: index('issues_project_rank_idx').on(table.projectId, table.rank),
   // Composite indexes for common queries
   projectStatusIdx: index('issues_project_status_idx').on(table.projectId, table.statusId),
   projectTypeIdx: index('issues_project_type_idx').on(table.projectId, table.issueTypeId),
@@ -129,7 +139,90 @@ export const issueFieldValues = pgTable('issue_field_values', {
 }));
 
 // =============================================================================
-// ISSUE HISTORY - Değişiklik geçmişi (Audit Log)
+// CHANGE GROUPS - Gruplandırılmış değişiklik kayıtları (Jira-style)
+// =============================================================================
+
+// Change action types
+export const CHANGE_ACTION_TYPES = [
+  'created',
+  'updated',
+  'transitioned',
+  'assigned',
+  'commented',
+  'attachment_added',
+  'attachment_removed',
+  'linked',
+  'unlinked',
+  'moved',
+  'cloned',
+  'worklog_added',
+  'worklog_updated',
+  'worklog_deleted',
+] as const;
+
+export type ChangeActionType = (typeof CHANGE_ACTION_TYPES)[number];
+
+export const changeGroups = pgTable('change_groups', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+
+  issueId: text('issue_id')
+    .notNull()
+    .references(() => issues.id, { onDelete: 'cascade' }),
+  
+  // Who made the change
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'restrict' }),
+
+  // Action type (created, updated, transitioned, etc.)
+  action: text('action').$type<ChangeActionType>().notNull(),
+
+  // When
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (table) => ({
+  issueIdx: index('change_groups_issue_idx').on(table.issueId),
+  userIdx: index('change_groups_user_idx').on(table.userId),
+  createdAtIdx: index('change_groups_created_at_idx').on(table.createdAt),
+  actionIdx: index('change_groups_action_idx').on(table.action),
+  // Composite: Get all changes for an issue sorted by time
+  issueCreatedAtIdx: index('change_groups_issue_created_at_idx').on(table.issueId, table.createdAt),
+}));
+
+// =============================================================================
+// CHANGE ITEMS - Bireysel field değişiklikleri
+// =============================================================================
+
+export const changeItems = pgTable('change_items', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+
+  changeGroupId: text('change_group_id')
+    .notNull()
+    .references(() => changeGroups.id, { onDelete: 'cascade' }),
+
+  // What field changed
+  field: text('field').notNull(), // Display name (e.g., "Status", "Assignee", "Story Points")
+  fieldId: text('field_id'), // Optional: Reference to custom field ID
+  fieldType: text('field_type'), // Optional: "system" | "custom"
+
+  // Old and new values as strings for display
+  oldString: text('old_string'), // Human-readable old value (e.g., "John Doe", "To Do")
+  newString: text('new_string'), // Human-readable new value
+
+  // Old and new values as IDs/raw values for programmatic use
+  oldValue: text('old_value'), // Raw old value (e.g., user ID, status ID)
+  newValue: text('new_value'), // Raw new value
+}, (table) => ({
+  changeGroupIdx: index('change_items_change_group_idx').on(table.changeGroupId),
+  fieldIdx: index('change_items_field_idx').on(table.field),
+}));
+
+// =============================================================================
+// LEGACY: ISSUE HISTORY (Deprecated - migrate to change_groups)
+// Kept for backwards compatibility during migration
 // =============================================================================
 
 export type HistoryChange = {
@@ -213,6 +306,7 @@ export const issueRelations = relations(issues, ({ one, many }) => ({
   }),
   fieldValues: many(issueFieldValues),
   history: many(issueHistory),
+  changeGroups: many(changeGroups),
 }));
 
 export const issueFieldValueRelations = relations(issueFieldValues, ({ one }) => ({
@@ -223,6 +317,25 @@ export const issueFieldValueRelations = relations(issueFieldValues, ({ one }) =>
   field: one(fields, {
     fields: [issueFieldValues.fieldId],
     references: [fields.id],
+  }),
+}));
+
+export const changeGroupRelations = relations(changeGroups, ({ one, many }) => ({
+  issue: one(issues, {
+    fields: [changeGroups.issueId],
+    references: [issues.id],
+  }),
+  user: one(user, {
+    fields: [changeGroups.userId],
+    references: [user.id],
+  }),
+  items: many(changeItems),
+}));
+
+export const changeItemRelations = relations(changeItems, ({ one }) => ({
+  changeGroup: one(changeGroups, {
+    fields: [changeItems.changeGroupId],
+    references: [changeGroups.id],
   }),
 }));
 
@@ -245,5 +358,10 @@ export type Issue = typeof issues.$inferSelect;
 export type NewIssue = typeof issues.$inferInsert;
 export type IssueFieldValue = typeof issueFieldValues.$inferSelect;
 export type NewIssueFieldValue = typeof issueFieldValues.$inferInsert;
+export type ChangeGroup = typeof changeGroups.$inferSelect;
+export type NewChangeGroup = typeof changeGroups.$inferInsert;
+export type ChangeItem = typeof changeItems.$inferSelect;
+export type NewChangeItem = typeof changeItems.$inferInsert;
+// Legacy types (deprecated)
 export type IssueHistory = typeof issueHistory.$inferSelect;
 export type NewIssueHistory = typeof issueHistory.$inferInsert;

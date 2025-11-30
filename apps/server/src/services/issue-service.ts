@@ -12,6 +12,7 @@ import { createAppError } from '@/lib/errors';
 import type { CreateIssueInput, UpdateIssueInput, TransitionIssueInput, IssueFilters } from '@taskmaster/validation';
 import type { FieldValue, HistoryChange } from '@/db/schema/issues';
 import { ISSUE_TYPE_HIERARCHY } from '@taskmaster/constants';
+import { generateInitialRank, generateRankBefore, generateRankAfter, generateRankBetween, generateRanks } from '@/utils/lexorank';
 
 export class IssueService {
   constructor(
@@ -556,5 +557,120 @@ export class IssueService {
     if (Object.keys(cacheUpdate).length > 0) {
       await this.issueRepository.update(issueId, cacheUpdate);
     }
+  }
+
+  // ==========================================================================
+  // RANKING / REORDERING
+  // ==========================================================================
+
+  /**
+   * Reorder a single issue in the backlog
+   */
+  async reorderIssue(
+    issueId: string,
+    afterIssueId: string | null,
+    beforeIssueId: string | null,
+    userId: string
+  ) {
+    // Get the issue to reorder
+    const issue = await this.getIssueById(issueId);
+
+    // Get ranks of adjacent issues
+    let prevRank: string | null = null;
+    let nextRank: string | null = null;
+
+    if (afterIssueId) {
+      const afterIssue = await this.issueRepository.findById(afterIssueId);
+      if (afterIssue) {
+        prevRank = afterIssue.rank;
+      }
+    }
+
+    if (beforeIssueId) {
+      const beforeIssue = await this.issueRepository.findById(beforeIssueId);
+      if (beforeIssue) {
+        nextRank = beforeIssue.rank;
+      }
+    }
+
+    // If no afterIssue specified and we need to go to top
+    if (!afterIssueId && beforeIssueId) {
+      // Get first rank in project to insert before it
+      const firstRank = await this.issueRepository.getFirstRankInProject(issue.projectId);
+      if (firstRank && firstRank !== issue.rank) {
+        nextRank = firstRank;
+      }
+    }
+
+    // If no beforeIssue specified and we need to go to bottom
+    if (afterIssueId && !beforeIssueId) {
+      // Get last rank in project to insert after it
+      const lastRank = await this.issueRepository.getLastRankInProject(issue.projectId);
+      if (lastRank && lastRank !== issue.rank) {
+        prevRank = lastRank;
+      }
+    }
+
+    // Generate new rank
+    const newRank = generateRankBetween(prevRank, nextRank);
+
+    // Update the issue rank
+    const updated = await this.issueRepository.updateRank(issueId, newRank);
+
+    return {
+      issueId,
+      previousRank: issue.rank,
+      newRank,
+      issue: updated,
+    };
+  }
+
+  /**
+   * Bulk reorder issues - sets explicit order for multiple issues
+   */
+  async bulkReorderIssues(
+    projectId: string,
+    issueIds: string[],
+    userId: string
+  ) {
+    // Validate project exists
+    const project = await this.projectRepository.findById(projectId);
+    if (!project) {
+      throw createAppError(ErrorMessages.PROJECT_NOT_FOUND, { statusCode: 404, code: 'NOT_FOUND' });
+    }
+
+    // Generate ranks for all issues
+    const ranks = generateRanks(issueIds.length);
+
+    // Create update array
+    const updates = issueIds.map((id, index) => ({
+      id,
+      rank: ranks[index],
+    }));
+
+    // Bulk update
+    const results = await this.issueRepository.bulkUpdateRanks(updates);
+
+    return {
+      projectId,
+      updatedCount: results.length,
+      issues: results,
+    };
+  }
+
+  /**
+   * Get backlog issues ordered by rank
+   */
+  async getBacklogIssues(projectId: string, limit = 100) {
+    return this.issueRepository.findByProjectOrderedByRank(projectId, limit);
+  }
+
+  /**
+   * Get initial rank for a new issue in a project
+   */
+  async getInitialRankForProject(projectId: string): Promise<string> {
+    // Get the last rank in the project and generate one after it
+    const lastRank = await this.issueRepository.getLastRankInProject(projectId);
+    return generateRankAfter(lastRank);
   }
 }

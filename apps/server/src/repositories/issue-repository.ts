@@ -499,4 +499,120 @@ export class IssueRepository {
       .where(eq(issues.issueTypeId, issueTypeId));
     return Number(result?.count || 0);
   }
+
+  // ==========================================================================
+  // RANKING / ORDERING
+  // ==========================================================================
+
+  /**
+   * Update the rank of an issue
+   */
+  async updateRank(id: string, rank: string) {
+    const [updated] = await db
+      .update(issues)
+      .set({ rank, updatedAt: new Date() })
+      .where(eq(issues.id, id))
+      .returning();
+    return updated;
+  }
+
+  /**
+   * Get the first issue rank in a project (for inserting at top)
+   */
+  async getFirstRankInProject(projectId: string): Promise<string | null> {
+    const result = await db.query.issues.findFirst({
+      where: and(
+        eq(issues.projectId, projectId),
+        sql`${issues.rank} IS NOT NULL`
+      ),
+      orderBy: asc(issues.rank),
+      columns: { rank: true },
+    });
+    return result?.rank || null;
+  }
+
+  /**
+   * Get the last issue rank in a project (for inserting at bottom)
+   */
+  async getLastRankInProject(projectId: string): Promise<string | null> {
+    const result = await db.query.issues.findFirst({
+      where: and(
+        eq(issues.projectId, projectId),
+        sql`${issues.rank} IS NOT NULL`
+      ),
+      orderBy: desc(issues.rank),
+      columns: { rank: true },
+    });
+    return result?.rank || null;
+  }
+
+  /**
+   * Get issues ordered by rank for a project
+   */
+  async findByProjectOrderedByRank(projectId: string, limit = 100) {
+    return db.query.issues.findMany({
+      where: eq(issues.projectId, projectId),
+      orderBy: [asc(issues.rank), asc(issues.createdAt)],
+      limit,
+      with: {
+        issueType: { columns: { id: true, name: true, icon: true } },
+        status: true,
+        assignee: {
+          columns: { id: true, name: true, email: true, image: true },
+        },
+      },
+    });
+  }
+
+  /**
+   * Get adjacent issues for reordering (previous and next by rank)
+   */
+  async getAdjacentIssueRanks(
+    projectId: string,
+    targetRank: string
+  ): Promise<{ prevRank: string | null; nextRank: string | null }> {
+    // Get issue just before target rank
+    const prev = await db.query.issues.findFirst({
+      where: and(
+        eq(issues.projectId, projectId),
+        sql`${issues.rank} < ${targetRank}`
+      ),
+      orderBy: desc(issues.rank),
+      columns: { rank: true },
+    });
+
+    // Get issue just after target rank
+    const next = await db.query.issues.findFirst({
+      where: and(
+        eq(issues.projectId, projectId),
+        sql`${issues.rank} > ${targetRank}`
+      ),
+      orderBy: asc(issues.rank),
+      columns: { rank: true },
+    });
+
+    return {
+      prevRank: prev?.rank || null,
+      nextRank: next?.rank || null,
+    };
+  }
+
+  /**
+   * Bulk update ranks for multiple issues
+   */
+  async bulkUpdateRanks(updates: { id: string; rank: string }[]) {
+    // Use a transaction for consistency
+    return db.transaction(async (tx) => {
+      const results = [];
+      for (const { id, rank } of updates) {
+        const [updated] = await tx
+          .update(issues)
+          .set({ rank, updatedAt: new Date() })
+          .where(eq(issues.id, id))
+          .returning();
+        results.push(updated);
+      }
+      return results;
+    });
+  }
 }

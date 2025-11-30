@@ -8,6 +8,8 @@ import {
   issueFiltersSchema,
   getIssueSchema,
   issueHistoryFiltersSchema,
+  reorderIssueSchema,
+  bulkReorderIssuesSchema,
 } from '@taskmaster/validation';
 import { successResponse, paginatedResponse } from '@/utils/response';
 import { requirePermission, requireAnyPermission, extractProjectId } from '@/lib/middleware/permission';
@@ -151,5 +153,56 @@ export const issuesRouter = router({
       const { issueId, page, limit } = input;
       const result = await ctx.services.issue.getIssueHistory(issueId, page, limit);
       return paginatedResponse(result.data, result.pagination);
+    }),
+
+  // ==========================================================================
+  // MUTATION: Reorder Issues (Backlog ranking)
+  // ==========================================================================
+
+  /**
+   * Reorder a single issue in the backlog
+   * Moves the issue after/before another issue
+   */
+  reorderIssue: protectedProcedure
+    .input(reorderIssueSchema)
+    .use(requirePermission('issue:edit'))
+    .mutation(async ({ ctx, input }) => {
+      const result = await ctx.services.issue.reorderIssue(
+        input.issueId,
+        input.afterIssueId ?? null,
+        input.beforeIssueId ?? null,
+        ctx.session.user.id
+      );
+      return successResponse(result, 'Issue reordered');
+    }),
+
+  /**
+   * Bulk reorder issues - sets explicit order for multiple issues
+   * issueIds array defines the new order (first = top)
+   */
+  bulkReorderIssues: protectedProcedure
+    .input(bulkReorderIssuesSchema)
+    .use(requirePermission('issue:edit', extractProjectId.fromProjectId))
+    .mutation(async ({ ctx, input }) => {
+      const result = await ctx.services.issue.bulkReorderIssues(
+        input.projectId,
+        input.issueIds,
+        ctx.session.user.id
+      );
+      return successResponse(result, 'Issues reordered');
+    }),
+
+  /**
+   * Get issues ordered by rank for backlog view
+   */
+  getBacklogIssues: protectedProcedure
+    .input(z.object({
+      projectId: z.string().uuid(),
+      limit: z.number().min(1).max(500).optional().default(100),
+    }))
+    .use(requirePermission('issue:view', extractProjectId.fromProjectId))
+    .query(async ({ ctx, input }) => {
+      const issues = await ctx.services.issue.getBacklogIssues(input.projectId, input.limit);
+      return successResponse(issues, 'Backlog issues retrieved');
     }),
 });

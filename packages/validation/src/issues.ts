@@ -188,3 +188,61 @@ export const bulkUpdateIssuesSchema = z.object({
 });
 
 export type BulkUpdateIssuesInput = z.infer<typeof bulkUpdateIssuesSchema>;
+
+// =============================================================================
+// REORDER / RANKING
+// =============================================================================
+
+/**
+ * Reorder an issue in the backlog
+ * - afterIssueId: Place after this issue (null = move to top)
+ * - beforeIssueId: Place before this issue (null = move to bottom)
+ * At least one of afterIssueId or beforeIssueId should be provided
+ */
+export const reorderIssueSchema = z.object({
+  issueId: z.string().uuid(),
+  afterIssueId: z.string().uuid().nullable().optional(),
+  beforeIssueId: z.string().uuid().nullable().optional(),
+}).refine(
+  (data) => data.afterIssueId !== undefined || data.beforeIssueId !== undefined,
+  { message: 'Either afterIssueId or beforeIssueId must be provided' }
+);
+
+export type ReorderIssueInput = z.infer<typeof reorderIssueSchema>;
+
+/**
+ * Bulk reorder issues (set explicit order)
+ */
+export const bulkReorderIssuesSchema = z.object({
+  projectId: z.string().uuid(),
+  issueIds: z.array(z.string().uuid()).min(1).max(500),
+});
+
+export type BulkReorderIssuesInput = z.infer<typeof bulkReorderIssuesSchema>;
+
+/**
+ * Reorder issue within a sprint
+ */
+export const reorderSprintIssueSchema = z.object({
+  issueId: z.string().uuid(),
+  sprintId: z.string().uuid(),
+  afterIssueId: z.string().uuid().nullable().optional(),
+  beforeIssueId: z.string().uuid().nullable().optional(),
+}).refine(
+  (data) => data.afterIssueId !== undefined || data.beforeIssueId !== undefined,
+  { message: 'Either afterIssueId or beforeIssueId must be provided' }
+);
+
+export type ReorderSprintIssueInput = z.infer<typeof reorderSprintIssueSchema>;
+
+/**
+ * Move issue between sprints with position
+ */
+export const moveIssueToSprintSchema = z.object({
+  issueId: z.string().uuid(),
+  targetSprintId: z.string().uuid().nullable(), // null = move to backlog
+  afterIssueId: z.string().uuid().nullable().optional(),
+  beforeIssueId: z.string().uuid().nullable().optional(),
+});
+
+export type MoveIssueToSprintInput = z.infer<typeof moveIssueToSprintSchema>;

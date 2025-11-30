@@ -785,3 +785,164 @@ export class BurndownRepository {
 		return dataPoints;
 	}
 }
+
+// =====================================================
+// SPRINT ISSUE RANKING
+// =====================================================
+
+export class SprintIssueRankingRepository {
+	/**
+	 * Update the rank of an issue within a sprint
+	 */
+	async updateRank(issueId: string, rank: string) {
+		const [updated] = await db
+			.update(sprintIssues)
+			.set({ rank })
+			.where(eq(sprintIssues.issueId, issueId))
+			.returning();
+		return updated;
+	}
+
+	/**
+	 * Get the first rank in a sprint (for inserting at top)
+	 */
+	async getFirstRankInSprint(sprintId: string): Promise<string | null> {
+		const result = await db.query.sprintIssues.findFirst({
+			where: and(
+				eq(sprintIssues.sprintId, sprintId),
+				sql`${sprintIssues.rank} IS NOT NULL`
+			),
+			orderBy: asc(sprintIssues.rank),
+			columns: { rank: true },
+		});
+		return result?.rank || null;
+	}
+
+	/**
+	 * Get the last rank in a sprint (for inserting at bottom)
+	 */
+	async getLastRankInSprint(sprintId: string): Promise<string | null> {
+		const result = await db.query.sprintIssues.findFirst({
+			where: and(
+				eq(sprintIssues.sprintId, sprintId),
+				sql`${sprintIssues.rank} IS NOT NULL`
+			),
+			orderBy: desc(sprintIssues.rank),
+			columns: { rank: true },
+		});
+		return result?.rank || null;
+	}
+
+	/**
+	 * Get issues in sprint ordered by rank
+	 */
+	async getSprintIssuesOrderedByRank(sprintId: string) {
+		return db
+			.select({
+				id: sprintIssues.id,
+				issueId: sprintIssues.issueId,
+				sprintId: sprintIssues.sprintId,
+				position: sprintIssues.position,
+				rank: sprintIssues.rank,
+				addedAt: sprintIssues.addedAt,
+				storyPointsSnapshot: sprintIssues.storyPointsSnapshot,
+				// Issue details
+				issueKey: issues.key,
+				issueSummary: issues.summary,
+				issueStatusId: issues.statusId,
+				issueTypeId: issues.issueTypeId,
+				issueAssigneeId: issues.assigneeId,
+				issueStoryPoints: issues.storyPoints,
+				issuePriority: issues.priority,
+			})
+			.from(sprintIssues)
+			.innerJoin(issues, eq(sprintIssues.issueId, issues.id))
+			.where(eq(sprintIssues.sprintId, sprintId))
+			.orderBy(asc(sprintIssues.rank), asc(sprintIssues.position));
+	}
+
+	/**
+	 * Get adjacent issue ranks in a sprint for reordering
+	 */
+	async getAdjacentRanks(
+		sprintId: string,
+		targetRank: string
+	): Promise<{ prevRank: string | null; nextRank: string | null }> {
+		// Get issue just before target rank
+		const prev = await db.query.sprintIssues.findFirst({
+			where: and(
+				eq(sprintIssues.sprintId, sprintId),
+				sql`${sprintIssues.rank} < ${targetRank}`
+			),
+			orderBy: desc(sprintIssues.rank),
+			columns: { rank: true },
+		});
+
+		// Get issue just after target rank
+		const next = await db.query.sprintIssues.findFirst({
+			where: and(
+				eq(sprintIssues.sprintId, sprintId),
+				sql`${sprintIssues.rank} > ${targetRank}`
+			),
+			orderBy: asc(sprintIssues.rank),
+			columns: { rank: true },
+		});
+
+		return {
+			prevRank: prev?.rank || null,
+			nextRank: next?.rank || null,
+		};
+	}
+
+	/**
+	 * Bulk update ranks for sprint issues
+	 */
+	async bulkUpdateRanks(updates: { issueId: string; rank: string }[]) {
+		return db.transaction(async (tx) => {
+			const results = [];
+			for (const { issueId, rank } of updates) {
+				const [updated] = await tx
+					.update(sprintIssues)
+					.set({ rank })
+					.where(eq(sprintIssues.issueId, issueId))
+					.returning();
+				results.push(updated);
+			}
+			return results;
+		});
+	}
+
+	/**
+	 * Set rank when adding issue to sprint
+	 */
+	async addIssueWithRank(
+		sprintId: string,
+		issueId: string,
+		addedById: string,
+		rank: string,
+		storyPointsSnapshot?: number | null
+	) {
+		const [sprintIssue] = await db
+			.insert(sprintIssues)
+			.values({
+				sprintId,
+				issueId,
+				position: 0, // Legacy field, rank takes precedence
+				rank,
+				addedById,
+				storyPointsSnapshot,
+			})
+			.onConflictDoUpdate({
+				target: sprintIssues.issueId,
+				set: {
+					sprintId,
+					rank,
+					addedAt: new Date(),
+					addedById,
+				},
+			})
+			.returning();
+
+		return sprintIssue;
+	}
+}

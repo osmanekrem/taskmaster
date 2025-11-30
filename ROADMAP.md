@@ -69,15 +69,25 @@
 
 ---
 
-### Phase 2: History & Ranking (3-4 gün)
+### Phase 2: History & Ranking (3-4 gün) ✅ TAMAMLANDI
 > **Jira: 25% → 30%** | **Öncelik: YÜKSEK**
 
-- [ ] `change_groups` + `change_items` schema (JSONB history yerine)
-- [ ] LexoRank ekleme:
-  - [ ] `issues.rank` kolonu
-  - [ ] `sprint_issues.rank` kolonu
-  - [ ] `bun add lexorank`
-- [ ] Reorder endpoints
+- [x] `change_groups` + `change_items` schema (JSONB history yerine)
+  - [x] `change_groups` tablosu (issue_id, user_id, action, created_at)
+  - [x] `change_items` tablosu (change_group_id, field, old_string, new_string, old_value, new_value)
+  - [x] ChangeActionType enum (created, updated, transitioned, assigned, etc.)
+  - [x] Legacy `issue_history` tablosu korundu (backwards compat)
+- [x] LexoRank ekleme:
+  - [x] `issues.rank` kolonu (backlog ordering)
+  - [x] `sprint_issues.rank` kolonu (sprint ordering)
+  - [x] `bun add lexorank`
+  - [x] `/utils/lexorank.ts` - generateInitialRank, generateRankBefore, generateRankAfter, generateRankBetween, generateRanks
+- [x] Reorder endpoints:
+  - [x] `reorderIssue` - Tek issue'yu afterIssueId/beforeIssueId ile taşı
+  - [x] `bulkReorderIssues` - Birden fazla issue'yu sırala
+  - [x] `getBacklogIssues` - Rank'e göre sıralı backlog
+  - [x] Repository metodları: updateRank, getFirstRankInProject, getLastRankInProject, bulkUpdateRanks
+  - [x] Sprint issue ranking repository eklendi
 
 ---
 
@@ -539,9 +549,9 @@
 
 | Phase | Status | Start | End | Notes |
 |-------|--------|-------|-----|-------|
-| Phase 0 | ⏳ Not Started | | | |
-| Phase 1 | ⏳ Not Started | | | |
-| Phase 2 | ⏳ Not Started | | | |
+| Phase 0 | ✅ Completed | 29 Kas | 29 Kas | Bug fix, security, in-use checks |
+| Phase 1 | ✅ Completed | 30 Kas | 30 Kas | Event Bus, indexes, transaction |
+| Phase 2 | ✅ Completed | 30 Kas | 30 Kas | Change history, LexoRank, reorder |
 | Phase 3 | ⏳ Not Started | | | |
 | Phase 4 | ⏳ Not Started | | | |
 | Phase 5 | ⏳ Not Started | | | |

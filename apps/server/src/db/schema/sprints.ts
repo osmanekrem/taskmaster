@@ -126,8 +126,12 @@ export const sprintIssues = pgTable("sprint_issues", {
 		.notNull()
 		.references(() => issues.id, {onDelete: "cascade"}),
 	
-	// Position within sprint backlog
+	// Position within sprint backlog (legacy integer)
 	position: integer("position").notNull().default(0),
+	
+	// LexoRank for sprint ordering (new - preferred over position)
+	// Allows insertion between any two items without rebalancing
+	rank: text("rank"),
 	
 	// When added to sprint (for tracking scope changes)
 	addedAt: timestamp("added_at").defaultNow().notNull(),
@@ -141,6 +145,7 @@ export const sprintIssues = pgTable("sprint_issues", {
 	unique("sprint_issues_issue_unique").on(table.issueId),
 	index("sprint_issues_sprint_id_idx").on(table.sprintId),
 	index("sprint_issues_position_idx").on(table.sprintId, table.position),
+	index("sprint_issues_rank_idx").on(table.sprintId, table.rank),
 ]);
 
 // =====================================================

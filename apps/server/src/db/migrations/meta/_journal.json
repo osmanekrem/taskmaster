@@ -176,6 +176,13 @@
       "when": 1764504480239,
       "tag": "0024_dizzy_titanium_man",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1764525896759,
+      "tag": "0025_unique_robin_chapel",
+      "breakpoints": true
     }
   ]
 }
