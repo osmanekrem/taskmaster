@@ -1,59 +1,85 @@
-import { fieldOptions, fields, selectOptions } from '@/db/schema/field';
+import { fields, type FieldConfig, type FieldSelectOption } from '@/db/schema/field';
+import { issueTypeFields } from '@/db/schema/issue-type-fields';
 import { db } from '@/db';
-import { and, asc, eq, inArray, notInArray } from 'drizzle-orm';
-import type { EditFieldSchema } from '@taskmaster/validation';
-import { fieldTypeOptions } from '@/db/schema/field-types';
-import {
-  issueTypeFieldOptions,
-  issueTypeFields,
-  issueTypeSelectOptions,
-} from '@/db/schema/issue-type-fields';
+import { and, asc, eq } from 'drizzle-orm';
 import type { DrizzleClientOrTransaction } from '@/lib/types/db';
 
+// Input types
+export interface CreateFieldInput {
+  name: string;
+  fieldType: string;
+  icon?: string;
+  config?: FieldConfig;
+  options?: FieldSelectOption[];
+}
+
+export interface UpdateFieldInput {
+  name?: string;
+  icon?: string;
+  config?: FieldConfig;
+  options?: FieldSelectOption[];
+}
+
+export interface AddFieldToIssueTypeInput {
+  issueTypeId: string;
+  fieldId: string;
+  order?: number;
+  configOverride?: FieldConfig | null;
+  optionsOverride?: FieldSelectOption[] | null;
+}
+
+export interface UpdateIssueTypeFieldInput {
+  configOverride?: FieldConfig | null;
+  optionsOverride?: FieldSelectOption[] | null;
+  order?: number;
+}
+
 export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
-  findMany: () => drizzle.select().from(fields),
+  // ==================== FIELDS ====================
+  
+  findMany: () => 
+    drizzle
+      .select()
+      .from(fields)
+      .orderBy(asc(fields.name)),
 
   findById: (id: string) =>
-    drizzle.query.fields.findFirst({ where: eq(fields.id, id) }),
+    drizzle.query.fields.findFirst({ 
+      where: eq(fields.id, id) 
+    }),
 
-  findWithDetails: () =>
+  findByIds: (ids: string[]) =>
     drizzle.query.fields.findMany({
-      with: {
-        fieldType: true,
-        options: {
-          orderBy: [asc(fieldTypeOptions.order)],
-          with: {
-            fieldTypeOption: true,
-            selectOptions: { orderBy: [asc(selectOptions.order)] },
-          },
-        },
-      },
+      where: (fields, { inArray }) => inArray(fields.id, ids),
     }),
 
-  findWithDetailsById: (id: string) =>
-    drizzle.query.fields.findFirst({
-      where: eq(fields.id, id),
-      with: {
-        fieldType: true,
-        options: {
-          orderBy: [asc(fieldTypeOptions.order)],
-          with: {
-            fieldTypeOption: true,
-            selectOptions: { orderBy: [asc(selectOptions.order)] },
-          },
-        },
-      },
-    }),
-
-  create: async (values: typeof fields.$inferInsert) => {
-    const [result] = await drizzle.insert(fields).values(values).returning();
+  create: async (input: CreateFieldInput) => {
+    const [result] = await drizzle
+      .insert(fields)
+      .values({
+        name: input.name,
+        fieldType: input.fieldType,
+        icon: input.icon,
+        config: input.config ?? {},
+        options: input.options ?? [],
+      })
+      .returning();
     return result;
   },
 
-  update: async (id: string, values: Omit<EditFieldSchema, 'fieldId'>) => {
+  update: async (id: string, input: UpdateFieldInput) => {
+    const updateData: Record<string, unknown> = {
+      updatedAt: new Date(),
+    };
+    
+    if (input.name !== undefined) updateData.name = input.name;
+    if (input.icon !== undefined) updateData.icon = input.icon;
+    if (input.config !== undefined) updateData.config = input.config;
+    if (input.options !== undefined) updateData.options = input.options;
+
     const [result] = await drizzle
       .update(fields)
-      .set(values)
+      .set(updateData)
       .where(eq(fields.id, id))
       .returning();
     return result;
@@ -67,105 +93,80 @@ export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
     return result;
   },
 
-  findFieldTypeOptionsByTypeId: (fieldTypeId: string) =>
+  // ==================== ISSUE TYPE FIELDS ====================
+
+  findIssueTypeFieldsByIssueTypeId: (issueTypeId: string) =>
     drizzle
       .select()
-      .from(fieldTypeOptions)
-      .where(eq(fieldTypeOptions.fieldTypeId, fieldTypeId)),
+      .from(issueTypeFields)
+      .where(eq(issueTypeFields.issueTypeId, issueTypeId))
+      .orderBy(asc(issueTypeFields.order)),
 
-  createManyFieldOptions: (values: (typeof fieldOptions.$inferInsert)[]) =>
-    drizzle.insert(fieldOptions).values(values),
+  findIssueTypeFieldsWithFieldByIssueTypeId: (issueTypeId: string) =>
+    drizzle.query.issueTypeFields.findMany({
+      where: eq(issueTypeFields.issueTypeId, issueTypeId),
+      orderBy: [asc(issueTypeFields.order)],
+      with: {
+        field: true,
+      },
+    }),
 
-  updateFieldOptionValue: async (id: string, value: string) => {
-    const [result] = await drizzle
-      .update(fieldOptions)
-      .set({ value })
-      .where(eq(fieldOptions.id, id))
-      .returning();
-    return result;
-  },
+  findIssueTypeField: (issueTypeId: string, fieldId: string) =>
+    drizzle.query.issueTypeFields.findFirst({
+      where: and(
+        eq(issueTypeFields.issueTypeId, issueTypeId),
+        eq(issueTypeFields.fieldId, fieldId),
+      ),
+      with: {
+        field: true,
+      },
+    }),
 
-  findSelectOptionsByFieldOptionIds: (ids: string[]) => {
-    if (ids.length === 0) return [];
-    return drizzle
-      .select()
-      .from(selectOptions)
-      .where(inArray(selectOptions.fieldOptionId, ids))
-      .orderBy(asc(selectOptions.order));
-  },
-
-  deleteSelectOptionsNotInList: (
-    fieldOptionId: string,
-    idsToKeep: string[],
-  ) => {
-    const condition =
-      idsToKeep.length > 0
-        ? and(
-            eq(selectOptions.fieldOptionId, fieldOptionId),
-            notInArray(selectOptions.id, idsToKeep),
-          )
-        : eq(selectOptions.fieldOptionId, fieldOptionId);
-
-    return drizzle.delete(selectOptions).where(condition);
-  },
-
-  createManySelectOptions: (values: (typeof selectOptions.$inferInsert)[]) =>
-    drizzle.insert(selectOptions).values(values),
-
-  updateSelectOption: (
-    id: string,
-    values: { name: string; icon: string; order: number },
-  ) =>
-    drizzle.update(selectOptions).set(values).where(eq(selectOptions.id, id)),
-
-  createIssueTypeField: async (
-    issueTypeId: string,
-    fieldId: string,
-    order: number,
+  addFieldToIssueType: async (
+    issueTypeId: string, 
+    fieldId: string, 
+    options?: Omit<AddFieldToIssueTypeInput, 'issueTypeId' | 'fieldId'>
   ) => {
     const [result] = await drizzle
       .insert(issueTypeFields)
-      .values({ issueTypeId, fieldId, order })
+      .values({
+        issueTypeId,
+        fieldId,
+        order: options?.order ?? 0,
+        configOverride: options?.configOverride,
+        optionsOverride: options?.optionsOverride,
+      })
       .returning();
     return result;
   },
 
-  createIssueTypeFieldOption: async (
-    issueTypeFieldId: string,
-    fieldOptionId: string,
-    value: string,
+  updateIssueTypeField: async (
+    issueTypeId: string, 
+    fieldId: string, 
+    input: UpdateIssueTypeFieldInput
   ) => {
+    const updateData: Record<string, unknown> = {};
+    
+    if (input.order !== undefined) updateData.order = input.order;
+    if (input.configOverride !== undefined) updateData.configOverride = input.configOverride;
+    if (input.optionsOverride !== undefined) updateData.optionsOverride = input.optionsOverride;
+
+    if (Object.keys(updateData).length === 0) return null;
+
     const [result] = await drizzle
-      .insert(issueTypeFieldOptions)
-      .values({ issueTypeFieldId, fieldOptionId, value })
+      .update(issueTypeFields)
+      .set(updateData)
+      .where(
+        and(
+          eq(issueTypeFields.issueTypeId, issueTypeId),
+          eq(issueTypeFields.fieldId, fieldId),
+        ),
+      )
       .returning();
     return result;
   },
 
-  createIssueTypeSelectOption: async (
-    fieldOptionId: string,
-    name: string,
-    icon: string,
-    order: number,
-  ) => {
-    const [result] = await drizzle
-      .insert(issueTypeSelectOptions)
-      .values({ fieldOptionId, name, icon, order })
-      .returning();
-    return result;
-  },
-
-  createManyIssueTypeSelectOptions: async (
-    values: (typeof issueTypeSelectOptions.$inferInsert)[],
-  ) => {
-    const [result] = await drizzle
-      .insert(issueTypeSelectOptions)
-      .values(values)
-      .returning();
-    return result;
-  },
-
-  deleteIssueTypeField: async (issueTypeId: string, fieldId: string) => {
+  removeFieldFromIssueType: async (issueTypeId: string, fieldId: string) => {
     const [result] = await drizzle
       .delete(issueTypeFields)
       .where(
@@ -178,127 +179,19 @@ export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
     return result;
   },
 
-  deleteIssueTypeFieldOption: async (
-    issueTypeFieldId: string,
-    fieldOptionId: string,
-  ) => {
-    const [result] = await drizzle
-      .delete(issueTypeFieldOptions)
-      .where(
-        and(
-          eq(issueTypeFieldOptions.issueTypeFieldId, issueTypeFieldId),
-          eq(issueTypeFieldOptions.fieldOptionId, fieldOptionId),
-        ),
-      )
-      .returning();
-    return result;
-  },
-
-  deleteIssueTypeFieldOptions: async (fieldOptionIds: string[]) => {
-    if (fieldOptionIds.length === 0) return [];
-    const [result] = await drizzle
-      .delete(issueTypeFieldOptions)
-      .where(inArray(issueTypeFieldOptions.fieldOptionId, fieldOptionIds))
-      .returning();
-    return result;
-  },
-
-  deleteIssueTypeSelectOption: async (fieldOptionId: string) => {
-    const [result] = await drizzle
-      .delete(issueTypeSelectOptions)
-      .where(eq(issueTypeSelectOptions.fieldOptionId, fieldOptionId))
-      .returning();
-    return result;
-  },
-
-  updateIssueTypeFieldOptionValue: async (
-    issueTypeFieldId: string,
-    fieldOptionId: string,
-    value: string,
-  ) => {
-    const [result] = await drizzle
-      .update(issueTypeFieldOptions)
-      .set({ value })
-      .where(
-        and(
-          eq(issueTypeFieldOptions.issueTypeFieldId, issueTypeFieldId),
-          eq(issueTypeFieldOptions.fieldOptionId, fieldOptionId),
-        ),
-      )
-      .returning();
-    return result;
-  },
-
-  updateIssueTypeFieldOptionValueById: async (
-    issueTypeFieldOptionId: string,
-    value: string,
-  ) => {
-    const [result] = await drizzle
-      .update(issueTypeFieldOptions)
-      .set({ value })
-      .where(eq(issueTypeFieldOptions.id, issueTypeFieldOptionId))
-      .returning();
-    return result;
-  },
-
-  updateIssueTypeSelectOption: async (
-    fieldOptionId: string,
-    name: string,
-    icon: string,
-    order: number,
-  ) => {
-    const [result] = await drizzle
-      .update(issueTypeSelectOptions)
-      .set({ name, icon, order })
-      .where(eq(issueTypeSelectOptions.fieldOptionId, fieldOptionId))
-      .returning();
-    return result;
-  },
-
-  updateIssueTypeSelectOptionById: async (
-    selectOptionId: string,
-    name: string,
-    icon: string,
-    order: number,
-  ) => {
-    const [result] = await drizzle
-      .update(issueTypeSelectOptions)
-      .set({ name, icon, order })
-      .where(eq(issueTypeSelectOptions.id, selectOptionId))
-      .returning();
-    return result;
-  },
-
-  deleteIssueTypeSelectOptionsNotInList: async (
-    fieldOptionId: string,
-    selectOptionIdsToKeep: string[],
-  ) => {
-    const condition =
-      selectOptionIdsToKeep.length > 0
-        ? and(
-            eq(issueTypeSelectOptions.fieldOptionId, fieldOptionId),
-            notInArray(issueTypeSelectOptions.id, selectOptionIdsToKeep),
-          )
-        : eq(issueTypeSelectOptions.fieldOptionId, fieldOptionId);
-
-    return drizzle.delete(issueTypeSelectOptions).where(condition);
-  },
-
-  findIssueTypeFieldsByIssueTypeId: async (issueTypeId: string) => {
-    const result = await drizzle
-      .select()
-      .from(issueTypeFields)
+  removeAllFieldsFromIssueType: async (issueTypeId: string) => {
+    return drizzle
+      .delete(issueTypeFields)
       .where(eq(issueTypeFields.issueTypeId, issueTypeId));
-    return result;
   },
 
-  findIssueTypeSelectOptionsByIssueTypeFieldOptionId: async (
-    fieldOptionId: string,
-  ) => {
-    const result = await drizzle
-      .select()
-      .from(issueTypeSelectOptions)
-      .where(eq(issueTypeSelectOptions.fieldOptionId, fieldOptionId));
+  updateIssueTypeFieldOrder: async (id: string, order: number) => {
+    const [result] = await drizzle
+      .update(issueTypeFields)
+      .set({ order })
+      .where(eq(issueTypeFields.id, id))
+      .returning();
     return result;
   },
 });
+

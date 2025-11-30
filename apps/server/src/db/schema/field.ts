@@ -1,70 +1,50 @@
-import {pgTable, smallint, text} from "drizzle-orm/pg-core";
-import {fieldTypeOptions, fieldTypes} from "@/db/schema/field-types";
-import {relations} from "drizzle-orm";
+import { pgTable, text, jsonb, timestamp } from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm';
+import { issueTypeFields } from './issue-type-fields';
 
-export const fields = pgTable("fields", {
-    id: text("id")
-        .primaryKey()
-        .$defaultFn(() => crypto.randomUUID()),
-    name: text("name").notNull(),
-    icon: text("icon"),
-    fieldTypeId: text("field_type_id")
-        .notNull()
-        .references(() => fieldTypes.id, {onDelete: "cascade"}),
+/**
+ * Fields - Global field tanımları
+ * 
+ * Her field tek bir kaynak olarak burada tanımlanır.
+ * config: Field'ın varsayılan konfigürasyonu (isRequired, placeholder, vb.)
+ * options: Select tipi field'lar için varsayılan seçenekler
+ */
+export const fields = pgTable('fields', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text('name').notNull(),
+  fieldType: text('field_type').notNull(), // 'text-input', 'single-select', etc.
+  icon: text('icon'),
+
+  // Varsayılan konfigürasyon (JSON)
+  // Örnek: { isRequired: false, placeholder: 'Enter text...', description: '' }
+  config: jsonb('config').notNull().default({}),
+
+  // Select tipi field'lar için varsayılan seçenekler (JSON array)
+  // Örnek: [{ id: '1', name: 'Option 1', icon: '🔵', order: 0 }]
+  options: jsonb('options').default([]),
+
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
 });
 
-export const fieldOptions = pgTable("field-options", {
-    id: text("id")
-        .primaryKey()
-        .$defaultFn(() => crypto.randomUUID()),
-    fieldId: text("field_id")
-        .notNull()
-        .references(() => fields.id, {onDelete: "cascade"}),
-    fieldTypeId: text("field_type_id")
-        .notNull()
-        .references(() => fieldTypes.id, {onDelete: "cascade"}),
-    fieldTypeOptionId: text("field_type_option_id")
-        .notNull()
-        .references(() => fieldTypeOptions.id, {onDelete: "cascade"}),
-    value: text("value").notNull(),
-    order: smallint("order").notNull().default(0)
-});
-
-export const selectOptions = pgTable("select-options", {
-    id: text("id")
-        .primaryKey()
-        .$defaultFn(() => crypto.randomUUID()),
-    fieldOptionId: text("field_option_id")
-        .notNull()
-        .references(() => fieldOptions.id, {onDelete: "cascade"}),
-    name: text("name").notNull(),
-    icon: text("icon"),
-    order: smallint("order").notNull().default(0)
-});
-
-export const fieldsRelations = relations(fields, ({one, many}) => ({
-    fieldType: one(fieldTypes, {
-        fields: [fields.fieldTypeId],
-        references: [fieldTypes.id],
-    }),
-    options: many(fieldOptions),
+export const fieldsRelations = relations(fields, ({ many }) => ({
+  issueTypeFields: many(issueTypeFields),
 }));
 
-export const fieldOptionsRelations = relations(fieldOptions, ({one, many}) => ({
-    field: one(fields, {
-        fields: [fieldOptions.fieldId],
-        references: [fields.id],
-    }),
-    fieldTypeOption: one(fieldTypeOptions, {
-        fields: [fieldOptions.fieldTypeOptionId],
-        references: [fieldTypeOptions.id],
-    }),
-    selectOptions: many(selectOptions),
-}));
+// Type exports
+export type Field = typeof fields.$inferSelect;
+export type NewField = typeof fields.$inferInsert;
 
-export const selectOptionsRelations = relations(selectOptions, ({one}) => ({
-    fieldOption: one(fieldOptions, {
-        fields: [selectOptions.fieldOptionId],
-        references: [fieldOptions.id],
-    }),
-}));
+// Option type for select fields
+export interface FieldSelectOption {
+  id: string;
+  name: string;
+  icon?: string;
+  order: number;
+}
+
+// Config type (dynamic based on field type)
+export type FieldConfig = Record<string, unknown>;
+

@@ -8,20 +8,36 @@ import {
   ItemContent,
   ItemMedia,
 } from '@/components/ui/item';
-import { useState } from 'react';
 import useCustomizeFieldModal from '../../hooks/use-customize-field-modal';
-import type { IssueTypeFieldWithDetails } from '@/types/fields';
+import type { FieldWithDefaults, FieldConfig, FieldSelectOption } from '@/types/fields';
+
+// Extended field type that includes issue type specific overrides
+interface IssueTypeFieldState extends FieldWithDefaults {
+  configOverride?: FieldConfig;
+  optionsOverride?: FieldSelectOption[];
+}
 
 interface TicketTypeCustomizeProps {
-  fields: IssueTypeFieldWithDetails[];
-  setFields: React.Dispatch<React.SetStateAction<IssueTypeFieldWithDetails[]>>;
+  fields: IssueTypeFieldState[];
+  setFields: React.Dispatch<React.SetStateAction<IssueTypeFieldState[]>>;
   id: string;
+}
+
+// Merge field with its overrides for display
+function getMergedField(field: IssueTypeFieldState): FieldWithDefaults {
+  const baseConfig = (field.config as FieldConfig) ?? {};
+  const baseOptions = (field.options as FieldSelectOption[]) ?? [];
+  
+  return {
+    ...field,
+    config: { ...baseConfig, ...field.configOverride },
+    options: field.optionsOverride ?? baseOptions,
+  };
 }
 
 export default function TicketTypeCustomize({
   fields,
   setFields,
-  id,
 }: TicketTypeCustomizeProps) {
   const { open } = useCustomizeFieldModal();
   return (
@@ -43,7 +59,7 @@ export default function TicketTypeCustomize({
                 </Sortable.ItemHandle>
               </ItemMedia>
               <ItemContent>
-                <FieldRendererPreview key={field.id} field={field} />
+                <FieldRendererPreview key={field.id} field={getMergedField(field)} />
               </ItemContent>
               <ItemActions>
                 <Button
@@ -73,7 +89,7 @@ export default function TicketTypeCustomize({
 }
 
 interface OverlayItemProps {
-  field: IssueTypeFieldWithDetails;
+  field: IssueTypeFieldState;
 }
 
 function OverlayItem({ field }: OverlayItemProps) {
@@ -85,7 +101,7 @@ function OverlayItem({ field }: OverlayItemProps) {
         </Button>
       </ItemMedia>
       <ItemContent>
-        <FieldRendererPreview field={field} />
+        <FieldRendererPreview field={getMergedField(field)} />
       </ItemContent>
     </Item>
   );

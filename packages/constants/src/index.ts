@@ -6,4 +6,5 @@ export * from './error-codes';
 export * from './messages';
 export * from './error-messages';
 export * from './validation';
+export * from './field-types';
 

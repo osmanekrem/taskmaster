@@ -1,63 +1,78 @@
 import { Icon } from '@/components/ui/icon-picker';
 import type { IconName } from 'lucide-react/dynamic';
+import type { FieldConfig, FieldSelectOption } from '@/types/fields';
 
 interface FieldInfoTooltipProps {
-  options: Array<{
-    id: string;
-    value: string;
-    fieldTypeOption: {
-      key: string;
-      name: string;
-      type: string;
-    };
-    selectOptions: Array<{
-      id: string;
-      name: string;
-      icon: string | null | undefined;
-    }>;
-  }>;
+  config?: FieldConfig | null;
+  options?: FieldSelectOption[] | null;
+  fieldType?: string;
 }
 
-export const FieldInfoTooltipContent = ({ options }: FieldInfoTooltipProps) => {
+export const FieldInfoTooltipContent = ({
+  config,
+  options,
+  fieldType,
+}: FieldInfoTooltipProps) => {
+  const isSelectType =
+    fieldType === 'single-select' || fieldType === 'multi-select';
+
   return (
-    <>
-      {options.map((option) => {
-        const isStaticSelect =
-          option.fieldTypeOption.key === 'is-dynamic-options' &&
-          option.value === 'false';
-
-        const displayValue =
-          option.fieldTypeOption.type === 'boolean'
-            ? option.value === 'true'
-              ? 'Evet'
-              : 'Hayır'
-            : option.value;
-
-        return (
-          <div key={option.id} className='mt-2'>
-            <strong>{option.fieldTypeOption.name}:</strong> {displayValue}
-            {isStaticSelect && option.selectOptions.length > 0 && (
-              <div className='mt-1'>
-                <strong>Seçenekler:</strong>
-                <ul className='list-disc list-inside'>
-                  {option.selectOptions.map((selectOption) => (
-                    <li
-                      key={selectOption.id}
-                      className='flex items-center gap-2'
-                    >
-                      <Icon
-                        name={(selectOption.icon as IconName) || ''}
-                        className='size-3.5'
-                      />
-                      {selectOption.name}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </>
+    <div className='flex flex-col gap-2'>
+      {config?.isRequired !== undefined && (
+        <div>
+          <strong>Zorunlu:</strong> {config.isRequired ? 'Evet' : 'Hayır'}
+        </div>
+      )}
+      {config?.placeholder && (
+        <div>
+          <strong>Placeholder:</strong> {config.placeholder}
+        </div>
+      )}
+      {config?.description && (
+        <div>
+          <strong>Açıklama:</strong> {config.description}
+        </div>
+      )}
+      {config?.minLength !== undefined && (
+        <div>
+          <strong>Min Uzunluk:</strong> {config.minLength}
+        </div>
+      )}
+      {config?.maxLength !== undefined && (
+        <div>
+          <strong>Max Uzunluk:</strong> {config.maxLength}
+        </div>
+      )}
+      {config?.min !== undefined && (
+        <div>
+          <strong>Min Değer:</strong> {config.min}
+        </div>
+      )}
+      {config?.max !== undefined && (
+        <div>
+          <strong>Max Değer:</strong> {config.max}
+        </div>
+      )}
+      {config?.granularity && (
+        <div>
+          <strong>Hassasiyet:</strong> {config.granularity}
+        </div>
+      )}
+      {isSelectType && options && options.length > 0 && (
+        <div>
+          <strong>Seçenekler:</strong>
+          <ul className='list-disc list-inside mt-1'>
+            {options.map((opt) => (
+              <li key={opt.id} className='flex items-center gap-2'>
+                {opt.icon && (
+                  <Icon name={opt.icon as IconName} className='size-3.5' />
+                )}
+                {opt.name}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
   );
 };

@@ -1,20 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
-import { getFieldsWithDetailsQuery } from '@/features/fields/lib/queries';
+import { getFieldsWithDefaultsQuery } from '@/features/fields/lib/queries';
 import { FieldSelectorItem } from './field-selector-item';
-import type { FieldWithDetails } from '@/types/fields';
+import type { FieldWithDefaults } from '@/types/fields';
 
 interface FieldSelectorProps {
-  readonly fields: FieldWithDetails[];
-  readonly setFields: React.Dispatch<React.SetStateAction<FieldWithDetails[]>>;
+  readonly fields: FieldWithDefaults[];
+  readonly setFields: React.Dispatch<React.SetStateAction<FieldWithDefaults[]>>;
 }
 
 export default function FieldSelector({
   fields,
   setFields,
 }: FieldSelectorProps) {
-  const { data } = useQuery(getFieldsWithDetailsQuery);
+  const { data } = useQuery(getFieldsWithDefaultsQuery);
 
-  const handleToggleField = (field: FieldWithDetails) => {
+  const handleToggleField = (field: FieldWithDefaults) => {
     const isSelected = fields.some((item) => item.id === field.id);
     if (isSelected) {
       setFields((prevFields) =>

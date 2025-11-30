@@ -1,83 +1,59 @@
-import { pgTable, smallint, text } from 'drizzle-orm/pg-core';
-import { fields, fieldOptions } from '@/db/schema/field';
+import { pgTable, smallint, text, jsonb, timestamp, unique } from 'drizzle-orm/pg-core';
+import { fields } from '@/db/schema/field';
 import { relations } from 'drizzle-orm';
 import { issueTypes } from './issue-types';
 
-export const issueTypeFields = pgTable('issue_type_fields', {
-  id: text('id')
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  issueTypeId: text('issue_type_id')
-    .notNull()
-    .references(() => issueTypes.id, { onDelete: 'cascade' }),
-  fieldId: text('field_id')
-    .notNull()
-    .references(() => fields.id, { onDelete: 'cascade' }),
-  order: smallint('order').notNull().default(0),
-});
+/**
+ * Issue Type Fields - Field'ların issue type'lara atanması
+ * 
+ * Bir field bir issue type'a atandığında bu tabloya kayıt eklenir.
+ * configOverride: Field'ın bu issue type için özelleştirilmiş config'i (sadece değişen key'ler)
+ * optionsOverride: Select tipi field'lar için bu issue type'a özel seçenekler (null = field'ın options'ını kullan)
+ */
+export const issueTypeFields = pgTable(
+  'issue_type_fields',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    issueTypeId: text('issue_type_id')
+      .notNull()
+      .references(() => issueTypes.id, { onDelete: 'cascade' }),
+    fieldId: text('field_id')
+      .notNull()
+      .references(() => fields.id, { onDelete: 'cascade' }),
+    order: smallint('order').notNull().default(0),
 
-export const issueTypeFieldOptions = pgTable('issue_type_field_options', {
-  id: text('id')
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  issueTypeFieldId: text('issue_type_field_id')
-    .notNull()
-    .references(() => issueTypeFields.id, { onDelete: 'cascade' }),
-  fieldOptionId: text('field_option_id')
-    .notNull()
-    .references(() => fieldOptions.id, { onDelete: 'cascade' }),
-  value: text('value').notNull(),
-  order: smallint('order').notNull().default(0),
-});
+    // Config override (JSON, nullable)
+    // Sadece bu issue type için değişen config key'leri
+    // Örnek: { isRequired: true } - sadece required değişti, diğerleri field'dan alınır
+    configOverride: jsonb('config_override'),
 
-export const issueTypeSelectOptions = pgTable('issue_type_select_options', {
-  id: text('id')
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  fieldOptionId: text('field_option_id')
-    .notNull()
-    .references(() => issueTypeFieldOptions.id, { onDelete: 'cascade' }),
-  name: text('name').notNull(),
-  icon: text('icon'),
-  order: smallint('order').notNull().default(0),
-});
+    // Options override (JSON array, nullable)
+    // null = field'ın varsayılan options'ını kullan
+    // array = bu issue type için tamamen farklı options
+    optionsOverride: jsonb('options_override'),
 
-export const issueTypeFieldRelations = relations(
-  issueTypeFields,
-  ({ many, one }) => ({
-    options: many(issueTypeFieldOptions),
-    field: one(fields, {
-      fields: [issueTypeFields.fieldId],
-      references: [fields.id],
-    }),
-    issueType: one(issueTypes, {
-      fields: [issueTypeFields.issueTypeId],
-      references: [issueTypes.id],
-    }),
+    createdAt: timestamp('created_at').defaultNow(),
+  },
+  (table) => ({
+    // Bir field bir issue type'ta sadece bir kere olabilir
+    uniqueIssueTypeField: unique().on(table.issueTypeId, table.fieldId),
   }),
 );
 
-export const issueTypeFieldOptionRelations = relations(
-  issueTypeFieldOptions,
-  ({ many, one }) => ({
-    selectOptions: many(issueTypeSelectOptions),
-    fieldOption: one(fieldOptions, {
-      fields: [issueTypeFieldOptions.fieldOptionId],
-      references: [fieldOptions.id],
-    }),
-    issueTypeField: one(issueTypeFields, {
-      fields: [issueTypeFieldOptions.issueTypeFieldId],
-      references: [issueTypeFields.id],
-    }),
+export const issueTypeFieldRelations = relations(issueTypeFields, ({ one }) => ({
+  field: one(fields, {
+    fields: [issueTypeFields.fieldId],
+    references: [fields.id],
   }),
-);
+  issueType: one(issueTypes, {
+    fields: [issueTypeFields.issueTypeId],
+    references: [issueTypes.id],
+  }),
+}));
 
-export const issueTypeSelectOptionRelations = relations(
-  issueTypeSelectOptions,
-  ({ one }) => ({
-    fieldOption: one(issueTypeFieldOptions, {
-      fields: [issueTypeSelectOptions.fieldOptionId],
-      references: [issueTypeFieldOptions.id],
-    }),
-  }),
-);
+// Type exports
+export type IssueTypeField = typeof issueTypeFields.$inferSelect;
+export type NewIssueTypeField = typeof issueTypeFields.$inferInsert;
+

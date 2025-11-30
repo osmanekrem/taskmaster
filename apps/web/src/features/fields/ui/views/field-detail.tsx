@@ -5,31 +5,29 @@ import useEditFieldModal from '@/features/fields/hooks/use-edit-field-modal';
 import EditFieldModal from '@/features/fields/ui/components/edit-field-modal';
 import DeleteFieldButton from '@/features/fields/ui/components/delete-field-button';
 import { Route } from '@/routes/__protected/__admin/admin-settings/fields/$id';
-import { getFieldWithDetailsQuery } from '@/features/fields/lib/queries';
+import { getFieldWithDefaultsQuery } from '@/features/fields/lib/queries';
 import { useQuery } from '@tanstack/react-query';
-import {
-  useSaveSelectOptionsMutation,
-  useUpdateFieldOptionValueMutation,
-} from '@/features/fields/lib/mutations';
+import { useEditFieldMutation } from '@/features/fields/lib/mutations';
 import { Icon } from '@/components/ui/icon-picker';
 import type { IconName } from 'lucide-react/dynamic';
+import type { FieldConfig, FieldSelectOption } from '@/types/fields';
 import CustomizeFieldForm from './customize-field-form';
 
 export default function FieldDetail() {
   const { id } = useParams({ from: Route.id });
-  const { data } = useQuery(getFieldWithDetailsQuery(id));
+  const { data } = useQuery(getFieldWithDefaultsQuery(id));
   const { open } = useEditFieldModal();
-  const { mutate: saveSelectOptions } = useSaveSelectOptionsMutation();
-  const { mutate: updateFieldOptionValue } =
-    useUpdateFieldOptionValueMutation();
+  const { mutate: updateField } = useEditFieldMutation();
+
+  const fieldData = data?.data;
 
   return (
     <div className='flex flex-col w-full h-full space-y-4'>
       <EditFieldModal />
       <div className='flex justify-between items-center'>
         <h2 className='text-xl font-bold leading-tight flex items-center gap-2 truncate'>
-          <Icon name={(data?.data?.icon as IconName) ?? ''} />
-          {data?.data?.name}
+          <Icon name={(fieldData?.icon as IconName) ?? ''} />
+          {fieldData?.name}
         </h2>
 
         <div className='flex items-center gap-2'>
@@ -41,11 +39,18 @@ export default function FieldDetail() {
         </div>
       </div>
       <div className='flex flex-col w-full flex-1 min-h-0 space-y-4 overflow-y-auto'>
-        <CustomizeFieldForm
-          options={data?.data?.options}
-          updateFieldOptionValue={updateFieldOptionValue}
-          saveSelectOptions={saveSelectOptions}
-        />
+        {fieldData && (
+          <CustomizeFieldForm
+            field={{
+              ...fieldData,
+              config: (fieldData.config as FieldConfig) ?? {},
+              options: (fieldData.options as FieldSelectOption[]) ?? [],
+            }}
+            onUpdateField={(updates) =>
+              updateField({ fieldId: id, ...updates })
+            }
+          />
+        )}
       </div>
     </div>
   );

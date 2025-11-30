@@ -19,7 +19,7 @@ export default function AddFieldForm() {
     defaultValues: {
       name: '',
       icon: '',
-      fieldTypeId: '',
+      fieldType: '',
     },
     onSubmit: async ({ value }) => {
       await createField.mutateAsync(value, {
@@ -47,7 +47,7 @@ export default function AddFieldForm() {
         <form.Field name='name'>
           {(field) => <TextField field={field} label='Alan Adı *' />}
         </form.Field>
-        <form.Field name='fieldTypeId'>
+        <form.Field name='fieldType'>
           {(field) => (
             <FormField field={field} label='Alan Türü *'>
               <FieldTypeSelect

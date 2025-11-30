@@ -1,5 +1,6 @@
 import { db } from '@/db';
 import { ticketTypeRepository } from '@/repositories/ticket-type-repository';
+import { fieldRepository } from '@/repositories/field-repository';
 import type {
   CreateTicketTypeSchema,
   EditTicketTypeSchema,
@@ -10,47 +11,11 @@ import type {
 } from '@taskmaster/validation';
 import { throwNotFoundError } from '@/lib/errors';
 import type { DrizzleClient } from '@/lib/types/db';
-
-type IssueTypeFieldWithDetails = NonNullable<
-  Awaited<
-    ReturnType<
-      ReturnType<
-        typeof ticketTypeRepository
-      >['findIssueTypeWithDetailsByIssueTypeId']
-    >
-  >
->['fields'][number];
-
-// Transform issue type field to match field structure for reusable components
-function transformIssueTypeFieldToFieldStructure(
-  issueTypeField: IssueTypeFieldWithDetails,
-) {
-  if (!issueTypeField?.field) {
-    return null;
-  }
-
-  return {
-    id: issueTypeField.field.id,
-    name: issueTypeField.field.name,
-    icon: issueTypeField.field.icon,
-    fieldTypeId: issueTypeField.field.fieldTypeId,
-    fieldType: issueTypeField.field.fieldType,
-    options:
-      issueTypeField.options?.map((option) => ({
-        id: option.id,
-        value: option.value,
-        order: option.order,
-        fieldId: issueTypeField.field.id,
-        fieldTypeId: issueTypeField.field.fieldTypeId,
-        fieldTypeOptionId: option.fieldOption?.fieldTypeOptionId,
-        fieldTypeOption: option.fieldOption?.fieldTypeOption,
-        selectOptions: option.selectOptions || [],
-      })) || [],
-  };
-}
+import { resolveFieldsForIssueType, type ResolvedField } from './field-config-resolver';
 
 export const ticketTypeService = (drizzle: DrizzleClient = db) => {
   const repository = ticketTypeRepository(drizzle);
+  const fieldRepo = fieldRepository(drizzle);
 
   return {
     getAllTicketTypes: () => repository.findMany(),
@@ -58,8 +23,18 @@ export const ticketTypeService = (drizzle: DrizzleClient = db) => {
     getTicketTypeById: (input: GetTicketTypeByIdRequestSchema) =>
       repository.findById(input.ticketTypeId),
 
-    getFieldsForTicketType: (input: GetFieldsForTicketTypeRequestSchema) =>
-      repository.findFieldsForTicketType(input.ticketTypeId),
+    /**
+     * Get resolved fields for a ticket type
+     * Returns fields with merged config (base + override)
+     */
+    getFieldsForTicketType: async (
+      input: GetFieldsForTicketTypeRequestSchema,
+    ): Promise<ResolvedField[]> => {
+      const issueTypeFields = await fieldRepo.findIssueTypeFieldsWithFieldByIssueTypeId(
+        input.ticketTypeId,
+      );
+      return resolveFieldsForIssueType(issueTypeFields);
+    },
 
     createTicketType: async (data: CreateTicketTypeSchema) => {
       return await repository.create(data);
@@ -88,28 +63,27 @@ export const ticketTypeService = (drizzle: DrizzleClient = db) => {
       return await repository.delete(input.ticketTypeId);
     },
 
+    /**
+     * Get issue type with resolved field details
+     */
     getIssueTypeWithDetailsByIssueTypeId: async (
       input: GetIssueTypeWithDetailsByIssueTypeIdRequestSchema,
     ) => {
-      const result = await repository.findIssueTypeWithDetailsByIssueTypeId(
-        input.issueTypeId,
-      );
+      const issueType = await repository.findById(input.issueTypeId);
 
-      if (!result) {
+      if (!issueType) {
         return null;
       }
 
-      // Transform fields to match field structure
-      const transformedFields =
-        result.fields
-          ?.map(transformIssueTypeFieldToFieldStructure)
-          .filter(
-            (field): field is NonNullable<typeof field> => field !== null,
-          ) || [];
+      // Get resolved fields for this issue type
+      const issueTypeFields = await fieldRepo.findIssueTypeFieldsWithFieldByIssueTypeId(
+        input.issueTypeId,
+      );
+      const resolvedFields = resolveFieldsForIssueType(issueTypeFields);
 
       return {
-        ...result,
-        fields: transformedFields,
+        ...issueType,
+        fields: resolvedFields,
       };
     },
   };

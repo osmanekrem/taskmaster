@@ -1,4 +1,4 @@
-import type { FieldWithDetails } from '@/features/fields/types';
+import type { FieldWithDefaults, ResolvedField, FieldConfig } from '@/types/fields';
 import {
   Select,
   SelectContent,
@@ -15,18 +15,17 @@ import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { useState } from 'react';
 import type { DateValue } from 'react-aria-components';
 import UserSelector from '@/components/user-selector';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface FieldRendererProps {
-  field: FieldWithDetails;
+  field: FieldWithDefaults | ResolvedField;
 }
 
 export default function FieldRendererPreview({ field }: FieldRendererProps) {
-  const isRequired =
-    field.options.find((option) => option.fieldTypeOption.key === 'is-required')
-      ?.value === 'true';
-  const description =
-    field.options.find((option) => option.fieldTypeOption.key === 'description')
-      ?.value || '';
+  const config = field.config as FieldConfig | null;
+  const isRequired = config?.isRequired ?? false;
+  const description = config?.description ?? '';
+
   return (
     <Field>
       <FieldLabel className='flex items-center'>
@@ -40,23 +39,20 @@ export default function FieldRendererPreview({ field }: FieldRendererProps) {
 }
 
 export function FieldRendererPreviewComponent({ field }: FieldRendererProps) {
-  const placeholder =
-    field.options.find((option) => option.fieldTypeOption.key === 'placeholder')
-      ?.value || '';
-  const isDynamicOptions = field.options.find(
-    (option) => option.fieldTypeOption.key === 'is-dynamic-options',
-  );
-  const defaultOption =
-    field.options.find(
-      (option) => option.fieldTypeOption.key === 'default-option',
-    )?.value || '';
+  const config = field.config as FieldConfig | null;
+  const placeholder = config?.placeholder ?? '';
+  const defaultOption = config?.defaultOption;
 
   const [option, setOption] = useState<string | undefined>(defaultOption);
   const [date, setDate] = useState<DateValue | null>(null);
   const [user, setUser] = useState<string | undefined>();
+  const [checked, setChecked] = useState<boolean>(false);
+
   if (!field.fieldType) return null;
 
-  if (field.fieldType.component === 'single-select') {
+  // Select types
+  if (field.fieldType === 'single-select' || field.fieldType === 'multi-select') {
+    const options = field.options ?? [];
     return (
       <Select value={option} onValueChange={setOption}>
         <SelectTrigger className='w-[180px]'>
@@ -65,10 +61,10 @@ export function FieldRendererPreviewComponent({ field }: FieldRendererProps) {
           ></SelectValue>
         </SelectTrigger>
         <SelectContent>
-          {isDynamicOptions?.selectOptions?.map((option) => (
-            <SelectItem key={option.id} value={option.id}>
-              <Icon name={option.icon as IconName} className='size-4 mr-2' />
-              {option.name}
+          {options.map((opt) => (
+            <SelectItem key={opt.id} value={opt.id}>
+              {opt.icon && <Icon name={opt.icon as IconName} className='size-4 mr-2' />}
+              {opt.name}
             </SelectItem>
           ))}
         </SelectContent>
@@ -76,19 +72,69 @@ export function FieldRendererPreviewComponent({ field }: FieldRendererProps) {
     );
   }
 
-  if (field.fieldType.component === 'text') {
-    return <Input placeholder={placeholder} />;
+  // Text input
+  if (field.fieldType === 'text-input') {
+    return (
+      <Input
+        type='text'
+        placeholder={placeholder}
+        minLength={config?.minLength as number | undefined}
+        maxLength={config?.maxLength as number | undefined}
+      />
+    );
   }
 
-  if (field.fieldType.component === 'textarea') {
-    return <Textarea placeholder={placeholder} />;
+  // URL input
+  if (field.fieldType === 'url-input') {
+    return (
+      <Input
+        type='url'
+        placeholder={placeholder || 'https://example.com'}
+        minLength={config?.minLength as number | undefined}
+        maxLength={config?.maxLength as number | undefined}
+      />
+    );
   }
 
-  if (field.fieldType.component === 'date') {
-    const granularity =
-      field.options.find(
-        (option) => option.fieldTypeOption.key === 'granularity',
-      )?.value || 'day';
+  // Email input
+  if (field.fieldType === 'email-input') {
+    return (
+      <Input
+        type='email'
+        placeholder={placeholder || 'email@example.com'}
+        minLength={config?.minLength as number | undefined}
+        maxLength={config?.maxLength as number | undefined}
+      />
+    );
+  }
+
+  // Textarea
+  if (field.fieldType === 'text-area') {
+    return (
+      <Textarea
+        placeholder={placeholder}
+        minLength={config?.minLength as number | undefined}
+        maxLength={config?.maxLength as number | undefined}
+      />
+    );
+  }
+
+  // Number input
+  if (field.fieldType === 'number-input') {
+    return (
+      <Input
+        type='number'
+        placeholder={placeholder}
+        min={config?.min as number | undefined}
+        max={config?.max as number | undefined}
+        step={config?.step as number | undefined}
+      />
+    );
+  }
+
+  // Date picker
+  if (field.fieldType === 'date-picker') {
+    const granularity = config?.granularity ?? 'day';
     return (
       <DatePicker
         value={date}
@@ -100,8 +146,27 @@ export function FieldRendererPreviewComponent({ field }: FieldRendererProps) {
     );
   }
 
-  if (field.fieldType.component === 'user') {
-    return <UserSelector value={user} onChange={setUser} />;
+  // User picker
+  if (field.fieldType === 'user-picker') {
+    return (
+      <UserSelector
+        value={user}
+        onChange={setUser}
+        placeholder={placeholder || 'Select user'}
+      />
+    );
+  }
+
+  // Checkbox
+  if (field.fieldType === 'checkbox') {
+    return (
+      <div className='flex items-center'>
+        <Checkbox
+          checked={checked}
+          onCheckedChange={(value) => setChecked(value === true)}
+        />
+      </div>
+    );
   }
 
   return null;

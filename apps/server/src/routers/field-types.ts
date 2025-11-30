@@ -1,58 +1,47 @@
 import { protectedProcedure, router } from '@/lib/trpc';
 import { successResponse } from '@/utils/response';
-import {
-  createFieldTypeSchema,
-  editFieldTypeSchema,
-  getFieldTypeByIdRequestSchema,
-  getFieldTypeWithOptionsByIdRequestSchema,
-  deleteFieldTypeRequestSchema,
-} from '@taskmaster/validation';
+import { getFieldTypeList, getFieldType, getDefaultConfig, FIELD_TYPES } from '@taskmaster/constants';
+import { z } from 'zod';
 
 export const fieldTypesRouter = router({
-  getFieldTypes: protectedProcedure.query(async ({ ctx }) => {
-    const data = await ctx.services.fieldType.getAllFieldTypes();
+  /**
+   * Get all available field types from constants
+   */
+  getFieldTypes: protectedProcedure.query(async () => {
+    const data = getFieldTypeList();
     return successResponse(data, 'Alan türleri başarıyla getirildi');
   }),
 
+  /**
+   * Get a field type by ID with its config schema
+   */
   getFieldTypeById: protectedProcedure
-    .input(getFieldTypeByIdRequestSchema)
-    .query(async ({ ctx, input }) => {
-      const data = await ctx.services.fieldType.getFieldTypeById(input);
-      return successResponse(data, 'Alan türü başarıyla getirildi');
-    }),
+    .input(z.object({ fieldTypeId: z.string() }))
+    .query(async ({ input }) => {
+      const fieldType = getFieldType(input.fieldTypeId);
+      if (!fieldType) {
+        return successResponse(null, 'Alan türü bulunamadı');
+      }
 
-  getFieldTypesWithOptions: protectedProcedure.query(async ({ ctx }) => {
-    const data = await ctx.services.fieldType.getAllFieldTypesWithOptions();
-    return successResponse(data, 'Alan türleri başarıyla getirildi');
-  }),
-
-  getFieldTypeWithOptionsById: protectedProcedure
-    .input(getFieldTypeWithOptionsByIdRequestSchema)
-    .query(async ({ ctx, input }) => {
-      const data = await ctx.services.fieldType.getFieldTypeWithOptionsById(
-        input,
+      const defaultConfig = getDefaultConfig(input.fieldTypeId);
+      return successResponse(
+        {
+          ...fieldType,
+          defaultConfig,
+        },
+        'Alan türü başarıyla getirildi',
       );
-      return successResponse(data, 'Alan türü başarıyla getirildi');
     }),
 
-  createFieldType: protectedProcedure
-    .input(createFieldTypeSchema)
-    .mutation(async ({ ctx, input }) => {
-      const data = await ctx.services.fieldType.createFieldType(input);
-      return successResponse(data, 'Alan türü başarıyla oluşturuldu');
-    }),
-
-  editFieldType: protectedProcedure
-    .input(editFieldTypeSchema)
-    .mutation(async ({ ctx, input }) => {
-      const data = await ctx.services.fieldType.updateFieldType(input);
-      return successResponse(data, 'Alan türü başarıyla güncellendi');
-    }),
-
-  deleteFieldType: protectedProcedure
-    .input(deleteFieldTypeRequestSchema)
-    .mutation(async ({ ctx, input }) => {
-      const data = await ctx.services.fieldType.deleteFieldType(input);
-      return successResponse(data, 'Alan türü başarıyla silindi');
-    }),
+  /**
+   * Get all field types with their config schemas
+   */
+  getFieldTypesWithOptions: protectedProcedure.query(async () => {
+    const fieldTypes = getFieldTypeList().map((ft) => ({
+      ...ft,
+      defaultConfig: getDefaultConfig(ft.id),
+      configSchema: FIELD_TYPES[ft.id as keyof typeof FIELD_TYPES]?.configSchema || {},
+    }));
+    return successResponse(fieldTypes, 'Alan türleri başarıyla getirildi');
+  }),
 });

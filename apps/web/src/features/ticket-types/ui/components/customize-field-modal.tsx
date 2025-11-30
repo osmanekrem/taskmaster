@@ -1,5 +1,5 @@
 import useCustomizeFieldModal from '@/features/ticket-types/hooks/use-customize-field-modal';
-import type { FieldWithDetails } from '../../../fields/types';
+import type { FieldWithDefaults, FieldConfig, FieldSelectOption } from '@/types/fields';
 import {
   Sheet,
   SheetContent,
@@ -7,23 +7,28 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import CustomizeFieldFormIssueType from './customize-field-form-issue-type';
-import type {
-  UpdateFieldOptionValueRequest,
-  SaveSelectOptionsRequest,
-} from '@/types/api';
+
+// Extended field type that includes issue type specific overrides
+interface IssueTypeFieldState extends FieldWithDefaults {
+  configOverride?: FieldConfig;
+  optionsOverride?: FieldSelectOption[];
+}
 
 interface CustomizeFieldModalProps {
-  updateFieldOptionValue: (data: UpdateFieldOptionValueRequest) => void;
-  saveSelectOptions: (data: SaveSelectOptionsRequest) => void;
-  fields: FieldWithDetails[];
+  fields: IssueTypeFieldState[];
+  onUpdateOverride: (updates: {
+    configOverride?: FieldConfig;
+    optionsOverride?: FieldSelectOption[];
+  }) => void;
 }
 
 export default function CustomizeFieldModal({
   fields,
-  updateFieldOptionValue,
-  saveSelectOptions,
+  onUpdateOverride,
 }: CustomizeFieldModalProps) {
   const { fieldId, setFieldId } = useCustomizeFieldModal();
+  const currentField = fields.find((field) => field.id === fieldId);
+
   return (
     <Sheet open={!!fieldId} onOpenChange={() => setFieldId('')}>
       <SheetContent>
@@ -31,11 +36,14 @@ export default function CustomizeFieldModal({
           <SheetTitle>Alan Özelliklerini Özelleştir</SheetTitle>
         </SheetHeader>
         <div className='flex flex-col w-full h-full space-y-4 overflow-y-auto p-4'>
-          <CustomizeFieldFormIssueType
-            options={fields.find((field) => field.id === fieldId)?.options}
-            updateFieldOptionValue={updateFieldOptionValue}
-            saveSelectOptions={saveSelectOptions}
-          />
+          {currentField && (
+            <CustomizeFieldFormIssueType
+              field={currentField}
+              configOverride={currentField.configOverride}
+              optionsOverride={currentField.optionsOverride}
+              onUpdateOverride={onUpdateOverride}
+            />
+          )}
         </div>
       </SheetContent>
     </Sheet>

@@ -25,17 +25,18 @@ export const fieldKeys = {
   list: () => [...fieldKeys.lists()] as const,
   details: () => [...fieldKeys.all, 'detail'] as const,
   detail: (id: string) => [...fieldKeys.details(), id] as const,
-  withDetails: () => [...fieldKeys.lists(), 'withDetails'] as const,
-  withFieldType: () => [...fieldKeys.lists(), 'withFieldType'] as const,
+  withDefaults: () => [...fieldKeys.lists(), 'withDefaults'] as const,
+  // Issue type fields
+  issueTypeFields: () => [...fieldKeys.all, 'issueTypeFields'] as const,
+  issueTypeFieldsByIssueTypeId: (issueTypeId: string) =>
+    [...fieldKeys.issueTypeFields(), issueTypeId] as const,
+  // Legacy keys for backward compatibility
+  withDetails: () => [...fieldKeys.withDefaults()] as const,
+  withFieldType: () => [...fieldKeys.withDefaults()] as const,
   withDetailsById: (id: string) =>
-    [...fieldKeys.details(), id, 'withDetails'] as const,
+    [...fieldKeys.details(), id, 'withDefaults'] as const,
   withFieldTypeById: (id: string) =>
-    [...fieldKeys.details(), id, 'withFieldType'] as const,
-  selectOptions: () => [...fieldKeys.all, 'selectOptions'] as const,
-  selectOptionsByFieldOptionIds: (ids: string[]) =>
-    [...fieldKeys.selectOptions(), 'byFieldOptionIds', ids] as const,
-  selectOptionsByFieldOptionId: (id: string) =>
-    [...fieldKeys.selectOptions(), 'byFieldOptionId', id] as const,
+    [...fieldKeys.details(), id, 'withDefaults'] as const,
 };
 
 export const fieldTypeKeys = {

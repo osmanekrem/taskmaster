@@ -1,36 +1,43 @@
 import { trpc } from '@/utils/trpc';
 
+// Field Type Queries
 export const getFieldTypesQuery = trpc.fieldTypes.getFieldTypes.queryOptions();
 
 export const getFieldTypeQuery = (fieldTypeId: string) =>
   trpc.fieldTypes.getFieldTypeById.queryOptions({ fieldTypeId });
 
+export const getFieldTypesWithOptionsQuery =
+  trpc.fieldTypes.getFieldTypesWithOptions.queryOptions();
+
+// Field Queries
 export const getFieldsQuery = trpc.fields.getFields.queryOptions();
 
 export const getFieldQuery = (fieldId: string) =>
   trpc.fields.getFieldById.queryOptions({ fieldId });
 
-export const getFieldsWithDetailsQuery =
-  trpc.fields.getFieldsWithDetails.queryOptions();
+export const getFieldsWithDefaultsQuery =
+  trpc.fields.getFieldsWithDefaults.queryOptions();
 
-export const getFieldWithDetailsQuery = (fieldId: string) => {
-  const options = trpc.fields.getFieldWithDetailsById.queryOptions({ fieldId });
-  return {
-    ...options,
-    enabled: !!fieldId && options.enabled !== false,
-  };
-};
+// Single field with defaults (uses getFieldById which returns field with config)
+export const getFieldWithDefaultsQuery = (fieldId: string) => ({
+  ...trpc.fields.getFieldById.queryOptions({ fieldId }),
+  enabled: !!fieldId,
+});
 
-export const getFieldsWithFieldTypeQuery =
-  trpc.fields.getFieldsWithFieldType.queryOptions();
+// Issue Type Field Queries
+export const getIssueTypeFieldsQuery = (issueTypeId: string) => ({
+  ...trpc.fields.getIssueTypeFields.queryOptions({ issueTypeId }),
+  enabled: !!issueTypeId,
+});
+
+// Legacy queries for backward compatibility
+export const getFieldsWithDetailsQuery = getFieldsWithDefaultsQuery;
+export const getFieldsWithFieldTypeQuery = getFieldsWithDefaultsQuery;
+
+export const getFieldWithDetailsQuery = (fieldId: string) => ({
+  ...trpc.fields.getFieldById.queryOptions({ fieldId }),
+  enabled: !!fieldId,
+});
 
 export const getFieldWithFieldTypeQuery = (fieldId: string) =>
-  trpc.fields.getFieldWithFieldTypeById.queryOptions({ fieldId });
-
-export const getSelectOptionsByFieldOptionIdsQuery = (
-  fieldOptionIds: string[],
-) =>
-  trpc.fields.getSelectOptionsByFieldOptionIds.queryOptions({ fieldOptionIds });
-
-export const getSelectOptionsByFieldOptionIdQuery = (fieldOptionId: string) =>
-  trpc.fields.getSelectOptionsByFieldOptionId.queryOptions({ fieldOptionId });
+  trpc.fields.getFieldById.queryOptions({ fieldId });

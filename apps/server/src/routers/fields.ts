@@ -5,19 +5,33 @@ import {
   editFieldSchema,
   getFieldByIdRequestSchema,
   deleteFieldRequestSchema,
-  getSelectOptionsByFieldOptionIdRequestSchema,
-  getSelectOptionsByFieldOptionIdsRequestSchema,
-  saveSelectOptionsRequestSchema,
-  updateFieldOptionValueRequestSchema,
   saveIssueTypeFieldsRequestSchema,
+  getIssueTypeFieldsByIssueTypeIdRequestSchema,
+  updateIssueTypeFieldOverrideRequestSchema,
+  addFieldToIssueTypeRequestSchema,
+  removeFieldFromIssueTypeRequestSchema,
 } from '@taskmaster/validation';
 
 export const fieldsRouter = router({
+  /**
+   * Get all fields (global field definitions)
+   */
   getFields: protectedProcedure.query(async ({ ctx }) => {
     const data = await ctx.services.field.getAllFields();
     return successResponse(data, 'Alanlar başarıyla getirildi');
   }),
 
+  /**
+   * Get all fields with resolved default config
+   */
+  getFieldsWithDefaults: protectedProcedure.query(async ({ ctx }) => {
+    const data = await ctx.services.field.getAllFieldsWithDefaults();
+    return successResponse(data, 'Alanlar başarıyla getirildi');
+  }),
+
+  /**
+   * Get a field by ID
+   */
   getFieldById: protectedProcedure
     .input(getFieldByIdRequestSchema)
     .query(async ({ ctx, input }) => {
@@ -25,30 +39,9 @@ export const fieldsRouter = router({
       return successResponse(data, 'Alan başarıyla getirildi');
     }),
 
-  getFieldsWithDetails: protectedProcedure.query(async ({ ctx }) => {
-    const data = await ctx.services.field.getAllFieldsWithDetails();
-    return successResponse(data, 'Alanlar başarıyla getirildi');
-  }),
-
-  getFieldWithDetailsById: protectedProcedure
-    .input(getFieldByIdRequestSchema)
-    .query(async ({ ctx, input }) => {
-      const data = await ctx.services.field.getFieldWithDetailsById(input);
-      return successResponse(data, 'Alan başarıyla getirildi');
-    }),
-
-  getFieldsWithFieldType: protectedProcedure.query(async ({ ctx }) => {
-    const data = await ctx.services.field.getAllFieldsWithDetails();
-    return successResponse(data, 'Alanlar başarıyla getirildi');
-  }),
-
-  getFieldWithFieldTypeById: protectedProcedure
-    .input(getFieldByIdRequestSchema)
-    .query(async ({ ctx, input }) => {
-      const data = await ctx.services.field.getFieldWithDetailsById(input);
-      return successResponse(data, 'Alan başarıyla getirildi');
-    }),
-
+  /**
+   * Create a new field
+   */
   createField: protectedProcedure
     .input(createFieldSchema)
     .mutation(async ({ ctx, input }) => {
@@ -56,13 +49,9 @@ export const fieldsRouter = router({
       return successResponse(data, 'Alan başarıyla oluşturuldu');
     }),
 
-  deleteField: protectedProcedure
-    .input(deleteFieldRequestSchema)
-    .mutation(async ({ ctx, input }) => {
-      const data = await ctx.services.field.deleteField(input);
-      return successResponse(data, 'Alan başarıyla silindi');
-    }),
-
+  /**
+   * Update a field
+   */
   editField: protectedProcedure
     .input(editFieldSchema)
     .mutation(async ({ ctx, input }) => {
@@ -70,45 +59,81 @@ export const fieldsRouter = router({
       return successResponse(data, 'Alan başarıyla güncellendi');
     }),
 
-  getSelectOptionsByFieldOptionId: protectedProcedure
-    .input(getSelectOptionsByFieldOptionIdRequestSchema)
+  /**
+   * Delete a field
+   */
+  deleteField: protectedProcedure
+    .input(deleteFieldRequestSchema)
+    .mutation(async ({ ctx, input }) => {
+      const data = await ctx.services.field.deleteField(input);
+      return successResponse(data, 'Alan başarıyla silindi');
+    }),
+
+  // ==================== ISSUE TYPE FIELDS ====================
+
+  /**
+   * Get resolved fields for an issue type
+   * Returns fields with merged config (base + override)
+   */
+  getIssueTypeFields: protectedProcedure
+    .input(getIssueTypeFieldsByIssueTypeIdRequestSchema)
     .query(async ({ ctx, input }) => {
-      const data = await ctx.services.field.getSelectOptionsByFieldOptionIds({
-        fieldOptionIds: [input.fieldOptionId],
+      const data = await ctx.services.field.getResolvedFieldsForIssueType({
+        issueTypeId: input.issueTypeId,
       });
-      return successResponse(data, 'Seçim seçenekleri başarıyla getirildi');
+      return successResponse(data, 'Issue type alanları başarıyla getirildi');
     }),
 
-  getSelectOptionsByFieldOptionIds: protectedProcedure
-    .input(getSelectOptionsByFieldOptionIdsRequestSchema)
-    .query(async ({ ctx, input }) => {
-      const data = await ctx.services.field.getSelectOptionsByFieldOptionIds(
-        input,
-      );
-      return successResponse(data, 'Seçim seçenekleri başarıyla getirildi');
-    }),
-
-  saveSelectOptions: protectedProcedure
-    .input(saveSelectOptionsRequestSchema)
-    .mutation(async ({ ctx, input }) => {
-      const data = await ctx.services.field.saveSelectOptions(input);
-      return successResponse(data, 'Seçim seçenekleri başarıyla kaydedildi');
-    }),
-
-  updateFieldOptionValue: protectedProcedure
-    .input(updateFieldOptionValueRequestSchema)
-    .mutation(async ({ ctx, input }) => {
-      const data = await ctx.services.field.updateFieldOptionValue(input);
-      return successResponse(
-        data,
-        'Alan seçeneği değeri başarıyla güncellendi',
-      );
-    }),
-
+  /**
+   * Save fields for an issue type
+   * Handles adding, removing, and reordering fields
+   */
   saveIssueTypeFields: protectedProcedure
     .input(saveIssueTypeFieldsRequestSchema)
     .mutation(async ({ ctx, input }) => {
-      const data = await ctx.services.field.saveIssueTypeFields(input);
+      const data = await ctx.services.field.saveIssueTypeFields({
+        issueTypeId: input.issueTypeId,
+        fields: input.fields,
+      });
       return successResponse(data, 'Alanlar başarıyla kaydedildi');
+    }),
+
+  /**
+   * Update an issue type field's override config
+   */
+  updateIssueTypeFieldOverride: protectedProcedure
+    .input(updateIssueTypeFieldOverrideRequestSchema)
+    .mutation(async ({ ctx, input }) => {
+      const data = await ctx.services.field.updateIssueTypeFieldOverride(input);
+      return successResponse(data, 'Alan override başarıyla güncellendi');
+    }),
+
+  /**
+   * Add a field to an issue type
+   */
+  addFieldToIssueType: protectedProcedure
+    .input(addFieldToIssueTypeRequestSchema)
+    .mutation(async ({ ctx, input }) => {
+      const data = await ctx.services.field.addFieldToIssueType(
+        input.issueTypeId,
+        input.fieldId,
+        input.order ?? 0,
+        input.configOverride,
+        input.optionsOverride,
+      );
+      return successResponse(data, 'Alan issue type\'a başarıyla eklendi');
+    }),
+
+  /**
+   * Remove a field from an issue type
+   */
+  removeFieldFromIssueType: protectedProcedure
+    .input(removeFieldFromIssueTypeRequestSchema)
+    .mutation(async ({ ctx, input }) => {
+      const data = await ctx.services.field.removeFieldFromIssueType(
+        input.issueTypeId,
+        input.fieldId,
+      );
+      return successResponse(data, 'Alan issue type\'dan başarıyla kaldırıldı');
     }),
 });

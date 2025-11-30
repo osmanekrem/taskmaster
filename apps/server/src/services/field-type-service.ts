@@ -1,51 +1,50 @@
-import { db } from "@/db";
-import { fieldTypeRepository } from "@/repositories/field-type-repository";
-import type {
-  CreateFieldTypeSchema,
-  EditFieldTypeSchema,
-  GetFieldTypeByIdRequestSchema,
-  GetFieldTypeWithOptionsByIdRequestSchema,
-  DeleteFieldTypeRequestSchema,
-} from "@taskmaster/validation";
-import { throwNotFoundError } from "@/lib/errors";
-import type { DrizzleClient } from "@/lib/types/db";
+import { getFieldTypeList, getFieldType, getDefaultConfig, FIELD_TYPES } from '@taskmaster/constants';
+import type { DrizzleClient } from '@/lib/types/db';
+import { db } from '@/db';
 
-export const fieldTypeService = (drizzle: DrizzleClient = db) => {
-    const repository = fieldTypeRepository(drizzle);
+/**
+ * Field type service - now reads from constants instead of database
+ * Field types are now static and defined in @taskmaster/constants
+ */
+export const fieldTypeService = (_drizzle: DrizzleClient = db) => {
+  return {
+    /**
+     * Get all field types
+     */
+    getAllFieldTypes: () => getFieldTypeList(),
 
-    return {
-        getAllFieldTypes: () => repository.findMany(),
+    /**
+     * Get a field type by ID
+     */
+    getFieldTypeById: (input: { fieldTypeId: string }) => {
+      const fieldType = getFieldType(input.fieldTypeId);
+      return fieldType || null;
+    },
 
-        getFieldTypeById: (input: GetFieldTypeByIdRequestSchema) =>
-            repository.findById(input.fieldTypeId),
+    /**
+     * Get all field types with their config schemas
+     */
+    getAllFieldTypesWithOptions: () => {
+      return getFieldTypeList().map((ft) => ({
+        ...ft,
+        defaultConfig: getDefaultConfig(ft.id),
+        configSchema: FIELD_TYPES[ft.id as keyof typeof FIELD_TYPES]?.configSchema || {},
+      }));
+    },
 
-        getAllFieldTypesWithOptions: () => repository.findWithOptions(),
+    /**
+     * Get a field type by ID with its config schema
+     */
+    getFieldTypeWithOptionsById: (input: { fieldTypeId: string }) => {
+      const fieldType = getFieldType(input.fieldTypeId);
+      if (!fieldType) return null;
 
-        getFieldTypeWithOptionsById: (input: GetFieldTypeWithOptionsByIdRequestSchema) =>
-            repository.findWithOptionsById(input.fieldTypeId),
-
-        createFieldType: async (data: CreateFieldTypeSchema) => {
-            return await repository.create(data);
-        },
-
-        updateFieldType: async (data: EditFieldTypeSchema) => {
-            const existingFieldType = await repository.findById(data.fieldTypeId);
-            if (!existingFieldType) {
-                throwNotFoundError("FIELD_TYPE_NOT_FOUND", { fieldTypeId: data.fieldTypeId });
-            }
-
-            const { fieldTypeId, ...updateData } = data;
-            return await repository.update(fieldTypeId, updateData);
-        },
-
-        deleteFieldType: async (input: DeleteFieldTypeRequestSchema) => {
-            const existingFieldType = await repository.findById(input.fieldTypeId);
-            if (!existingFieldType) {
-                throwNotFoundError("FIELD_TYPE_NOT_FOUND", { fieldTypeId: input.fieldTypeId });
-            }
-
-            return await repository.delete(input.fieldTypeId);
-        },
-    };
+      return {
+        ...fieldType,
+        defaultConfig: getDefaultConfig(input.fieldTypeId),
+        configSchema: FIELD_TYPES[input.fieldTypeId as keyof typeof FIELD_TYPES]?.configSchema || {},
+      };
+    },
+  };
 };
 

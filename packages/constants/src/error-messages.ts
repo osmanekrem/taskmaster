@@ -9,6 +9,8 @@ export const ErrorMessages = {
 
   TICKET_TYPE_NOT_FOUND: 'Bilet türü bulunamadı',
 
+  ISSUE_TYPE_FIELD_NOT_FOUND: 'Bu alan bilet türüne atanmamış',
+
   NOT_FOUND: 'Kayıt bulunamadı',
   VALIDATION_ERROR: 'Geçersiz veri',
   CONFLICT: 'Çakışma hatası',

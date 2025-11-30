@@ -43,13 +43,20 @@ export const ticketTypesRouter = router({
       return successResponse(data, 'Bilet türü başarıyla silindi');
     }),
 
+  /**
+   * Get resolved fields for a ticket type
+   * Returns fields with merged config (base + override)
+   */
   getFieldsForTicketType: protectedProcedure
     .input(getFieldsForTicketTypeRequestSchema)
     .query(async ({ ctx, input }) => {
       const data = await ctx.services.ticketType.getFieldsForTicketType(input);
-      return data;
+      return successResponse(data, 'Bilet türü alanları başarıyla getirildi');
     }),
 
+  /**
+   * Get ticket type with resolved field details
+   */
   getIssueTypeWithDetailsByIssueTypeId: protectedProcedure
     .input(getIssueTypeWithDetailsByIssueTypeIdRequestSchema)
     .query(async ({ ctx, input }) => {

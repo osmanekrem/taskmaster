@@ -15,10 +15,10 @@ import {
 } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { FieldInfoTooltipContent } from './field-info-tooltip';
-import type { FieldWithDetails } from '@/features/fields/types';
+import type { FieldWithDefaults, FieldConfig, FieldSelectOption } from '@/types/fields';
 
 interface FieldSelectorItemProps {
-  field: FieldWithDetails;
+  field: FieldWithDefaults;
   isSelected: boolean;
   onToggle: () => void;
 }
@@ -48,7 +48,11 @@ export const FieldSelectorItem = ({
             <Icon className='size-4' name={'info'} />
           </TooltipTrigger>
           <TooltipContent className='p-4'>
-            <FieldInfoTooltipContent options={field.options} />
+            <FieldInfoTooltipContent
+              config={field.config as FieldConfig | null}
+              options={field.options as FieldSelectOption[] | null}
+              fieldType={field.fieldType}
+            />
           </TooltipContent>
         </Tooltip>
         <Button

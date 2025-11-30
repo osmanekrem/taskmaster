@@ -1,27 +1,44 @@
 import { z } from 'zod';
 import { idSchema } from './general';
 
-// Create Field Schema (merged from web addFieldSchema and server createFieldSchema)
-// Using server version with optional icon for flexibility
+// Field config schema - JSONB config object
+export const fieldConfigSchema = z.record(z.string(), z.unknown()).optional();
+
+export type FieldConfigSchema = z.infer<typeof fieldConfigSchema>;
+
+// Select option schema for field options
+export const fieldSelectOptionSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1, 'Seçenek adı zorunludur'),
+  icon: z.string().optional(),
+  order: z.number().min(0),
+});
+
+export type FieldSelectOptionSchema = z.infer<typeof fieldSelectOptionSchema>;
+
+// Create Field Schema
 export const createFieldSchema = z.object({
   name: z.string().min(1, 'Alan adı zorunludur'),
+  fieldType: z.string().min(1, 'Alan türü zorunludur'),
   icon: z.string().optional(),
-  fieldTypeId: z.string().min(1, "Alan türü ID'si zorunludur"),
+  config: fieldConfigSchema,
+  options: z.array(fieldSelectOptionSchema).optional(),
 });
 
 export type CreateFieldSchema = z.infer<typeof createFieldSchema>;
 
-// Edit Field Schema (merged from web and server versions)
-// Using server version with optional icon for flexibility
+// Edit Field Schema
 export const editFieldSchema = z.object({
   fieldId: idSchema,
-  name: z.string().min(1, 'Alan adı zorunludur'),
+  name: z.string().min(1, 'Alan adı zorunludur').optional(),
   icon: z.string().optional(),
-  fieldTypeId: z.string().min(1, "Alan türü ID'si zorunludur"),
+  config: fieldConfigSchema,
+  options: z.array(fieldSelectOptionSchema).optional(),
 });
 
 export type EditFieldSchema = z.infer<typeof editFieldSchema>;
 
+// Legacy schemas (kept for backward compatibility during migration)
 // Select Option Schema
 export const selectOptionSchema = z.object({
   id: z.string().optional(),
@@ -32,22 +49,14 @@ export const selectOptionSchema = z.object({
 
 export type SelectOptionSchema = z.infer<typeof selectOptionSchema>;
 
-// Field Option Schema
-export const fieldOptionSchema = z.object({
-  id: z.string().optional(),
-  value: z.string(),
-  selectOptions: z.array(selectOptionSchema),
+// Issue Type Field Schema (for saving fields to issue type)
+export const issueTypeFieldSchema = z.object({
+  id: idSchema, // Field ID
+  configOverride: fieldConfigSchema,
+  optionsOverride: z.array(fieldSelectOptionSchema).optional().nullable(),
 });
 
-export type FieldOptionSchema = z.infer<typeof fieldOptionSchema>;
-
-// Field With Details Schema
-export const fieldWithDetailsSchema = z.object({
-  id: z.string().optional(),
-  options: z.array(fieldOptionSchema),
-});
-
-export type FieldWithDetailsSchema = z.infer<typeof fieldWithDetailsSchema>;
+export type IssueTypeFieldSchema = z.infer<typeof issueTypeFieldSchema>;
 
 export const getFieldByIdRequestSchema = z.object({
   fieldId: idSchema,
@@ -63,53 +72,56 @@ export const deleteFieldRequestSchema = z.object({
 
 export type DeleteFieldRequestSchema = z.infer<typeof deleteFieldRequestSchema>;
 
-export const getSelectOptionsByFieldOptionIdRequestSchema = z.object({
-  fieldOptionId: idSchema,
-});
-
-export type GetSelectOptionsByFieldOptionIdRequestSchema = z.infer<
-  typeof getSelectOptionsByFieldOptionIdRequestSchema
->;
-
-export const getSelectOptionsByFieldOptionIdsRequestSchema = z.object({
-  fieldOptionIds: z.array(idSchema),
-});
-
-export type GetSelectOptionsByFieldOptionIdsRequestSchema = z.infer<
-  typeof getSelectOptionsByFieldOptionIdsRequestSchema
->;
-
-export const saveSelectOptionsRequestSchema = z.object({
-  fieldOptionId: idSchema,
-  options: z.array(selectOptionSchema),
-});
-
-export type SaveSelectOptionsRequestSchema = z.infer<
-  typeof saveSelectOptionsRequestSchema
->;
-
-export const updateFieldOptionValueRequestSchema = z.object({
-  fieldOptionId: idSchema,
-  value: z.string(),
-});
-
-export type UpdateFieldOptionValueRequestSchema = z.infer<
-  typeof updateFieldOptionValueRequestSchema
->;
-
+// Save Issue Type Fields Schema
 export const saveIssueTypeFieldsRequestSchema = z.object({
   issueTypeId: idSchema,
-  fields: z.array(fieldWithDetailsSchema),
+  fields: z.array(issueTypeFieldSchema),
 });
 
 export type SaveIssueTypeFieldsRequestSchema = z.infer<
   typeof saveIssueTypeFieldsRequestSchema
 >;
 
+// Get Issue Type Fields Schema
 export const getIssueTypeFieldsByIssueTypeIdRequestSchema = z.object({
   issueTypeId: idSchema,
 });
 
 export type GetIssueTypeFieldsByIssueTypeIdRequestSchema = z.infer<
   typeof getIssueTypeFieldsByIssueTypeIdRequestSchema
+>;
+
+// Update Issue Type Field Override Schema
+export const updateIssueTypeFieldOverrideRequestSchema = z.object({
+  issueTypeId: idSchema,
+  fieldId: idSchema,
+  configOverride: fieldConfigSchema,
+  optionsOverride: z.array(fieldSelectOptionSchema).optional().nullable(),
+});
+
+export type UpdateIssueTypeFieldOverrideRequestSchema = z.infer<
+  typeof updateIssueTypeFieldOverrideRequestSchema
+>;
+
+// Add Field to Issue Type Schema
+export const addFieldToIssueTypeRequestSchema = z.object({
+  issueTypeId: idSchema,
+  fieldId: idSchema,
+  order: z.number().min(0).optional(),
+  configOverride: fieldConfigSchema,
+  optionsOverride: z.array(fieldSelectOptionSchema).optional().nullable(),
+});
+
+export type AddFieldToIssueTypeRequestSchema = z.infer<
+  typeof addFieldToIssueTypeRequestSchema
+>;
+
+// Remove Field from Issue Type Schema
+export const removeFieldFromIssueTypeRequestSchema = z.object({
+  issueTypeId: idSchema,
+  fieldId: idSchema,
+});
+
+export type RemoveFieldFromIssueTypeRequestSchema = z.infer<
+  typeof removeFieldFromIssueTypeRequestSchema
 >;

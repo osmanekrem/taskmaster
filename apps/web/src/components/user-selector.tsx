@@ -21,9 +21,10 @@ import { cn } from '@/lib/utils';
 interface UserSelectorProps {
   value: string | undefined;
   onChange: (value: string | undefined) => void;
+  placeholder?: string;
 }
 
-export default function UserSelector({ value, onChange }: UserSelectorProps) {
+export default function UserSelector({ value, onChange, placeholder = "Kullanıcı seçiniz" }: UserSelectorProps) {
 const id = useId();
   const [search, setSearch] = useState('');
   const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
@@ -64,7 +65,7 @@ const id = useId();
                     <span className="truncate">{selectedUser.name}</span>
                   </div>
                 )
-                : "Kullanıcı seçiniz"}
+                : placeholder}
             </span>
             <ChevronDownIcon
               size={16}

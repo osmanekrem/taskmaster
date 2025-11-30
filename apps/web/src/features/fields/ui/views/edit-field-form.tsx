@@ -30,7 +30,7 @@ export default function EditFieldForm({
       fieldId: fieldId,
       name: data?.data?.name ?? '',
       icon: data?.data?.icon ?? '',
-      fieldTypeId: data?.data?.fieldTypeId ?? '',
+      fieldType: data?.data?.fieldType ?? '',
     },
     onSubmit: async ({ value }) => {
       await createField.mutateAsync(value, {
@@ -58,7 +58,7 @@ export default function EditFieldForm({
         <form.Field name='name'>
           {(field) => <TextField field={field} label='Alan Adı *' />}
         </form.Field>
-        <form.Field name='fieldTypeId'>
+        <form.Field name='fieldType'>
           {(field) => (
             <FormField field={field} label='Alan Türü *'>
               <FieldTypeSelect

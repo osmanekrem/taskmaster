@@ -95,14 +95,10 @@ export const useSaveIssueTypeFieldsMutation = () =>
         queryClient.invalidateQueries({
           queryKey: trpc.ticketTypes.getTicketTypes.queryKey(),
         });
-        if (res?.data?.[0]?.issueTypeId) {
-          queryClient.invalidateQueries({
-            queryKey:
-              trpc.ticketTypes.getIssueTypeWithDetailsByIssueTypeId.queryKey({
-                issueTypeId: res.data[0].issueTypeId,
-              }),
-          });
-        }
+        // Invalidate all issue type detail queries
+        queryClient.invalidateQueries({
+          queryKey: ['ticketTypes', 'getIssueTypeWithDetailsByIssueTypeId'],
+        });
       },
       onError: (error) => {
         handleError(error);

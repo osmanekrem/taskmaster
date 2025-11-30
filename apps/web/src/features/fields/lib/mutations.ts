@@ -16,10 +16,7 @@ export const useCreateFieldMutation = () =>
           queryKey: trpc.fields.getFields.queryKey(),
         });
         queryClient.invalidateQueries({
-          queryKey: trpc.fields.getFieldsWithDetails.queryKey(),
-        });
-        queryClient.invalidateQueries({
-          queryKey: trpc.fields.getFieldsWithFieldType.queryKey(),
+          queryKey: trpc.fields.getFieldsWithDefaults.queryKey(),
         });
       },
       onError: (error) => {
@@ -41,24 +38,11 @@ export const useEditFieldMutation = () =>
           queryKey: trpc.fields.getFields.queryKey(),
         });
         queryClient.invalidateQueries({
-          queryKey: trpc.fields.getFieldsWithDetails.queryKey(),
-        });
-        queryClient.invalidateQueries({
-          queryKey: trpc.fields.getFieldsWithFieldType.queryKey(),
+          queryKey: trpc.fields.getFieldsWithDefaults.queryKey(),
         });
         if (res?.data?.id) {
           queryClient.invalidateQueries({
             queryKey: trpc.fields.getFieldById.queryKey({
-              fieldId: res.data.id,
-            }),
-          });
-          queryClient.invalidateQueries({
-            queryKey: trpc.fields.getFieldWithDetailsById.queryKey({
-              fieldId: res.data.id,
-            }),
-          });
-          queryClient.invalidateQueries({
-            queryKey: trpc.fields.getFieldWithFieldTypeById.queryKey({
               fieldId: res.data.id,
             }),
           });
@@ -69,6 +53,9 @@ export const useEditFieldMutation = () =>
       },
     }),
   );
+
+// Alias for useEditFieldMutation
+export const useUpdateFieldMutation = useEditFieldMutation;
 
 export type DeleteFieldRequestType = RouterInput['fields']['deleteField'];
 
@@ -83,10 +70,7 @@ export const useDeleteFieldMutation = () =>
           queryKey: trpc.fields.getFields.queryKey(),
         });
         queryClient.invalidateQueries({
-          queryKey: trpc.fields.getFieldsWithDetails.queryKey(),
-        });
-        queryClient.invalidateQueries({
-          queryKey: trpc.fields.getFieldsWithFieldType.queryKey(),
+          queryKey: trpc.fields.getFieldsWithDefaults.queryKey(),
         });
         if (res?.data?.id) {
           queryClient.invalidateQueries({
@@ -94,16 +78,6 @@ export const useDeleteFieldMutation = () =>
               fieldId: res.data.id,
             }),
           });
-          queryClient.invalidateQueries({
-            queryKey: trpc.fields.getFieldWithDetailsById.queryKey({
-              fieldId: res.data.id,
-            }),
-          });
-          queryClient.invalidateQueries({
-            queryKey: trpc.fields.getFieldWithFieldTypeById.queryKey({
-              fieldId: res.data.id,
-            }),
-          });
         }
       },
       onError: (error) => {
@@ -112,28 +86,23 @@ export const useDeleteFieldMutation = () =>
     }),
   );
 
-export type UpdateFieldOptionValueRequest =
-  RouterInput['fields']['updateFieldOptionValue'];
+export type SaveIssueTypeFieldsRequest =
+  RouterInput['fields']['saveIssueTypeFields'];
 
-export const useUpdateFieldOptionValueMutation = () =>
+export const useSaveIssueTypeFieldsMutation = () =>
   useMutation(
-    trpc.fields.updateFieldOptionValue.mutationOptions({
+    trpc.fields.saveIssueTypeFields.mutationOptions({
       onSuccess: (res) => {
         if (res?.message) {
           toast.success(res.message);
         }
-        if (res?.data?.fieldId) {
-          queryClient.invalidateQueries({
-            queryKey: trpc.fields.getFieldWithDetailsById.queryKey({
-              fieldId: res.data.fieldId,
-            }),
-          });
-          queryClient.invalidateQueries({
-            queryKey: trpc.fields.getFieldWithFieldTypeById.queryKey({
-              fieldId: res.data.fieldId,
-            }),
-          });
-        }
+        // Invalidate issue type fields queries
+        queryClient.invalidateQueries({
+          queryKey: ['fields', 'issueTypeFields'],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['ticketTypes'],
+        });
       },
       onError: (error) => {
         handleError(error);
@@ -141,23 +110,68 @@ export const useUpdateFieldOptionValueMutation = () =>
     }),
   );
 
-export type SaveSelectOptionsRequest =
-  RouterInput['fields']['saveSelectOptions'];
+export type AddFieldToIssueTypeRequest =
+  RouterInput['fields']['addFieldToIssueType'];
 
-export const useSaveSelectOptionsMutation = () =>
+export const useAddFieldToIssueTypeMutation = () =>
   useMutation(
-    trpc.fields.saveSelectOptions.mutationOptions({
+    trpc.fields.addFieldToIssueType.mutationOptions({
       onSuccess: (res) => {
         if (res?.message) {
           toast.success(res.message);
         }
-        if (res?.data?.[0]?.fieldOptionId) {
-          queryClient.invalidateQueries({
-            queryKey: trpc.fields.getSelectOptionsByFieldOptionId.queryKey({
-              fieldOptionId: res.data[0].fieldOptionId,
-            }),
-          });
+        queryClient.invalidateQueries({
+          queryKey: ['fields', 'issueTypeFields'],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['ticketTypes'],
+        });
+      },
+      onError: (error) => {
+        handleError(error);
+      },
+    }),
+  );
+
+export type RemoveFieldFromIssueTypeRequest =
+  RouterInput['fields']['removeFieldFromIssueType'];
+
+export const useRemoveFieldFromIssueTypeMutation = () =>
+  useMutation(
+    trpc.fields.removeFieldFromIssueType.mutationOptions({
+      onSuccess: (res) => {
+        if (res?.message) {
+          toast.success(res.message);
         }
+        queryClient.invalidateQueries({
+          queryKey: ['fields', 'issueTypeFields'],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['ticketTypes'],
+        });
+      },
+      onError: (error) => {
+        handleError(error);
+      },
+    }),
+  );
+
+export type UpdateIssueTypeFieldOverrideRequest =
+  RouterInput['fields']['updateIssueTypeFieldOverride'];
+
+export const useUpdateIssueTypeFieldOverrideMutation = () =>
+  useMutation(
+    trpc.fields.updateIssueTypeFieldOverride.mutationOptions({
+      onSuccess: (res) => {
+        if (res?.message) {
+          toast.success(res.message);
+        }
+        queryClient.invalidateQueries({
+          queryKey: ['fields', 'issueTypeFields'],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['ticketTypes'],
+        });
       },
       onError: (error) => {
         handleError(error);
