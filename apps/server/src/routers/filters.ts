@@ -4,88 +4,21 @@ import { successResponse } from '@/utils/response';
 import { filterService } from '@/services/filter-service';
 import { jqlService } from '@/services/jql-service';
 import { requirePermission } from '@/lib/middleware/permission';
+import {
+  createFilterSchema,
+  updateFilterSchema,
+  filterIdSchema,
+  cloneFilterSchema,
+  subscribeToFilterSchema,
+  executeFilterSchema,
+  searchJqlSchema,
+  validateJqlSchema,
+  searchFiltersSchema,
+  buildJqlSchema,
+} from '@taskmaster/validation';
 
-// =============================================================================
-// VALIDATION SCHEMAS
-// =============================================================================
-
-const filterShareTypeSchema = z.enum(['private', 'group', 'project', 'public']);
-const filterSubscriptionScheduleSchema = z.enum(['daily', 'weekly', 'monthly']);
-
-const createFilterSchema = z.object({
-  name: z.string().min(1).max(255),
-  description: z.string().optional(),
-  jql: z.string().min(1),
-  shareType: filterShareTypeSchema.optional(),
-  sharedGroups: z.array(z.string().uuid()).optional(),
-  sharedProjects: z.array(z.string().uuid()).optional(),
-});
-
-const updateFilterSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1).max(255).optional(),
-  description: z.string().optional(),
-  jql: z.string().min(1).optional(),
-  shareType: filterShareTypeSchema.optional(),
-  sharedGroups: z.array(z.string().uuid()).optional(),
-  sharedProjects: z.array(z.string().uuid()).optional(),
-  position: z.number().int().min(0).optional(),
-});
-
-const filterIdSchema = z.object({
-  id: z.string().uuid(),
-});
-
-const cloneFilterSchema = z.object({
-  sourceId: z.string().uuid(),
-  newName: z.string().min(1).max(255),
-});
-
-const subscribeSchema = z.object({
-  filterId: z.string().uuid(),
-  schedule: filterSubscriptionScheduleSchema,
-});
-
-const executeFilterSchema = z.object({
-  filterId: z.string().uuid(),
-  limit: z.number().int().min(1).max(100).optional(),
-  offset: z.number().int().min(0).optional(),
-});
-
-const searchJqlSchema = z.object({
-  jql: z.string().min(1),
-  limit: z.number().int().min(1).max(100).optional(),
-  offset: z.number().int().min(0).optional(),
-});
-
-const validateJqlSchema = z.object({
-  jql: z.string(),
-});
-
-const searchFiltersSchema = z.object({
-  query: z.string().min(1),
-});
-
-const buildJqlSchema = z.object({
-  project: z.string().optional(),
-  status: z.union([z.string(), z.array(z.string())]).optional(),
-  assignee: z.string().optional(),
-  reporter: z.string().optional(),
-  issueType: z.union([z.string(), z.array(z.string())]).optional(),
-  priority: z.union([z.string(), z.array(z.string())]).optional(),
-  sprint: z.string().optional(),
-  labels: z.array(z.string()).optional(),
-  text: z.string().optional(),
-  createdAfter: z.string().datetime().optional(),
-  createdBefore: z.string().datetime().optional(),
-  updatedAfter: z.string().datetime().optional(),
-  updatedBefore: z.string().datetime().optional(),
-  dueAfter: z.string().datetime().optional(),
-  dueBefore: z.string().datetime().optional(),
-  resolution: z.string().optional(),
-  orderBy: z.string().optional(),
-  orderDirection: z.enum(['ASC', 'DESC']).optional(),
-});
+// Alias for backward compatibility
+const subscribeSchema = subscribeToFilterSchema;
 
 // =============================================================================
 // HELPER: CREATE FILTER CONTEXT

@@ -7,118 +7,34 @@ import {
 } from '@/services/screen-service';
 import { requirePermission } from '@/lib/middleware/permission';
 import type { ScreenOperation } from '@/db/schema/screens';
+import {
+  createScreenSchema,
+  updateScreenSchema,
+  screenIdSchema,
+  createScreenTabSchema,
+  updateScreenTabSchema,
+  reorderScreenTabsSchema,
+  addFieldToTabSchema,
+  updateTabFieldSchema,
+  reorderTabFieldsSchema,
+  createScreenSchemeSchema,
+  updateScreenSchemeSchema,
+  createScreenSchemeItemSchema,
+  updateScreenSchemeItemSchema,
+  assignScreenSchemeToProjectSchema,
+  resolveScreenSchema,
+  cloneScreenSchema,
+} from '@taskmaster/validation';
 
-// =============================================================================
-// VALIDATION SCHEMAS
-// =============================================================================
-
-// Screen schemas
-const createScreenSchema = z.object({
-  name: z.string().min(1).max(255),
-  description: z.string().optional(),
-});
-
-const updateScreenSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1).max(255).optional(),
-  description: z.string().optional(),
-});
-
-const screenIdSchema = z.object({
-  id: z.string().uuid(),
-});
-
-// Tab schemas
-const createTabSchema = z.object({
-  screenId: z.string().uuid(),
-  name: z.string().min(1).max(255),
-  position: z.number().int().min(0).optional(),
-});
-
-const updateTabSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1).max(255).optional(),
-  position: z.number().int().min(0).optional(),
-});
-
-const reorderTabsSchema = z.object({
-  screenId: z.string().uuid(),
-  tabOrder: z.array(
-    z.object({
-      id: z.string().uuid(),
-      position: z.number().int().min(0),
-    }),
-  ),
-});
-
-// Tab field schemas
-const addFieldToTabSchema = z.object({
-  tabId: z.string().uuid(),
-  fieldId: z.string().uuid(),
-  position: z.number().int().min(0).optional(),
-  isRequiredOverride: z.boolean().optional(),
-});
-
-const updateTabFieldSchema = z.object({
-  id: z.string().uuid(),
-  position: z.number().int().min(0).optional(),
-  isRequiredOverride: z.boolean().optional().nullable(),
-});
-
-const reorderTabFieldsSchema = z.object({
-  tabId: z.string().uuid(),
-  fieldOrder: z.array(
-    z.object({
-      id: z.string().uuid(),
-      position: z.number().int().min(0),
-    }),
-  ),
-});
-
-// Screen scheme schemas
-const createSchemeSchema = z.object({
-  name: z.string().min(1).max(255),
-  description: z.string().optional(),
-  isDefault: z.boolean().optional(),
-});
-
-const updateSchemeSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1).max(255).optional(),
-  description: z.string().optional(),
-});
-
-// Screen scheme item schemas
-const createSchemeItemSchema = z.object({
-  schemeId: z.string().uuid(),
-  issueTypeId: z.string().uuid().optional().nullable(),
-  operation: z.enum(['create', 'edit', 'view']),
-  screenId: z.string().uuid(),
-});
-
-const updateSchemeItemSchema = z.object({
-  id: z.string().uuid(),
-  screenId: z.string().uuid(),
-});
-
-// Project assignment schema
-const assignSchemeToProjectSchema = z.object({
-  projectId: z.string().uuid(),
-  schemeId: z.string().uuid(),
-});
-
-// Resolution schema
-const resolveScreenSchema = z.object({
-  projectId: z.string().uuid(),
-  issueTypeId: z.string().uuid(),
-  operation: z.enum(['create', 'edit', 'view']),
-});
-
-// Clone schema
-const cloneScreenSchema = z.object({
-  sourceId: z.string().uuid(),
-  newName: z.string().min(1).max(255),
-});
+// Alias imports for backward compatibility
+const createTabSchema = createScreenTabSchema;
+const updateTabSchema = updateScreenTabSchema;
+const reorderTabsSchema = reorderScreenTabsSchema;
+const createSchemeSchema = createScreenSchemeSchema;
+const updateSchemeSchema = updateScreenSchemeSchema;
+const createSchemeItemSchema = createScreenSchemeItemSchema;
+const updateSchemeItemSchema = updateScreenSchemeItemSchema;
+const assignSchemeToProjectSchema = assignScreenSchemeToProjectSchema;
 
 // =============================================================================
 // SCREENS ROUTER

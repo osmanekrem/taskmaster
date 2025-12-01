@@ -3,145 +3,37 @@ import { protectedProcedure, router } from '@/lib/trpc';
 import { successResponse } from '@/utils/response';
 import { boardService } from '@/services/board-service';
 import { requirePermission } from '@/lib/middleware/permission';
+import {
+  createBoardSchema,
+  updateBoardSchema,
+  boardIdSchema,
+  createBoardColumnSchema,
+  updateBoardColumnSchema,
+  reorderBoardColumnsSchema,
+  setBoardSwimlaneSchema,
+  createBoardQuickFilterSchema,
+  updateBoardQuickFilterSchema,
+  reorderBoardQuickFiltersSchema,
+  setBoardCardLayoutSchema,
+  setBoardUserSettingsSchema,
+  getBoardDataSchema,
+  cloneBoardSchema,
+} from '@taskmaster/validation';
 
-// =============================================================================
-// VALIDATION SCHEMAS
-// =============================================================================
+// Alias imports for backward compatibility
+const createColumnSchema = createBoardColumnSchema;
+const updateColumnSchema = updateBoardColumnSchema;
+const reorderColumnsSchema = reorderBoardColumnsSchema;
+const setSwimlaneSchema = setBoardSwimlaneSchema;
+const createQuickFilterSchema = createBoardQuickFilterSchema;
+const updateQuickFilterSchema = updateBoardQuickFilterSchema;
+const reorderQuickFiltersSchema = reorderBoardQuickFiltersSchema;
+const setCardLayoutSchema = setBoardCardLayoutSchema;
+const setUserSettingsSchema = setBoardUserSettingsSchema;
 
-// Board schemas
-const createBoardSchema = z.object({
-  name: z.string().min(1).max(255),
-  description: z.string().optional(),
-  type: z.enum(['scrum', 'kanban']),
-  projectId: z.string().uuid(),
-  filterJql: z.string().optional(),
-  settings: z.record(z.string(), z.unknown()).optional(),
-  createDefaultColumns: z.boolean().optional().default(true),
-});
-
-const updateBoardSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1).max(255).optional(),
-  description: z.string().optional(),
-  filterJql: z.string().optional(),
-  settings: z.record(z.string(), z.unknown()).optional(),
-});
-
-const boardIdSchema = z.object({
-  id: z.string().uuid(),
-});
-
+// Local schema for project ID (not part of board-specific validation)
 const projectIdSchema = z.object({
   projectId: z.string().uuid(),
-});
-
-// Column schemas
-const createColumnSchema = z.object({
-  boardId: z.string().uuid(),
-  name: z.string().min(1).max(255),
-  statusIds: z.array(z.string().uuid()).optional().default([]),
-  position: z.number().int().min(0).optional(),
-  minIssues: z.number().int().min(0).optional(),
-  maxIssues: z.number().int().min(0).optional(),
-  constraintType: z.enum(['none', 'warn', 'block']).optional(),
-  color: z.string().optional(),
-});
-
-const updateColumnSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1).max(255).optional(),
-  statusIds: z.array(z.string().uuid()).optional(),
-  minIssues: z.number().int().min(0).optional().nullable(),
-  maxIssues: z.number().int().min(0).optional().nullable(),
-  constraintType: z.enum(['none', 'warn', 'block']).optional(),
-  color: z.string().optional().nullable(),
-});
-
-const reorderColumnsSchema = z.object({
-  boardId: z.string().uuid(),
-  columnOrder: z.array(
-    z.object({
-      id: z.string().uuid(),
-      position: z.number().int().min(0),
-    }),
-  ),
-});
-
-// Swimlane schemas
-const setSwimlaneSchema = z.object({
-  boardId: z.string().uuid(),
-  type: z.enum([
-    'none',
-    'assignee',
-    'epic',
-    'parent',
-    'priority',
-    'custom_field',
-  ]),
-  customFieldId: z.string().uuid().optional().nullable(),
-  settings: z.record(z.string(), z.unknown()).optional(),
-});
-
-// Quick filter schemas
-const createQuickFilterSchema = z.object({
-  boardId: z.string().uuid(),
-  name: z.string().min(1).max(255),
-  jql: z.string().min(1),
-  position: z.number().int().min(0).optional(),
-  isDefault: z.boolean().optional(),
-});
-
-const updateQuickFilterSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1).max(255).optional(),
-  jql: z.string().min(1).optional(),
-  isDefault: z.boolean().optional(),
-});
-
-const reorderQuickFiltersSchema = z.object({
-  boardId: z.string().uuid(),
-  filterOrder: z.array(
-    z.object({
-      id: z.string().uuid(),
-      position: z.number().int().min(0),
-    }),
-  ),
-});
-
-// Card layout schemas
-const setCardLayoutSchema = z.object({
-  boardId: z.string().uuid(),
-  cardColorFieldId: z.string().uuid().optional().nullable(),
-  cardColorMapping: z.record(z.string(), z.string()).optional(),
-  visibleFields: z.array(z.string().uuid()).optional(),
-  showAvatar: z.boolean().optional(),
-  showPriority: z.boolean().optional(),
-  showIssueType: z.boolean().optional(),
-  showLabels: z.boolean().optional(),
-  showDueDate: z.boolean().optional(),
-  showEstimate: z.boolean().optional(),
-  cardSize: z.enum(['compact', 'medium', 'detailed']).optional(),
-});
-
-// User settings schemas
-const setUserSettingsSchema = z.object({
-  boardId: z.string().uuid(),
-  collapsedSwimlanes: z.array(z.string()).optional(),
-  activeQuickFilters: z.array(z.string().uuid()).optional(),
-  collapsedColumns: z.array(z.string().uuid()).optional(),
-});
-
-// Board data schema
-const getBoardDataSchema = z.object({
-  boardId: z.string().uuid(),
-  sprintId: z.string().uuid().optional(),
-  quickFilterIds: z.array(z.string().uuid()).optional(),
-});
-
-// Clone schema
-const cloneBoardSchema = z.object({
-  sourceId: z.string().uuid(),
-  newName: z.string().min(1).max(255),
 });
 
 // =============================================================================

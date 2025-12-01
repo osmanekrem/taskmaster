@@ -5,18 +5,10 @@
 import { Queue, Worker, Job, QueueEvents, type JobsOptions } from 'bullmq';
 import { createRedisConnection, getRedisOptions } from '@/lib/redis';
 import { env } from '@/config/env';
+import { QUEUE_NAMES } from '@taskmaster/constants';
 
-// =============================================================================
-// QUEUE NAMES
-// =============================================================================
-
-export const QUEUE_NAMES = {
-  NOTIFICATION: 'notification',
-  EMAIL: 'email',
-  WEBHOOK: 'webhook',
-  AUTOMATION: 'automation',
-} as const;
-
+// Re-export for backwards compatibility
+export { QUEUE_NAMES };
 export type QueueName = typeof QUEUE_NAMES[keyof typeof QUEUE_NAMES];
 
 // =============================================================================

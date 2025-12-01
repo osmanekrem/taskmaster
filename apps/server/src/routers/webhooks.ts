@@ -9,74 +9,23 @@ import { z } from 'zod';
 import { requirePermission } from '@/lib/middleware/permission';
 import { webhookService } from '@/services/webhook-service';
 import { successResponse } from '@/utils/response';
-import { webhookEvents, type WebhookEvent } from '@/db/schema/webhooks';
+import {
+  createWebhookSchema,
+  updateWebhookSchema,
+  webhookIdSchema as idSchema,
+  webhookIdAltSchema as webhookIdSchema,
+  getWebhookDeliveriesSchema as getDeliveriesSchema,
+  getWebhookDeliveryStatsSchema as getDeliveryStatsSchema,
+  getRecentWebhookDeliveriesSchema as getRecentDeliveriesSchema,
+  toggleWebhookSchema,
+  webhookProjectIdSchema as projectIdSchema,
+  webhookEvents,
+} from '@taskmaster/validation';
 
-// =============================================================================
-// VALIDATION SCHEMAS
-// =============================================================================
-
-const webhookEventSchema = z.enum([...webhookEvents] as [
-  WebhookEvent,
-  ...WebhookEvent[],
-]);
-
-const createWebhookSchema = z.object({
-  name: z.string().min(1).max(255),
-  description: z.string().max(1000).optional(),
-  projectId: z.string().uuid().optional(),
-  url: z.string().url(),
-  secret: z.string().min(16).max(255).optional(),
-  events: z.array(webhookEventSchema).min(1),
-  customHeaders: z.record(z.string(), z.string()).optional(),
-});
-
-const updateWebhookSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1).max(255).optional(),
-  description: z.string().max(1000).optional(),
-  url: z.string().url().optional(),
-  secret: z.string().min(16).max(255).optional(),
-  events: z.array(webhookEventSchema).min(1).optional(),
-  customHeaders: z.record(z.string(), z.string()).optional(),
-  isActive: z.boolean().optional(),
-});
-
-const idSchema = z.object({
-  id: z.string().uuid(),
-});
-
-const webhookIdSchema = z.object({
-  webhookId: z.string().uuid(),
-});
-
+// Local pagination schema
 const paginationSchema = z.object({
   limit: z.number().int().min(1).max(100).default(50),
   offset: z.number().int().min(0).default(0),
-});
-
-const getDeliveriesSchema = z.object({
-  webhookId: z.string().uuid(),
-  limit: z.number().int().min(1).max(100).default(50),
-  offset: z.number().int().min(0).default(0),
-});
-
-const getDeliveryStatsSchema = z.object({
-  webhookId: z.string().uuid(),
-  since: z.date().optional(),
-});
-
-const getRecentDeliveriesSchema = z.object({
-  limit: z.number().int().min(1).max(100).default(50),
-  status: z.enum(['pending', 'success', 'failed', 'retrying']).optional(),
-});
-
-const toggleWebhookSchema = z.object({
-  id: z.string().uuid(),
-  isActive: z.boolean(),
-});
-
-const projectIdSchema = z.object({
-  projectId: z.string().uuid().optional(),
 });
 
 // =============================================================================

@@ -3,66 +3,28 @@ import { TRPCError } from '@trpc/server';
 import { router, protectedProcedure } from '@/lib/trpc';
 import { requirePermission } from '@/lib/middleware/permission';
 import securityService from '@/services/security-service';
+import {
+  securityMemberTypeSchema,
+  createSecuritySchemeSchema,
+  updateSecuritySchemeSchema,
+  createSecurityLevelSchema,
+  updateSecurityLevelSchema,
+  addSecurityMemberSchema,
+  setSecurityMembersSchema,
+  securitySchemeIdSchema,
+  securityLevelIdSchema,
+  cloneSecuritySchemeSchema,
+  getLevelsBySchemeSchema,
+} from '@taskmaster/validation';
 
-// ============================================================================
-// VALIDATION SCHEMAS
-// ============================================================================
-
-const memberTypeSchema = z.enum([
-  'user',
-  'group',
-  'project_role',
-  'reporter',
-  'assignee',
-  'project_lead',
-  'current_user',
-  'custom_field',
-]);
-
-const createSchemeSchema = z.object({
-  name: z.string().min(1).max(200),
-  description: z.string().max(1000).optional(),
-  isDefault: z.boolean().optional(),
-});
-
-const updateSchemeSchema = z.object({
-  name: z.string().min(1).max(200).optional(),
-  description: z.string().max(1000).optional(),
-  isDefault: z.boolean().optional(),
-});
-
-const createLevelSchema = z.object({
-  schemeId: z.string().uuid(),
-  name: z.string().min(1).max(200),
-  description: z.string().max(1000).optional(),
-  sortOrder: z.number().int().min(0).optional(),
-  isDefault: z.boolean().optional(),
-});
-
-const updateLevelSchema = z.object({
-  name: z.string().min(1).max(200).optional(),
-  description: z.string().max(1000).optional(),
-  sortOrder: z.number().int().min(0).optional(),
-  isDefault: z.boolean().optional(),
-});
-
-const addMemberSchema = z.object({
-  levelId: z.string().uuid(),
-  memberType: memberTypeSchema,
-  memberId: z.string().uuid().optional(),
-  customFieldId: z.string().uuid().optional(),
-});
-
-const setMembersSchema = z.object({
-  levelId: z.string().uuid(),
-  members: z.array(
-    z.object({
-      memberType: memberTypeSchema,
-      memberId: z.string().uuid().optional(),
-      customFieldId: z.string().uuid().optional(),
-    }),
-  ),
-});
+// Alias imports for backward compatibility
+const memberTypeSchema = securityMemberTypeSchema;
+const createSchemeSchema = createSecuritySchemeSchema;
+const updateSchemeSchema = updateSecuritySchemeSchema;
+const createLevelSchema = createSecurityLevelSchema;
+const updateLevelSchema = updateSecurityLevelSchema;
+const addMemberSchema = addSecurityMemberSchema;
+const setMembersSchema = setSecurityMembersSchema;
 
 // ============================================================================
 // ROUTER

@@ -8,6 +8,15 @@ import { ComponentService } from '../services/component-service';
 import { ComponentRepository } from '../repositories/component-repository';
 import { ProjectRepository } from '../repositories/project-repository';
 import { db } from '../db';
+import {
+  componentProjectIdSchema,
+  componentIdSchema,
+  createComponentSchema,
+  updateComponentSchema,
+  issueComponentIdSchema,
+  issueComponentSchema,
+  setIssueComponentsSchema,
+} from '@taskmaster/validation';
 
 // Initialize dependencies
 const componentRepository = new ComponentRepository(db);
@@ -23,7 +32,7 @@ export const componentsRouter = router({
    * Get all components for a project
    */
   list: protectedProcedure
-    .input(z.object({ projectId: z.string().uuid() }))
+    .input(componentProjectIdSchema)
     .query(async ({ input }) => {
       return componentService.getComponentsByProjectId(input.projectId);
     }),
@@ -32,7 +41,7 @@ export const componentsRouter = router({
    * Get all components for a project with issue counts
    */
   listWithCounts: protectedProcedure
-    .input(z.object({ projectId: z.string().uuid() }))
+    .input(componentProjectIdSchema)
     .query(async ({ input }) => {
       return componentService.getComponentsWithCounts(input.projectId);
     }),
@@ -41,7 +50,7 @@ export const componentsRouter = router({
    * Get component by ID
    */
   getById: protectedProcedure
-    .input(z.object({ id: z.string().uuid() }))
+    .input(componentIdSchema)
     .query(async ({ input }) => {
       return componentService.getComponentById(input.id);
     }),
@@ -50,15 +59,7 @@ export const componentsRouter = router({
    * Create a new component
    */
   create: protectedProcedure
-    .input(
-      z.object({
-        projectId: z.string().uuid(),
-        name: z.string().min(1).max(100),
-        description: z.string().max(500).optional(),
-        leadId: z.string().uuid().optional(),
-        defaultAssigneeId: z.string().uuid().optional(),
-      })
-    )
+    .input(createComponentSchema)
     .mutation(async ({ input }) => {
       return componentService.createComponent(input);
     }),
@@ -67,15 +68,7 @@ export const componentsRouter = router({
    * Update a component
    */
   update: protectedProcedure
-    .input(
-      z.object({
-        id: z.string().uuid(),
-        name: z.string().min(1).max(100).optional(),
-        description: z.string().max(500).optional().nullable(),
-        leadId: z.string().uuid().optional().nullable(),
-        defaultAssigneeId: z.string().uuid().optional().nullable(),
-      })
-    )
+    .input(updateComponentSchema)
     .mutation(async ({ input }) => {
       const { id, ...data } = input;
       return componentService.updateComponent(id, data);
@@ -85,7 +78,7 @@ export const componentsRouter = router({
    * Delete a component
    */
   delete: protectedProcedure
-    .input(z.object({ id: z.string().uuid() }))
+    .input(componentIdSchema)
     .mutation(async ({ input }) => {
       await componentService.deleteComponent(input.id);
       return { success: true };
@@ -99,7 +92,7 @@ export const componentsRouter = router({
    * Get components for an issue
    */
   getIssueComponents: protectedProcedure
-    .input(z.object({ issueId: z.string().uuid() }))
+    .input(issueComponentIdSchema)
     .query(async ({ input }) => {
       return componentService.getIssueComponents(input.issueId);
     }),
@@ -108,12 +101,7 @@ export const componentsRouter = router({
    * Add component to issue
    */
   addToIssue: protectedProcedure
-    .input(
-      z.object({
-        issueId: z.string().uuid(),
-        componentId: z.string().uuid(),
-      })
-    )
+    .input(issueComponentSchema)
     .mutation(async ({ input }) => {
       await componentService.addComponentToIssue(input.issueId, input.componentId);
       return { success: true };
@@ -123,12 +111,7 @@ export const componentsRouter = router({
    * Remove component from issue
    */
   removeFromIssue: protectedProcedure
-    .input(
-      z.object({
-        issueId: z.string().uuid(),
-        componentId: z.string().uuid(),
-      })
-    )
+    .input(issueComponentSchema)
     .mutation(async ({ input }) => {
       await componentService.removeComponentFromIssue(input.issueId, input.componentId);
       return { success: true };
@@ -138,12 +121,7 @@ export const componentsRouter = router({
    * Set all components for an issue (replace existing)
    */
   setIssueComponents: protectedProcedure
-    .input(
-      z.object({
-        issueId: z.string().uuid(),
-        componentIds: z.array(z.string().uuid()),
-      })
-    )
+    .input(setIssueComponentsSchema)
     .mutation(async ({ input }) => {
       await componentService.setIssueComponents(input.issueId, input.componentIds);
       return { success: true };

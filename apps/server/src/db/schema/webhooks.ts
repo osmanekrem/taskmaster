@@ -12,61 +12,19 @@ import {
 
 import { user } from './auth';
 import { projects } from './projects';
+import {
+  webhookEvents,
+  webhookDeliveryStatuses,
+  type WebhookEvent,
+} from '@taskmaster/constants';
+
+// Re-export for backwards compatibility
+export { webhookEvents };
+export type { WebhookEvent };
 
 // =============================================================================
 // ENUMS
 // =============================================================================
-
-/**
- * Webhook event types that can trigger a webhook
- */
-export const webhookEvents = [
-  // Issue events
-  'issue:created',
-  'issue:updated',
-  'issue:deleted',
-  'issue:assigned',
-  'issue:transitioned',
-  'issue:commented',
-
-  // Comment events
-  'comment:created',
-  'comment:updated',
-  'comment:deleted',
-
-  // Sprint events
-  'sprint:created',
-  'sprint:started',
-  'sprint:completed',
-  'sprint:deleted',
-
-  // Version events
-  'version:created',
-  'version:updated',
-  'version:released',
-  'version:deleted',
-
-  // Project events
-  'project:created',
-  'project:updated',
-  'project:deleted',
-
-  // Worklog events
-  'worklog:created',
-  'worklog:updated',
-  'worklog:deleted',
-
-  // User events
-  'user:created',
-  'user:updated',
-
-  // Board events
-  'board:created',
-  'board:updated',
-  'board:deleted',
-] as const;
-
-export type WebhookEvent = (typeof webhookEvents)[number];
 
 /**
  * Webhook delivery status
@@ -463,31 +421,12 @@ export interface VersionWebhookPayload {
 }
 
 // =============================================================================
-// CONSTANTS
+// CONSTANTS (re-exported from @taskmaster/constants)
 // =============================================================================
 
-/**
- * Maximum retries for failed webhooks
- */
-export const WEBHOOK_MAX_RETRIES = 5;
-
-/**
- * Retry delays in milliseconds (exponential backoff)
- */
-export const WEBHOOK_RETRY_DELAYS = [
-  1000 * 60, // 1 minute
-  1000 * 60 * 5, // 5 minutes
-  1000 * 60 * 30, // 30 minutes
-  1000 * 60 * 60, // 1 hour
-  1000 * 60 * 60 * 4, // 4 hours
-];
-
-/**
- * Failure count threshold to auto-disable webhook
- */
-export const WEBHOOK_AUTO_DISABLE_THRESHOLD = 10;
-
-/**
- * Webhook timeout in milliseconds
- */
-export const WEBHOOK_TIMEOUT_MS = 30000;
+export {
+  WEBHOOK_MAX_RETRIES,
+  WEBHOOK_RETRY_DELAYS,
+  WEBHOOK_AUTO_DISABLE_THRESHOLD,
+  WEBHOOK_TIMEOUT_MS,
+} from '@taskmaster/constants';

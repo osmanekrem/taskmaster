@@ -3,79 +3,22 @@ import { z } from "zod";
 import { protectedProcedure, router } from "@/lib/trpc";
 import { notificationSchemeRepository } from "@/repositories/notification-scheme-repository";
 import { TRPCError } from "@trpc/server";
+import {
+  createNotificationSchemeSchema,
+  updateNotificationSchemeSchema,
+  addNotificationSchemeEventSchema,
+  updateNotificationSchemeEventSchema,
+  notificationSchemeIdSchema,
+  notificationEventIdSchema,
+  assignNotificationSchemeSchema,
+} from '@taskmaster/validation';
 
-// =====================================================
-// VALIDATION SCHEMAS
-// =====================================================
-
-const createSchemeSchema = z.object({
-  name: z.string().min(1).max(100),
-  description: z.string().max(500).optional(),
-  isDefault: z.boolean().optional(),
-});
-
-const updateSchemeSchema = z.object({
-  schemeId: z.string().uuid(),
-  name: z.string().min(1).max(100).optional(),
-  description: z.string().max(500).optional(),
-  isDefault: z.boolean().optional(),
-});
-
-const addSchemeEventSchema = z.object({
-  schemeId: z.string().uuid(),
-  eventType: z.string(),
-  recipientType: z.enum([
-    'current_assignee',
-    'reporter',
-    'project_lead',
-    'component_lead',
-    'all_watchers',
-    'users_in_role',
-    'single_user',
-    'group',
-    'custom_field_user',
-    'current_user',
-    'previous_assignee',
-  ]),
-  recipientParams: z.object({
-    userId: z.string().optional(),
-    roleId: z.string().optional(),
-    groupId: z.string().optional(),
-    fieldId: z.string().optional(),
-  }).optional(),
-  channels: z.array(z.enum(['in_app', 'email', 'push'])).optional(),
-  isEnabled: z.boolean().optional(),
-});
-
-const updateSchemeEventSchema = z.object({
-  eventId: z.string().uuid(),
-  recipientType: z.enum([
-    'current_assignee',
-    'reporter',
-    'project_lead',
-    'component_lead',
-    'all_watchers',
-    'users_in_role',
-    'single_user',
-    'group',
-    'custom_field_user',
-    'current_user',
-    'previous_assignee',
-  ]).optional(),
-  recipientParams: z.object({
-    userId: z.string().optional(),
-    roleId: z.string().optional(),
-    groupId: z.string().optional(),
-    fieldId: z.string().optional(),
-  }).optional(),
-  channels: z.array(z.enum(['in_app', 'email', 'push'])).optional(),
-  isEnabled: z.boolean().optional(),
-});
-
-const assignSchemeSchema = z.object({
-  projectId: z.string(),
-  schemeId: z.string().uuid(),
-});
+// Alias imports for backward compatibility
+const createSchemeSchema = createNotificationSchemeSchema;
+const updateSchemeSchema = updateNotificationSchemeSchema;
+const addSchemeEventSchema = addNotificationSchemeEventSchema;
+const updateSchemeEventSchema = updateNotificationSchemeEventSchema;
+const assignSchemeSchema = assignNotificationSchemeSchema;
 
 // =====================================================
 // NOTIFICATION SCHEMES ROUTER

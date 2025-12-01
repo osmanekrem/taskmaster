@@ -9,13 +9,24 @@ import { LabelRepository } from '../repositories/label-repository';
 import { ProjectRepository } from '../repositories/project-repository';
 import { db } from '../db';
 import { LABEL_COLORS } from '../db/schema/labels';
+import {
+  labelProjectIdSchema,
+  labelIdSchema,
+  searchLabelsSchema,
+  createLabelSchema,
+  createGlobalLabelSchema,
+  updateLabelSchema,
+  issueLabelIdSchema,
+  issueLabelSchema,
+  setIssueLabelsSchema,
+  getIssuesByLabelSchema,
+  getMostUsedLabelsSchema,
+} from '@taskmaster/validation';
 
 // Initialize dependencies
 const labelRepository = new LabelRepository(db);
 const projectRepository = new ProjectRepository(db);
 const labelService = new LabelService(labelRepository, projectRepository);
-
-const colorSchema = z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid hex color');
 
 export const labelsRouter = router({
   // ===========================================================================
@@ -26,7 +37,7 @@ export const labelsRouter = router({
    * Get all labels for a project (including global)
    */
   list: protectedProcedure
-    .input(z.object({ projectId: z.string().uuid() }))
+    .input(labelProjectIdSchema)
     .query(async ({ input }) => {
       return labelService.getLabelsByProjectId(input.projectId);
     }),
@@ -35,7 +46,7 @@ export const labelsRouter = router({
    * Get all labels for a project with issue counts
    */
   listWithCounts: protectedProcedure
-    .input(z.object({ projectId: z.string().uuid() }))
+    .input(labelProjectIdSchema)
     .query(async ({ input }) => {
       return labelService.getLabelsWithCounts(input.projectId);
     }),
@@ -51,7 +62,7 @@ export const labelsRouter = router({
    * Get label by ID
    */
   getById: protectedProcedure
-    .input(z.object({ id: z.string().uuid() }))
+    .input(labelIdSchema)
     .query(async ({ input }) => {
       return labelService.getLabelById(input.id);
     }),
@@ -60,10 +71,7 @@ export const labelsRouter = router({
    * Search labels
    */
   search: protectedProcedure
-    .input(z.object({
-      query: z.string().min(1),
-      projectId: z.string().uuid().optional(),
-    }))
+    .input(searchLabelsSchema)
     .query(async ({ input }) => {
       return labelService.searchLabels(input.query, input.projectId);
     }),
@@ -72,14 +80,7 @@ export const labelsRouter = router({
    * Create a new label
    */
   create: protectedProcedure
-    .input(
-      z.object({
-        name: z.string().min(1).max(100),
-        color: colorSchema.optional(),
-        description: z.string().max(255).optional(),
-        projectId: z.string().uuid().optional(),
-      })
-    )
+    .input(createLabelSchema)
     .mutation(async ({ input }) => {
       return labelService.createLabel(input);
     }),
@@ -88,13 +89,7 @@ export const labelsRouter = router({
    * Create a global label (admin only)
    */
   createGlobal: adminProcedure
-    .input(
-      z.object({
-        name: z.string().min(1).max(100),
-        color: colorSchema.optional(),
-        description: z.string().max(255).optional(),
-      })
-    )
+    .input(createGlobalLabelSchema)
     .mutation(async ({ input }) => {
       return labelService.createLabel(input);
     }),
@@ -103,14 +98,7 @@ export const labelsRouter = router({
    * Update a label
    */
   update: protectedProcedure
-    .input(
-      z.object({
-        id: z.string().uuid(),
-        name: z.string().min(1).max(100).optional(),
-        color: colorSchema.optional(),
-        description: z.string().max(255).optional().nullable(),
-      })
-    )
+    .input(updateLabelSchema)
     .mutation(async ({ input }) => {
       const { id, ...data } = input;
       return labelService.updateLabel(id, data);
@@ -120,7 +108,7 @@ export const labelsRouter = router({
    * Delete a label
    */
   delete: protectedProcedure
-    .input(z.object({ id: z.string().uuid() }))
+    .input(labelIdSchema)
     .mutation(async ({ input }) => {
       await labelService.deleteLabel(input.id);
       return { success: true };
@@ -130,7 +118,7 @@ export const labelsRouter = router({
    * Create default labels for a project
    */
   createDefaults: protectedProcedure
-    .input(z.object({ projectId: z.string().uuid() }))
+    .input(labelProjectIdSchema)
     .mutation(async ({ input }) => {
       return labelService.createDefaultLabels(input.projectId);
     }),
@@ -150,7 +138,7 @@ export const labelsRouter = router({
    * Get labels for an issue
    */
   getIssueLabels: protectedProcedure
-    .input(z.object({ issueId: z.string().uuid() }))
+    .input(issueLabelIdSchema)
     .query(async ({ input }) => {
       return labelService.getIssueLabels(input.issueId);
     }),
@@ -159,10 +147,7 @@ export const labelsRouter = router({
    * Add label to issue
    */
   addToIssue: protectedProcedure
-    .input(z.object({
-      issueId: z.string().uuid(),
-      labelId: z.string().uuid(),
-    }))
+    .input(issueLabelSchema)
     .mutation(async ({ input }) => {
       await labelService.addLabelToIssue(input.issueId, input.labelId);
       return { success: true };
@@ -172,10 +157,7 @@ export const labelsRouter = router({
    * Remove label from issue
    */
   removeFromIssue: protectedProcedure
-    .input(z.object({
-      issueId: z.string().uuid(),
-      labelId: z.string().uuid(),
-    }))
+    .input(issueLabelSchema)
     .mutation(async ({ input }) => {
       await labelService.removeLabelFromIssue(input.issueId, input.labelId);
       return { success: true };
@@ -185,10 +167,7 @@ export const labelsRouter = router({
    * Set all labels for an issue
    */
   setIssueLabels: protectedProcedure
-    .input(z.object({
-      issueId: z.string().uuid(),
-      labelIds: z.array(z.string().uuid()),
-    }))
+    .input(setIssueLabelsSchema)
     .mutation(async ({ input }) => {
       await labelService.setIssueLabels(input.issueId, input.labelIds);
       return { success: true };
@@ -198,7 +177,7 @@ export const labelsRouter = router({
    * Get issue IDs by label
    */
   getIssuesByLabel: protectedProcedure
-    .input(z.object({ labelId: z.string().uuid() }))
+    .input(getIssuesByLabelSchema)
     .query(async ({ input }) => {
       return labelService.getIssueIdsByLabel(input.labelId);
     }),

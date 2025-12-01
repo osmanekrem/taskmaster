@@ -3,106 +3,37 @@ import { protectedProcedure, router } from '@/lib/trpc';
 import { successResponse } from '@/utils/response';
 import { fieldConfigurationService } from '@/services/screen-service';
 import { requirePermission } from '@/lib/middleware/permission';
+import {
+  createFieldConfigSchema,
+  updateFieldConfigSchema,
+  fieldConfigIdSchema,
+  createFieldConfigItemSchema,
+  updateFieldConfigItemSchema,
+  upsertFieldConfigItemSchema,
+  createFieldConfigSchemeSchema,
+  updateFieldConfigSchemeSchema,
+  createFieldConfigSchemeItemSchema,
+  updateFieldConfigSchemeItemSchema,
+  assignFieldConfigSchemeToProjectSchema,
+  resolveFieldConfigSchema,
+  resolveFieldBehaviorSchema,
+  cloneFieldConfigSchema,
+} from '@taskmaster/validation';
 
-// =============================================================================
-// VALIDATION SCHEMAS
-// =============================================================================
-
-// Configuration schemas
-const createConfigSchema = z.object({
-  name: z.string().min(1).max(255),
-  description: z.string().optional(),
-  isDefault: z.boolean().optional(),
-});
-
-const updateConfigSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1).max(255).optional(),
-  description: z.string().optional(),
-});
-
-const configIdSchema = z.object({
-  id: z.string().uuid(),
-});
-
-// Configuration item schemas
-const createConfigItemSchema = z.object({
-  configId: z.string().uuid(),
-  fieldId: z.string().uuid(),
-  isRequired: z.boolean().optional(),
-  isHidden: z.boolean().optional(),
-  renderer: z.string().optional().nullable(),
-  defaultValue: z.string().optional().nullable(),
-  descriptionOverride: z.string().optional().nullable(),
-});
-
-const updateConfigItemSchema = z.object({
-  id: z.string().uuid(),
-  isRequired: z.boolean().optional(),
-  isHidden: z.boolean().optional(),
-  renderer: z.string().optional().nullable(),
-  defaultValue: z.string().optional().nullable(),
-  descriptionOverride: z.string().optional().nullable(),
-});
-
-const upsertConfigItemSchema = z.object({
-  configId: z.string().uuid(),
-  fieldId: z.string().uuid(),
-  isRequired: z.boolean().optional(),
-  isHidden: z.boolean().optional(),
-  renderer: z.string().optional().nullable(),
-  defaultValue: z.string().optional().nullable(),
-  descriptionOverride: z.string().optional().nullable(),
-});
-
-// Scheme schemas
-const createSchemeSchema = z.object({
-  name: z.string().min(1).max(255),
-  description: z.string().optional(),
-  isDefault: z.boolean().optional(),
-});
-
-const updateSchemeSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1).max(255).optional(),
-  description: z.string().optional(),
-});
-
-// Scheme item schemas
-const createSchemeItemSchema = z.object({
-  schemeId: z.string().uuid(),
-  issueTypeId: z.string().uuid().optional().nullable(),
-  configId: z.string().uuid(),
-});
-
-const updateSchemeItemSchema = z.object({
-  id: z.string().uuid(),
-  configId: z.string().uuid(),
-});
-
-// Project assignment schema
-const assignSchemeToProjectSchema = z.object({
-  projectId: z.string().uuid(),
-  schemeId: z.string().uuid(),
-});
-
-// Resolution schema
-const resolveConfigSchema = z.object({
-  projectId: z.string().uuid(),
-  issueTypeId: z.string().uuid(),
-});
-
-const resolveFieldBehaviorSchema = z.object({
-  projectId: z.string().uuid(),
-  issueTypeId: z.string().uuid(),
-  fieldId: z.string().uuid(),
-});
-
-// Clone schema
-const cloneConfigSchema = z.object({
-  sourceId: z.string().uuid(),
-  newName: z.string().min(1).max(255),
-});
+// Alias imports for backward compatibility
+const createConfigSchema = createFieldConfigSchema;
+const updateConfigSchema = updateFieldConfigSchema;
+const configIdSchema = fieldConfigIdSchema;
+const createConfigItemSchema = createFieldConfigItemSchema;
+const updateConfigItemSchema = updateFieldConfigItemSchema;
+const upsertConfigItemSchema = upsertFieldConfigItemSchema;
+const createSchemeSchema = createFieldConfigSchemeSchema;
+const updateSchemeSchema = updateFieldConfigSchemeSchema;
+const createSchemeItemSchema = createFieldConfigSchemeItemSchema;
+const updateSchemeItemSchema = updateFieldConfigSchemeItemSchema;
+const assignSchemeToProjectSchema = assignFieldConfigSchemeToProjectSchema;
+const resolveConfigSchema = resolveFieldConfigSchema;
+const cloneConfigSchema = cloneFieldConfigSchema;
 
 // =============================================================================
 // FIELD CONFIGURATIONS ROUTER

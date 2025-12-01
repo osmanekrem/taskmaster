@@ -3,165 +3,10 @@ import { TRPCError } from '@trpc/server';
 import { router, protectedProcedure } from '@/lib/trpc';
 import { requirePermission } from '@/lib/middleware/permission';
 import { automationService } from '@/services/automation-service';
-
-// ============================================================================
-// VALIDATION SCHEMAS
-// ============================================================================
-
-const triggerSchema = z.object({
-  type: z.enum([
-    'issue_created',
-    'issue_updated',
-    'issue_transitioned',
-    'issue_commented',
-    'issue_assigned',
-    'issue_deleted',
-    'field_changed',
-    'field_value_set',
-    'field_value_cleared',
-    'sprint_created',
-    'sprint_started',
-    'sprint_completed',
-    'sprint_deleted',
-    'version_created',
-    'version_released',
-    'version_archived',
-    'comment_created',
-    'comment_updated',
-    'comment_deleted',
-    'worklog_created',
-    'worklog_updated',
-    'worklog_deleted',
-    'scheduled',
-    'scheduled_jql',
-    'manual',
-    'incoming_webhook',
-  ]),
-  config: z.record(z.string(), z.unknown()).optional(),
-});
-
-const conditionSchema: z.ZodType<{
-  type: string;
-  config?: Record<string, unknown>;
-  conditions?: Array<{ type: string; config?: Record<string, unknown> }>;
-}> = z.object({
-  type: z.enum([
-    'field_equals',
-    'field_not_equals',
-    'field_contains',
-    'field_not_contains',
-    'field_is_empty',
-    'field_is_not_empty',
-    'field_greater_than',
-    'field_less_than',
-    'field_in',
-    'field_not_in',
-    'field_changed',
-    'field_changed_to',
-    'field_changed_from',
-    'issue_type',
-    'issue_status',
-    'issue_priority',
-    'issue_has_subtasks',
-    'issue_is_subtask',
-    'issue_has_parent',
-    'jql_match',
-    'user_in_group',
-    'user_in_project_role',
-    'user_is_assignee',
-    'user_is_reporter',
-    'time_since_created',
-    'time_since_updated',
-    'time_in_status',
-    'due_date_approaching',
-    'and',
-    'or',
-    'not',
-  ]),
-  config: z.record(z.string(), z.unknown()).optional(),
-  conditions: z.lazy(() => z.array(conditionSchema)).optional(),
-});
-
-const actionSchema: z.ZodType<{
-  type: string;
-  config?: Record<string, unknown>;
-  conditions?: Array<{ type: string; config?: Record<string, unknown> }>;
-  thenActions?: Array<{ type: string; config?: Record<string, unknown> }>;
-  elseActions?: Array<{ type: string; config?: Record<string, unknown> }>;
-  items?: string;
-  iteratorAction?: { type: string; config?: Record<string, unknown> };
-}> = z.object({
-  type: z.enum([
-    'edit_issue',
-    'transition_issue',
-    'assign_issue',
-    'unassign_issue',
-    'add_comment',
-    'add_labels',
-    'remove_labels',
-    'set_priority',
-    'set_due_date',
-    'clear_due_date',
-    'add_watcher',
-    'remove_watcher',
-    'set_field_value',
-    'clear_field_value',
-    'create_issue',
-    'create_subtask',
-    'clone_issue',
-    'link_issues',
-    'unlink_issues',
-    'add_to_sprint',
-    'remove_from_sprint',
-    'move_to_backlog',
-    'set_fix_version',
-    'remove_fix_version',
-    'set_affected_version',
-    'remove_affected_version',
-    'add_component',
-    'remove_component',
-    'send_email',
-    'send_notification',
-    'send_webhook',
-    'log_work',
-    'set_estimate',
-    'if_else',
-    'for_each',
-    'run_jql',
-    'lookup_issues',
-    'branch_rule',
-  ]),
-  config: z.record(z.string(), z.unknown()).optional(),
-  conditions: z.array(conditionSchema).optional(),
-  thenActions: z.lazy(() => z.array(actionSchema)).optional(),
-  elseActions: z.lazy(() => z.array(actionSchema)).optional(),
-  items: z.string().optional(),
-  iteratorAction: z.lazy(() => actionSchema).optional(),
-});
-
-const createRuleSchema = z.object({
-  name: z.string().min(1).max(200),
-  description: z.string().max(1000).optional(),
-  projectId: z.string().uuid().optional(),
-  isGlobal: z.boolean().optional(),
-  trigger: triggerSchema,
-  conditions: z.array(conditionSchema).optional(),
-  actions: z.array(actionSchema).min(1),
-  isEnabled: z.boolean().optional(),
-  priority: z.number().int().min(1).max(1000).optional(),
-  rateLimitPerHour: z.number().int().min(1).max(10000).optional(),
-});
-
-const updateRuleSchema = z.object({
-  name: z.string().min(1).max(200).optional(),
-  description: z.string().max(1000).optional(),
-  trigger: triggerSchema.optional(),
-  conditions: z.array(conditionSchema).optional(),
-  actions: z.array(actionSchema).min(1).optional(),
-  isEnabled: z.boolean().optional(),
-  priority: z.number().int().min(1).max(1000).optional(),
-  rateLimitPerHour: z.number().int().min(1).max(10000).optional(),
-});
+import {
+  createAutomationRuleSchema,
+  updateAutomationRuleSchema,
+} from '@taskmaster/validation';
 
 // ============================================================================
 // ROUTER
@@ -177,7 +22,7 @@ export const automationRouter = router({
    */
   create: protectedProcedure
     .use(requirePermission('automation:create'))
-    .input(createRuleSchema)
+    .input(createAutomationRuleSchema)
     .mutation(async ({ ctx, input }) => {
       const rule = await automationService.createRule(
         {
@@ -206,7 +51,7 @@ export const automationRouter = router({
     .input(
       z.object({
         id: z.string().uuid(),
-        data: updateRuleSchema,
+        data: updateAutomationRuleSchema,
       }),
     )
     .mutation(async ({ ctx, input }) => {

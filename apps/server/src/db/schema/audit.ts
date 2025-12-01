@@ -9,105 +9,32 @@ import {
 } from 'drizzle-orm/pg-core';
 
 import { user } from './auth';
+import {
+  auditEntityTypes,
+  auditActions,
+  type AuditEntityType,
+  type AuditAction,
+} from '@taskmaster/constants';
+
+// Re-export for backwards compatibility
+export { auditEntityTypes, auditActions };
+export type { AuditEntityType, AuditAction };
 
 // =============================================================================
 // ENUMS
 // =============================================================================
 
 /**
- * Entity types that can be audited
+ * Audit log category for grouping
  */
-export const auditEntityTypes = [
-  // Auth
-  'user',
-  'session',
-
-  // Projects & Issues
-  'project',
-  'issue',
-  'comment',
-  'attachment',
-
-  // Configuration
-  'workflow',
-  'status',
-  'resolution',
-  'issue_type',
-  'field',
-  'screen',
-  'field_configuration',
-
-  // Teams & Permissions
-  'permission_scheme',
-  'notification_scheme',
-  'role',
-  'role_member',
-
-  // Sprints & Versions
-  'sprint',
-  'version',
-  'component',
-  'label',
-
-  // Boards & Filters
-  'board',
-  'filter',
-
-  // Time Tracking
-  'worklog',
-
-  // Webhooks
-  'webhook',
-
-  // System
-  'system_setting',
-] as const;
-
-export type AuditEntityType = (typeof auditEntityTypes)[number];
-
-/**
- * Audit action types
- */
-export const auditActions = [
-  // Authentication
-  'auth:login',
-  'auth:logout',
-  'auth:login_failed',
-  'auth:password_changed',
-  'auth:password_reset_requested',
-  'auth:2fa_enabled',
-  'auth:2fa_disabled',
-
-  // CRUD
-  'create',
-  'update',
-  'delete',
-  'view', // For sensitive data access
-  'export',
-  'import',
-
-  // Specific actions
-  'permission:grant',
-  'permission:revoke',
-  'member:add',
-  'member:remove',
-  'workflow:transition',
-  'issue:assign',
-  'issue:move',
-  'sprint:start',
-  'sprint:complete',
-  'version:release',
-  'webhook:test',
-  'webhook:redeliver',
-
-  // Admin actions
-  'admin:impersonate_start',
-  'admin:impersonate_end',
-  'admin:data_export',
-  'admin:system_setting_change',
-] as const;
-
-export type AuditAction = (typeof auditActions)[number];
+export type AuditCategory =
+  | 'authentication'
+  | 'authorization'
+  | 'data_access'
+  | 'data_modification'
+  | 'configuration'
+  | 'administration'
+  | 'security';
 
 /**
  * Audit log category enum for DB
@@ -276,14 +203,6 @@ export const auditLogsRelations = relations(auditLogs, ({ one }) => ({
 
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type NewAuditLog = typeof auditLogs.$inferInsert;
-export type AuditCategory =
-  | 'authentication'
-  | 'authorization'
-  | 'data_access'
-  | 'data_modification'
-  | 'configuration'
-  | 'administration'
-  | 'security';
 
 // =============================================================================
 // AUDIT LOG INPUT TYPE

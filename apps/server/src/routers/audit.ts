@@ -13,93 +13,19 @@ import {
   auditEntityTypes,
   type AuditAction,
   type AuditEntityType,
-  type AuditCategory,
 } from '@/db/schema/audit';
-
-// =============================================================================
-// VALIDATION SCHEMAS
-// =============================================================================
-
-const auditCategorySchema = z.enum([
-  'authentication',
-  'authorization',
-  'data_access',
-  'data_modification',
-  'configuration',
-  'administration',
-  'security',
-]);
-
-const auditActionSchema = z.enum([...auditActions] as [
-  AuditAction,
-  ...AuditAction[],
-]);
-const auditEntityTypeSchema = z.enum([...auditEntityTypes] as [
-  AuditEntityType,
-  ...AuditEntityType[],
-]);
-
-const searchFiltersSchema = z.object({
-  userId: z.string().uuid().optional(),
-  entityType: auditEntityTypeSchema.optional(),
-  entityId: z.string().optional(),
-  action: auditActionSchema.optional(),
-  category: auditCategorySchema.optional(),
-  ipAddress: z.string().optional(),
-  startDate: z.date().optional(),
-  endDate: z.date().optional(),
-  result: z.enum(['success', 'failure', 'partial']).optional(),
-  search: z.string().optional(),
-});
-
-const paginationSchema = z.object({
-  limit: z.number().int().min(1).max(100).default(50),
-  offset: z.number().int().min(0).default(0),
-});
-
-const searchSchema = searchFiltersSchema.merge(paginationSchema);
-
-const idSchema = z.object({
-  id: z.string().uuid(),
-});
-
-const entityHistorySchema = z.object({
-  entityType: auditEntityTypeSchema,
-  entityId: z.string(),
-  limit: z.number().int().min(1).max(100).default(50),
-  offset: z.number().int().min(0).default(0),
-});
-
-const userActivitySchema = z.object({
-  userId: z.string().uuid(),
-  limit: z.number().int().min(1).max(100).default(50),
-  offset: z.number().int().min(0).default(0),
-});
-
-const ipActivitySchema = z.object({
-  ipAddress: z.string(),
-  limit: z.number().int().min(1).max(100).default(50),
-  offset: z.number().int().min(0).default(0),
-});
-
-const loginHistorySchema = z.object({
-  userId: z.string().uuid(),
-  limit: z.number().int().min(1).max(20).default(20),
-});
-
-const failedLoginsSchema = z.object({
-  since: z.date(),
-  ipAddress: z.string().optional(),
-});
-
-const statsSchema = z.object({
-  startDate: z.date(),
-  endDate: z.date(),
-});
-
-const exportSchema = searchFiltersSchema.extend({
-  limit: z.number().int().min(1).max(10000).default(1000),
-});
+import {
+  auditSearchSchema as searchSchema,
+  auditIdSchema as idSchema,
+  auditEntityHistorySchema as entityHistorySchema,
+  auditUserActivitySchema as userActivitySchema,
+  auditIpActivitySchema as ipActivitySchema,
+  auditLoginHistorySchema as loginHistorySchema,
+  auditFailedLoginsSchema as failedLoginsSchema,
+  auditStatsSchema as statsSchema,
+  auditExportSchema as exportSchema,
+  auditPaginationSchema as paginationSchema,
+} from '@taskmaster/validation';
 
 // =============================================================================
 // ROUTER

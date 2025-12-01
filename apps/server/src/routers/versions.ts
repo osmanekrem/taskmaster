@@ -13,13 +13,25 @@ import {
   requireProjectAccess,
   extractProjectId,
 } from '../lib/middleware/permission';
+import {
+  versionStatusSchema,
+  listVersionsSchema,
+  versionProjectIdSchema,
+  versionIdSchema,
+  getVersionsByStatusSchema,
+  createVersionSchema,
+  updateVersionSchema,
+  releaseVersionSchema,
+  issueVersionIdSchema,
+  issueVersionSchema,
+  setIssueVersionsSchema,
+  getIssuesByVersionSchema,
+} from '@taskmaster/validation';
 
 // Initialize dependencies
 const versionRepository = new VersionRepository(db);
 const projectRepository = new ProjectRepository(db);
 const versionService = new VersionService(versionRepository, projectRepository);
-
-const versionStatusSchema = z.enum(['unreleased', 'released', 'archived']);
 
 export const versionsRouter = router({
   // ===========================================================================
@@ -30,12 +42,7 @@ export const versionsRouter = router({
    * Get all versions for a project
    */
   list: protectedProcedure
-    .input(
-      z.object({
-        projectId: z.string().uuid(),
-        includeArchived: z.boolean().default(false),
-      }),
-    )
+    .input(listVersionsSchema)
     .use(requireProjectAccess(extractProjectId.fromProjectId))
     .query(async ({ input }) => {
       return versionService.getVersionsByProjectId(
@@ -48,7 +55,7 @@ export const versionsRouter = router({
    * Get all versions for a project with issue counts
    */
   listWithCounts: protectedProcedure
-    .input(z.object({ projectId: z.string().uuid() }))
+    .input(versionProjectIdSchema)
     .use(requireProjectAccess(extractProjectId.fromProjectId))
     .query(async ({ input }) => {
       return versionService.getVersionsWithCounts(input.projectId);
@@ -58,7 +65,7 @@ export const versionsRouter = router({
    * Get version by ID
    */
   getById: protectedProcedure
-    .input(z.object({ id: z.string().uuid() }))
+    .input(versionIdSchema)
     .query(async ({ input }) => {
       return versionService.getVersionById(input.id);
     }),
@@ -67,12 +74,7 @@ export const versionsRouter = router({
    * Get versions by status
    */
   getByStatus: protectedProcedure
-    .input(
-      z.object({
-        projectId: z.string().uuid(),
-        status: versionStatusSchema,
-      }),
-    )
+    .input(getVersionsByStatusSchema)
     .use(requireProjectAccess(extractProjectId.fromProjectId))
     .query(async ({ input }) => {
       return versionService.getVersionsByStatus(input.projectId, input.status);
@@ -82,15 +84,7 @@ export const versionsRouter = router({
    * Create a new version
    */
   create: protectedProcedure
-    .input(
-      z.object({
-        projectId: z.string().uuid(),
-        name: z.string().min(1).max(100),
-        description: z.string().max(500).optional(),
-        startDate: z.string().optional(),
-        releaseDate: z.string().optional(),
-      }),
-    )
+    .input(createVersionSchema)
     .use(requirePermission('project:edit', extractProjectId.fromProjectId))
     .mutation(async ({ input }) => {
       return versionService.createVersion(input);
@@ -100,16 +94,7 @@ export const versionsRouter = router({
    * Update a version
    */
   update: protectedProcedure
-    .input(
-      z.object({
-        id: z.string().uuid(),
-        name: z.string().min(1).max(100).optional(),
-        description: z.string().max(500).optional().nullable(),
-        startDate: z.string().optional().nullable(),
-        releaseDate: z.string().optional().nullable(),
-        sortOrder: z.string().max(10).optional(),
-      }),
-    )
+    .input(updateVersionSchema)
     .use(requirePermission('project:edit'))
     .mutation(async ({ input }) => {
       const { id, ...data } = input;
@@ -120,12 +105,7 @@ export const versionsRouter = router({
    * Release a version
    */
   release: protectedProcedure
-    .input(
-      z.object({
-        id: z.string().uuid(),
-        releaseDate: z.string().optional(),
-      }),
-    )
+    .input(releaseVersionSchema)
     .use(requirePermission('project:edit'))
     .mutation(async ({ input }) => {
       return versionService.releaseVersion(input.id, input.releaseDate);
@@ -135,7 +115,7 @@ export const versionsRouter = router({
    * Unrelease a version
    */
   unrelease: protectedProcedure
-    .input(z.object({ id: z.string().uuid() }))
+    .input(versionIdSchema)
     .use(requirePermission('project:edit'))
     .mutation(async ({ input }) => {
       return versionService.unreleaseVersion(input.id);
@@ -145,7 +125,7 @@ export const versionsRouter = router({
    * Archive a version
    */
   archive: protectedProcedure
-    .input(z.object({ id: z.string().uuid() }))
+    .input(versionIdSchema)
     .use(requirePermission('project:edit'))
     .mutation(async ({ input }) => {
       return versionService.archiveVersion(input.id);
@@ -155,7 +135,7 @@ export const versionsRouter = router({
    * Unarchive a version
    */
   unarchive: protectedProcedure
-    .input(z.object({ id: z.string().uuid() }))
+    .input(versionIdSchema)
     .use(requirePermission('project:edit'))
     .mutation(async ({ input }) => {
       return versionService.unarchiveVersion(input.id);
@@ -165,7 +145,7 @@ export const versionsRouter = router({
    * Delete a version
    */
   delete: protectedProcedure
-    .input(z.object({ id: z.string().uuid() }))
+    .input(versionIdSchema)
     .use(requirePermission('project:edit'))
     .mutation(async ({ input }) => {
       await versionService.deleteVersion(input.id);
@@ -180,7 +160,7 @@ export const versionsRouter = router({
    * Get fix versions for an issue
    */
   getFixVersions: protectedProcedure
-    .input(z.object({ issueId: z.string().uuid() }))
+    .input(issueVersionIdSchema)
     .use(requirePermission('issue:view'))
     .query(async ({ input }) => {
       return versionService.getFixVersions(input.issueId);
@@ -190,12 +170,7 @@ export const versionsRouter = router({
    * Add fix version to issue
    */
   addFixVersion: protectedProcedure
-    .input(
-      z.object({
-        issueId: z.string().uuid(),
-        versionId: z.string().uuid(),
-      }),
-    )
+    .input(issueVersionSchema)
     .use(requirePermission('issue:edit'))
     .mutation(async ({ input }) => {
       await versionService.addFixVersion(input.issueId, input.versionId);
@@ -206,12 +181,7 @@ export const versionsRouter = router({
    * Remove fix version from issue
    */
   removeFixVersion: protectedProcedure
-    .input(
-      z.object({
-        issueId: z.string().uuid(),
-        versionId: z.string().uuid(),
-      }),
-    )
+    .input(issueVersionSchema)
     .use(requirePermission('issue:edit'))
     .mutation(async ({ input }) => {
       await versionService.removeFixVersion(input.issueId, input.versionId);
@@ -222,12 +192,7 @@ export const versionsRouter = router({
    * Set all fix versions for an issue
    */
   setFixVersions: protectedProcedure
-    .input(
-      z.object({
-        issueId: z.string().uuid(),
-        versionIds: z.array(z.string().uuid()),
-      }),
-    )
+    .input(setIssueVersionsSchema)
     .use(requirePermission('issue:edit'))
     .mutation(async ({ input }) => {
       await versionService.setFixVersions(input.issueId, input.versionIds);
@@ -242,7 +207,7 @@ export const versionsRouter = router({
    * Get affected versions for an issue
    */
   getAffectedVersions: protectedProcedure
-    .input(z.object({ issueId: z.string().uuid() }))
+    .input(issueVersionIdSchema)
     .use(requirePermission('issue:view'))
     .query(async ({ input }) => {
       return versionService.getAffectedVersions(input.issueId);
@@ -252,12 +217,7 @@ export const versionsRouter = router({
    * Add affected version to issue
    */
   addAffectedVersion: protectedProcedure
-    .input(
-      z.object({
-        issueId: z.string().uuid(),
-        versionId: z.string().uuid(),
-      }),
-    )
+    .input(issueVersionSchema)
     .use(requirePermission('issue:edit'))
     .mutation(async ({ input }) => {
       await versionService.addAffectedVersion(input.issueId, input.versionId);
@@ -268,12 +228,7 @@ export const versionsRouter = router({
    * Remove affected version from issue
    */
   removeAffectedVersion: protectedProcedure
-    .input(
-      z.object({
-        issueId: z.string().uuid(),
-        versionId: z.string().uuid(),
-      }),
-    )
+    .input(issueVersionSchema)
     .use(requirePermission('issue:edit'))
     .mutation(async ({ input }) => {
       await versionService.removeAffectedVersion(
@@ -287,12 +242,7 @@ export const versionsRouter = router({
    * Set all affected versions for an issue
    */
   setAffectedVersions: protectedProcedure
-    .input(
-      z.object({
-        issueId: z.string().uuid(),
-        versionIds: z.array(z.string().uuid()),
-      }),
-    )
+    .input(setIssueVersionsSchema)
     .use(requirePermission('issue:edit'))
     .mutation(async ({ input }) => {
       await versionService.setAffectedVersions(input.issueId, input.versionIds);

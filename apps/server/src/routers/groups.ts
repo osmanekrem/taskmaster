@@ -3,45 +3,19 @@ import { TRPCError } from '@trpc/server';
 import { router, protectedProcedure } from '@/lib/trpc';
 import { requirePermission } from '@/lib/middleware/permission';
 import groupService from '@/services/group-service';
-
-// ============================================================================
-// VALIDATION SCHEMAS
-// ============================================================================
-
-const createGroupSchema = z.object({
-  name: z
-    .string()
-    .min(2, 'Group name must be at least 2 characters')
-    .max(100, 'Group name must be at most 100 characters')
-    .regex(
-      /^[a-zA-Z0-9_-]+$/,
-      'Group name can only contain letters, numbers, hyphens, and underscores',
-    ),
-  displayName: z.string().min(1).max(200).optional(),
-  description: z.string().max(1000).optional(),
-});
-
-const updateGroupSchema = z.object({
-  name: z
-    .string()
-    .min(2, 'Group name must be at least 2 characters')
-    .max(100, 'Group name must be at most 100 characters')
-    .regex(
-      /^[a-zA-Z0-9_-]+$/,
-      'Group name can only contain letters, numbers, hyphens, and underscores',
-    )
-    .optional(),
-  displayName: z.string().min(1).max(200).optional(),
-  description: z.string().max(1000).optional(),
-  isActive: z.boolean().optional(),
-});
-
-const listGroupsSchema = z.object({
-  includeInactive: z.boolean().optional(),
-  search: z.string().optional(),
-  limit: z.number().int().min(1).max(100).optional(),
-  offset: z.number().int().min(0).optional(),
-});
+import {
+  createGroupSchema,
+  updateGroupSchema,
+  listGroupsSchema,
+  groupIdSchema,
+  groupNameParamSchema,
+  groupIdParamSchema,
+  addGroupMemberSchema,
+  addGroupMembersSchema,
+  removeGroupMemberSchema,
+  removeGroupMembersSchema,
+  setGroupMembersSchema,
+} from '@taskmaster/validation';
 
 // ============================================================================
 // ROUTER

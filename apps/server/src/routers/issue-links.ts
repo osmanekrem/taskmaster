@@ -9,6 +9,14 @@ import { IssueLinkRepository } from '../repositories/issue-link-repository';
 import { IssueRepository } from '../repositories/issue-repository';
 import { db } from '../db';
 import { requirePermission } from '../lib/middleware/permission';
+import {
+  linkTypeIdSchema,
+  createLinkTypeSchema,
+  updateLinkTypeSchema,
+  issueLinkIssueIdSchema,
+  createIssueLinkSchema,
+  issueLinkIdSchema,
+} from '@taskmaster/validation';
 
 // Initialize dependencies
 const issueLinkRepository = new IssueLinkRepository(db);
@@ -39,7 +47,7 @@ export const issueLinksRouter = router({
    * Get link type by ID
    */
   getLinkType: protectedProcedure
-    .input(z.object({ id: z.string().uuid() }))
+    .input(linkTypeIdSchema)
     .use(requirePermission('issue:view'))
     .query(async ({ input }) => {
       return issueLinkService.getLinkTypeById(input.id);
@@ -49,14 +57,7 @@ export const issueLinksRouter = router({
    * Create a new link type (admin only)
    */
   createLinkType: adminProcedure
-    .input(
-      z.object({
-        name: z.string().min(1).max(100),
-        inwardName: z.string().min(1).max(100),
-        outwardName: z.string().min(1).max(100),
-        description: z.string().max(500).optional(),
-      }),
-    )
+    .input(createLinkTypeSchema)
     .mutation(async ({ input }) => {
       return issueLinkService.createLinkType(input);
     }),
@@ -65,15 +66,7 @@ export const issueLinksRouter = router({
    * Update a link type (admin only)
    */
   updateLinkType: adminProcedure
-    .input(
-      z.object({
-        id: z.string().uuid(),
-        name: z.string().min(1).max(100).optional(),
-        inwardName: z.string().min(1).max(100).optional(),
-        outwardName: z.string().min(1).max(100).optional(),
-        description: z.string().max(500).optional(),
-      }),
-    )
+    .input(updateLinkTypeSchema)
     .mutation(async ({ input }) => {
       const { id, ...data } = input;
       return issueLinkService.updateLinkType(id, data);
@@ -83,7 +76,7 @@ export const issueLinksRouter = router({
    * Delete a link type (admin only)
    */
   deleteLinkType: adminProcedure
-    .input(z.object({ id: z.string().uuid() }))
+    .input(linkTypeIdSchema)
     .mutation(async ({ input }) => {
       await issueLinkService.deleteLinkType(input.id);
       return { success: true };
@@ -97,7 +90,7 @@ export const issueLinksRouter = router({
    * Get all links for an issue
    */
   getLinksForIssue: protectedProcedure
-    .input(z.object({ issueId: z.string().uuid() }))
+    .input(issueLinkIssueIdSchema)
     .use(requirePermission('issue:view'))
     .query(async ({ input }) => {
       return issueLinkService.getLinksForIssue(input.issueId);
@@ -107,13 +100,7 @@ export const issueLinksRouter = router({
    * Create a link between two issues
    */
   createLink: protectedProcedure
-    .input(
-      z.object({
-        sourceIssueId: z.string().uuid(),
-        targetIssueId: z.string().uuid(),
-        linkTypeId: z.string().uuid(),
-      }),
-    )
+    .input(createIssueLinkSchema)
     .use(requirePermission('issue:link'))
     .mutation(async ({ input, ctx }) => {
       return issueLinkService.createLink({
@@ -126,7 +113,7 @@ export const issueLinksRouter = router({
    * Delete a link
    */
   deleteLink: protectedProcedure
-    .input(z.object({ id: z.string().uuid() }))
+    .input(issueLinkIdSchema)
     .use(requirePermission('issue:link'))
     .mutation(async ({ input, ctx }) => {
       await issueLinkService.deleteLink(input.id, ctx.session!.user.id);
@@ -137,7 +124,7 @@ export const issueLinksRouter = router({
    * Get blocking issues for an issue
    */
   getBlockingIssues: protectedProcedure
-    .input(z.object({ issueId: z.string().uuid() }))
+    .input(issueLinkIssueIdSchema)
     .use(requirePermission('issue:view'))
     .query(async ({ input }) => {
       return issueLinkService.getBlockingIssues(input.issueId);
@@ -147,7 +134,7 @@ export const issueLinksRouter = router({
    * Get issues blocked by an issue
    */
   getBlockedByIssue: protectedProcedure
-    .input(z.object({ issueId: z.string().uuid() }))
+    .input(issueLinkIssueIdSchema)
     .use(requirePermission('issue:view'))
     .query(async ({ input }) => {
       return issueLinkService.getBlockedByIssue(input.issueId);
@@ -157,7 +144,7 @@ export const issueLinksRouter = router({
    * Check if issue is blocked
    */
   isBlocked: protectedProcedure
-    .input(z.object({ issueId: z.string().uuid() }))
+    .input(issueLinkIssueIdSchema)
     .use(requirePermission('issue:view'))
     .query(async ({ input }) => {
       const blocked = await issueLinkService.isBlocked(input.issueId);
