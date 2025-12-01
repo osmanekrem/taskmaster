@@ -3,9 +3,17 @@
 // Flexible tagging system for issues
 // =============================================================================
 
-import { pgTable, uuid, varchar, timestamp, index, unique } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  varchar,
+  text,
+  timestamp,
+  index,
+  unique,
+} from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { projects } from './projects';
+import { issues } from './issues';
 
 // =============================================================================
 // LABELS
@@ -15,34 +23,46 @@ import { projects } from './projects';
  * Labels for categorizing and filtering issues
  * Can be project-specific or global
  */
-export const labels = pgTable('labels', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  
-  // Project association (null = global label)
-  projectId: uuid('project_id').references(() => projects.id, { onDelete: 'cascade' }),
-  
-  // Label details
-  name: varchar('name', { length: 100 }).notNull(),
-  
-  // Color for display (hex code)
-  color: varchar('color', { length: 7 }).default('#6B7280').notNull(),
-  
-  // Description
-  description: varchar('description', { length: 255 }),
-  
-  // Timestamps
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-}, (table) => [
-  // Index for project queries
-  index('labels_project_id_idx').on(table.projectId),
-  
-  // Index for name searches
-  index('labels_name_idx').on(table.name),
-  
-  // Unique constraint: label name per project (or globally if projectId is null)
-  // Note: PostgreSQL unique constraints treat NULL values as distinct
-]);
+export const labels = pgTable(
+  'labels',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+
+    // Project association (null = global label)
+    projectId: text('project_id').references(() => projects.id, {
+      onDelete: 'cascade',
+    }),
+
+    // Label details
+    name: varchar('name', { length: 100 }).notNull(),
+
+    // Color for display (hex code)
+    color: varchar('color', { length: 7 }).default('#6B7280').notNull(),
+
+    // Description
+    description: varchar('description', { length: 255 }),
+
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    // Index for project queries
+    index('labels_project_id_idx').on(table.projectId),
+
+    // Index for name searches
+    index('labels_name_idx').on(table.name),
+
+    // Unique constraint: label name per project (or globally if projectId is null)
+    // Note: PostgreSQL unique constraints treat NULL values as distinct
+  ],
+);
 
 // =============================================================================
 // ISSUE LABELS (junction table)
@@ -51,22 +71,34 @@ export const labels = pgTable('labels', {
 /**
  * Many-to-many relationship between issues and labels
  */
-export const issueLabels = pgTable('issue_labels', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  
-  // Issue reference
-  issueId: uuid('issue_id').notNull(),
-  
-  // Label reference
-  labelId: uuid('label_id').notNull().references(() => labels.id, { onDelete: 'cascade' }),
-  
-  // Timestamps
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-}, (table) => [
-  index('issue_labels_issue_id_idx').on(table.issueId),
-  index('issue_labels_label_id_idx').on(table.labelId),
-  unique('issue_labels_unique').on(table.issueId, table.labelId),
-]);
+export const issueLabels = pgTable(
+  'issue_labels',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+
+    // Issue reference - with proper foreign key
+    issueId: text('issue_id')
+      .notNull()
+      .references(() => issues.id, { onDelete: 'cascade' }),
+
+    // Label reference
+    labelId: text('label_id')
+      .notNull()
+      .references(() => labels.id, { onDelete: 'cascade' }),
+
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index('issue_labels_issue_id_idx').on(table.issueId),
+    index('issue_labels_label_id_idx').on(table.labelId),
+    unique('issue_labels_unique').on(table.issueId, table.labelId),
+  ],
+);
 
 // =============================================================================
 // RELATIONS
@@ -84,6 +116,10 @@ export const issueLabelsRelations = relations(issueLabels, ({ one }) => ({
   label: one(labels, {
     fields: [issueLabels.labelId],
     references: [labels.id],
+  }),
+  issue: one(issues, {
+    fields: [issueLabels.issueId],
+    references: [issues.id],
   }),
 }));
 
@@ -120,16 +156,64 @@ export const LABEL_COLORS = {
 
 // Default labels that can be created for new projects
 export const DEFAULT_LABELS = [
-  { name: 'bug', color: LABEL_COLORS.RED, description: 'Something isn\'t working' },
-  { name: 'enhancement', color: LABEL_COLORS.BLUE, description: 'New feature or request' },
-  { name: 'documentation', color: LABEL_COLORS.PURPLE, description: 'Improvements or additions to documentation' },
-  { name: 'duplicate', color: LABEL_COLORS.GRAY, description: 'This issue already exists' },
-  { name: 'good first issue', color: LABEL_COLORS.GREEN, description: 'Good for newcomers' },
-  { name: 'help wanted', color: LABEL_COLORS.YELLOW, description: 'Extra attention is needed' },
-  { name: 'invalid', color: LABEL_COLORS.GRAY, description: 'This doesn\'t seem right' },
-  { name: 'question', color: LABEL_COLORS.CYAN, description: 'Further information is requested' },
-  { name: 'wontfix', color: LABEL_COLORS.GRAY, description: 'This will not be worked on' },
-  { name: 'priority: high', color: LABEL_COLORS.RED, description: 'High priority issue' },
-  { name: 'priority: medium', color: LABEL_COLORS.ORANGE, description: 'Medium priority issue' },
-  { name: 'priority: low', color: LABEL_COLORS.TEAL, description: 'Low priority issue' },
+  {
+    name: 'bug',
+    color: LABEL_COLORS.RED,
+    description: "Something isn't working",
+  },
+  {
+    name: 'enhancement',
+    color: LABEL_COLORS.BLUE,
+    description: 'New feature or request',
+  },
+  {
+    name: 'documentation',
+    color: LABEL_COLORS.PURPLE,
+    description: 'Improvements or additions to documentation',
+  },
+  {
+    name: 'duplicate',
+    color: LABEL_COLORS.GRAY,
+    description: 'This issue already exists',
+  },
+  {
+    name: 'good first issue',
+    color: LABEL_COLORS.GREEN,
+    description: 'Good for newcomers',
+  },
+  {
+    name: 'help wanted',
+    color: LABEL_COLORS.YELLOW,
+    description: 'Extra attention is needed',
+  },
+  {
+    name: 'invalid',
+    color: LABEL_COLORS.GRAY,
+    description: "This doesn't seem right",
+  },
+  {
+    name: 'question',
+    color: LABEL_COLORS.CYAN,
+    description: 'Further information is requested',
+  },
+  {
+    name: 'wontfix',
+    color: LABEL_COLORS.GRAY,
+    description: 'This will not be worked on',
+  },
+  {
+    name: 'priority: high',
+    color: LABEL_COLORS.RED,
+    description: 'High priority issue',
+  },
+  {
+    name: 'priority: medium',
+    color: LABEL_COLORS.ORANGE,
+    description: 'Medium priority issue',
+  },
+  {
+    name: 'priority: low',
+    color: LABEL_COLORS.TEAL,
+    description: 'Low priority issue',
+  },
 ] as const;

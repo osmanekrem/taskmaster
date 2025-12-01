@@ -12,13 +12,18 @@ import {
   bulkReorderIssuesSchema,
 } from '@taskmaster/validation';
 import { successResponse, paginatedResponse } from '@/utils/response';
-import { requirePermission, requireAnyPermission, extractProjectId } from '@/lib/middleware/permission';
+import {
+  requirePermission,
+  requireOwnershipPermission,
+  extractProjectId,
+  extractEntityId,
+} from '@/lib/middleware/permission';
 
 export const issuesRouter = router({
   // ==========================================================================
   // QUERY: Get Issues
   // ==========================================================================
-  
+
   getIssues: protectedProcedure
     .input(issueFiltersSchema)
     .use(requirePermission('issue:view', extractProjectId.fromProjectId))
@@ -67,7 +72,10 @@ export const issuesRouter = router({
     .input(createIssueSchema)
     .use(requirePermission('issue:create', extractProjectId.fromProjectId))
     .mutation(async ({ ctx, input }) => {
-      const issue = await ctx.services.issue.createIssue(input, ctx.session!.user.id);
+      const issue = await ctx.services.issue.createIssue(
+        input,
+        ctx.session!.user.id,
+      );
       return successResponse(issue, 'Issue created');
     }),
 
@@ -76,13 +84,26 @@ export const issuesRouter = router({
   // ==========================================================================
 
   updateIssue: protectedProcedure
-    .input(z.object({
-      id: z.string().uuid(),
-      data: updateIssueSchema,
-    }))
-    .use(requireAnyPermission(['issue:edit', 'issue:edit_own']))
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        data: updateIssueSchema,
+      }),
+    )
+    .use(
+      requireOwnershipPermission(
+        'issue:edit',
+        'issue:edit_own',
+        'issue',
+        extractEntityId.fromId,
+      ),
+    )
     .mutation(async ({ ctx, input }) => {
-      const issue = await ctx.services.issue.updateIssue(input.id, input.data, ctx.session!.user.id);
+      const issue = await ctx.services.issue.updateIssue(
+        input.id,
+        input.data,
+        ctx.session!.user.id,
+      );
       return successResponse(issue, 'Issue updated');
     }),
 
@@ -91,17 +112,26 @@ export const issuesRouter = router({
   // ==========================================================================
 
   updateFieldValues: protectedProcedure
-    .input(z.object({
-      issueId: z.string().uuid(),
-      ...updateFieldValuesSchema.shape,
-    }))
-    .use(requireAnyPermission(['issue:edit', 'issue:edit_own']))
+    .input(
+      z.object({
+        issueId: z.string().uuid(),
+        ...updateFieldValuesSchema.shape,
+      }),
+    )
+    .use(
+      requireOwnershipPermission(
+        'issue:edit',
+        'issue:edit_own',
+        'issue',
+        extractEntityId.fromIssueId,
+      ),
+    )
     .mutation(async ({ ctx, input }) => {
       const { issueId, fieldValues } = input;
       const issue = await ctx.services.issue.updateFieldValues(
         issueId,
         fieldValues,
-        ctx.session!.user.id
+        ctx.session!.user.id,
       );
       return successResponse(issue, 'Field values updated');
     }),
@@ -111,14 +141,20 @@ export const issuesRouter = router({
   // ==========================================================================
 
   transitionIssue: protectedProcedure
-    .input(z.object({
-      id: z.string().uuid(),
-      ...transitionIssueSchema.shape,
-    }))
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        ...transitionIssueSchema.shape,
+      }),
+    )
     .use(requirePermission('issue:transition'))
     .mutation(async ({ ctx, input }) => {
       const { id, ...transitionData } = input;
-      const issue = await ctx.services.issue.transitionIssue(id, transitionData, ctx.session!.user.id);
+      const issue = await ctx.services.issue.transitionIssue(
+        id,
+        transitionData,
+        ctx.session!.user.id,
+      );
       return successResponse(issue, 'Issue transitioned');
     }),
 
@@ -126,7 +162,9 @@ export const issuesRouter = router({
     .input(z.object({ issueId: z.string().uuid() }))
     .use(requirePermission('issue:view'))
     .query(async ({ ctx, input }) => {
-      const transitions = await ctx.services.issue.getAvailableTransitions(input.issueId);
+      const transitions = await ctx.services.issue.getAvailableTransitions(
+        input.issueId,
+      );
       return successResponse(transitions, 'Transitions retrieved');
     }),
 
@@ -136,7 +174,14 @@ export const issuesRouter = router({
 
   deleteIssue: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
-    .use(requireAnyPermission(['issue:delete', 'issue:delete_own']))
+    .use(
+      requireOwnershipPermission(
+        'issue:delete',
+        'issue:delete_own',
+        'issue',
+        extractEntityId.fromId,
+      ),
+    )
     .mutation(async ({ ctx, input }) => {
       await ctx.services.issue.deleteIssue(input.id);
       return successResponse(null, 'Issue deleted');
@@ -151,7 +196,11 @@ export const issuesRouter = router({
     .use(requirePermission('issue:view'))
     .query(async ({ ctx, input }) => {
       const { issueId, page, limit } = input;
-      const result = await ctx.services.issue.getIssueHistory(issueId, page, limit);
+      const result = await ctx.services.issue.getIssueHistory(
+        issueId,
+        page,
+        limit,
+      );
       return paginatedResponse(result.data, result.pagination);
     }),
 
@@ -171,7 +220,7 @@ export const issuesRouter = router({
         input.issueId,
         input.afterIssueId ?? null,
         input.beforeIssueId ?? null,
-        ctx.session!.user.id
+        ctx.session!.user.id,
       );
       return successResponse(result, 'Issue reordered');
     }),
@@ -187,7 +236,7 @@ export const issuesRouter = router({
       const result = await ctx.services.issue.bulkReorderIssues(
         input.projectId,
         input.issueIds,
-        ctx.session!.user.id
+        ctx.session!.user.id,
       );
       return successResponse(result, 'Issues reordered');
     }),
@@ -196,13 +245,18 @@ export const issuesRouter = router({
    * Get issues ordered by rank for backlog view
    */
   getBacklogIssues: protectedProcedure
-    .input(z.object({
-      projectId: z.string().uuid(),
-      limit: z.number().min(1).max(500).optional().default(100),
-    }))
+    .input(
+      z.object({
+        projectId: z.string().uuid(),
+        limit: z.number().min(1).max(500).optional().default(100),
+      }),
+    )
     .use(requirePermission('issue:view', extractProjectId.fromProjectId))
     .query(async ({ ctx, input }) => {
-      const issues = await ctx.services.issue.getBacklogIssues(input.projectId, input.limit);
+      const issues = await ctx.services.issue.getBacklogIssues(
+        input.projectId,
+        input.limit,
+      );
       return successResponse(issues, 'Backlog issues retrieved');
     }),
 });

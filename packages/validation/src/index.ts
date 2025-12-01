@@ -15,3 +15,4 @@ export * from './permissions';
 export * from './sprints';
 export * from './response';
 export * from './issue-associations';
+export * from './worklogs';

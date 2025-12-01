@@ -10,7 +10,11 @@ import {
   attachmentFiltersSchema,
 } from '@taskmaster/validation';
 import { successResponse, paginatedResponse } from '@/utils/response';
-import { requirePermission, requireAnyPermission } from '@/lib/middleware/permission';
+import {
+  requirePermission,
+  requireOwnershipPermission,
+  extractEntityId,
+} from '@/lib/middleware/permission';
 
 export const commentsRouter = router({
   // ==========================================================================
@@ -37,33 +41,58 @@ export const commentsRouter = router({
     .input(createCommentSchema)
     .use(requirePermission('comment:create'))
     .mutation(async ({ ctx, input }) => {
-      const comment = await ctx.services.comment.createComment(input, ctx.session!.user.id);
+      const comment = await ctx.services.comment.createComment(
+        input,
+        ctx.session!.user.id,
+      );
       return successResponse(comment, 'Comment created');
     }),
 
   updateComment: protectedProcedure
-    .input(z.object({
-      id: z.string().uuid(),
-      data: updateCommentSchema,
-    }))
-    .use(requireAnyPermission(['comment:edit', 'comment:edit_own']))
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        data: updateCommentSchema,
+      }),
+    )
+    .use(
+      requireOwnershipPermission(
+        'comment:edit',
+        'comment:edit_own',
+        'comment',
+        extractEntityId.fromId,
+      ),
+    )
     .mutation(async ({ ctx, input }) => {
       const comment = await ctx.services.comment.updateComment(
         input.id,
         input.data,
-        ctx.session!.user.id
+        ctx.session!.user.id,
       );
       return successResponse(comment, 'Comment updated');
     }),
 
   deleteComment: protectedProcedure
-    .input(z.object({
-      id: z.string().uuid(),
-      hardDelete: z.boolean().optional().default(false),
-    }))
-    .use(requireAnyPermission(['comment:delete', 'comment:delete_own']))
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        hardDelete: z.boolean().optional().default(false),
+      }),
+    )
+    .use(
+      requireOwnershipPermission(
+        'comment:delete',
+        'comment:delete_own',
+        'comment',
+        extractEntityId.fromId,
+      ),
+    )
     .mutation(async ({ ctx, input }) => {
-      await ctx.services.comment.deleteComment(input.id, ctx.session!.user.id, input.hardDelete);
+      await ctx.services.comment.deleteComment(
+        input.id,
+        ctx.session!.user.id,
+        input.hardDelete,
+      );
       return successResponse(null, 'Comment deleted');
     }),
 
@@ -78,7 +107,7 @@ export const commentsRouter = router({
       const reaction = await ctx.services.comment.addReaction(
         input.commentId,
         ctx.session!.user.id,
-        input.emoji
+        input.emoji,
       );
       return successResponse(reaction, 'Reaction added');
     }),
@@ -90,7 +119,7 @@ export const commentsRouter = router({
       await ctx.services.comment.removeReaction(
         input.commentId,
         ctx.session!.user.id,
-        input.emoji
+        input.emoji,
       );
       return successResponse(null, 'Reaction removed');
     }),
@@ -99,7 +128,9 @@ export const commentsRouter = router({
     .input(z.object({ commentId: z.string().uuid() }))
     .use(requirePermission('issue:view'))
     .query(async ({ ctx, input }) => {
-      const counts = await ctx.services.comment.getReactionCounts(input.commentId);
+      const counts = await ctx.services.comment.getReactionCounts(
+        input.commentId,
+      );
       return successResponse(counts, 'Reaction counts retrieved');
     }),
 
@@ -127,15 +158,28 @@ export const commentsRouter = router({
     .input(createAttachmentSchema)
     .use(requirePermission('attachment:create'))
     .mutation(async ({ ctx, input }) => {
-      const attachment = await ctx.services.comment.createAttachment(input, ctx.session!.user.id);
+      const attachment = await ctx.services.comment.createAttachment(
+        input,
+        ctx.session!.user.id,
+      );
       return successResponse(attachment, 'Attachment created');
     }),
 
   deleteAttachment: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
-    .use(requireAnyPermission(['attachment:delete', 'attachment:delete_own']))
+    .use(
+      requireOwnershipPermission(
+        'attachment:delete',
+        'attachment:delete_own',
+        'attachment',
+        extractEntityId.fromId,
+      ),
+    )
     .mutation(async ({ ctx, input }) => {
-      await ctx.services.comment.deleteAttachment(input.id, ctx.session!.user.id);
+      await ctx.services.comment.deleteAttachment(
+        input.id,
+        ctx.session!.user.id,
+      );
       return successResponse(null, 'Attachment deleted');
     }),
 });

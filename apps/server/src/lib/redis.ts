@@ -16,7 +16,7 @@ export function getRedisOptions(): RedisOptions {
       maxRetriesPerRequest: null, // Required for BullMQ
     };
   }
-  
+
   return {
     host: env.REDIS_HOST,
     port: env.REDIS_PORT,
@@ -48,20 +48,20 @@ let sharedConnection: Redis | null = null;
 export function getRedisConnection(): Redis {
   if (!sharedConnection) {
     sharedConnection = createRedisConnection();
-    
+
     sharedConnection.on('error', (err) => {
       console.error('[Redis] Connection error:', err.message);
     });
-    
+
     sharedConnection.on('connect', () => {
       console.log('[Redis] Connected successfully');
     });
-    
+
     sharedConnection.on('ready', () => {
       console.log('[Redis] Ready to accept commands');
     });
   }
-  
+
   return sharedConnection;
 }
 
@@ -85,6 +85,20 @@ export async function isRedisAvailable(): Promise<boolean> {
     await redis.ping();
     return true;
   } catch {
+    return false;
+  }
+}
+
+/**
+ * Check Redis health - used for readiness probe
+ */
+export async function checkRedisHealth(): Promise<boolean> {
+  try {
+    const redis = getRedisConnection();
+    const result = await redis.ping();
+    return result === 'PONG';
+  } catch (error) {
+    console.error('[Redis] Health check failed:', error);
     return false;
   }
 }

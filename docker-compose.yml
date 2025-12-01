@@ -13,12 +13,17 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-taskmaster_secret}
       POSTGRES_DB: ${POSTGRES_DB:-taskmaster}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - '${POSTGRES_PORT:-5432}:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-taskmaster} -d ${POSTGRES_DB:-taskmaster}"]
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${POSTGRES_USER:-taskmaster} -d
+          ${POSTGRES_DB:-taskmaster}',
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -33,20 +38,56 @@ services:
     container_name: taskmaster-redis
     restart: unless-stopped
     command: >
-      redis-server
-      --appendonly yes
-      --maxmemory 256mb
-      --maxmemory-policy allkeys-lru
-      ${REDIS_PASSWORD:+--requirepass ${REDIS_PASSWORD}}
+      redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy
+      allkeys-lru ${REDIS_PASSWORD:+--requirepass ${REDIS_PASSWORD}}
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - '${REDIS_PORT:-6379}:6379'
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - taskmaster-network
+
+  # =============================================================================
+  # MinIO (S3-compatible object storage for attachments)
+  # =============================================================================
+  minio:
+    image: minio/minio:latest
+    container_name: taskmaster-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    ports:
+      - '${MINIO_PORT:-9000}:9000'
+      - '${MINIO_CONSOLE_PORT:-9001}:9001'
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ['CMD', 'mc', 'ready', 'local']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - taskmaster-network
+
+  # MinIO bucket initialization
+  minio-init:
+    image: minio/mc:latest
+    container_name: taskmaster-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c " mc alias set myminio http://minio:9000
+      ${MINIO_ACCESS_KEY:-minioadmin} ${MINIO_SECRET_KEY:-minioadmin}; mc mb
+      myminio/${MINIO_BUCKET:-taskmaster} --ignore-existing; mc anonymous set
+      download myminio/${MINIO_BUCKET:-taskmaster}/public; exit 0; "
     networks:
       - taskmaster-network
 
@@ -71,12 +112,18 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD:-}
       REDIS_DB: 0
+      STORAGE_PROVIDER: minio
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      MINIO_BUCKET: ${MINIO_BUCKET:-taskmaster}
+      MINIO_USE_SSL: 'false'
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
       BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3001}
       RESEND_API_KEY: ${RESEND_API_KEY}
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
     ports:
-      - "${SERVER_PORT:-3001}:3001"
+      - '${SERVER_PORT:-3001}:3001'
     volumes:
       # Development: mount source for hot reload
       - ./apps/server/src:/app/apps/server/src:ro
@@ -100,7 +147,7 @@ services:
     environment:
       VITE_API_URL: ${VITE_API_URL:-http://localhost:3001}
     ports:
-      - "${WEB_PORT:-5173}:5173"
+      - '${WEB_PORT:-5173}:5173'
     volumes:
       - ./apps/web/src:/app/apps/web/src:ro
     networks:
@@ -120,7 +167,7 @@ services:
     environment:
       REDIS_HOSTS: local:redis:6379${REDIS_PASSWORD:+:${REDIS_PASSWORD}}
     ports:
-      - "${REDIS_COMMANDER_PORT:-8081}:8081"
+      - '${REDIS_COMMANDER_PORT:-8081}:8081'
     networks:
       - taskmaster-network
     profiles:
@@ -138,9 +185,9 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@taskmaster.local}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
-      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
     ports:
-      - "${PGADMIN_PORT:-8082}:80"
+      - '${PGADMIN_PORT:-8082}:80'
     volumes:
       - pgadmin_data:/var/lib/pgadmin
     networks:
@@ -162,6 +209,8 @@ volumes:
   postgres_data:
     driver: local
   redis_data:
+    driver: local
+  minio_data:
     driver: local
   pgadmin_data:
     driver: local

@@ -4,11 +4,11 @@
 
 import { IssueLinkRepository } from '../repositories/issue-link-repository';
 import { IssueRepository } from '../repositories/issue-repository';
-import { 
-  type IssueLink, 
+import {
+  type IssueLink,
   type NewIssueLink,
   type IssueLinkType,
-  type NewIssueLinkType 
+  type NewIssueLinkType,
 } from '../db/schema';
 import { TRPCError } from '@trpc/server';
 
@@ -28,7 +28,7 @@ export interface LinkWithDetails {
 export class IssueLinkService {
   constructor(
     private issueLinkRepository: IssueLinkRepository,
-    private issueRepository: IssueRepository
+    private issueRepository: IssueRepository,
   ) {}
 
   // ===========================================================================
@@ -57,7 +57,9 @@ export class IssueLinkService {
     description?: string;
   }): Promise<IssueLinkType> {
     // Check for duplicate name
-    const existing = await this.issueLinkRepository.findLinkTypeByName(data.name);
+    const existing = await this.issueLinkRepository.findLinkTypeByName(
+      data.name,
+    );
     if (existing) {
       throw new TRPCError({
         code: 'CONFLICT',
@@ -67,18 +69,26 @@ export class IssueLinkService {
 
     return this.issueLinkRepository.createLinkType({
       ...data,
-      isSystem: 'false',
+      isSystem: false,
     });
   }
 
   async updateLinkType(
-    id: string, 
-    data: Partial<Pick<NewIssueLinkType, 'name' | 'inwardName' | 'outwardName' | 'description'>>
+    id: string,
+    data: Partial<
+      Pick<
+        NewIssueLinkType,
+        'name' | 'inwardName' | 'outwardName' | 'description'
+      >
+    >,
   ): Promise<IssueLinkType> {
     const linkType = await this.getLinkTypeById(id);
-    
+
     // System link types can only have description updated
-    if (linkType.isSystem === 'true' && (data.name || data.inwardName || data.outwardName)) {
+    if (
+      linkType.isSystem === true &&
+      (data.name || data.inwardName || data.outwardName)
+    ) {
       throw new TRPCError({
         code: 'FORBIDDEN',
         message: 'Cannot modify name or direction names of system link type',
@@ -87,7 +97,9 @@ export class IssueLinkService {
 
     // Check for duplicate name
     if (data.name && data.name !== linkType.name) {
-      const existing = await this.issueLinkRepository.findLinkTypeByName(data.name);
+      const existing = await this.issueLinkRepository.findLinkTypeByName(
+        data.name,
+      );
       if (existing) {
         throw new TRPCError({
           code: 'CONFLICT',
@@ -109,8 +121,8 @@ export class IssueLinkService {
 
   async deleteLinkType(id: string): Promise<void> {
     const linkType = await this.getLinkTypeById(id);
-    
-    if (linkType.isSystem === 'true') {
+
+    if (linkType.isSystem === true) {
       throw new TRPCError({
         code: 'FORBIDDEN',
         message: 'Cannot delete system link type',
@@ -134,13 +146,16 @@ export class IssueLinkService {
    * Get all links for an issue with details
    */
   async getLinksForIssue(issueId: string): Promise<LinkWithDetails[]> {
-    const { outwardLinks, inwardLinks } = await this.issueLinkRepository.findLinksByIssueId(issueId);
-    
+    const { outwardLinks, inwardLinks } =
+      await this.issueLinkRepository.findLinksByIssueId(issueId);
+
     const result: LinkWithDetails[] = [];
 
     // Process outward links
     for (const link of outwardLinks) {
-      const linkedIssue = await this.issueRepository.findById(link.targetIssueId);
+      const linkedIssue = await this.issueRepository.findById(
+        link.targetIssueId,
+      );
       if (linkedIssue) {
         result.push({
           id: link.id,
@@ -159,7 +174,9 @@ export class IssueLinkService {
 
     // Process inward links
     for (const link of inwardLinks) {
-      const linkedIssue = await this.issueRepository.findById(link.sourceIssueId);
+      const linkedIssue = await this.issueRepository.findById(
+        link.sourceIssueId,
+      );
       if (linkedIssue) {
         result.push({
           id: link.id,
@@ -220,9 +237,9 @@ export class IssueLinkService {
     const existing = await this.issueLinkRepository.findExistingLink(
       data.sourceIssueId,
       data.targetIssueId,
-      data.linkTypeId
+      data.linkTypeId,
     );
-    
+
     if (existing) {
       throw new TRPCError({
         code: 'CONFLICT',
@@ -234,9 +251,9 @@ export class IssueLinkService {
     const reverseExisting = await this.issueLinkRepository.findExistingLink(
       data.targetIssueId,
       data.sourceIssueId,
-      data.linkTypeId
+      data.linkTypeId,
     );
-    
+
     if (reverseExisting) {
       throw new TRPCError({
         code: 'CONFLICT',
@@ -244,7 +261,30 @@ export class IssueLinkService {
       });
     }
 
-    return this.issueLinkRepository.createLink(data);
+    const link = await this.issueLinkRepository.createLink(data);
+
+    // Get link type for history
+    const linkType = await this.getLinkTypeById(data.linkTypeId);
+
+    // Add history to source issue (outward direction)
+    await this.issueRepository.addHistory(data.sourceIssueId, data.createdBy, [
+      {
+        field: 'link',
+        oldValue: null,
+        newValue: `${linkType.outwardName} ${targetIssue.key}`,
+      },
+    ]);
+
+    // Add history to target issue (inward direction)
+    await this.issueRepository.addHistory(data.targetIssueId, data.createdBy, [
+      {
+        field: 'link',
+        oldValue: null,
+        newValue: `${linkType.inwardName} ${sourceIssue.key}`,
+      },
+    ]);
+
+    return link;
   }
 
   /**
@@ -259,6 +299,11 @@ export class IssueLinkService {
       });
     }
 
+    // Get link type and issues for history
+    const linkType = await this.getLinkTypeById(link.linkTypeId);
+    const sourceIssue = await this.issueRepository.findById(link.sourceIssueId);
+    const targetIssue = await this.issueRepository.findById(link.targetIssueId);
+
     // TODO: Check permissions (project member, admin, or creator)
 
     const deleted = await this.issueLinkRepository.deleteLink(id);
@@ -268,18 +313,42 @@ export class IssueLinkService {
         message: 'Failed to delete link',
       });
     }
+
+    // Add history to source issue (link removed)
+    if (sourceIssue && targetIssue) {
+      await this.issueRepository.addHistory(link.sourceIssueId, userId, [
+        {
+          field: 'link',
+          oldValue: `${linkType.outwardName} ${targetIssue.key}`,
+          newValue: null,
+        },
+      ]);
+
+      // Add history to target issue (link removed)
+      await this.issueRepository.addHistory(link.targetIssueId, userId, [
+        {
+          field: 'link',
+          oldValue: `${linkType.inwardName} ${sourceIssue.key}`,
+          newValue: null,
+        },
+      ]);
+    }
   }
 
   /**
    * Get blocking issues for an issue
    */
-  async getBlockingIssues(issueId: string): Promise<{
-    id: string;
-    key: string;
-    statusId: string;
-  }[]> {
-    const blockingLinks = await this.issueLinkRepository.findBlockingIssues(issueId);
-    
+  async getBlockingIssues(issueId: string): Promise<
+    {
+      id: string;
+      key: string;
+      statusId: string;
+    }[]
+  > {
+    const blockingLinks = await this.issueLinkRepository.findBlockingIssues(
+      issueId,
+    );
+
     const result = [];
     for (const link of blockingLinks) {
       const issue = await this.issueRepository.findById(link.sourceIssueId);
@@ -291,20 +360,24 @@ export class IssueLinkService {
         });
       }
     }
-    
+
     return result;
   }
 
   /**
    * Get issues blocked by this issue
    */
-  async getBlockedByIssue(issueId: string): Promise<{
-    id: string;
-    key: string;
-    statusId: string;
-  }[]> {
-    const blockedLinks = await this.issueLinkRepository.findBlockedIssues(issueId);
-    
+  async getBlockedByIssue(issueId: string): Promise<
+    {
+      id: string;
+      key: string;
+      statusId: string;
+    }[]
+  > {
+    const blockedLinks = await this.issueLinkRepository.findBlockedIssues(
+      issueId,
+    );
+
     const result = [];
     for (const link of blockedLinks) {
       const issue = await this.issueRepository.findById(link.targetIssueId);
@@ -316,7 +389,7 @@ export class IssueLinkService {
         });
       }
     }
-    
+
     return result;
   }
 
@@ -324,14 +397,18 @@ export class IssueLinkService {
    * Check if issue has any blocking issues
    */
   async isBlocked(issueId: string): Promise<boolean> {
-    const blockingIssues = await this.issueLinkRepository.findBlockingIssues(issueId);
+    const blockingIssues = await this.issueLinkRepository.findBlockingIssues(
+      issueId,
+    );
     return blockingIssues.length > 0;
   }
 
   /**
    * Get link statistics
    */
-  async getLinkStats(): Promise<Array<{ linkTypeId: string; linkTypeName: string; count: number }>> {
+  async getLinkStats(): Promise<
+    Array<{ linkTypeId: string; linkTypeName: string; count: number }>
+  > {
     return this.issueLinkRepository.countLinksByType();
   }
 }

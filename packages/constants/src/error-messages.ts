@@ -16,28 +16,28 @@ export const ErrorMessages = {
   STATUS_NAME_EXISTS: 'Bu isimde bir status zaten mevcut',
   CANNOT_MODIFY_SYSTEM_STATUS: 'Sistem statusleri değiştirilemez',
   CANNOT_DELETE_SYSTEM_STATUS: 'Sistem statusleri silinemez',
-  STATUS_IN_USE: 'Status issue\'lar tarafından kullanılıyor, silinemez',
-  STATUS_IN_WORKFLOW: 'Status workflow\'larda kullanılıyor, silinemez',
+  STATUS_IN_USE: "Status issue'lar tarafından kullanılıyor, silinemez",
+  STATUS_IN_WORKFLOW: "Status workflow'larda kullanılıyor, silinemez",
 
   // Resolution errors
   RESOLUTION_NOT_FOUND: 'Resolution bulunamadı',
   RESOLUTION_NAME_EXISTS: 'Bu isimde bir resolution zaten mevcut',
-  CANNOT_MODIFY_SYSTEM_RESOLUTION: 'Sistem resolution\'ları değiştirilemez',
-  CANNOT_DELETE_SYSTEM_RESOLUTION: 'Sistem resolution\'ları silinemez',
+  CANNOT_MODIFY_SYSTEM_RESOLUTION: "Sistem resolution'ları değiştirilemez",
+  CANNOT_DELETE_SYSTEM_RESOLUTION: "Sistem resolution'ları silinemez",
   CANNOT_DELETE_DEFAULT_RESOLUTION: 'Varsayılan resolution silinemez',
-  RESOLUTION_IN_USE: 'Resolution issue\'lar tarafından kullanılıyor, silinemez',
+  RESOLUTION_IN_USE: "Resolution issue'lar tarafından kullanılıyor, silinemez",
 
   // Workflow errors
   WORKFLOW_NOT_FOUND: 'Workflow bulunamadı',
   WORKFLOW_NAME_EXISTS: 'Bu isimde bir workflow zaten mevcut',
   CANNOT_DELETE_DEFAULT_WORKFLOW: 'Varsayılan workflow silinemez',
   WORKFLOW_IN_USE: 'Workflow kullanımda, silinemez',
-  
+
   // Workflow status errors
   WORKFLOW_STATUS_NOT_FOUND: 'Workflow status bulunamadı',
-  STATUS_ALREADY_IN_WORKFLOW: 'Bu status zaten workflow\'da mevcut',
-  STATUS_NOT_IN_WORKFLOW: 'Bu status workflow\'da mevcut değil',
-  CANNOT_REMOVE_ONLY_STATUS: 'Workflow\'daki tek status silinemez',
+  STATUS_ALREADY_IN_WORKFLOW: "Bu status zaten workflow'da mevcut",
+  STATUS_NOT_IN_WORKFLOW: "Bu status workflow'da mevcut değil",
+  CANNOT_REMOVE_ONLY_STATUS: "Workflow'daki tek status silinemez",
 
   // Transition errors
   TRANSITION_NOT_FOUND: 'Transition bulunamadı',
@@ -50,13 +50,16 @@ export const ErrorMessages = {
   PROJECT_NOT_FOUND: 'Proje bulunamadı',
   PROJECT_KEY_EXISTS: 'Bu proje anahtarı zaten kullanılıyor',
   PROJECT_NAME_EXISTS: 'Bu isimde bir proje zaten mevcut',
-  CANNOT_DELETE_ARCHIVED_PROJECT: 'Arşivlenmiş proje silinemez, önce arşivden çıkarın',
-  PROJECT_HAS_ISSUES: 'Bu projede issue\'lar var, önce issue\'ları silin veya taşıyın',
-  
+  CANNOT_DELETE_ARCHIVED_PROJECT:
+    'Arşivlenmiş proje silinemez, önce arşivden çıkarın',
+  PROJECT_HAS_ISSUES:
+    "Bu projede issue'lar var, önce issue'ları silin veya taşıyın",
+
   // Project issue type errors
   PROJECT_ISSUE_TYPE_NOT_FOUND: 'Bu issue type projede bulunamadı',
   ISSUE_TYPE_ALREADY_IN_PROJECT: 'Bu issue type zaten projede mevcut',
-  CANNOT_REMOVE_ISSUE_TYPE_WITH_ISSUES: 'Bu issue type\'da issue\'lar var, önce issue\'ları silin veya taşıyın',
+  CANNOT_REMOVE_ISSUE_TYPE_WITH_ISSUES:
+    "Bu issue type'da issue'lar var, önce issue'ları silin veya taşıyın",
 
   // Issue errors
   ISSUE_NOT_FOUND: 'Issue bulunamadı',
@@ -68,7 +71,7 @@ export const ErrorMessages = {
   PARENT_ISSUE_NOT_FOUND: 'Üst issue bulunamadı',
   EPIC_NOT_FOUND: 'Epic bulunamadı',
   INVALID_PARENT_HIERARCHY: 'Geçersiz üst issue ilişkisi',
-  INVALID_EPIC_HIERARCHY: 'Sadece epic türündeki issue\'lara bağlanabilir',
+  INVALID_EPIC_HIERARCHY: "Sadece epic türündeki issue'lara bağlanabilir",
   CIRCULAR_HIERARCHY: 'Döngüsel bağımlılık tespit edildi',
   CANNOT_MOVE_ISSUE_WITH_SUBTASKS: 'Alt görevleri olan issue taşınamaz',
   FIELD_VALUE_REQUIRED: 'Bu alan zorunludur',
@@ -94,10 +97,10 @@ export const ErrorMessages = {
   // Sprint errors
   SPRINT_NOT_FOUND: 'Sprint bulunamadı',
   SPRINT_ALREADY_ACTIVE: 'Bu projede zaten aktif bir sprint var',
-  CANNOT_START_SPRINT: 'Sadece planlanan sprint\'ler başlatılabilir',
-  CANNOT_COMPLETE_SPRINT: 'Sadece aktif sprint\'ler tamamlanabilir',
+  CANNOT_START_SPRINT: "Sadece planlanan sprint'ler başlatılabilir",
+  CANNOT_COMPLETE_SPRINT: "Sadece aktif sprint'ler tamamlanabilir",
   CANNOT_DELETE_ACTIVE_SPRINT: 'Aktif sprint silinemez',
-  ISSUE_ALREADY_IN_SPRINT: 'Bu issue zaten bir sprint\'te',
+  ISSUE_ALREADY_IN_SPRINT: "Bu issue zaten bir sprint'te",
 
   NOT_FOUND: 'Kayıt bulunamadı',
   VALIDATION_ERROR: 'Geçersiz veri',
@@ -105,10 +108,19 @@ export const ErrorMessages = {
   UNAUTHORIZED: 'Yetkilendirme gerekli',
   FORBIDDEN: 'Bu işlem için yetki gerekli',
   PERMISSION_DENIED: 'Bu işlem için yetkiniz yok',
-  
+
   // Issue type errors
   ISSUE_TYPE_NOT_FOUND: 'Issue type bulunamadı',
   ISSUE_TYPE_IN_USE: 'Issue type kullanımda, silinemez',
+
+  // Board errors
+  BOARD_NOT_FOUND: 'Board bulunamadı',
+  BOARD_COLUMN_NOT_FOUND: 'Board kolonu bulunamadı',
+  BOARD_SWIMLANE_NOT_FOUND: 'Swimlane bulunamadı',
+  BOARD_QUICK_FILTER_NOT_FOUND: 'Hızlı filtre bulunamadı',
+  BOARD_CARD_LAYOUT_NOT_FOUND: 'Kart düzeni bulunamadı',
+  CANNOT_DELETE_DEFAULT_BOARD: 'Varsayılan board silinemez',
+  WIP_LIMIT_EXCEEDED: 'WIP limiti aşıldı',
 } as const;
 
 export type ErrorMessageKey = keyof typeof ErrorMessages;
@@ -123,7 +135,7 @@ export const ERROR_MESSAGES = {
   SERVER_ERROR: 'Sunucu hatası. Lütfen daha sonra tekrar deneyin.',
   VALIDATION: 'Girdiğiniz bilgileri kontrol edin.',
   TIMEOUT: 'İstek zaman aşımına uğradı. Lütfen tekrar deneyin.',
-  
+
   // Sprint errors
   SPRINT_NOT_FOUND: 'Sprint bulunamadı',
 } as const;
@@ -137,4 +149,3 @@ export const getErrorMessage = (error: unknown): string => {
   }
   return ERROR_MESSAGES.GENERIC;
 };
-

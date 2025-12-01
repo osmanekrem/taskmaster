@@ -78,8 +78,7 @@ export {
   executePostFunctions,
   registerPostFunctionHandler,
   getPostFunctionHandler,
-  resetPendingChanges,
-  getPendingChanges,
+  createEmptyChanges,
   type PostFunctionHandler,
   type PostFunctionChanges,
 } from './post-functions';

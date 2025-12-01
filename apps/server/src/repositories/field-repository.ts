@@ -10,27 +10,33 @@ import type {
   UpdateIssueTypeFieldSchema,
 } from '@taskmaster/validation';
 
-export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
+// =============================================================================
+// CLASS-BASED REPOSITORY (for DI)
+// =============================================================================
+
+export class FieldRepository {
+  constructor(private drizzle: DrizzleClientOrTransaction = db) {}
+
   // ==================== FIELDS ====================
-  
-  findMany: () => 
-    drizzle
-      .select()
-      .from(fields)
-      .orderBy(asc(fields.name)),
 
-  findById: (id: string) =>
-    drizzle.query.fields.findFirst({ 
-      where: eq(fields.id, id) 
-    }),
+  findMany() {
+    return this.drizzle.select().from(fields).orderBy(asc(fields.name));
+  }
 
-  findByIds: (ids: string[]) =>
-    drizzle.query.fields.findMany({
+  findById(id: string) {
+    return this.drizzle.query.fields.findFirst({
+      where: eq(fields.id, id),
+    });
+  }
+
+  findByIds(ids: string[]) {
+    return this.drizzle.query.fields.findMany({
       where: (fields, { inArray }) => inArray(fields.id, ids),
-    }),
+    });
+  }
 
-  create: async (input: CreateFieldSchema) => {
-    const [result] = await drizzle
+  async create(input: CreateFieldSchema) {
+    const [result] = await this.drizzle
       .insert(fields)
       .values({
         name: input.name,
@@ -42,54 +48,56 @@ export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
       })
       .returning();
     return result;
-  },
+  }
 
-  update: async (input: EditFieldSchema) => {
+  async update(input: EditFieldSchema) {
     const updateData: Record<string, unknown> = {
       updatedAt: new Date(),
     };
-    
+
     if (input.name !== undefined) updateData.name = input.name;
     if (input.icon !== undefined) updateData.icon = input.icon;
     if (input.config !== undefined) updateData.config = input.config;
     if (input.options !== undefined) updateData.options = input.options;
 
-    const [result] = await drizzle
+    const [result] = await this.drizzle
       .update(fields)
       .set(updateData)
       .where(eq(fields.id, input.fieldId))
       .returning();
     return result;
-  },
+  }
 
-  delete: async (id: string) => {
-    const [result] = await drizzle
+  async delete(id: string) {
+    const [result] = await this.drizzle
       .delete(fields)
       .where(eq(fields.id, id))
       .returning();
     return result;
-  },
+  }
 
   // ==================== ISSUE TYPE FIELDS ====================
 
-  findIssueTypeFieldsByIssueTypeId: (issueTypeId: string) =>
-    drizzle
+  findIssueTypeFieldsByIssueTypeId(issueTypeId: string) {
+    return this.drizzle
       .select()
       .from(issueTypeFields)
       .where(eq(issueTypeFields.issueTypeId, issueTypeId))
-      .orderBy(asc(issueTypeFields.order)),
+      .orderBy(asc(issueTypeFields.order));
+  }
 
-  findIssueTypeFieldsWithFieldByIssueTypeId: (issueTypeId: string) =>
-    drizzle.query.issueTypeFields.findMany({
+  findIssueTypeFieldsWithFieldByIssueTypeId(issueTypeId: string) {
+    return this.drizzle.query.issueTypeFields.findMany({
       where: eq(issueTypeFields.issueTypeId, issueTypeId),
       orderBy: [asc(issueTypeFields.order)],
       with: {
         field: true,
       },
-    }),
+    });
+  }
 
-  findIssueTypeField: (issueTypeId: string, fieldId: string) =>
-    drizzle.query.issueTypeFields.findFirst({
+  findIssueTypeField(issueTypeId: string, fieldId: string) {
+    return this.drizzle.query.issueTypeFields.findFirst({
       where: and(
         eq(issueTypeFields.issueTypeId, issueTypeId),
         eq(issueTypeFields.fieldId, fieldId),
@@ -97,13 +105,13 @@ export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
       with: {
         field: true,
       },
-    }),
+    });
+  }
 
-  addFieldToIssueType: async (
-    input: AddFieldToIssueTypeRequestSchema
-  ) => {
-    const { issueTypeId, fieldId, order, configOverride, optionsOverride } = input;
-    const [result] = await drizzle
+  async addFieldToIssueType(input: AddFieldToIssueTypeRequestSchema) {
+    const { issueTypeId, fieldId, order, configOverride, optionsOverride } =
+      input;
+    const [result] = await this.drizzle
       .insert(issueTypeFields)
       .values({
         issueTypeId,
@@ -114,22 +122,24 @@ export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
       })
       .returning();
     return result;
-  },
+  }
 
-  updateIssueTypeField: async (
-    issueTypeId: string, 
-    fieldId: string, 
-    input: UpdateIssueTypeFieldSchema
-  ) => {
+  async updateIssueTypeField(
+    issueTypeId: string,
+    fieldId: string,
+    input: UpdateIssueTypeFieldSchema,
+  ) {
     const updateData: Record<string, unknown> = {};
-    
+
     if (input.order !== undefined) updateData.order = input.order;
-    if (input.configOverride !== undefined) updateData.configOverride = input.configOverride;
-    if (input.optionsOverride !== undefined) updateData.optionsOverride = input.optionsOverride;
+    if (input.configOverride !== undefined)
+      updateData.configOverride = input.configOverride;
+    if (input.optionsOverride !== undefined)
+      updateData.optionsOverride = input.optionsOverride;
 
     if (Object.keys(updateData).length === 0) return null;
 
-    const [result] = await drizzle
+    const [result] = await this.drizzle
       .update(issueTypeFields)
       .set(updateData)
       .where(
@@ -140,10 +150,10 @@ export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
       )
       .returning();
     return result;
-  },
+  }
 
-  removeFieldFromIssueType: async (issueTypeId: string, fieldId: string) => {
-    const [result] = await drizzle
+  async removeFieldFromIssueType(issueTypeId: string, fieldId: string) {
+    const [result] = await this.drizzle
       .delete(issueTypeFields)
       .where(
         and(
@@ -153,21 +163,55 @@ export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => ({
       )
       .returning();
     return result;
-  },
+  }
 
-  removeAllFieldsFromIssueType: async (issueTypeId: string) => {
-    return drizzle
+  async removeAllFieldsFromIssueType(issueTypeId: string) {
+    return this.drizzle
       .delete(issueTypeFields)
       .where(eq(issueTypeFields.issueTypeId, issueTypeId));
-  },
+  }
 
-  updateIssueTypeFieldOrder: async (id: string, order: number) => {
-    const [result] = await drizzle
+  async updateIssueTypeFieldOrder(id: string, order: number) {
+    const [result] = await this.drizzle
       .update(issueTypeFields)
       .set({ order })
       .where(eq(issueTypeFields.id, id))
       .returning();
     return result;
-  },
-});
+  }
+}
 
+// =============================================================================
+// FUNCTION-BASED REPOSITORY (backward compatibility)
+// =============================================================================
+
+export const fieldRepository = (drizzle: DrizzleClientOrTransaction = db) => {
+  const repo = new FieldRepository(drizzle);
+  return {
+    findMany: () => repo.findMany(),
+    findById: (id: string) => repo.findById(id),
+    findByIds: (ids: string[]) => repo.findByIds(ids),
+    create: (input: CreateFieldSchema) => repo.create(input),
+    update: (input: EditFieldSchema) => repo.update(input),
+    delete: (id: string) => repo.delete(id),
+    findIssueTypeFieldsByIssueTypeId: (issueTypeId: string) =>
+      repo.findIssueTypeFieldsByIssueTypeId(issueTypeId),
+    findIssueTypeFieldsWithFieldByIssueTypeId: (issueTypeId: string) =>
+      repo.findIssueTypeFieldsWithFieldByIssueTypeId(issueTypeId),
+    findIssueTypeField: (issueTypeId: string, fieldId: string) =>
+      repo.findIssueTypeField(issueTypeId, fieldId),
+    addFieldToIssueType: (input: AddFieldToIssueTypeRequestSchema) =>
+      repo.addFieldToIssueType(input),
+    updateIssueTypeField: (
+      issueTypeId: string,
+      fieldId: string,
+      input: UpdateIssueTypeFieldSchema,
+    ) => repo.updateIssueTypeField(issueTypeId, fieldId, input),
+    removeFieldFromIssueType: (issueTypeId: string, fieldId: string) =>
+      repo.removeFieldFromIssueType(issueTypeId, fieldId),
+    removeAllFieldsFromIssueType: (issueTypeId: string) =>
+      repo.removeAllFieldsFromIssueType(issueTypeId),
+    updateIssueTypeFieldOrder: (id: string, order: number) =>
+      repo.updateIssueTypeFieldOrder(id, order),
+  };
+};

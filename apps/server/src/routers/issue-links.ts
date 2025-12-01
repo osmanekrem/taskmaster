@@ -8,11 +8,15 @@ import { IssueLinkService } from '../services/issue-link-service';
 import { IssueLinkRepository } from '../repositories/issue-link-repository';
 import { IssueRepository } from '../repositories/issue-repository';
 import { db } from '../db';
+import { requirePermission } from '../lib/middleware/permission';
 
 // Initialize dependencies
 const issueLinkRepository = new IssueLinkRepository(db);
 const issueRepository = new IssueRepository();
-const issueLinkService = new IssueLinkService(issueLinkRepository, issueRepository);
+const issueLinkService = new IssueLinkService(
+  issueLinkRepository,
+  issueRepository,
+);
 
 // Export type for router
 export type { IssueLinkType, IssueLink } from '../db/schema';
@@ -25,15 +29,18 @@ export const issueLinksRouter = router({
   /**
    * Get all link types
    */
-  listLinkTypes: protectedProcedure.query(async () => {
-    return issueLinkService.getAllLinkTypes();
-  }),
+  listLinkTypes: protectedProcedure
+    .use(requirePermission('issue:view'))
+    .query(async () => {
+      return issueLinkService.getAllLinkTypes();
+    }),
 
   /**
    * Get link type by ID
    */
   getLinkType: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
+    .use(requirePermission('issue:view'))
     .query(async ({ input }) => {
       return issueLinkService.getLinkTypeById(input.id);
     }),
@@ -48,7 +55,7 @@ export const issueLinksRouter = router({
         inwardName: z.string().min(1).max(100),
         outwardName: z.string().min(1).max(100),
         description: z.string().max(500).optional(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       return issueLinkService.createLinkType(input);
@@ -65,7 +72,7 @@ export const issueLinksRouter = router({
         inwardName: z.string().min(1).max(100).optional(),
         outwardName: z.string().min(1).max(100).optional(),
         description: z.string().max(500).optional(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const { id, ...data } = input;
@@ -91,6 +98,7 @@ export const issueLinksRouter = router({
    */
   getLinksForIssue: protectedProcedure
     .input(z.object({ issueId: z.string().uuid() }))
+    .use(requirePermission('issue:view'))
     .query(async ({ input }) => {
       return issueLinkService.getLinksForIssue(input.issueId);
     }),
@@ -104,8 +112,9 @@ export const issueLinksRouter = router({
         sourceIssueId: z.string().uuid(),
         targetIssueId: z.string().uuid(),
         linkTypeId: z.string().uuid(),
-      })
+      }),
     )
+    .use(requirePermission('issue:link'))
     .mutation(async ({ input, ctx }) => {
       return issueLinkService.createLink({
         ...input,
@@ -118,6 +127,7 @@ export const issueLinksRouter = router({
    */
   deleteLink: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
+    .use(requirePermission('issue:link'))
     .mutation(async ({ input, ctx }) => {
       await issueLinkService.deleteLink(input.id, ctx.session!.user.id);
       return { success: true };
@@ -128,6 +138,7 @@ export const issueLinksRouter = router({
    */
   getBlockingIssues: protectedProcedure
     .input(z.object({ issueId: z.string().uuid() }))
+    .use(requirePermission('issue:view'))
     .query(async ({ input }) => {
       return issueLinkService.getBlockingIssues(input.issueId);
     }),
@@ -137,6 +148,7 @@ export const issueLinksRouter = router({
    */
   getBlockedByIssue: protectedProcedure
     .input(z.object({ issueId: z.string().uuid() }))
+    .use(requirePermission('issue:view'))
     .query(async ({ input }) => {
       return issueLinkService.getBlockedByIssue(input.issueId);
     }),
@@ -146,6 +158,7 @@ export const issueLinksRouter = router({
    */
   isBlocked: protectedProcedure
     .input(z.object({ issueId: z.string().uuid() }))
+    .use(requirePermission('issue:view'))
     .query(async ({ input }) => {
       const blocked = await issueLinkService.isBlocked(input.issueId);
       return { blocked };

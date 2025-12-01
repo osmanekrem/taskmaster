@@ -1,10 +1,25 @@
-import { CommentRepository, AttachmentRepository } from '@/repositories/comment-repository';
+import {
+  CommentRepository,
+  AttachmentRepository,
+} from '@/repositories/comment-repository';
 import { IssueRepository } from '@/repositories/issue-repository';
+import { NotificationService } from '@/services/notification-service';
+import {
+  NotificationRepository,
+  WatcherRepository,
+  NotificationPreferencesRepository,
+  DigestSettingsRepository,
+} from '@/repositories/notification-repository';
 import { db } from '@/db';
 import { user } from '@/db/schema/auth';
 import { eq, inArray } from 'drizzle-orm';
 import { ErrorMessages } from '@taskmaster/constants';
 import { createAppError } from '@/lib/errors';
+import {
+  getStorageProvider,
+  generateStorageKey,
+  generateThumbnailKey,
+} from '@/lib/storage';
 import {
   type CreateCommentInput,
   type UpdateCommentInput,
@@ -15,13 +30,24 @@ import {
   ALLOWED_MIME_TYPES,
   MAX_FILE_SIZE,
 } from '@taskmaster/validation';
+import { emitCommentCreated } from '@/lib/events/event-bus';
 
 export class CommentService {
+  private readonly notificationService: NotificationService;
+
   constructor(
     private commentRepository: CommentRepository,
     private attachmentRepository: AttachmentRepository,
-    private issueRepository: IssueRepository
-  ) {}
+    private issueRepository: IssueRepository,
+  ) {
+    const watcherRepo = new WatcherRepository();
+    this.notificationService = new NotificationService(
+      new NotificationRepository(),
+      watcherRepo,
+      new NotificationPreferencesRepository(),
+      new DigestSettingsRepository(),
+    );
+  }
 
   // ==========================================================================
   // COMMENTS
@@ -31,7 +57,10 @@ export class CommentService {
     // Verify issue exists
     const issue = await this.issueRepository.findById(filters.issueId);
     if (!issue) {
-      throw createAppError(ErrorMessages.ISSUE_NOT_FOUND, { statusCode: 404, code: 'NOT_FOUND' });
+      throw createAppError(ErrorMessages.ISSUE_NOT_FOUND, {
+        statusCode: 404,
+        code: 'NOT_FOUND',
+      });
     }
 
     return this.commentRepository.findCommentsByIssue(filters);
@@ -40,7 +69,10 @@ export class CommentService {
   async getCommentById(id: string) {
     const comment = await this.commentRepository.findCommentById(id);
     if (!comment) {
-      throw createAppError(ErrorMessages.COMMENT_NOT_FOUND, { statusCode: 404, code: 'NOT_FOUND' });
+      throw createAppError(ErrorMessages.COMMENT_NOT_FOUND, {
+        statusCode: 404,
+        code: 'NOT_FOUND',
+      });
     }
     return comment;
   }
@@ -49,17 +81,28 @@ export class CommentService {
     // Verify issue exists
     const issue = await this.issueRepository.findById(input.issueId);
     if (!issue) {
-      throw createAppError(ErrorMessages.ISSUE_NOT_FOUND, { statusCode: 404, code: 'NOT_FOUND' });
+      throw createAppError(ErrorMessages.ISSUE_NOT_FOUND, {
+        statusCode: 404,
+        code: 'NOT_FOUND',
+      });
     }
 
     // If replying, verify parent comment exists and is not deleted
     if (input.parentId) {
-      const parent = await this.commentRepository.findCommentById(input.parentId);
+      const parent = await this.commentRepository.findCommentById(
+        input.parentId,
+      );
       if (!parent) {
-        throw createAppError(ErrorMessages.COMMENT_NOT_FOUND, { statusCode: 404, code: 'NOT_FOUND' });
+        throw createAppError(ErrorMessages.COMMENT_NOT_FOUND, {
+          statusCode: 404,
+          code: 'NOT_FOUND',
+        });
       }
       if (parent.isDeleted) {
-        throw createAppError(ErrorMessages.CANNOT_REPLY_TO_DELETED_COMMENT, { statusCode: 400, code: 'BAD_REQUEST' });
+        throw createAppError(ErrorMessages.CANNOT_REPLY_TO_DELETED_COMMENT, {
+          statusCode: 400,
+          code: 'BAD_REQUEST',
+        });
       }
     }
 
@@ -73,11 +116,15 @@ export class CommentService {
 
     // Extract and save mentions
     const mentionedUserIds = extractMentions(input.content);
+    let validMentionedUserIds: string[] = [];
     if (mentionedUserIds.length > 0) {
       // Verify mentioned users exist (filter out invalid IDs)
-      const validUserIds = await this.validateUserIds(mentionedUserIds);
-      if (validUserIds.length > 0) {
-        await this.commentRepository.createMentions(comment.id, validUserIds);
+      validMentionedUserIds = await this.validateUserIds(mentionedUserIds);
+      if (validMentionedUserIds.length > 0) {
+        await this.commentRepository.createMentions(
+          comment.id,
+          validMentionedUserIds,
+        );
       }
     }
 
@@ -86,23 +133,116 @@ export class CommentService {
       { field: 'comment', oldValue: null, newValue: comment.id },
     ]);
 
+    // Emit comment:created event (notification scheme will handle watchers)
+    emitCommentCreated({
+      commentId: comment.id,
+      issueId: input.issueId,
+      issueKey: issue.key,
+      projectId: issue.projectId,
+      actorId: authorId,
+      parentCommentId: input.parentId,
+    });
+
+    // Handle mentions notification directly (not scheme-based)
+    if (validMentionedUserIds.length > 0) {
+      (async () => {
+        try {
+          const author = await db.query.user.findFirst({
+            where: eq(user.id, authorId),
+            columns: { name: true, email: true },
+          });
+          const actorData = {
+            name: author?.name || 'Unknown',
+            email: author?.email || '',
+          };
+          const issueData = {
+            key: issue.key,
+            title: issue.summary || issue.key,
+          };
+          const contentPreview = input.content.substring(0, 200);
+
+          await this.notificationService.notifyMentions(
+            validMentionedUserIds,
+            input.issueId,
+            authorId,
+            issueData,
+            actorData,
+            { commentId: comment.id, commentPreview: contentPreview },
+          );
+        } catch (err) {
+          console.error('[Notification] Mention notification failed:', err);
+        }
+      })();
+    }
+
+    // Handle reply notification directly (not scheme-based)
+    if (input.parentId) {
+      (async () => {
+        try {
+          const parent = await this.commentRepository.findCommentById(
+            input.parentId!,
+          );
+          if (parent && parent.authorId !== authorId) {
+            const author = await db.query.user.findFirst({
+              where: eq(user.id, authorId),
+              columns: { name: true, email: true },
+            });
+            const actorData = {
+              name: author?.name || 'Unknown',
+              email: author?.email || '',
+            };
+            const issueData = {
+              key: issue.key,
+              title: issue.summary || issue.key,
+            };
+            const contentPreview = input.content.substring(0, 200);
+
+            await this.notificationService.notifyCommentReply(
+              parent.authorId,
+              input.issueId,
+              comment.id,
+              authorId,
+              issueData,
+              contentPreview,
+              actorData,
+            );
+          }
+        } catch (err) {
+          console.error('[Notification] Reply notification failed:', err);
+        }
+      })();
+    }
+
     return this.commentRepository.findCommentById(comment.id);
   }
 
-  async updateComment(commentId: string, input: UpdateCommentInput, userId: string) {
+  async updateComment(
+    commentId: string,
+    input: UpdateCommentInput,
+    userId: string,
+  ) {
     const comment = await this.commentRepository.findCommentById(commentId);
     if (!comment) {
-      throw createAppError(ErrorMessages.COMMENT_NOT_FOUND, { statusCode: 404, code: 'NOT_FOUND' });
+      throw createAppError(ErrorMessages.COMMENT_NOT_FOUND, {
+        statusCode: 404,
+        code: 'NOT_FOUND',
+      });
     }
 
     // Check ownership
     if (comment.authorId !== userId) {
-      throw createAppError(ErrorMessages.NOT_COMMENT_AUTHOR, { statusCode: 403, code: 'FORBIDDEN' });
+      throw createAppError(ErrorMessages.NOT_COMMENT_AUTHOR, {
+        statusCode: 403,
+        code: 'FORBIDDEN',
+      });
     }
 
     // Check not deleted
     if (comment.isDeleted) {
-      throw createAppError(ErrorMessages.CANNOT_EDIT_DELETED_COMMENT, { statusCode: 400, code: 'BAD_REQUEST' });
+      throw createAppError(ErrorMessages.CANNOT_EDIT_DELETED_COMMENT, {
+        statusCode: 400,
+        code: 'BAD_REQUEST',
+      });
     }
 
     // Update comment
@@ -124,16 +264,25 @@ export class CommentService {
   async deleteComment(commentId: string, userId: string, hardDelete = false) {
     const comment = await this.commentRepository.findCommentById(commentId);
     if (!comment) {
-      throw createAppError(ErrorMessages.COMMENT_NOT_FOUND, { statusCode: 404, code: 'NOT_FOUND' });
+      throw createAppError(ErrorMessages.COMMENT_NOT_FOUND, {
+        statusCode: 404,
+        code: 'NOT_FOUND',
+      });
     }
 
     // Check ownership (or admin - TODO: add admin check)
     if (comment.authorId !== userId) {
-      throw createAppError(ErrorMessages.NOT_COMMENT_AUTHOR, { statusCode: 403, code: 'FORBIDDEN' });
+      throw createAppError(ErrorMessages.NOT_COMMENT_AUTHOR, {
+        statusCode: 403,
+        code: 'FORBIDDEN',
+      });
     }
 
     if (comment.isDeleted) {
-      throw createAppError(ErrorMessages.COMMENT_ALREADY_DELETED, { statusCode: 400, code: 'BAD_REQUEST' });
+      throw createAppError(ErrorMessages.COMMENT_ALREADY_DELETED, {
+        statusCode: 400,
+        code: 'BAD_REQUEST',
+      });
     }
 
     if (hardDelete) {
@@ -150,22 +299,39 @@ export class CommentService {
   async addReaction(commentId: string, userId: string, emoji: string) {
     const comment = await this.commentRepository.findCommentById(commentId);
     if (!comment) {
-      throw createAppError(ErrorMessages.COMMENT_NOT_FOUND, { statusCode: 404, code: 'NOT_FOUND' });
+      throw createAppError(ErrorMessages.COMMENT_NOT_FOUND, {
+        statusCode: 404,
+        code: 'NOT_FOUND',
+      });
     }
 
     // Check if reaction already exists
-    const existing = await this.commentRepository.findReaction(commentId, userId, emoji);
+    const existing = await this.commentRepository.findReaction(
+      commentId,
+      userId,
+      emoji,
+    );
     if (existing) {
-      throw createAppError(ErrorMessages.REACTION_ALREADY_EXISTS, { statusCode: 409, code: 'CONFLICT' });
+      throw createAppError(ErrorMessages.REACTION_ALREADY_EXISTS, {
+        statusCode: 409,
+        code: 'CONFLICT',
+      });
     }
 
     return this.commentRepository.addReaction(commentId, userId, emoji);
   }
 
   async removeReaction(commentId: string, userId: string, emoji: string) {
-    const existing = await this.commentRepository.findReaction(commentId, userId, emoji);
+    const existing = await this.commentRepository.findReaction(
+      commentId,
+      userId,
+      emoji,
+    );
     if (!existing) {
-      throw createAppError(ErrorMessages.REACTION_NOT_FOUND, { statusCode: 404, code: 'NOT_FOUND' });
+      throw createAppError(ErrorMessages.REACTION_NOT_FOUND, {
+        statusCode: 404,
+        code: 'NOT_FOUND',
+      });
     }
 
     return this.commentRepository.removeReaction(commentId, userId, emoji);
@@ -183,7 +349,10 @@ export class CommentService {
     // Verify issue exists
     const issue = await this.issueRepository.findById(filters.issueId);
     if (!issue) {
-      throw createAppError(ErrorMessages.ISSUE_NOT_FOUND, { statusCode: 404, code: 'NOT_FOUND' });
+      throw createAppError(ErrorMessages.ISSUE_NOT_FOUND, {
+        statusCode: 404,
+        code: 'NOT_FOUND',
+      });
     }
 
     return this.attachmentRepository.findByIssue(filters);
@@ -192,7 +361,10 @@ export class CommentService {
   async getAttachmentById(id: string) {
     const attachment = await this.attachmentRepository.findById(id);
     if (!attachment) {
-      throw createAppError(ErrorMessages.ATTACHMENT_NOT_FOUND, { statusCode: 404, code: 'NOT_FOUND' });
+      throw createAppError(ErrorMessages.ATTACHMENT_NOT_FOUND, {
+        statusCode: 404,
+        code: 'NOT_FOUND',
+      });
     }
     return attachment;
   }
@@ -201,17 +373,26 @@ export class CommentService {
     // Verify issue exists
     const issue = await this.issueRepository.findById(input.issueId);
     if (!issue) {
-      throw createAppError(ErrorMessages.ISSUE_NOT_FOUND, { statusCode: 404, code: 'NOT_FOUND' });
+      throw createAppError(ErrorMessages.ISSUE_NOT_FOUND, {
+        statusCode: 404,
+        code: 'NOT_FOUND',
+      });
     }
 
     // Validate file type
     if (!ALLOWED_MIME_TYPES.includes(input.mimeType as any)) {
-      throw createAppError(ErrorMessages.INVALID_FILE_TYPE, { statusCode: 400, code: 'BAD_REQUEST' });
+      throw createAppError(ErrorMessages.INVALID_FILE_TYPE, {
+        statusCode: 400,
+        code: 'BAD_REQUEST',
+      });
     }
 
     // Validate file size
     if (input.size > MAX_FILE_SIZE) {
-      throw createAppError(ErrorMessages.FILE_TOO_LARGE, { statusCode: 400, code: 'BAD_REQUEST' });
+      throw createAppError(ErrorMessages.FILE_TOO_LARGE, {
+        statusCode: 400,
+        code: 'BAD_REQUEST',
+      });
     }
 
     const attachment = await this.attachmentRepository.create({
@@ -230,15 +411,38 @@ export class CommentService {
   async deleteAttachment(id: string, userId: string) {
     const attachment = await this.attachmentRepository.findById(id);
     if (!attachment) {
-      throw createAppError(ErrorMessages.ATTACHMENT_NOT_FOUND, { statusCode: 404, code: 'NOT_FOUND' });
+      throw createAppError(ErrorMessages.ATTACHMENT_NOT_FOUND, {
+        statusCode: 404,
+        code: 'NOT_FOUND',
+      });
     }
 
     // Check ownership (or admin - TODO: add admin check)
     if (attachment.uploaderId !== userId) {
-      throw createAppError(ErrorMessages.FORBIDDEN, { statusCode: 403, code: 'FORBIDDEN' });
+      throw createAppError(ErrorMessages.FORBIDDEN, {
+        statusCode: 403,
+        code: 'FORBIDDEN',
+      });
     }
 
-    // TODO: Delete actual file from storage
+    // Delete actual file from storage
+    const storage = getStorageProvider();
+    try {
+      await storage.delete(attachment.storageKey);
+
+      // Delete thumbnail if exists
+      if (attachment.thumbnailKey) {
+        await storage.delete(attachment.thumbnailKey);
+      }
+    } catch (error) {
+      // Log error but continue with database deletion
+      // File might already be deleted or storage might be unavailable
+      console.error(
+        '[Storage] Failed to delete file:',
+        attachment.storageKey,
+        error,
+      );
+    }
 
     return this.attachmentRepository.delete(id);
   }
@@ -251,7 +455,8 @@ export class CommentService {
     if (userIds.length === 0) return [];
 
     // Check which IDs are valid UUIDs and exist
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     const validUuids = userIds.filter((id) => uuidRegex.test(id));
 
     if (validUuids.length === 0) return [];

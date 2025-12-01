@@ -1,3 +1,20 @@
+// =============================================================================
+// DEPENDENCY INJECTION CONTAINER
+// =============================================================================
+// Centralized container for managing service and repository instances
+// Implements lazy loading and proper dependency injection
+//
+// Design Principles:
+// 1. Lazy loading - instances created on first access
+// 2. Singleton per container - same instance returned on subsequent calls
+// 3. Proper DI - dependencies injected through container, not created internally
+// 4. Testability - can create new container with mock db
+//
+// Usage:
+// - Production: import { container } from '@/lib/container'
+// - Testing: const testContainer = Container.create(mockDb)
+// =============================================================================
+
 import { db } from '@/db';
 import { userService } from '@/services/user-service';
 import { fieldService } from '@/services/field-service';
@@ -10,7 +27,10 @@ import { IssueService } from '@/services/issue-service';
 import { IssueRepository } from '@/repositories/issue-repository';
 import { ProjectRepository } from '@/repositories/project-repository';
 import { CommentService } from '@/services/comment-service';
-import { CommentRepository, AttachmentRepository } from '@/repositories/comment-repository';
+import {
+  CommentRepository,
+  AttachmentRepository,
+} from '@/repositories/comment-repository';
 import { NotificationService } from '@/services/notification-service';
 import {
   WatcherRepository,
@@ -29,11 +49,33 @@ import { SprintService } from '@/services/sprint-service';
 import type { DrizzleClient } from '@/lib/types/db';
 
 class Container {
+  // ===========================================================================
+  // PRIVATE STATE
+  // ===========================================================================
+
   private readonly _db: DrizzleClient;
+
+  // Repository instances (cached for singleton behavior)
+  private _issueRepository: IssueRepository | null = null;
+  private _projectRepository: ProjectRepository | null = null;
+  private _commentRepository: CommentRepository | null = null;
+  private _attachmentRepository: AttachmentRepository | null = null;
+  private _watcherRepository: WatcherRepository | null = null;
+  private _notificationRepository: NotificationRepository | null = null;
+  private _notificationPreferencesRepository: NotificationPreferencesRepository | null =
+    null;
+  private _digestSettingsRepository: DigestSettingsRepository | null = null;
+  private _roleRepository: RoleRepository | null = null;
+  private _rolePermissionRepository: RolePermissionRepository | null = null;
+  private _roleMemberRepository: RoleMemberRepository | null = null;
+  private _permissionSchemeRepository: PermissionSchemeRepository | null = null;
+
+  // Service instances (cached for singleton behavior)
   private _userService: ReturnType<typeof userService> | null = null;
   private _fieldService: ReturnType<typeof fieldService> | null = null;
   private _fieldTypeService: ReturnType<typeof fieldTypeService> | null = null;
-  private _ticketTypeService: ReturnType<typeof ticketTypeService> | null = null;
+  private _ticketTypeService: ReturnType<typeof ticketTypeService> | null =
+    null;
   private _statusService: ReturnType<typeof statusService> | null = null;
   private _workflowService: ReturnType<typeof workflowService> | null = null;
   private _projectService: ReturnType<typeof projectService> | null = null;
@@ -43,13 +85,91 @@ class Container {
   private _permissionService: PermissionService | null = null;
   private _sprintService: SprintService | null = null;
 
+  // ===========================================================================
+  // CONSTRUCTOR
+  // ===========================================================================
+
   constructor(database: DrizzleClient = db) {
     this._db = database;
   }
 
+  // ===========================================================================
+  // REPOSITORY ACCESSORS (Private - used internally for DI)
+  // ===========================================================================
+
+  private get issueRepository(): IssueRepository {
+    this._issueRepository ??= new IssueRepository();
+    return this._issueRepository;
+  }
+
+  private get projectRepository(): ProjectRepository {
+    this._projectRepository ??= new ProjectRepository(this._db);
+    return this._projectRepository;
+  }
+
+  private get commentRepository(): CommentRepository {
+    this._commentRepository ??= new CommentRepository();
+    return this._commentRepository;
+  }
+
+  private get attachmentRepository(): AttachmentRepository {
+    this._attachmentRepository ??= new AttachmentRepository();
+    return this._attachmentRepository;
+  }
+
+  private get watcherRepository(): WatcherRepository {
+    this._watcherRepository ??= new WatcherRepository();
+    return this._watcherRepository;
+  }
+
+  private get notificationRepository(): NotificationRepository {
+    this._notificationRepository ??= new NotificationRepository();
+    return this._notificationRepository;
+  }
+
+  private get notificationPreferencesRepository(): NotificationPreferencesRepository {
+    this._notificationPreferencesRepository ??=
+      new NotificationPreferencesRepository();
+    return this._notificationPreferencesRepository;
+  }
+
+  private get digestSettingsRepository(): DigestSettingsRepository {
+    this._digestSettingsRepository ??= new DigestSettingsRepository();
+    return this._digestSettingsRepository;
+  }
+
+  private get roleRepository(): RoleRepository {
+    this._roleRepository ??= new RoleRepository();
+    return this._roleRepository;
+  }
+
+  private get rolePermissionRepository(): RolePermissionRepository {
+    this._rolePermissionRepository ??= new RolePermissionRepository();
+    return this._rolePermissionRepository;
+  }
+
+  private get roleMemberRepository(): RoleMemberRepository {
+    this._roleMemberRepository ??= new RoleMemberRepository();
+    return this._roleMemberRepository;
+  }
+
+  private get permissionSchemeRepository(): PermissionSchemeRepository {
+    this._permissionSchemeRepository ??= new PermissionSchemeRepository();
+    return this._permissionSchemeRepository;
+  }
+
+  // ===========================================================================
+  // PUBLIC ACCESSORS
+  // ===========================================================================
+
   get db(): DrizzleClient {
     return this._db;
   }
+
+  // ===========================================================================
+  // FACTORY-BASED SERVICES
+  // These services use factory functions and receive db as parameter
+  // ===========================================================================
 
   get user() {
     this._userService ??= userService(this._db);
@@ -86,66 +206,129 @@ class Container {
     return this._projectService;
   }
 
-  get issue() {
+  // ===========================================================================
+  // CLASS-BASED SERVICES
+  // These services use class constructors with dependency injection
+  // Dependencies are resolved from container (not created inline)
+  // ===========================================================================
+
+  /**
+   * Issue Service
+   * Dependencies: IssueRepository, ProjectRepository, NotificationService
+   */
+  get issue(): IssueService {
     if (!this._issueService) {
-      const issueRepository = new IssueRepository();
-      const projectRepository = new ProjectRepository();
-      this._issueService = new IssueService(issueRepository, projectRepository);
+      this._issueService = new IssueService(
+        this.issueRepository,
+        this.projectRepository,
+        this.notification, // ✅ Injected from container
+      );
     }
     return this._issueService;
   }
 
-  get comment() {
+  /**
+   * Comment Service
+   * Dependencies: CommentRepository, AttachmentRepository, IssueRepository
+   */
+  get comment(): CommentService {
     if (!this._commentService) {
-      const commentRepository = new CommentRepository();
-      const attachmentRepository = new AttachmentRepository();
-      const issueRepository = new IssueRepository();
-      this._commentService = new CommentService(commentRepository, attachmentRepository, issueRepository);
+      this._commentService = new CommentService(
+        this.commentRepository,
+        this.attachmentRepository,
+        this.issueRepository,
+      );
     }
     return this._commentService;
   }
 
-  get notification() {
+  /**
+   * Notification Service
+   * Dependencies: NotificationRepository, WatcherRepository,
+   *               NotificationPreferencesRepository, DigestSettingsRepository
+   */
+  get notification(): NotificationService {
     if (!this._notificationService) {
-      const notificationRepo = new NotificationRepository();
-      const watcherRepo = new WatcherRepository();
-      const preferencesRepo = new NotificationPreferencesRepository();
-      const digestRepo = new DigestSettingsRepository();
       this._notificationService = new NotificationService(
-        notificationRepo,
-        watcherRepo,
-        preferencesRepo,
-        digestRepo,
+        this.notificationRepository,
+        this.watcherRepository,
+        this.notificationPreferencesRepository,
+        this.digestSettingsRepository,
       );
     }
     return this._notificationService;
   }
 
-  get permission() {
+  /**
+   * Permission Service
+   * Dependencies: RoleRepository, RolePermissionRepository,
+   *               RoleMemberRepository, PermissionSchemeRepository
+   */
+  get permission(): PermissionService {
     if (!this._permissionService) {
-      const roleRepo = new RoleRepository();
-      const permissionRepo = new RolePermissionRepository();
-      const memberRepo = new RoleMemberRepository();
-      const schemeRepo = new PermissionSchemeRepository();
       this._permissionService = new PermissionService(
-        roleRepo,
-        permissionRepo,
-        memberRepo,
-        schemeRepo,
+        this.roleRepository,
+        this.rolePermissionRepository,
+        this.roleMemberRepository,
+        this.permissionSchemeRepository,
       );
     }
     return this._permissionService;
   }
 
-  get sprint() {
-    if (!this._sprintService) {
-      this._sprintService = new SprintService();
-    }
+  /**
+   * Sprint Service
+   * No dependencies (uses db directly internally)
+   */
+  get sprint(): SprintService {
+    this._sprintService ??= new SprintService();
     return this._sprintService;
   }
 
+  // ===========================================================================
+  // FACTORY & UTILITY METHODS
+  // ===========================================================================
+
+  /**
+   * Create a new container instance
+   * Useful for testing with mock database
+   */
   static create(database?: DrizzleClient): Container {
     return new Container(database);
+  }
+
+  /**
+   * Reset all cached instances
+   * Useful for testing to ensure clean state between tests
+   */
+  reset(): void {
+    // Reset repositories
+    this._issueRepository = null;
+    this._projectRepository = null;
+    this._commentRepository = null;
+    this._attachmentRepository = null;
+    this._watcherRepository = null;
+    this._notificationRepository = null;
+    this._notificationPreferencesRepository = null;
+    this._digestSettingsRepository = null;
+    this._roleRepository = null;
+    this._rolePermissionRepository = null;
+    this._roleMemberRepository = null;
+    this._permissionSchemeRepository = null;
+
+    // Reset services
+    this._userService = null;
+    this._fieldService = null;
+    this._fieldTypeService = null;
+    this._ticketTypeService = null;
+    this._statusService = null;
+    this._workflowService = null;
+    this._projectService = null;
+    this._issueService = null;
+    this._commentService = null;
+    this._notificationService = null;
+    this._permissionService = null;
+    this._sprintService = null;
   }
 }
 

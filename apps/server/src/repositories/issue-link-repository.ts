@@ -4,13 +4,13 @@
 
 import { eq, and, or, desc, sql, inArray } from 'drizzle-orm';
 import { db } from '../db';
-import { 
-  issueLinks, 
-  issueLinkTypes, 
-  type IssueLink, 
+import {
+  issueLinks,
+  issueLinkTypes,
+  type IssueLink,
   type NewIssueLink,
   type IssueLinkType,
-  type NewIssueLinkType 
+  type NewIssueLinkType,
 } from '../db/schema';
 
 type DbType = typeof db;
@@ -23,10 +23,7 @@ export class IssueLinkRepository {
   // ===========================================================================
 
   async findAllLinkTypes(): Promise<IssueLinkType[]> {
-    return this.db
-      .select()
-      .from(issueLinkTypes)
-      .orderBy(issueLinkTypes.name);
+    return this.db.select().from(issueLinkTypes).orderBy(issueLinkTypes.name);
   }
 
   async findLinkTypeById(id: string): Promise<IssueLinkType | null> {
@@ -35,7 +32,7 @@ export class IssueLinkRepository {
       .from(issueLinkTypes)
       .where(eq(issueLinkTypes.id, id))
       .limit(1);
-    
+
     return result[0] ?? null;
   }
 
@@ -45,7 +42,7 @@ export class IssueLinkRepository {
       .from(issueLinkTypes)
       .where(eq(issueLinkTypes.name, name))
       .limit(1);
-    
+
     return result[0] ?? null;
   }
 
@@ -54,13 +51,18 @@ export class IssueLinkRepository {
       .insert(issueLinkTypes)
       .values(data)
       .returning();
-    
+
     return linkType;
   }
 
   async updateLinkType(
-    id: string, 
-    data: Partial<Pick<NewIssueLinkType, 'name' | 'inwardName' | 'outwardName' | 'description'>>
+    id: string,
+    data: Partial<
+      Pick<
+        NewIssueLinkType,
+        'name' | 'inwardName' | 'outwardName' | 'description'
+      >
+    >,
   ): Promise<IssueLinkType | null> {
     const [linkType] = await this.db
       .update(issueLinkTypes)
@@ -70,14 +72,14 @@ export class IssueLinkRepository {
       })
       .where(eq(issueLinkTypes.id, id))
       .returning();
-    
+
     return linkType ?? null;
   }
 
   async deleteLinkType(id: string): Promise<boolean> {
     // Check if it's a system link type
     const linkType = await this.findLinkTypeById(id);
-    if (linkType?.isSystem === 'true') {
+    if (linkType?.isSystem === true) {
       throw new Error('Cannot delete system link type');
     }
 
@@ -85,7 +87,7 @@ export class IssueLinkRepository {
       .delete(issueLinkTypes)
       .where(eq(issueLinkTypes.id, id))
       .returning({ id: issueLinkTypes.id });
-    
+
     return result.length > 0;
   }
 
@@ -99,7 +101,7 @@ export class IssueLinkRepository {
       .from(issueLinks)
       .where(eq(issueLinks.id, id))
       .limit(1);
-    
+
     return result[0] ?? null;
   }
 
@@ -131,8 +133,14 @@ export class IssueLinkRepository {
       .orderBy(desc(issueLinks.createdAt));
 
     return {
-      outwardLinks: outward.map((r: typeof outward[number]) => ({ ...r.link, linkType: r.linkType })),
-      inwardLinks: inward.map((r: typeof inward[number]) => ({ ...r.link, linkType: r.linkType })),
+      outwardLinks: outward.map((r: (typeof outward)[number]) => ({
+        ...r.link,
+        linkType: r.linkType,
+      })),
+      inwardLinks: inward.map((r: (typeof inward)[number]) => ({
+        ...r.link,
+        linkType: r.linkType,
+      })),
     };
   }
 
@@ -140,9 +148,9 @@ export class IssueLinkRepository {
    * Get all links of a specific type for an issue
    */
   async findLinksByTypeAndIssue(
-    issueId: string, 
+    issueId: string,
     linkTypeId: string,
-    direction: 'outward' | 'inward' | 'both' = 'both'
+    direction: 'outward' | 'inward' | 'both' = 'both',
   ): Promise<IssueLink[]> {
     const conditions = [eq(issueLinks.linkTypeId, linkTypeId)];
 
@@ -154,8 +162,8 @@ export class IssueLinkRepository {
       conditions.push(
         or(
           eq(issueLinks.sourceIssueId, issueId),
-          eq(issueLinks.targetIssueId, issueId)
-        )!
+          eq(issueLinks.targetIssueId, issueId),
+        )!,
       );
     }
 
@@ -178,8 +186,8 @@ export class IssueLinkRepository {
       .where(
         and(
           eq(issueLinks.targetIssueId, issueId),
-          eq(issueLinks.linkTypeId, blocksType.id)
-        )
+          eq(issueLinks.linkTypeId, blocksType.id),
+        ),
       );
   }
 
@@ -196,8 +204,8 @@ export class IssueLinkRepository {
       .where(
         and(
           eq(issueLinks.sourceIssueId, issueId),
-          eq(issueLinks.linkTypeId, blocksType.id)
-        )
+          eq(issueLinks.linkTypeId, blocksType.id),
+        ),
       );
   }
 
@@ -214,18 +222,15 @@ export class IssueLinkRepository {
     const existing = await this.findExistingLink(
       data.sourceIssueId,
       data.targetIssueId,
-      data.linkTypeId
+      data.linkTypeId,
     );
-    
+
     if (existing) {
       throw new Error('Link already exists between these issues');
     }
 
-    const [link] = await this.db
-      .insert(issueLinks)
-      .values(data)
-      .returning();
-    
+    const [link] = await this.db.insert(issueLinks).values(data).returning();
+
     return link;
   }
 
@@ -235,7 +240,7 @@ export class IssueLinkRepository {
   async findExistingLink(
     sourceIssueId: string,
     targetIssueId: string,
-    linkTypeId: string
+    linkTypeId: string,
   ): Promise<IssueLink | null> {
     const result = await this.db
       .select()
@@ -244,11 +249,11 @@ export class IssueLinkRepository {
         and(
           eq(issueLinks.sourceIssueId, sourceIssueId),
           eq(issueLinks.targetIssueId, targetIssueId),
-          eq(issueLinks.linkTypeId, linkTypeId)
-        )
+          eq(issueLinks.linkTypeId, linkTypeId),
+        ),
       )
       .limit(1);
-    
+
     return result[0] ?? null;
   }
 
@@ -260,7 +265,7 @@ export class IssueLinkRepository {
       .delete(issueLinks)
       .where(eq(issueLinks.id, id))
       .returning({ id: issueLinks.id });
-    
+
     return result.length > 0;
   }
 
@@ -273,18 +278,20 @@ export class IssueLinkRepository {
       .where(
         or(
           eq(issueLinks.sourceIssueId, issueId),
-          eq(issueLinks.targetIssueId, issueId)
-        )
+          eq(issueLinks.targetIssueId, issueId),
+        ),
       )
       .returning({ id: issueLinks.id });
-    
+
     return result.length;
   }
 
   /**
    * Get linked issue IDs for multiple issues (for bulk operations)
    */
-  async findLinkedIssueIds(issueIds: string[]): Promise<Map<string, Set<string>>> {
+  async findLinkedIssueIds(
+    issueIds: string[],
+  ): Promise<Map<string, Set<string>>> {
     if (issueIds.length === 0) return new Map();
 
     const links = await this.db
@@ -293,12 +300,12 @@ export class IssueLinkRepository {
       .where(
         or(
           inArray(issueLinks.sourceIssueId, issueIds),
-          inArray(issueLinks.targetIssueId, issueIds)
-        )
+          inArray(issueLinks.targetIssueId, issueIds),
+        ),
       );
 
     const result = new Map<string, Set<string>>();
-    
+
     for (const issueId of issueIds) {
       result.set(issueId, new Set());
     }
@@ -318,7 +325,9 @@ export class IssueLinkRepository {
   /**
    * Count links by type
    */
-  async countLinksByType(): Promise<Array<{ linkTypeId: string; linkTypeName: string; count: number }>> {
+  async countLinksByType(): Promise<
+    Array<{ linkTypeId: string; linkTypeName: string; count: number }>
+  > {
     const result = await this.db
       .select({
         linkTypeId: issueLinkTypes.id,

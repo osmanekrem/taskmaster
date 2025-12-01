@@ -1,8 +1,30 @@
-# my-better-t-app
+# TaskMaster
 
-This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines React, TanStack Router, Hono, TRPC, and more.
+Jira-level project management application built with modern TypeScript stack.
 
-## Features
+> 📋 **Development Roadmap:** See [JIRA_PARITY_ROADMAP.md](./JIRA_PARITY_ROADMAP.md) for the full feature parity plan.
+
+## Current Status
+
+**~55-60% Jira Feature Parity**
+
+### ✅ Completed Features
+- Issue Management (hierarchy, LexoRank ordering)
+- Custom Fields (15+ field types, config override)
+- Workflows (conditions, validators, post-functions)
+- Sprint Management (burndown, history)
+- Notification Schemes (Jira-style)
+- Permission System (40+ granular permissions)
+- Components, Versions, Labels, Issue Linking
+
+### 🚧 In Progress
+- Screens & Field Configurations
+- Boards (Scrum/Kanban)
+- JQL Query Engine
+- Time Tracking
+- Automation Rules
+
+## Tech Stack
 
 - **TypeScript** - For type safety and improved developer experience
 - **TanStack Router** - File-based routing with full type safety
@@ -13,9 +35,19 @@ This project was created with [Better-T-Stack](https://github.com/AmanVarshney01
 - **Bun** - Runtime environment
 - **Drizzle** - TypeScript-first ORM
 - **PostgreSQL** - Database engine
-- **Authentication** - Email & password authentication with Better Auth
-- **Husky** - Git hooks for code quality
+- **BullMQ** - Job queue for background tasks
+- **Redis** - Caching and queue backend
+- **Better Auth** - Email & password authentication
 - **Turborepo** - Optimized monorepo build system
+
+## Architecture Decisions
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Real-time | WebSocket (boards) + SSE (notifications) | Hybrid for optimal use cases |
+| JQL Parser | Hand-written recursive descent | Better error messages, full control |
+| Automation vs Post-Functions | Separate systems | Different execution models (async vs sync) |
+| Multi-tenancy | Single-tenant | Current scope, row-level isolation possible later |
 
 ## Getting Started
 

@@ -1,7 +1,25 @@
 import { db } from '@/db';
-import { issues, issueFieldValues, issueHistory, type FieldValue, type HistoryChange } from '@/db/schema/issues';
+import {
+  issues,
+  issueFieldValues,
+  issueHistory,
+  type FieldValue,
+  type HistoryChange,
+} from '@/db/schema/issues';
 import { projects } from '@/db/schema/projects';
-import { eq, and, or, desc, asc, sql, ilike, inArray, isNull, gte, lte } from 'drizzle-orm';
+import {
+  eq,
+  and,
+  or,
+  desc,
+  asc,
+  sql,
+  ilike,
+  inArray,
+  isNull,
+  gte,
+  lte,
+} from 'drizzle-orm';
 import type { IssueFilters } from '@taskmaster/validation';
 
 export class IssueRepository {
@@ -132,7 +150,7 @@ export class IssueRepository {
           ilike(issues.key, `%${filters.search}%`),
           ilike(issues.summary, `%${filters.search}%`),
           ilike(issues.description, `%${filters.search}%`),
-        )
+        ),
       );
     }
     if (filters.createdAfter) {
@@ -193,7 +211,10 @@ export class IssueRepository {
           },
         },
       }),
-      db.select({ count: sql<number>`count(*)` }).from(issues).where(whereClause),
+      db
+        .select({ count: sql<number>`count(*)` })
+        .from(issues)
+        .where(whereClause),
     ]);
 
     const total = Number(countResult[0]?.count || 0);
@@ -248,22 +269,26 @@ export class IssueRepository {
     parentId?: string | null;
     epicId?: string | null;
     dueDate?: Date | null;
+    rank?: string | null;
   }) {
     const [issue] = await db.insert(issues).values(data).returning();
     return issue;
   }
 
-  async update(id: string, data: Partial<{
-    issueTypeId: string;
-    statusId: string;
-    resolutionId: string | null;
-    assigneeId: string | null;
-    parentId: string | null;
-    epicId: string | null;
-    dueDate: Date | null;
-    resolvedAt: Date | null;
-    updatedAt: Date;
-  }>) {
+  async update(
+    id: string,
+    data: Partial<{
+      issueTypeId: string;
+      statusId: string;
+      resolutionId: string | null;
+      assigneeId: string | null;
+      parentId: string | null;
+      epicId: string | null;
+      dueDate: Date | null;
+      resolvedAt: Date | null;
+      updatedAt: Date;
+    }>,
+  ) {
     const [updated] = await db
       .update(issues)
       .set({ ...data, updatedAt: new Date() })
@@ -273,7 +298,10 @@ export class IssueRepository {
   }
 
   async delete(id: string) {
-    const [deleted] = await db.delete(issues).where(eq(issues.id, id)).returning();
+    const [deleted] = await db
+      .delete(issues)
+      .where(eq(issues.id, id))
+      .returning();
     return deleted;
   }
 
@@ -289,7 +317,12 @@ export class IssueRepository {
     const result = await db
       .select({ count: sql<number>`count(*)` })
       .from(issues)
-      .where(and(eq(issues.projectId, projectId), eq(issues.issueTypeId, issueTypeId)));
+      .where(
+        and(
+          eq(issues.projectId, projectId),
+          eq(issues.issueTypeId, issueTypeId),
+        ),
+      );
     return Number(result[0]?.count || 0);
   }
 
@@ -297,7 +330,9 @@ export class IssueRepository {
   // ISSUE KEY GENERATION (Atomic)
   // ==========================================================================
 
-  async getNextIssueNumber(projectId: string): Promise<{ key: string; issueNumber: number }> {
+  async getNextIssueNumber(
+    projectId: string,
+  ): Promise<{ key: string; issueNumber: number }> {
     // Use a transaction with row-level locking for atomicity
     return db.transaction(async (tx) => {
       // Lock the project row and get current settings
@@ -311,7 +346,7 @@ export class IssueRepository {
         throw new Error('Project not found');
       }
 
-      const settings = project.settings as any || {};
+      const settings = (project.settings as any) || {};
       const nextNumber = (settings.nextIssueNumber || 1) as number;
       const prefix = settings.issueKeyPrefix || project.key;
 
@@ -352,20 +387,23 @@ export class IssueRepository {
       .values({ issueId, fieldId, value })
       .onConflictDoUpdate({
         target: [issueFieldValues.issueId, issueFieldValues.fieldId],
-        set: { 
-          value, 
-          updatedAt: new Date() 
+        set: {
+          value,
+          updatedAt: new Date(),
         },
       })
       .returning();
     return result;
   }
 
-  async setFieldValues(issueId: string, fieldValues: { fieldId: string; value: FieldValue }[]) {
+  async setFieldValues(
+    issueId: string,
+    fieldValues: { fieldId: string; value: FieldValue }[],
+  ) {
     if (fieldValues.length === 0) return [];
 
     // Batch upsert: insert all values in one query
-    const valuesToInsert = fieldValues.map(fv => ({
+    const valuesToInsert = fieldValues.map((fv) => ({
       issueId,
       fieldId: fv.fieldId,
       value: fv.value,
@@ -376,9 +414,9 @@ export class IssueRepository {
       .values(valuesToInsert)
       .onConflictDoUpdate({
         target: [issueFieldValues.issueId, issueFieldValues.fieldId],
-        set: { 
-          value: sql`excluded.value`, 
-          updatedAt: new Date() 
+        set: {
+          value: sql`excluded.value`,
+          updatedAt: new Date(),
         },
       })
       .returning();
@@ -392,8 +430,8 @@ export class IssueRepository {
       .where(
         and(
           eq(issueFieldValues.issueId, issueId),
-          eq(issueFieldValues.fieldId, fieldId)
-        )
+          eq(issueFieldValues.fieldId, fieldId),
+        ),
       )
       .returning();
     return deleted;
@@ -413,7 +451,7 @@ export class IssueRepository {
 
   async getHistory(issueId: string, page = 1, limit = 50) {
     const offset = (page - 1) * limit;
-    
+
     const [data, countResult] = await Promise.all([
       db.query.issueHistory.findMany({
         where: eq(issueHistory.issueId, issueId),
@@ -426,7 +464,8 @@ export class IssueRepository {
           },
         },
       }),
-      db.select({ count: sql<number>`count(*)` })
+      db
+        .select({ count: sql<number>`count(*)` })
         .from(issueHistory)
         .where(eq(issueHistory.issueId, issueId)),
     ]);
@@ -445,7 +484,10 @@ export class IssueRepository {
   // HIERARCHY CHECKS
   // ==========================================================================
 
-  async isAncestorOf(potentialAncestorId: string, issueId: string): Promise<boolean> {
+  async isAncestorOf(
+    potentialAncestorId: string,
+    issueId: string,
+  ): Promise<boolean> {
     // Check if potentialAncestor is an ancestor of issue (to prevent cycles)
     let current = await this.findById(issueId);
     const visited = new Set<string>();
@@ -523,7 +565,7 @@ export class IssueRepository {
     const result = await db.query.issues.findFirst({
       where: and(
         eq(issues.projectId, projectId),
-        sql`${issues.rank} IS NOT NULL`
+        sql`${issues.rank} IS NOT NULL`,
       ),
       orderBy: asc(issues.rank),
       columns: { rank: true },
@@ -538,7 +580,7 @@ export class IssueRepository {
     const result = await db.query.issues.findFirst({
       where: and(
         eq(issues.projectId, projectId),
-        sql`${issues.rank} IS NOT NULL`
+        sql`${issues.rank} IS NOT NULL`,
       ),
       orderBy: desc(issues.rank),
       columns: { rank: true },
@@ -569,13 +611,13 @@ export class IssueRepository {
    */
   async getAdjacentIssueRanks(
     projectId: string,
-    targetRank: string
+    targetRank: string,
   ): Promise<{ prevRank: string | null; nextRank: string | null }> {
     // Get issue just before target rank
     const prev = await db.query.issues.findFirst({
       where: and(
         eq(issues.projectId, projectId),
-        sql`${issues.rank} < ${targetRank}`
+        sql`${issues.rank} < ${targetRank}`,
       ),
       orderBy: desc(issues.rank),
       columns: { rank: true },
@@ -585,7 +627,7 @@ export class IssueRepository {
     const next = await db.query.issues.findFirst({
       where: and(
         eq(issues.projectId, projectId),
-        sql`${issues.rank} > ${targetRank}`
+        sql`${issues.rank} > ${targetRank}`,
       ),
       orderBy: asc(issues.rank),
       columns: { rank: true },

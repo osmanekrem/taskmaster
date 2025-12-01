@@ -1,6 +1,8 @@
 import { db } from '@/db';
 import { projectRepository } from '@/repositories/project-repository';
 import { workflowRepository } from '@/repositories/workflow-repository';
+import { issues } from '@/db/schema/issues';
+import { eq, count } from 'drizzle-orm';
 import type {
   CreateProjectSchema,
   UpdateProjectSchema,
@@ -31,7 +33,8 @@ export const projectService = (drizzle: DrizzleClientOrTransaction = db) => {
     /**
      * Get all projects
      */
-    getAllProjects: (filters?: ListProjectsSchema) => repository.findAllProjects(filters),
+    getAllProjects: (filters?: ListProjectsSchema) =>
+      repository.findAllProjects(filters),
 
     /**
      * Get a project by ID
@@ -73,9 +76,13 @@ export const projectService = (drizzle: DrizzleClientOrTransaction = db) => {
 
       // Validate workflow exists if provided
       if (input.defaultWorkflowId) {
-        const workflow = await workflowRepo.findWorkflowById(input.defaultWorkflowId);
+        const workflow = await workflowRepo.findWorkflowById(
+          input.defaultWorkflowId,
+        );
         if (!workflow) {
-          throwNotFoundError('WORKFLOW_NOT_FOUND', { workflowId: input.defaultWorkflowId });
+          throwNotFoundError('WORKFLOW_NOT_FOUND', {
+            workflowId: input.defaultWorkflowId,
+          });
         }
       }
 
@@ -108,10 +115,17 @@ export const projectService = (drizzle: DrizzleClientOrTransaction = db) => {
       }
 
       // Validate workflow if changing
-      if (input.defaultWorkflowId && input.defaultWorkflowId !== existing.defaultWorkflowId) {
-        const workflow = await workflowRepo.findWorkflowById(input.defaultWorkflowId);
+      if (
+        input.defaultWorkflowId &&
+        input.defaultWorkflowId !== existing.defaultWorkflowId
+      ) {
+        const workflow = await workflowRepo.findWorkflowById(
+          input.defaultWorkflowId,
+        );
         if (!workflow) {
-          throwNotFoundError('WORKFLOW_NOT_FOUND', { workflowId: input.defaultWorkflowId });
+          throwNotFoundError('WORKFLOW_NOT_FOUND', {
+            workflowId: input.defaultWorkflowId,
+          });
         }
       }
 
@@ -129,11 +143,24 @@ export const projectService = (drizzle: DrizzleClientOrTransaction = db) => {
 
       // Cannot delete archived project
       if (existing.isArchived) {
-        throwValidationError('CANNOT_DELETE_ARCHIVED_PROJECT', { projectId: input.projectId });
+        throwValidationError('CANNOT_DELETE_ARCHIVED_PROJECT', {
+          projectId: input.projectId,
+        });
       }
 
-      // TODO: Check if project has issues
-      // This will be implemented when we have issues
+      // Check if project has issues
+      const [issueCount] = await drizzle
+        .select({ count: count() })
+        .from(issues)
+        .where(eq(issues.projectId, input.projectId));
+
+      if (issueCount && issueCount.count > 0) {
+        throwValidationError('PROJECT_HAS_ISSUES', {
+          projectId: input.projectId,
+          issueCount: issueCount.count,
+          message: `Cannot delete project with ${issueCount.count} issue(s). Archive it instead or delete all issues first.`,
+        });
+      }
 
       return await repository.deleteProject(input.projectId);
     },
@@ -198,7 +225,10 @@ export const projectService = (drizzle: DrizzleClientOrTransaction = db) => {
       }
 
       // Check if already added
-      const existing = await repository.findProjectIssueType(input.projectId, input.issueTypeId);
+      const existing = await repository.findProjectIssueType(
+        input.projectId,
+        input.issueTypeId,
+      );
       if (existing) {
         throwValidationError('ISSUE_TYPE_ALREADY_IN_PROJECT', {
           projectId: input.projectId,
@@ -210,7 +240,9 @@ export const projectService = (drizzle: DrizzleClientOrTransaction = db) => {
       if (input.workflowId) {
         const workflow = await workflowRepo.findWorkflowById(input.workflowId);
         if (!workflow) {
-          throwNotFoundError('WORKFLOW_NOT_FOUND', { workflowId: input.workflowId });
+          throwNotFoundError('WORKFLOW_NOT_FOUND', {
+            workflowId: input.workflowId,
+          });
         }
       }
 
@@ -220,9 +252,14 @@ export const projectService = (drizzle: DrizzleClientOrTransaction = db) => {
     /**
      * Update workflow for an issue type in a project
      */
-    updateProjectIssueTypeWorkflow: async (input: UpdateProjectIssueTypeWorkflowSchema) => {
+    updateProjectIssueTypeWorkflow: async (
+      input: UpdateProjectIssueTypeWorkflowSchema,
+    ) => {
       // Verify project issue type exists
-      const existing = await repository.findProjectIssueType(input.projectId, input.issueTypeId);
+      const existing = await repository.findProjectIssueType(
+        input.projectId,
+        input.issueTypeId,
+      );
       if (!existing) {
         throwNotFoundError('PROJECT_ISSUE_TYPE_NOT_FOUND', {
           projectId: input.projectId,
@@ -234,7 +271,9 @@ export const projectService = (drizzle: DrizzleClientOrTransaction = db) => {
       if (input.workflowId) {
         const workflow = await workflowRepo.findWorkflowById(input.workflowId);
         if (!workflow) {
-          throwNotFoundError('WORKFLOW_NOT_FOUND', { workflowId: input.workflowId });
+          throwNotFoundError('WORKFLOW_NOT_FOUND', {
+            workflowId: input.workflowId,
+          });
         }
       }
 
@@ -244,9 +283,14 @@ export const projectService = (drizzle: DrizzleClientOrTransaction = db) => {
     /**
      * Remove an issue type from a project
      */
-    removeIssueTypeFromProject: async (input: RemoveIssueTypeFromProjectSchema) => {
+    removeIssueTypeFromProject: async (
+      input: RemoveIssueTypeFromProjectSchema,
+    ) => {
       // Verify project issue type exists
-      const existing = await repository.findProjectIssueType(input.projectId, input.issueTypeId);
+      const existing = await repository.findProjectIssueType(
+        input.projectId,
+        input.issueTypeId,
+      );
       if (!existing) {
         throwNotFoundError('PROJECT_ISSUE_TYPE_NOT_FOUND', {
           projectId: input.projectId,
@@ -257,13 +301,18 @@ export const projectService = (drizzle: DrizzleClientOrTransaction = db) => {
       // TODO: Check if there are issues of this type in the project
       // This will be implemented when we have issues
 
-      return await repository.removeIssueTypeFromProject(input.projectId, input.issueTypeId);
+      return await repository.removeIssueTypeFromProject(
+        input.projectId,
+        input.issueTypeId,
+      );
     },
 
     /**
      * Bulk add issue types to a project
      */
-    bulkAddIssueTypesToProject: async (input: BulkAddIssueTypesToProjectSchema) => {
+    bulkAddIssueTypesToProject: async (
+      input: BulkAddIssueTypesToProjectSchema,
+    ) => {
       // Verify project exists
       const project = await repository.findProjectById(input.projectId);
       if (!project) {
@@ -271,11 +320,17 @@ export const projectService = (drizzle: DrizzleClientOrTransaction = db) => {
       }
 
       // Get existing issue types
-      const existingIssueTypes = await repository.findProjectIssueTypes(input.projectId);
-      const existingIds = new Set(existingIssueTypes.map((it) => it.issueTypeId));
+      const existingIssueTypes = await repository.findProjectIssueTypes(
+        input.projectId,
+      );
+      const existingIds = new Set(
+        existingIssueTypes.map((it) => it.issueTypeId),
+      );
 
       // Filter out already existing ones
-      const newIssueTypes = input.issueTypes.filter((it) => !existingIds.has(it.issueTypeId));
+      const newIssueTypes = input.issueTypes.filter(
+        (it) => !existingIds.has(it.issueTypeId),
+      );
 
       if (newIssueTypes.length === 0) {
         return existingIssueTypes;
@@ -286,12 +341,17 @@ export const projectService = (drizzle: DrizzleClientOrTransaction = db) => {
         if (it.workflowId) {
           const workflow = await workflowRepo.findWorkflowById(it.workflowId);
           if (!workflow) {
-            throwNotFoundError('WORKFLOW_NOT_FOUND', { workflowId: it.workflowId });
+            throwNotFoundError('WORKFLOW_NOT_FOUND', {
+              workflowId: it.workflowId,
+            });
           }
         }
       }
 
-      await repository.bulkAddIssueTypesToProject(input.projectId, newIssueTypes);
+      await repository.bulkAddIssueTypesToProject(
+        input.projectId,
+        newIssueTypes,
+      );
 
       return await repository.findProjectIssueTypes(input.projectId);
     },
@@ -301,10 +361,16 @@ export const projectService = (drizzle: DrizzleClientOrTransaction = db) => {
      * Returns the issue type's workflow or project's default workflow
      */
     getWorkflowForIssueType: async (projectId: string, issueTypeId: string) => {
-      const projectIssueType = await repository.findProjectIssueType(projectId, issueTypeId);
-      
+      const projectIssueType = await repository.findProjectIssueType(
+        projectId,
+        issueTypeId,
+      );
+
       if (!projectIssueType) {
-        throwNotFoundError('PROJECT_ISSUE_TYPE_NOT_FOUND', { projectId, issueTypeId });
+        throwNotFoundError('PROJECT_ISSUE_TYPE_NOT_FOUND', {
+          projectId,
+          issueTypeId,
+        });
       }
 
       // If issue type has a specific workflow, use it
@@ -345,7 +411,10 @@ export const projectService = (drizzle: DrizzleClientOrTransaction = db) => {
     /**
      * Create project from template
      */
-    createProjectFromTemplate: async (templateId: string, projectData: CreateProjectSchema) => {
+    createProjectFromTemplate: async (
+      templateId: string,
+      projectData: CreateProjectSchema,
+    ) => {
       const template = await repository.findTemplateById(templateId);
       if (!template) {
         throwNotFoundError('NOT_FOUND', { templateId });
@@ -354,11 +423,16 @@ export const projectService = (drizzle: DrizzleClientOrTransaction = db) => {
       // Create the project
       const project = await repository.createProject({
         ...projectData,
-        defaultWorkflowId: projectData.defaultWorkflowId ?? template.defaultWorkflowId ?? undefined,
+        defaultWorkflowId:
+          projectData.defaultWorkflowId ??
+          template.defaultWorkflowId ??
+          undefined,
       });
 
       // Copy issue types from template
-      const templateIssueTypes = await repository.findTemplateIssueTypes(templateId);
+      const templateIssueTypes = await repository.findTemplateIssueTypes(
+        templateId,
+      );
       if (templateIssueTypes.length > 0) {
         await repository.bulkAddIssueTypesToProject(
           project.id,

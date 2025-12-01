@@ -3,11 +3,16 @@
 // =============================================================================
 
 import { z } from 'zod';
-import { router, protectedProcedure } from '../lib/trpc';
+import { router, protectedProcedure, adminProcedure } from '../lib/trpc';
 import { VersionService } from '../services/version-service';
 import { VersionRepository } from '../repositories/version-repository';
 import { ProjectRepository } from '../repositories/project-repository';
 import { db } from '../db';
+import {
+  requirePermission,
+  requireProjectAccess,
+  extractProjectId,
+} from '../lib/middleware/permission';
 
 // Initialize dependencies
 const versionRepository = new VersionRepository(db);
@@ -25,12 +30,18 @@ export const versionsRouter = router({
    * Get all versions for a project
    */
   list: protectedProcedure
-    .input(z.object({ 
-      projectId: z.string().uuid(),
-      includeArchived: z.boolean().default(false),
-    }))
+    .input(
+      z.object({
+        projectId: z.string().uuid(),
+        includeArchived: z.boolean().default(false),
+      }),
+    )
+    .use(requireProjectAccess(extractProjectId.fromProjectId))
     .query(async ({ input }) => {
-      return versionService.getVersionsByProjectId(input.projectId, input.includeArchived);
+      return versionService.getVersionsByProjectId(
+        input.projectId,
+        input.includeArchived,
+      );
     }),
 
   /**
@@ -38,6 +49,7 @@ export const versionsRouter = router({
    */
   listWithCounts: protectedProcedure
     .input(z.object({ projectId: z.string().uuid() }))
+    .use(requireProjectAccess(extractProjectId.fromProjectId))
     .query(async ({ input }) => {
       return versionService.getVersionsWithCounts(input.projectId);
     }),
@@ -55,10 +67,13 @@ export const versionsRouter = router({
    * Get versions by status
    */
   getByStatus: protectedProcedure
-    .input(z.object({
-      projectId: z.string().uuid(),
-      status: versionStatusSchema,
-    }))
+    .input(
+      z.object({
+        projectId: z.string().uuid(),
+        status: versionStatusSchema,
+      }),
+    )
+    .use(requireProjectAccess(extractProjectId.fromProjectId))
     .query(async ({ input }) => {
       return versionService.getVersionsByStatus(input.projectId, input.status);
     }),
@@ -74,8 +89,9 @@ export const versionsRouter = router({
         description: z.string().max(500).optional(),
         startDate: z.string().optional(),
         releaseDate: z.string().optional(),
-      })
+      }),
     )
+    .use(requirePermission('project:edit', extractProjectId.fromProjectId))
     .mutation(async ({ input }) => {
       return versionService.createVersion(input);
     }),
@@ -92,8 +108,9 @@ export const versionsRouter = router({
         startDate: z.string().optional().nullable(),
         releaseDate: z.string().optional().nullable(),
         sortOrder: z.string().max(10).optional(),
-      })
+      }),
     )
+    .use(requirePermission('project:edit'))
     .mutation(async ({ input }) => {
       const { id, ...data } = input;
       return versionService.updateVersion(id, data);
@@ -103,10 +120,13 @@ export const versionsRouter = router({
    * Release a version
    */
   release: protectedProcedure
-    .input(z.object({
-      id: z.string().uuid(),
-      releaseDate: z.string().optional(),
-    }))
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        releaseDate: z.string().optional(),
+      }),
+    )
+    .use(requirePermission('project:edit'))
     .mutation(async ({ input }) => {
       return versionService.releaseVersion(input.id, input.releaseDate);
     }),
@@ -116,6 +136,7 @@ export const versionsRouter = router({
    */
   unrelease: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
+    .use(requirePermission('project:edit'))
     .mutation(async ({ input }) => {
       return versionService.unreleaseVersion(input.id);
     }),
@@ -125,6 +146,7 @@ export const versionsRouter = router({
    */
   archive: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
+    .use(requirePermission('project:edit'))
     .mutation(async ({ input }) => {
       return versionService.archiveVersion(input.id);
     }),
@@ -134,6 +156,7 @@ export const versionsRouter = router({
    */
   unarchive: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
+    .use(requirePermission('project:edit'))
     .mutation(async ({ input }) => {
       return versionService.unarchiveVersion(input.id);
     }),
@@ -143,6 +166,7 @@ export const versionsRouter = router({
    */
   delete: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
+    .use(requirePermission('project:edit'))
     .mutation(async ({ input }) => {
       await versionService.deleteVersion(input.id);
       return { success: true };
@@ -157,6 +181,7 @@ export const versionsRouter = router({
    */
   getFixVersions: protectedProcedure
     .input(z.object({ issueId: z.string().uuid() }))
+    .use(requirePermission('issue:view'))
     .query(async ({ input }) => {
       return versionService.getFixVersions(input.issueId);
     }),
@@ -165,10 +190,13 @@ export const versionsRouter = router({
    * Add fix version to issue
    */
   addFixVersion: protectedProcedure
-    .input(z.object({
-      issueId: z.string().uuid(),
-      versionId: z.string().uuid(),
-    }))
+    .input(
+      z.object({
+        issueId: z.string().uuid(),
+        versionId: z.string().uuid(),
+      }),
+    )
+    .use(requirePermission('issue:edit'))
     .mutation(async ({ input }) => {
       await versionService.addFixVersion(input.issueId, input.versionId);
       return { success: true };
@@ -178,10 +206,13 @@ export const versionsRouter = router({
    * Remove fix version from issue
    */
   removeFixVersion: protectedProcedure
-    .input(z.object({
-      issueId: z.string().uuid(),
-      versionId: z.string().uuid(),
-    }))
+    .input(
+      z.object({
+        issueId: z.string().uuid(),
+        versionId: z.string().uuid(),
+      }),
+    )
+    .use(requirePermission('issue:edit'))
     .mutation(async ({ input }) => {
       await versionService.removeFixVersion(input.issueId, input.versionId);
       return { success: true };
@@ -191,10 +222,13 @@ export const versionsRouter = router({
    * Set all fix versions for an issue
    */
   setFixVersions: protectedProcedure
-    .input(z.object({
-      issueId: z.string().uuid(),
-      versionIds: z.array(z.string().uuid()),
-    }))
+    .input(
+      z.object({
+        issueId: z.string().uuid(),
+        versionIds: z.array(z.string().uuid()),
+      }),
+    )
+    .use(requirePermission('issue:edit'))
     .mutation(async ({ input }) => {
       await versionService.setFixVersions(input.issueId, input.versionIds);
       return { success: true };
@@ -209,6 +243,7 @@ export const versionsRouter = router({
    */
   getAffectedVersions: protectedProcedure
     .input(z.object({ issueId: z.string().uuid() }))
+    .use(requirePermission('issue:view'))
     .query(async ({ input }) => {
       return versionService.getAffectedVersions(input.issueId);
     }),
@@ -217,10 +252,13 @@ export const versionsRouter = router({
    * Add affected version to issue
    */
   addAffectedVersion: protectedProcedure
-    .input(z.object({
-      issueId: z.string().uuid(),
-      versionId: z.string().uuid(),
-    }))
+    .input(
+      z.object({
+        issueId: z.string().uuid(),
+        versionId: z.string().uuid(),
+      }),
+    )
+    .use(requirePermission('issue:edit'))
     .mutation(async ({ input }) => {
       await versionService.addAffectedVersion(input.issueId, input.versionId);
       return { success: true };
@@ -230,12 +268,18 @@ export const versionsRouter = router({
    * Remove affected version from issue
    */
   removeAffectedVersion: protectedProcedure
-    .input(z.object({
-      issueId: z.string().uuid(),
-      versionId: z.string().uuid(),
-    }))
+    .input(
+      z.object({
+        issueId: z.string().uuid(),
+        versionId: z.string().uuid(),
+      }),
+    )
+    .use(requirePermission('issue:edit'))
     .mutation(async ({ input }) => {
-      await versionService.removeAffectedVersion(input.issueId, input.versionId);
+      await versionService.removeAffectedVersion(
+        input.issueId,
+        input.versionId,
+      );
       return { success: true };
     }),
 
@@ -243,10 +287,13 @@ export const versionsRouter = router({
    * Set all affected versions for an issue
    */
   setAffectedVersions: protectedProcedure
-    .input(z.object({
-      issueId: z.string().uuid(),
-      versionIds: z.array(z.string().uuid()),
-    }))
+    .input(
+      z.object({
+        issueId: z.string().uuid(),
+        versionIds: z.array(z.string().uuid()),
+      }),
+    )
+    .use(requirePermission('issue:edit'))
     .mutation(async ({ input }) => {
       await versionService.setAffectedVersions(input.issueId, input.versionIds);
       return { success: true };
@@ -257,6 +304,7 @@ export const versionsRouter = router({
    */
   getIssuesByFixVersion: protectedProcedure
     .input(z.object({ versionId: z.string().uuid() }))
+    .use(requirePermission('issue:view'))
     .query(async ({ input }) => {
       return versionService.getIssueIdsByFixVersion(input.versionId);
     }),
