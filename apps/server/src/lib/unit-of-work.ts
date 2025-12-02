@@ -47,37 +47,27 @@ export class UnitOfWork {
   // ===========================================================================
 
   get issues(): IssueRepository {
-    if (!this._issues) {
-      this._issues = new IssueRepository();
-    }
+    this._issues ??= new IssueRepository();
     return this._issues;
   }
 
   get issueLinks(): IssueLinkRepository {
-    if (!this._issueLinks) {
-      this._issueLinks = new IssueLinkRepository(this.tx);
-    }
+    this._issueLinks ??= new IssueLinkRepository(this.tx);
     return this._issueLinks;
   }
 
   get projects(): ProjectRepository {
-    if (!this._projects) {
-      this._projects = new ProjectRepository(this.tx);
-    }
+    this._projects ??= new ProjectRepository(this.tx);
     return this._projects;
   }
 
   get comments(): CommentRepository {
-    if (!this._comments) {
-      this._comments = new CommentRepository(this.tx);
-    }
+    this._comments ??= new CommentRepository(this.tx);
     return this._comments;
   }
 
   get attachments(): AttachmentRepository {
-    if (!this._attachments) {
-      this._attachments = new AttachmentRepository(this.tx);
-    }
+    this._attachments ??= new AttachmentRepository(this.tx);
     return this._attachments;
   }
 

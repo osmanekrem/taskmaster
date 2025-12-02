@@ -17,7 +17,11 @@ import type {
   TransitionIssueInput,
   IssueFilters,
 } from '@taskmaster/validation';
-import type { FieldValue, HistoryChange } from '@/db/schema/issues';
+import type {
+  FieldValue,
+  HistoryChange,
+  ChangeActionType,
+} from '@/db/schema/issues';
 import {
   generateRankAfter,
   generateRankBetween,
@@ -209,8 +213,8 @@ export class IssueService {
     }
 
     // 10. Add creation history
-    await this.issueRepository.addHistory(issue.id, reporterId, [
-      { field: 'issue', oldValue: null, newValue: key },
+    await this.issueRepository.addChangeGroup(issue.id, reporterId, 'created', [
+      { field: 'issue', oldValue: undefined, newValue: key },
     ]);
 
     // 11. Auto-watch for reporter (fire-and-forget, don't block on errors)
@@ -340,7 +344,7 @@ export class IssueService {
     }
 
     // Apply update
-    const updated = await this.issueRepository.update(id, {
+    await this.issueRepository.update(id, {
       issueTypeId: input.issueTypeId,
       assigneeId: input.assigneeId,
       parentId: input.parentId,
@@ -350,7 +354,12 @@ export class IssueService {
 
     // Record history
     if (changes.length > 0) {
-      await this.issueRepository.addHistory(id, userId, changes);
+      await this.issueRepository.addChangeGroup(
+        id,
+        userId,
+        this.determineActionType(changes),
+        this.toChangeItems(changes),
+      );
     }
 
     // Emit issue:updated event
@@ -434,7 +443,12 @@ export class IssueService {
     );
 
     if (changes.length > 0) {
-      await this.issueRepository.addHistory(issueId, userId, changes);
+      await this.issueRepository.addChangeGroup(
+        issueId,
+        userId,
+        'updated',
+        this.toChangeItems(changes),
+      );
       await this.issueRepository.update(issueId, { updatedAt: new Date() });
     }
 
@@ -641,7 +655,12 @@ export class IssueService {
       }
 
       // 5. Record history
-      await this.issueRepository.addHistory(id, userId, historyChanges);
+      await this.issueRepository.addChangeGroup(
+        id,
+        userId,
+        'transitioned',
+        this.toChangeItems(historyChanges),
+      );
     });
 
     // Emit issue:transitioned event (notification scheme will handle recipients)
@@ -774,23 +793,72 @@ export class IssueService {
     return this.issueRepository.getChangeHistory(issueId, page, limit);
   }
 
-  /**
-   * @deprecated Use getIssueHistory which now uses the normalized change_groups
-   */
-  async getIssueHistoryLegacy(issueId: string, page = 1, limit = 50) {
-    const issue = await this.issueRepository.findById(issueId);
-    if (!issue) {
-      throw createAppError(ErrorMessages.ISSUE_NOT_FOUND, {
-        statusCode: 404,
-        code: 'NOT_FOUND',
-      });
-    }
-    return this.issueRepository.getHistory(issueId, page, limit);
-  }
-
   // ==========================================================================
   // PRIVATE HELPERS
   // ==========================================================================
+
+  /**
+   * Convert HistoryChange[] to ChangeItem format for addChangeGroup
+   */
+  private toChangeItems(changes: HistoryChange[]): Array<{
+    field: string;
+    fieldId?: string;
+    oldString?: string;
+    newString?: string;
+    oldValue?: string;
+    newValue?: string;
+  }> {
+    return changes.map((c) => ({
+      field: c.field,
+      fieldId: c.fieldId,
+      oldString: this.valueToString(c.oldValue),
+      newString: this.valueToString(c.newValue),
+      oldValue: this.valueToString(c.oldValue),
+      newValue: this.valueToString(c.newValue),
+    }));
+  }
+
+  /**
+   * Convert value to string for change items
+   */
+  private valueToString(value: unknown): string | undefined {
+    if (value === null || value === undefined) return undefined;
+    if (typeof value === 'string') return value;
+    if (typeof value === 'number' || typeof value === 'boolean')
+      return String(value);
+    if (value instanceof Date) return value.toISOString();
+    if (Array.isArray(value)) return value.join(', ');
+    return JSON.stringify(value);
+  }
+
+  /**
+   * Determine action type from changes
+   */
+  private determineActionType(changes: HistoryChange[]): ChangeActionType {
+    const fields = changes.map((c) => c.field.toLowerCase());
+
+    if (fields.includes('status')) return 'transitioned';
+    if (fields.includes('assignee')) return 'assigned';
+    if (fields.includes('comment')) return 'commented';
+    if (fields.some((f) => f.includes('attachment'))) {
+      const attachmentChange = changes.find((c) =>
+        c.field.toLowerCase().includes('attachment'),
+      );
+      if (attachmentChange?.oldValue === null) return 'attachment_added';
+      if (attachmentChange?.newValue === null) return 'attachment_removed';
+    }
+    if (fields.includes('worklog')) return 'worklog_added';
+    if (fields.includes('link')) {
+      const linkChange = changes.find((c) =>
+        c.field.toLowerCase().includes('link'),
+      );
+      if (linkChange?.oldValue === null) return 'linked';
+      if (linkChange?.newValue === null) return 'unlinked';
+    }
+    if (fields.includes('rank')) return 'updated';
+
+    return 'updated';
+  }
 
   private async getWorkflowForIssue(
     projectId: string,
@@ -1253,9 +1321,14 @@ export class IssueService {
 
       if (updates.labels !== undefined) {
         const oldLabels = (issue.labels as string[]) || [];
+        const sortedOldLabels = [...oldLabels].sort((a, b) =>
+          a.localeCompare(b),
+        );
+        const sortedNewLabels = [...updates.labels].sort((a, b) =>
+          a.localeCompare(b),
+        );
         if (
-          JSON.stringify(oldLabels.sort()) !==
-          JSON.stringify(updates.labels.sort())
+          JSON.stringify(sortedOldLabels) !== JSON.stringify(sortedNewLabels)
         ) {
           changes.push({
             field: 'labels',
@@ -1295,7 +1368,14 @@ export class IssueService {
 
     // Add history for all changes
     if (historyEntries.length > 0) {
-      await this.issueRepository.bulkAddHistory(historyEntries);
+      await this.issueRepository.bulkAddChangeGroups(
+        historyEntries.map((entry) => ({
+          issueId: entry.issueId,
+          userId: entry.userId,
+          action: this.determineActionType(entry.changes),
+          changes: this.toChangeItems(entry.changes),
+        })),
+      );
     }
 
     // Emit events for each updated issue
@@ -1465,7 +1545,14 @@ export class IssueService {
       ],
     }));
 
-    await this.issueRepository.bulkAddHistory(historyEntries);
+    await this.issueRepository.bulkAddChangeGroups(
+      historyEntries.map((entry) => ({
+        issueId: entry.issueId,
+        userId: entry.userId,
+        action: 'transitioned' as ChangeActionType,
+        changes: this.toChangeItems(entry.changes),
+      })),
+    );
 
     // Emit events for each transitioned issue
     for (const issue of transitioned) {
@@ -1649,7 +1736,7 @@ export class IssueService {
       });
 
       // Add history
-      await this.issueRepository.addHistory(issue.id, userId, [
+      await this.issueRepository.addChangeGroup(issue.id, userId, 'updated', [
         {
           field: 'project',
           oldValue: issue.project?.name,

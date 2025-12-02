@@ -66,10 +66,10 @@ export const boards = pgTable(
       onDelete: 'set null',
     }),
   },
-  (table) => ({
-    projectIdIdx: index('boards_project_id_idx').on(table.projectId),
-    ownerIdIdx: index('boards_owner_id_idx').on(table.ownerId),
-  }),
+  (table) => [
+    index('boards_project_id_idx').on(table.projectId),
+    index('boards_owner_id_idx').on(table.ownerId),
+  ],
 );
 
 // =============================================================================
@@ -115,9 +115,7 @@ export const boardColumns = pgTable(
       onDelete: 'set null',
     }),
   },
-  (table) => ({
-    boardIdIdx: index('board_columns_board_id_idx').on(table.boardId),
-  }),
+  (table) => [index('board_columns_board_id_idx').on(table.boardId)],
 );
 
 // =============================================================================
@@ -152,10 +150,10 @@ export const boardSwimlanes = pgTable(
 
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
-  (table) => ({
-    boardIdIdx: index('board_swimlanes_board_id_idx').on(table.boardId),
-    uniqueBoardSwimlane: unique('board_swimlanes_unique').on(table.boardId),
-  }),
+  (table) => [
+    index('board_swimlanes_board_id_idx').on(table.boardId),
+    unique('board_swimlanes_unique').on(table.boardId),
+  ],
 );
 
 // =============================================================================
@@ -188,9 +186,7 @@ export const boardQuickFilters = pgTable(
 
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
-  (table) => ({
-    boardIdIdx: index('board_quick_filters_board_id_idx').on(table.boardId),
-  }),
+  (table) => [index('board_quick_filters_board_id_idx').on(table.boardId)],
 );
 
 // =============================================================================
@@ -237,9 +233,7 @@ export const boardCardLayouts = pgTable(
 
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
-  (table) => ({
-    uniqueBoardLayout: unique('board_card_layouts_unique').on(table.boardId),
-  }),
+  (table) => [unique('board_card_layouts_unique').on(table.boardId)],
 );
 
 // =============================================================================
@@ -279,14 +273,11 @@ export const boardUserSettings = pgTable(
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },
-  (table) => ({
-    boardIdIdx: index('board_user_settings_board_id_idx').on(table.boardId),
-    userIdIdx: index('board_user_settings_user_id_idx').on(table.userId),
-    uniqueBoardUser: unique('board_user_settings_unique').on(
-      table.boardId,
-      table.userId,
-    ),
-  }),
+  (table) => [
+    index('board_user_settings_board_id_idx').on(table.boardId),
+    index('board_user_settings_user_id_idx').on(table.userId),
+    unique('board_user_settings_unique').on(table.boardId, table.userId),
+  ],
 );
 
 // =============================================================================

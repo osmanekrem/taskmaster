@@ -22,7 +22,7 @@ import { fieldTypeService } from '@/services/field-type-service';
 import { ticketTypeService } from '@/services/ticket-type-service';
 import { statusService } from '@/services/status-service';
 import { workflowService } from '@/services/workflow-service';
-import { projectService } from '@/services/project-service';
+import { ProjectService } from '@/services/project-service';
 import { IssueService } from '@/services/issue-service';
 import { IssueRepository } from '@/repositories/issue-repository';
 import { ProjectRepository } from '@/repositories/project-repository';
@@ -55,6 +55,7 @@ import { LabelService } from '@/services/label-service';
 import { LabelRepository } from '@/repositories/label-repository';
 import { VersionService } from '@/services/version-service';
 import { VersionRepository } from '@/repositories/version-repository';
+import { GroupService } from '@/services/group-service';
 import type { DrizzleClient } from '@/lib/types/db';
 
 class Container {
@@ -92,7 +93,7 @@ class Container {
     null;
   private _statusService: ReturnType<typeof statusService> | null = null;
   private _workflowService: ReturnType<typeof workflowService> | null = null;
-  private _projectService: ReturnType<typeof projectService> | null = null;
+  private _projectService: ProjectService | null = null;
   private _issueService: IssueService | null = null;
   private _commentService: CommentService | null = null;
   private _notificationService: NotificationService | null = null;
@@ -103,6 +104,7 @@ class Container {
   private _issueLinkService: IssueLinkService | null = null;
   private _labelService: LabelService | null = null;
   private _versionService: VersionService | null = null;
+  private _groupService: GroupService | null = null;
 
   // ===========================================================================
   // CONSTRUCTOR
@@ -240,8 +242,8 @@ class Container {
     return this._workflowService;
   }
 
-  get project() {
-    this._projectService ??= projectService(this._db);
+  get project(): ProjectService {
+    this._projectService ??= new ProjectService(this._db);
     return this._projectService;
   }
 
@@ -364,6 +366,15 @@ class Container {
     return this._versionService;
   }
 
+  /**
+   * Group Service
+   * No repository dependencies (uses static imports)
+   */
+  get group(): GroupService {
+    this._groupService ??= new GroupService();
+    return this._groupService;
+  }
+
   // ===========================================================================
   // TRANSACTION & UNIT OF WORK
   // ===========================================================================
@@ -451,6 +462,7 @@ class Container {
     this._issueLinkService = null;
     this._labelService = null;
     this._versionService = null;
+    this._groupService = null;
   }
 }
 

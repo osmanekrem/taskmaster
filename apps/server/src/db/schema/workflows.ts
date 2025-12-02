@@ -95,15 +95,10 @@ export const workflowStatuses = pgTable(
     isInitial: boolean('is_initial').default(false),
     sortOrder: integer('sort_order').notNull().default(0),
   },
-  (table) => ({
-    uniqueWorkflowStatus: unique('workflow_statuses_unique').on(
-      table.workflowId,
-      table.statusId,
-    ),
-    workflowIdIdx: index('workflow_statuses_workflow_id_idx').on(
-      table.workflowId,
-    ),
-  }),
+  (table) => [
+    unique('workflow_statuses_unique').on(table.workflowId, table.statusId),
+    index('workflow_statuses_workflow_id_idx').on(table.workflowId),
+  ],
 );
 
 // =============================================================================
@@ -148,22 +143,16 @@ export const workflowTransitions = pgTable(
 
     sortOrder: integer('sort_order').notNull().default(0),
   },
-  (table) => ({
-    uniqueTransition: unique('workflow_transitions_unique').on(
+  (table) => [
+    unique('workflow_transitions_unique').on(
       table.workflowId,
       table.fromStatusId,
       table.toStatusId,
     ),
-    workflowIdIdx: index('workflow_transitions_workflow_id_idx').on(
-      table.workflowId,
-    ),
-    fromStatusIdIdx: index('workflow_transitions_from_status_idx').on(
-      table.fromStatusId,
-    ),
-    toStatusIdIdx: index('workflow_transitions_to_status_idx').on(
-      table.toStatusId,
-    ),
-  }),
+    index('workflow_transitions_workflow_id_idx').on(table.workflowId),
+    index('workflow_transitions_from_status_idx').on(table.fromStatusId),
+    index('workflow_transitions_to_status_idx').on(table.toStatusId),
+  ],
 );
 
 // =============================================================================

@@ -41,9 +41,7 @@ export const fields = pgTable(
       onDelete: 'set null',
     }),
   },
-  (table) => ({
-    slugIdx: index('fields_slug_idx').on(table.slug),
-  }),
+  (table) => [index('fields_slug_idx').on(table.slug)],
 );
 
 export const fieldsRelations = relations(fields, ({ many }) => ({

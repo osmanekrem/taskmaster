@@ -63,12 +63,12 @@ export const issueComments = pgTable(
       onDelete: 'set null',
     }),
   },
-  (table) => ({
-    issueIdx: index('issue_comments_issue_idx').on(table.issueId),
-    authorIdx: index('issue_comments_author_idx').on(table.authorId),
-    parentIdx: index('issue_comments_parent_idx').on(table.parentId),
-    createdAtIdx: index('issue_comments_created_at_idx').on(table.createdAt),
-  }),
+  (table) => [
+    index('issue_comments_issue_idx').on(table.issueId),
+    index('issue_comments_author_idx').on(table.authorId),
+    index('issue_comments_parent_idx').on(table.parentId),
+    index('issue_comments_created_at_idx').on(table.createdAt),
+  ],
 );
 
 // =============================================================================
@@ -120,10 +120,10 @@ export const issueAttachments = pgTable(
       onDelete: 'set null',
     }),
   },
-  (table) => ({
-    issueIdx: index('issue_attachments_issue_idx').on(table.issueId),
-    uploaderIdx: index('issue_attachments_uploader_idx').on(table.uploaderId),
-  }),
+  (table) => [
+    index('issue_attachments_issue_idx').on(table.issueId),
+    index('issue_attachments_uploader_idx').on(table.uploaderId),
+  ],
 );
 
 // =============================================================================
@@ -148,10 +148,10 @@ export const commentMentions = pgTable(
 
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
-  (table) => ({
-    commentIdx: index('comment_mentions_comment_idx').on(table.commentId),
-    userIdx: index('comment_mentions_user_idx').on(table.mentionedUserId),
-  }),
+  (table) => [
+    index('comment_mentions_comment_idx').on(table.commentId),
+    index('comment_mentions_user_idx').on(table.mentionedUserId),
+  ],
 );
 
 // =============================================================================
@@ -178,16 +178,15 @@ export const commentReactions = pgTable(
 
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
-  (table) => ({
-    commentIdx: index('comment_reactions_comment_idx').on(table.commentId),
-    userIdx: index('comment_reactions_user_idx').on(table.userId),
-    // Prevent duplicate reactions (same user, same emoji, same comment)
-    uniqueReaction: unique('comment_reactions_unique').on(
+  (table) => [
+    index('comment_reactions_comment_idx').on(table.commentId),
+    index('comment_reactions_user_idx').on(table.userId),
+    unique('comment_reactions_unique').on(
       table.commentId,
       table.userId,
       table.emoji,
     ),
-  }),
+  ],
 );
 
 // =============================================================================

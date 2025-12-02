@@ -5,7 +5,6 @@ import {
 } from '@/repositories/group-repository';
 import type {
   Group,
-  InsertGroup,
   GroupMember,
   GroupWithMembers,
   GroupWithMemberCount,
@@ -244,9 +243,7 @@ export class GroupService {
   /**
    * Get members of a group
    */
-  async getGroupMembers(
-    groupId: string,
-  ): Promise<
+  async getGroupMembers(groupId: string): Promise<
     (GroupMember & {
       user: { id: string; name: string | null; email: string };
     })[]

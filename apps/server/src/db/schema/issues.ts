@@ -111,46 +111,28 @@ export const issues = pgTable(
       onDelete: 'set null',
     }),
   },
-  (table) => ({
-    // Performance indexes
-    projectIdx: index('issues_project_idx').on(table.projectId),
-    statusIdx: index('issues_status_idx').on(table.statusId),
-    assigneeIdx: index('issues_assignee_idx').on(table.assigneeId),
-    reporterIdx: index('issues_reporter_idx').on(table.reporterId),
-    parentIdx: index('issues_parent_idx').on(table.parentId),
-    epicIdx: index('issues_epic_idx').on(table.epicId),
-    // Security level index
-    securityLevelIdx: index('issues_security_level_idx').on(
-      table.securityLevelId,
-    ),
-    // Rank index for ordering
-    rankIdx: index('issues_rank_idx').on(table.rank),
-    projectRankIdx: index('issues_project_rank_idx').on(
-      table.projectId,
-      table.rank,
-    ),
-    // Composite indexes for common queries
-    projectStatusIdx: index('issues_project_status_idx').on(
-      table.projectId,
-      table.statusId,
-    ),
-    projectTypeIdx: index('issues_project_type_idx').on(
-      table.projectId,
-      table.issueTypeId,
-    ),
-    // Cache field indexes
-    storyPointsIdx: index('issues_story_points_idx').on(table.storyPoints),
-    priorityIdx: index('issues_priority_idx').on(table.priority),
-    // Unique constraint: issue number per project
-    uniqueProjectIssueNumber: unique('issues_project_number_unique').on(
+  (table) => [
+    index('issues_project_idx').on(table.projectId),
+    index('issues_status_idx').on(table.statusId),
+    index('issues_assignee_idx').on(table.assigneeId),
+    index('issues_reporter_idx').on(table.reporterId),
+    index('issues_parent_idx').on(table.parentId),
+    index('issues_epic_idx').on(table.epicId),
+    index('issues_security_level_idx').on(table.securityLevelId),
+    index('issues_rank_idx').on(table.rank),
+    index('issues_project_rank_idx').on(table.projectId, table.rank),
+    index('issues_project_status_idx').on(table.projectId, table.statusId),
+    index('issues_project_type_idx').on(table.projectId, table.issueTypeId),
+    index('issues_story_points_idx').on(table.storyPoints),
+    index('issues_priority_idx').on(table.priority),
+    unique('issues_project_number_unique').on(
       table.projectId,
       table.issueNumber,
     ),
-    // Text search indexes (using btree for ILIKE, GIN would need pg_trgm extension)
-    summaryIdx: index('issues_summary_idx').on(table.summary),
-    createdAtIdx: index('issues_created_at_idx').on(table.createdAt),
-    dueDateIdx: index('issues_due_date_idx').on(table.dueDate),
-  }),
+    index('issues_summary_idx').on(table.summary),
+    index('issues_created_at_idx').on(table.createdAt),
+    index('issues_due_date_idx').on(table.dueDate),
+  ],
 );
 
 // =============================================================================
@@ -189,15 +171,11 @@ export const issueFieldValues = pgTable(
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },
-  (table) => ({
-    issueIdx: index('issue_field_values_issue_idx').on(table.issueId),
-    fieldIdx: index('issue_field_values_field_idx').on(table.fieldId),
-    // Each field can only have one value per issue
-    uniqueIssueField: unique('issue_field_values_unique').on(
-      table.issueId,
-      table.fieldId,
-    ),
-  }),
+  (table) => [
+    index('issue_field_values_issue_idx').on(table.issueId),
+    index('issue_field_values_field_idx').on(table.fieldId),
+    unique('issue_field_values_unique').on(table.issueId, table.fieldId),
+  ],
 );
 
 // =============================================================================
@@ -246,17 +224,16 @@ export const changeGroups = pgTable(
     // When
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
-  (table) => ({
-    issueIdx: index('change_groups_issue_idx').on(table.issueId),
-    userIdx: index('change_groups_user_idx').on(table.userId),
-    createdAtIdx: index('change_groups_created_at_idx').on(table.createdAt),
-    actionIdx: index('change_groups_action_idx').on(table.action),
-    // Composite: Get all changes for an issue sorted by time
-    issueCreatedAtIdx: index('change_groups_issue_created_at_idx').on(
+  (table) => [
+    index('change_groups_issue_idx').on(table.issueId),
+    index('change_groups_user_idx').on(table.userId),
+    index('change_groups_created_at_idx').on(table.createdAt),
+    index('change_groups_action_idx').on(table.action),
+    index('change_groups_issue_created_at_idx').on(
       table.issueId,
       table.createdAt,
     ),
-  }),
+  ],
 );
 
 // =============================================================================
@@ -287,12 +264,10 @@ export const changeItems = pgTable(
     oldValue: text('old_value'), // Raw old value (e.g., user ID, status ID)
     newValue: text('new_value'), // Raw new value
   },
-  (table) => ({
-    changeGroupIdx: index('change_items_change_group_idx').on(
-      table.changeGroupId,
-    ),
-    fieldIdx: index('change_items_field_idx').on(table.field),
-  }),
+  (table) => [
+    index('change_items_change_group_idx').on(table.changeGroupId),
+    index('change_items_field_idx').on(table.field),
+  ],
 );
 
 // =============================================================================
@@ -329,11 +304,11 @@ export const issueHistory = pgTable(
     // When
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
-  (table) => ({
-    issueIdx: index('issue_history_issue_idx').on(table.issueId),
-    userIdx: index('issue_history_user_idx').on(table.userId),
-    createdAtIdx: index('issue_history_created_at_idx').on(table.createdAt),
-  }),
+  (table) => [
+    index('issue_history_issue_idx').on(table.issueId),
+    index('issue_history_user_idx').on(table.userId),
+    index('issue_history_created_at_idx').on(table.createdAt),
+  ],
 );
 
 // =============================================================================

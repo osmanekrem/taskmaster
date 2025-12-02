@@ -1,6 +1,6 @@
 import { db } from '@/db';
-import { projectRepository, ProjectRepository } from '@/repositories/project-repository';
-import { workflowRepository, WorkflowRepository } from '@/repositories/workflow-repository';
+import { projectRepository } from '@/repositories/project-repository';
+import { WorkflowRepository } from '@/repositories/workflow-repository';
 import { issues } from '@/db/schema/issues';
 import { eq, count } from 'drizzle-orm';
 import type {
@@ -27,9 +27,13 @@ import type { DbOrTx } from '@/lib/transaction';
 
 export class ProjectService {
   constructor(
-    private drizzle: DbOrTx = db,
-    private repository: ReturnType<typeof projectRepository> = projectRepository(db),
-    private workflowRepo: ReturnType<typeof workflowRepository> = workflowRepository(db)
+    private readonly drizzle: DbOrTx = db,
+    private readonly repository: ReturnType<
+      typeof projectRepository
+    > = projectRepository(db),
+    private readonly workflowRepo: WorkflowRepository = new WorkflowRepository(
+      db,
+    ),
   ) {}
 
   // =============================================================================
@@ -83,7 +87,7 @@ export class ProjectService {
 
     // Validate workflow exists if provided
     if (input.defaultWorkflowId) {
-      const workflow = await this.workflowRepo.findWorkflowById(
+      const workflow = await this.workflowRepo.findById(
         input.defaultWorkflowId,
       );
       if (!workflow) {
@@ -126,7 +130,7 @@ export class ProjectService {
       input.defaultWorkflowId &&
       input.defaultWorkflowId !== existing.defaultWorkflowId
     ) {
-      const workflow = await this.workflowRepo.findWorkflowById(
+      const workflow = await this.workflowRepo.findById(
         input.defaultWorkflowId,
       );
       if (!workflow) {
@@ -181,7 +185,10 @@ export class ProjectService {
       throwNotFoundError('PROJECT_NOT_FOUND', { projectId: input.projectId });
     }
 
-    return await this.repository.archiveProject(input.projectId, input.isArchived);
+    return await this.repository.archiveProject(
+      input.projectId,
+      input.isArchived,
+    );
   }
 
   /**
@@ -195,7 +202,7 @@ export class ProjectService {
 
     // Merge new settings with existing
     const mergedSettings = {
-      ...(existing.settings || {}),
+      ...existing.settings,
       ...input.settings,
     };
 
@@ -245,7 +252,7 @@ export class ProjectService {
 
     // Validate workflow if provided
     if (input.workflowId) {
-      const workflow = await this.workflowRepo.findWorkflowById(input.workflowId);
+      const workflow = await this.workflowRepo.findById(input.workflowId);
       if (!workflow) {
         throwNotFoundError('WORKFLOW_NOT_FOUND', {
           workflowId: input.workflowId,
@@ -259,7 +266,9 @@ export class ProjectService {
   /**
    * Update workflow for an issue type in a project
    */
-  async updateProjectIssueTypeWorkflow(input: UpdateProjectIssueTypeWorkflowSchema) {
+  async updateProjectIssueTypeWorkflow(
+    input: UpdateProjectIssueTypeWorkflowSchema,
+  ) {
     // Verify project issue type exists
     const existing = await this.repository.findProjectIssueType(
       input.projectId,
@@ -274,7 +283,7 @@ export class ProjectService {
 
     // Validate workflow if provided
     if (input.workflowId) {
-      const workflow = await this.workflowRepo.findWorkflowById(input.workflowId);
+      const workflow = await this.workflowRepo.findById(input.workflowId);
       if (!workflow) {
         throwNotFoundError('WORKFLOW_NOT_FOUND', {
           workflowId: input.workflowId,
@@ -321,9 +330,7 @@ export class ProjectService {
     const existingIssueTypes = await this.repository.findProjectIssueTypes(
       input.projectId,
     );
-    const existingIds = new Set(
-      existingIssueTypes.map((it) => it.issueTypeId),
-    );
+    const existingIds = new Set(existingIssueTypes.map((it) => it.issueTypeId));
 
     // Filter out already existing ones
     const newIssueTypes = input.issueTypes.filter(
@@ -337,7 +344,7 @@ export class ProjectService {
     // Validate all workflows
     for (const it of newIssueTypes) {
       if (it.workflowId) {
-        const workflow = await this.workflowRepo.findWorkflowById(it.workflowId);
+        const workflow = await this.workflowRepo.findById(it.workflowId);
         if (!workflow) {
           throwNotFoundError('WORKFLOW_NOT_FOUND', {
             workflowId: it.workflowId,
@@ -382,7 +389,7 @@ export class ProjectService {
     }
 
     // If no workflow is set, get the system default
-    return await this.workflowRepo.findDefaultWorkflow();
+    return await this.workflowRepo.findDefault();
   }
 
   // =============================================================================
@@ -457,9 +464,9 @@ export const projectService = (drizzle: DbOrTx = db) => {
   const service = new ProjectService(
     drizzle,
     projectRepository(drizzle),
-    workflowRepository(drizzle)
+    new WorkflowRepository(drizzle),
   );
-  
+
   return {
     getAllProjects: service.getAllProjects.bind(service),
     getProjectById: service.getProjectById.bind(service),
@@ -471,9 +478,12 @@ export const projectService = (drizzle: DbOrTx = db) => {
     updateProjectSettings: service.updateProjectSettings.bind(service),
     getProjectIssueTypes: service.getProjectIssueTypes.bind(service),
     addIssueTypeToProject: service.addIssueTypeToProject.bind(service),
-    updateProjectIssueTypeWorkflow: service.updateProjectIssueTypeWorkflow.bind(service),
-    removeIssueTypeFromProject: service.removeIssueTypeFromProject.bind(service),
-    bulkAddIssueTypesToProject: service.bulkAddIssueTypesToProject.bind(service),
+    updateProjectIssueTypeWorkflow:
+      service.updateProjectIssueTypeWorkflow.bind(service),
+    removeIssueTypeFromProject:
+      service.removeIssueTypeFromProject.bind(service),
+    bulkAddIssueTypesToProject:
+      service.bulkAddIssueTypesToProject.bind(service),
     getWorkflowForIssueType: service.getWorkflowForIssueType.bind(service),
     getAllTemplates: service.getAllTemplates.bind(service),
     getTemplateIssueTypes: service.getTemplateIssueTypes.bind(service),

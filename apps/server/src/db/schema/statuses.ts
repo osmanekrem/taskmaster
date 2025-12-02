@@ -1,5 +1,4 @@
-import { pgTable, text, boolean, timestamp, unique } from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
+import { pgTable, text, boolean, timestamp } from 'drizzle-orm/pg-core';
 import { user } from './auth';
 
 // =============================================================================
@@ -22,11 +21,11 @@ export type StatusCategory = 'todo' | 'in_progress' | 'done';
  * Each workflow can include any subset of these statuses.
  *
  * Examples:
- * - Open (todo)
- * - In Progress (in_progress)
- * - In Review (in_progress)
- * - Done (done)
- * - Cancelled (done)
+ * - Open (backlog category)
+ * - In Progress (in_progress category)
+ * - In Review (in_progress category)
+ * - Done (done category)
+ * - Cancelled (done category)
  */
 export const statuses = pgTable('statuses', {
   id: text('id')
@@ -36,7 +35,7 @@ export const statuses = pgTable('statuses', {
   description: text('description'),
 
   // Category for reporting and board grouping
-  // 'todo' | 'in_progress' | 'done'
+  // Values: 'backlog', 'in_progress', 'done'
   category: text('category').notNull().default('todo'),
 
   // Visual properties

@@ -5,7 +5,6 @@ import {
   boolean,
   integer,
   jsonb,
-  unique,
   index,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
@@ -84,16 +83,11 @@ export const projects = pgTable(
       onDelete: 'set null',
     }),
   },
-  (table) => ({
-    // Performance indexes
-    leadIdIdx: index('projects_lead_id_idx').on(table.leadId),
-    isArchivedIdx: index('projects_is_archived_idx').on(table.isArchived),
-    // Composite for filtering active projects by lead
-    archivedLeadIdx: index('projects_archived_lead_idx').on(
-      table.isArchived,
-      table.leadId,
-    ),
-  }),
+  (table) => [
+    index('projects_lead_id_idx').on(table.leadId),
+    index('projects_is_archived_idx').on(table.isArchived),
+    index('projects_archived_lead_idx').on(table.isArchived, table.leadId),
+  ],
 );
 
 // =============================================================================

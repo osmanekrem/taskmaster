@@ -66,8 +66,7 @@ export const userInGroupHandler: ConditionHandler<UserInGroupCondition> = {
     const userGroups = await container.group.getUserGroups(context.userId);
 
     const inGroup = userGroups.some(
-      (g) =>
-        g.groupId === condition.groupId || g.group.name === condition.groupName,
+      (g) => g.id === condition.groupId || g.name === condition.groupName,
     );
 
     return {

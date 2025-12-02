@@ -12,15 +12,10 @@ import {
 
 import { user } from './auth';
 import { projects } from './projects';
-import {
-  webhookEvents,
-  webhookDeliveryStatuses,
-  type WebhookEvent,
-} from '@taskmaster/constants';
+import type { WebhookEvent } from '@taskmaster/constants';
 
 // Re-export for backwards compatibility
-export { webhookEvents };
-export type { WebhookEvent };
+export { webhookEvents, type WebhookEvent } from '@taskmaster/constants';
 
 // =============================================================================
 // ENUMS

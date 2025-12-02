@@ -4,10 +4,9 @@
 // =============================================================================
 
 import { db } from '@/db';
-import type { SQL, Table } from 'drizzle-orm';
+import type { SQL, ExtractTablesWithRelations } from 'drizzle-orm';
 import { eq, sql, count, and, isNull } from 'drizzle-orm';
 import type { PgTable, TableConfig } from 'drizzle-orm/pg-core';
-import type { ExtractTablesWithRelations } from 'drizzle-orm';
 import type * as schema from '@/db/schema';
 
 // Type helper for schema
