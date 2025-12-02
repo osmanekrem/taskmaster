@@ -7,6 +7,7 @@ import { startNotificationWorker } from './notification-worker';
 import { startEmailWorker } from './email-worker';
 import { startBurndownWorker } from './burndown-worker';
 import { startWebhookWorker } from './webhook-worker';
+import { scheduleOutboxJobs } from './outbox-worker';
 import { isRedisAvailable } from '@/lib/redis';
 
 /**
@@ -30,6 +31,7 @@ export async function startWorkers(): Promise<void> {
   startEmailWorker();
   await startBurndownWorker();
   startWebhookWorker();
+  await scheduleOutboxJobs();
 
   console.log('[Workers] All workers started');
 }
@@ -49,3 +51,9 @@ export {
   triggerBurndownRecording,
 } from './burndown-worker';
 export { startWebhookWorker, triggerWebhooks } from './webhook-worker';
+export { 
+  scheduleOutboxJobs, 
+  getOutboxStats, 
+  triggerProcessing, 
+  triggerRetry 
+} from './outbox-worker';

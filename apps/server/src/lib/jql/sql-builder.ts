@@ -31,6 +31,8 @@ import type {
   ComparisonExpression,
   InExpression,
   IsExpression,
+  WasExpression,
+  ChangedExpression,
   FunctionCall,
   FieldReference,
   Literal,
@@ -40,7 +42,7 @@ import type {
 import { JQLSemanticError } from './ast';
 import { getFieldMapping, SYSTEM_FIELDS } from './fields';
 import { evaluateFunction, type FunctionContext } from './functions';
-import { issues } from '@/db/schema/issues';
+import { issues, issueHistory } from '@/db/schema/issues';
 import { statuses } from '@/db/schema/statuses';
 import { issueTypes } from '@/db/schema/issue-types';
 import { projects } from '@/db/schema/projects';
@@ -54,6 +56,8 @@ import {
 } from '@/db/schema/versions';
 import { labels, issueLabels } from '@/db/schema/labels';
 import { resolutions } from '@/db/schema/statuses';
+import { issueLinks, issueLinkTypes } from '@/db/schema/issue-links';
+import { issueWatchers } from '@/db/schema/notifications';
 
 // =============================================================================
 // TYPES
@@ -123,6 +127,10 @@ export class JQLSQLBuilder {
         return this.buildInExpression(expr);
       case 'IsExpression':
         return this.buildIsExpression(expr);
+      case 'WasExpression':
+        return this.buildWasExpression(expr);
+      case 'ChangedExpression':
+        return this.buildChangedExpression(expr);
       case 'FunctionCall':
         return this.buildFunctionCall(expr);
       case 'Literal':
@@ -210,6 +218,162 @@ export class JQLSQLBuilder {
     }
   }
 
+  /**
+   * Build WAS expression - historical field value query
+   * Example: status WAS "In Progress" AFTER "2024-01-01"
+   * 
+   * Queries the issue_history table to find issues where
+   * a field had a specific value at some point in time.
+   */
+  private buildWasExpression(expr: WasExpression): SQL {
+    const fieldName = expr.field.name.toLowerCase();
+    const value = this.resolveValue(expr.value);
+    
+    // Map field name to the actual field name in history changes
+    const historyFieldName = this.getHistoryFieldName(fieldName);
+    
+    // Build the base condition: look in issue_history.changes for field with value
+    // changes is JSONB array: [{ field: "status", oldValue: "X", newValue: "Y" }, ...]
+    const conditions: SQL[] = [];
+    
+    // Main condition: exists a history entry where this field had this value
+    const existsCondition = sql`EXISTS (
+      SELECT 1 FROM ${issueHistory}
+      WHERE ${issueHistory.issueId} = ${issues.id}
+      AND EXISTS (
+        SELECT 1 FROM jsonb_array_elements(${issueHistory.changes}) AS change
+        WHERE (
+          change->>'field' = ${historyFieldName}
+          AND (
+            change->>'oldValue' = ${value}::text
+            OR change->>'newValue' = ${value}::text
+          )
+        )
+      )`;
+    
+    conditions.push(existsCondition);
+    
+    // Add time constraints
+    if (expr.after) {
+      const afterDate = this.resolveValue(expr.after);
+      conditions.push(sql`AND ${issueHistory.createdAt} > ${afterDate}`);
+    }
+    
+    if (expr.before) {
+      const beforeDate = this.resolveValue(expr.before);
+      conditions.push(sql`AND ${issueHistory.createdAt} < ${beforeDate}`);
+    }
+    
+    if (expr.during) {
+      const fromDate = this.resolveValue(expr.during.from);
+      const toDate = this.resolveValue(expr.during.to);
+      conditions.push(sql`AND ${issueHistory.createdAt} BETWEEN ${fromDate} AND ${toDate}`);
+    }
+    
+    // Close the EXISTS subquery
+    conditions.push(sql`)`);
+    
+    // Combine all conditions
+    return sql.join(conditions, sql.raw(' '));
+  }
+
+  /**
+   * Build CHANGED expression - field change history query
+   * Example: status CHANGED FROM "Open" TO "In Progress" BY currentUser()
+   * 
+   * Queries the issue_history table to find issues where
+   * a field was changed, optionally with constraints on old/new values.
+   */
+  private buildChangedExpression(expr: ChangedExpression): SQL {
+    const fieldName = expr.field.name.toLowerCase();
+    const historyFieldName = this.getHistoryFieldName(fieldName);
+    
+    // Build conditions
+    const conditions: SQL[] = [];
+    
+    // Start the EXISTS subquery
+    let subquery = sql`EXISTS (
+      SELECT 1 FROM ${issueHistory}
+      WHERE ${issueHistory.issueId} = ${issues.id}
+      AND EXISTS (
+        SELECT 1 FROM jsonb_array_elements(${issueHistory.changes}) AS change
+        WHERE change->>'field' = ${historyFieldName}`;
+    
+    conditions.push(subquery);
+    
+    // FROM constraint
+    if (expr.from) {
+      const fromValue = this.resolveValue(expr.from);
+      conditions.push(sql`AND change->>'oldValue' = ${fromValue}::text`);
+    }
+    
+    // TO constraint
+    if (expr.to) {
+      const toValue = this.resolveValue(expr.to);
+      conditions.push(sql`AND change->>'newValue' = ${toValue}::text`);
+    }
+    
+    // Close the inner EXISTS
+    conditions.push(sql`)`);
+    
+    // BY constraint (who made the change)
+    if (expr.by) {
+      const byUser = this.resolveValue(expr.by);
+      conditions.push(sql`AND ${issueHistory.userId} = ${byUser}`);
+    }
+    
+    // Time constraints
+    if (expr.after) {
+      const afterDate = this.resolveValue(expr.after);
+      conditions.push(sql`AND ${issueHistory.createdAt} > ${afterDate}`);
+    }
+    
+    if (expr.before) {
+      const beforeDate = this.resolveValue(expr.before);
+      conditions.push(sql`AND ${issueHistory.createdAt} < ${beforeDate}`);
+    }
+    
+    if (expr.during) {
+      const fromDate = this.resolveValue(expr.during.from);
+      const toDate = this.resolveValue(expr.during.to);
+      conditions.push(sql`AND ${issueHistory.createdAt} BETWEEN ${fromDate} AND ${toDate}`);
+    }
+    
+    // Close the outer EXISTS
+    conditions.push(sql`)`);
+    
+    return sql.join(conditions, sql.raw(' '));
+  }
+
+  /**
+   * Map JQL field names to the field names stored in issue_history.changes
+   */
+  private getHistoryFieldName(fieldName: string): string {
+    // Map common JQL field names to how they're stored in history
+    const fieldMap: Record<string, string> = {
+      status: 'status',
+      assignee: 'assignee',
+      reporter: 'reporter',
+      priority: 'priority',
+      issuetype: 'issueType',
+      type: 'issueType',
+      summary: 'summary',
+      description: 'description',
+      duedate: 'dueDate',
+      labels: 'labels',
+      fixversion: 'fixVersion',
+      affectedversion: 'affectedVersion',
+      component: 'component',
+      epic: 'epic',
+      parent: 'parent',
+      resolution: 'resolution',
+      sprint: 'sprint',
+      storypoints: 'storyPoints',
+    };
+    
+    return fieldMap[fieldName] || fieldName;
+  }
+
   private buildFunctionCall(expr: FunctionCall): SQL {
     // Evaluate the function
     const result = evaluateFunction(expr.name, expr.arguments, this.context);
@@ -234,6 +398,18 @@ export class JQLSQLBuilder {
         return this.buildProjectsLeadByUserSubquery(expr.arguments);
       case 'componentsleadbyuser':
         return this.buildComponentsLeadByUserSubquery(expr.arguments);
+      case 'linkedissues':
+        return this.buildLinkedIssuesSubquery(expr.arguments);
+      case 'votedissues':
+        return this.buildVotedIssuesSubquery(expr.arguments);
+      case 'watchedissues':
+        return this.buildWatchedIssuesSubquery(expr.arguments);
+      case 'subtasksof':
+        return this.buildSubtasksOfSubquery(expr.arguments);
+      case 'parentof':
+        return this.buildParentOfSubquery(expr.arguments);
+      case 'epicissues':
+        return this.buildEpicIssuesSubquery(expr.arguments);
       default:
         // For simple functions that return a value
         if (result.type === 'Literal') {
@@ -531,6 +707,132 @@ export class JQLSQLBuilder {
     const userId =
       args.length > 0 ? this.resolveValue(args[0]) : this.context.currentUserId;
     return sql`(SELECT id FROM ${components} WHERE lead_id = ${userId})`;
+  }
+
+  /**
+   * linkedIssues(issueKey?, linkType?) - Returns issues linked to given issue
+   * If no arguments, uses current issue context
+   */
+  private buildLinkedIssuesSubquery(args: Expression[]): SQL {
+    // If issueKey is provided, find issues linked to that specific issue
+    if (args.length > 0) {
+      const issueKey = this.resolveValue(args[0]);
+      
+      if (args.length > 1) {
+        // With link type filter
+        const linkTypeName = this.resolveValue(args[1]);
+        return sql`(
+          SELECT DISTINCT 
+            CASE 
+              WHEN il.source_issue_id = src.id THEN il.target_issue_id
+              ELSE il.source_issue_id
+            END
+          FROM ${issueLinks} il
+          JOIN ${issues} src ON src.key = ${issueKey}
+          JOIN ${issueLinkTypes} lt ON lt.id = il.link_type_id
+          WHERE (il.source_issue_id = src.id OR il.target_issue_id = src.id)
+            AND (lt.name ILIKE ${linkTypeName} OR lt.inward_description ILIKE ${linkTypeName} OR lt.outward_description ILIKE ${linkTypeName})
+        )`;
+      }
+      
+      // Without link type filter - all linked issues
+      return sql`(
+        SELECT DISTINCT 
+          CASE 
+            WHEN il.source_issue_id = src.id THEN il.target_issue_id
+            ELSE il.source_issue_id
+          END
+        FROM ${issueLinks} il
+        JOIN ${issues} src ON src.key = ${issueKey}
+        WHERE il.source_issue_id = src.id OR il.target_issue_id = src.id
+      )`;
+    }
+    
+    // No arguments - return all issues that have any links (for general use)
+    return sql`(
+      SELECT DISTINCT source_issue_id FROM ${issueLinks}
+      UNION
+      SELECT DISTINCT target_issue_id FROM ${issueLinks}
+    )`;
+  }
+
+  /**
+   * votedIssues(userId?) - Returns issues voted by user
+   * Note: Issue voting table may not exist yet - placeholder implementation
+   */
+  private buildVotedIssuesSubquery(args: Expression[]): SQL {
+    const userId =
+      args.length > 0 ? this.resolveValue(args[0]) : this.context.currentUserId;
+    
+    // If issue_votes table exists, use it. Otherwise return empty set.
+    // This is a placeholder - voting feature needs to be implemented
+    return sql`(
+      SELECT issue_id FROM issue_votes WHERE user_id = ${userId}
+    )`;
+  }
+
+  /**
+   * watchedIssues(userId?) - Returns issues watched by user
+   */
+  private buildWatchedIssuesSubquery(args: Expression[]): SQL {
+    const userId =
+      args.length > 0 ? this.resolveValue(args[0]) : this.context.currentUserId;
+    
+    return sql`(
+      SELECT ${issueWatchers.issueId} FROM ${issueWatchers} 
+      WHERE ${issueWatchers.userId} = ${userId}
+    )`;
+  }
+
+  /**
+   * subtasksOf(issueKey) - Returns subtasks of given issue
+   */
+  private buildSubtasksOfSubquery(args: Expression[]): SQL {
+    if (args.length === 0) {
+      throw new JQLSemanticError('subtasksOf() requires an issue key argument');
+    }
+    
+    const issueKey = this.resolveValue(args[0]);
+    
+    return sql`(
+      SELECT ${issues.id} FROM ${issues} 
+      WHERE ${issues.parentId} = (
+        SELECT id FROM ${issues} WHERE key = ${issueKey}
+      )
+    )`;
+  }
+
+  /**
+   * parentOf(issueKey) - Returns parent of given issue
+   */
+  private buildParentOfSubquery(args: Expression[]): SQL {
+    if (args.length === 0) {
+      throw new JQLSemanticError('parentOf() requires an issue key argument');
+    }
+    
+    const issueKey = this.resolveValue(args[0]);
+    
+    return sql`(
+      SELECT ${issues.parentId} FROM ${issues} WHERE key = ${issueKey}
+    )`;
+  }
+
+  /**
+   * epicIssues(epicKey) - Returns issues in given epic
+   */
+  private buildEpicIssuesSubquery(args: Expression[]): SQL {
+    if (args.length === 0) {
+      throw new JQLSemanticError('epicIssues() requires an epic key argument');
+    }
+    
+    const epicKey = this.resolveValue(args[0]);
+    
+    return sql`(
+      SELECT ${issues.id} FROM ${issues} 
+      WHERE ${issues.epicId} = (
+        SELECT id FROM ${issues} WHERE key = ${epicKey}
+      )
+    )`;
   }
 
   // ---------------------------------------------------------------------------

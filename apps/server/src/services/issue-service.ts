@@ -8,7 +8,7 @@ import { issueTypes } from '@/db/schema/issue-types';
 import { issueTypeFields } from '@/db/schema/issue-type-fields';
 import { fields } from '@/db/schema/field';
 import { sprintIssues } from '@/db/schema/sprints';
-import { eq, and, isNull, or } from 'drizzle-orm';
+import { eq, and, isNull, or, inArray, asc } from 'drizzle-orm';
 import { ErrorMessages, ISSUE_TYPE_HIERARCHY } from '@taskmaster/constants';
 import { createAppError } from '@/lib/errors';
 import type {
@@ -38,6 +38,7 @@ import {
   emitIssueUpdated,
   emitIssueTransitioned,
   emitIssueAssigned,
+  emitIssueDeleted,
 } from '@/lib/events/event-bus';
 
 /**
@@ -1183,5 +1184,485 @@ export class IssueService {
     // Get the last rank in the project and generate one after it
     const lastRank = await this.issueRepository.getLastRankInProject(projectId);
     return generateRankAfter(lastRank);
+  }
+
+  // ==========================================================================
+  // BULK OPERATIONS
+  // ==========================================================================
+
+  /**
+   * Bulk edit multiple issues at once
+   * Applies the same changes to all specified issues
+   */
+  async bulkEdit(
+    issueIds: string[],
+    updates: {
+      assigneeId?: string | null;
+      priority?: string;
+      labels?: string[];
+      dueDate?: Date | null;
+      epicId?: string | null;
+    },
+    userId: string,
+  ) {
+    if (issueIds.length === 0) {
+      return { success: true, updatedCount: 0, issues: [] };
+    }
+
+    // Get all issues to validate they exist and gather old values
+    const existingIssues = await this.issueRepository.findByIds(issueIds);
+    
+    if (existingIssues.length === 0) {
+      throw createAppError('No valid issues found', {
+        statusCode: 404,
+        code: 'NOT_FOUND',
+      });
+    }
+
+    // Filter to only found issues
+    const foundIds = existingIssues.map(i => i.id);
+    const notFoundIds = issueIds.filter(id => !foundIds.includes(id));
+
+    // Validate epic if provided
+    if (updates.epicId) {
+      await this.validateEpicLink(updates.epicId);
+    }
+
+    // Prepare history entries for each issue
+    const historyEntries: { issueId: string; userId: string; changes: HistoryChange[] }[] = [];
+    
+    for (const issue of existingIssues) {
+      const changes: HistoryChange[] = [];
+      
+      if (updates.assigneeId !== undefined && updates.assigneeId !== issue.assigneeId) {
+        changes.push({
+          field: 'assignee',
+          oldValue: issue.assignee?.name || null,
+          newValue: updates.assigneeId,
+        });
+      }
+      
+      if (updates.priority !== undefined && updates.priority !== issue.priority) {
+        changes.push({
+          field: 'priority',
+          oldValue: issue.priority,
+          newValue: updates.priority,
+        });
+      }
+      
+      if (updates.labels !== undefined) {
+        const oldLabels = (issue.labels as string[]) || [];
+        if (JSON.stringify(oldLabels.sort()) !== JSON.stringify(updates.labels.sort())) {
+          changes.push({
+            field: 'labels',
+            oldValue: oldLabels.join(', '),
+            newValue: updates.labels.join(', '),
+          });
+        }
+      }
+      
+      if (updates.dueDate !== undefined) {
+        const oldDate = issue.dueDate?.toISOString().split('T')[0] || null;
+        const newDate = updates.dueDate?.toISOString().split('T')[0] || null;
+        if (oldDate !== newDate) {
+          changes.push({
+            field: 'dueDate',
+            oldValue: oldDate,
+            newValue: newDate,
+          });
+        }
+      }
+      
+      if (updates.epicId !== undefined && updates.epicId !== issue.epicId) {
+        changes.push({
+          field: 'epic',
+          oldValue: issue.epic?.key || null,
+          newValue: updates.epicId,
+        });
+      }
+      
+      if (changes.length > 0) {
+        historyEntries.push({ issueId: issue.id, userId, changes });
+      }
+    }
+
+    // Execute bulk update
+    const updated = await this.issueRepository.bulkUpdate(foundIds, updates);
+
+    // Add history for all changes
+    if (historyEntries.length > 0) {
+      await this.issueRepository.bulkAddHistory(historyEntries);
+    }
+
+    // Emit events for each updated issue
+    for (const issue of existingIssues) {
+      const historyEntry = historyEntries.find(h => h.issueId === issue.id);
+      if (historyEntry && historyEntry.changes.length > 0) {
+        const eventChanges: Record<string, { from: unknown; to: unknown }> = {};
+        for (const change of historyEntry.changes) {
+          eventChanges[change.field] = {
+            from: change.oldValue,
+            to: change.newValue,
+          };
+        }
+        emitIssueUpdated({
+          issueId: issue.id,
+          issueKey: issue.key,
+          projectId: issue.projectId,
+          actorId: userId,
+          changes: eventChanges,
+        });
+      }
+    }
+
+    return {
+      success: true,
+      updatedCount: updated.length,
+      notFoundIds,
+      issues: updated,
+    };
+  }
+
+  /**
+   * Bulk transition multiple issues to a new status
+   * All issues must support the transition from their current status
+   */
+  async bulkTransition(
+    issueIds: string[],
+    toStatusId: string,
+    userId: string,
+    options?: {
+      resolutionId?: string;
+      comment?: string;
+      skipValidation?: boolean;
+    },
+  ) {
+    if (issueIds.length === 0) {
+      return { success: true, transitionedCount: 0, issues: [], failed: [] };
+    }
+
+    // Get all issues with their current status
+    const existingIssues = await this.issueRepository.findByIds(issueIds);
+    
+    if (existingIssues.length === 0) {
+      throw createAppError('No valid issues found', {
+        statusCode: 404,
+        code: 'NOT_FOUND',
+      });
+    }
+
+    // Get target status
+    const targetStatus = await db.query.statuses.findFirst({
+      where: eq(statuses.id, toStatusId),
+    });
+    
+    if (!targetStatus) {
+      throw createAppError(ErrorMessages.STATUS_NOT_FOUND, {
+        statusCode: 404,
+        code: 'NOT_FOUND',
+      });
+    }
+
+    // Validate resolution for done status
+    if (targetStatus.category === 'done' && !options?.resolutionId) {
+      throw createAppError(ErrorMessages.RESOLUTION_REQUIRED, {
+        statusCode: 400,
+        code: 'BAD_REQUEST',
+      });
+    }
+
+    const transitioned: typeof existingIssues = [];
+    const failed: { issueId: string; issueKey: string; reason: string }[] = [];
+
+    // Group issues by project/issueType to batch workflow validation
+    const issuesByWorkflow = new Map<string, typeof existingIssues>();
+    
+    for (const issue of existingIssues) {
+      const workflowKey = `${issue.projectId}:${issue.issueTypeId}`;
+      if (!issuesByWorkflow.has(workflowKey)) {
+        issuesByWorkflow.set(workflowKey, []);
+      }
+      issuesByWorkflow.get(workflowKey)!.push(issue);
+    }
+
+    // Validate and collect transitionable issues
+    const validIssueIds: string[] = [];
+    
+    for (const [workflowKey, issueGroup] of issuesByWorkflow) {
+      const [projectId, issueTypeId] = workflowKey.split(':');
+      
+      // Get workflow for this project/issueType combination
+      const workflowId = await this.getWorkflowForIssue(projectId, issueTypeId);
+      
+      for (const issue of issueGroup) {
+        // Check if transition is valid from current status
+        if (!options?.skipValidation) {
+          const transitions = await db.query.workflowTransitions.findMany({
+            where: and(
+              eq(workflowTransitions.workflowId, workflowId),
+              eq(workflowTransitions.toStatusId, toStatusId),
+              or(
+                eq(workflowTransitions.fromStatusId, issue.statusId),
+                isNull(workflowTransitions.fromStatusId), // Global transition
+              ),
+            ),
+          });
+          
+          if (transitions.length === 0) {
+            failed.push({
+              issueId: issue.id,
+              issueKey: issue.key,
+              reason: `Invalid transition from ${issue.status?.name} to ${targetStatus.name}`,
+            });
+            continue;
+          }
+        }
+        
+        validIssueIds.push(issue.id);
+        transitioned.push(issue);
+      }
+    }
+
+    if (validIssueIds.length === 0) {
+      return {
+        success: false,
+        transitionedCount: 0,
+        issues: [],
+        failed,
+        message: 'No issues could be transitioned',
+      };
+    }
+
+    // Execute bulk status update
+    const resolvedAt = targetStatus.category === 'done' ? new Date() : null;
+    const resolutionId = targetStatus.category === 'done' ? options?.resolutionId : null;
+    
+    await this.issueRepository.bulkUpdateStatus(
+      validIssueIds,
+      toStatusId,
+      resolutionId,
+      resolvedAt,
+    );
+
+    // Prepare and add history entries
+    const historyEntries = transitioned.map(issue => ({
+      issueId: issue.id,
+      userId,
+      changes: [
+        {
+          field: 'status',
+          oldValue: issue.status?.name,
+          newValue: targetStatus.name,
+        },
+        ...(resolutionId ? [{
+          field: 'resolution',
+          oldValue: issue.resolution?.name || null,
+          newValue: resolutionId,
+        }] : []),
+      ],
+    }));
+    
+    await this.issueRepository.bulkAddHistory(historyEntries);
+
+    // Emit events for each transitioned issue
+    for (const issue of transitioned) {
+      emitIssueTransitioned({
+        issueId: issue.id,
+        issueKey: issue.key,
+        projectId: issue.projectId,
+        actorId: userId,
+        transitionId: 'bulk-transition',
+        statusId: toStatusId,
+        changes: {
+          status: { from: issue.statusId, to: toStatusId },
+          ...(resolutionId ? { resolution: { from: issue.resolutionId, to: resolutionId } } : {}),
+        },
+      });
+    }
+
+    return {
+      success: true,
+      transitionedCount: transitioned.length,
+      issues: transitioned,
+      failed,
+    };
+  }
+
+  /**
+   * Bulk delete multiple issues
+   */
+  async bulkDelete(
+    issueIds: string[],
+    userId: string,
+    options?: {
+      deleteSubtasks?: boolean;
+    },
+  ) {
+    if (issueIds.length === 0) {
+      return { success: true, deletedCount: 0, deletedKeys: [] };
+    }
+
+    // Get all issues to validate they exist
+    const existingIssues = await this.issueRepository.findByIds(issueIds);
+    
+    if (existingIssues.length === 0) {
+      throw createAppError('No valid issues found', {
+        statusCode: 404,
+        code: 'NOT_FOUND',
+      });
+    }
+
+    const foundIds = existingIssues.map(i => i.id);
+    
+    // If deleteSubtasks is true, also delete child issues
+    let allIdsToDelete = [...foundIds];
+    
+    if (options?.deleteSubtasks) {
+      // Find all subtasks of these issues
+      const subtasks = await db.query.issues.findMany({
+        where: inArray(issues.parentId, foundIds),
+        columns: { id: true, key: true },
+      });
+      allIdsToDelete = [...allIdsToDelete, ...subtasks.map(s => s.id)];
+    }
+
+    // Emit delete events before actually deleting
+    for (const issue of existingIssues) {
+      emitIssueDeleted({
+        issueId: issue.id,
+        issueKey: issue.key,
+        projectId: issue.projectId,
+        actorId: userId,
+      });
+    }
+
+    // Execute bulk delete
+    const result = await this.issueRepository.bulkDelete(allIdsToDelete);
+
+    return {
+      success: true,
+      deletedCount: result.deletedCount,
+      deletedKeys: result.deletedKeys,
+      deletedByProject: result.deletedByProject,
+    };
+  }
+
+  /**
+   * Bulk move issues to a different project
+   */
+  async bulkMove(
+    issueIds: string[],
+    targetProjectId: string,
+    userId: string,
+    options?: {
+      targetIssueTypeId?: string;
+      targetStatusId?: string;
+    },
+  ) {
+    if (issueIds.length === 0) {
+      return { success: true, movedCount: 0, issues: [] };
+    }
+
+    // Validate target project exists
+    const targetProject = await this.projectRepository.findById(targetProjectId);
+    if (!targetProject) {
+      throw createAppError(ErrorMessages.PROJECT_NOT_FOUND, {
+        statusCode: 404,
+        code: 'NOT_FOUND',
+      });
+    }
+
+    // Get all issues
+    const existingIssues = await this.issueRepository.findByIds(issueIds);
+    
+    if (existingIssues.length === 0) {
+      throw createAppError('No valid issues found', {
+        statusCode: 404,
+        code: 'NOT_FOUND',
+      });
+    }
+
+    // Get default issue type and status for target project if not specified
+    let targetIssueTypeId = options?.targetIssueTypeId;
+    let targetStatusId = options?.targetStatusId;
+    
+    if (!targetIssueTypeId) {
+      const projectIssueTypes = await this.projectRepository.getProjectIssueTypes(targetProjectId);
+      targetIssueTypeId = projectIssueTypes[0]?.issueType.id;
+      if (!targetIssueTypeId) {
+        throw createAppError('Target project has no issue types', {
+          statusCode: 400,
+          code: 'BAD_REQUEST',
+        });
+      }
+    }
+    
+    if (!targetStatusId) {
+      // Get default status from workflow
+      const workflowId = await this.getWorkflowForIssue(targetProjectId, targetIssueTypeId);
+      const workflowStatusList = await db.query.workflowStatuses.findMany({
+        where: eq(workflowStatuses.workflowId, workflowId),
+        with: { status: true },
+        orderBy: asc(workflowStatuses.sortOrder),
+      });
+      targetStatusId = workflowStatusList[0]?.statusId;
+      if (!targetStatusId) {
+        throw createAppError('Could not determine target status', {
+          statusCode: 400,
+          code: 'BAD_REQUEST',
+        });
+      }
+    }
+
+    const movedIssues: { id: string; oldKey: string; newKey: string }[] = [];
+
+    // Move each issue (need to update keys)
+    for (const issue of existingIssues) {
+      // Generate new key for target project using existing method
+      const { key: newKey, issueNumber: nextNumber } = await this.issueRepository.getNextIssueNumber(targetProjectId);
+      
+      // Update issue
+      await db
+        .update(issues)
+        .set({
+          projectId: targetProjectId,
+          key: newKey,
+          issueNumber: nextNumber,
+          issueTypeId: targetIssueTypeId,
+          statusId: targetStatusId,
+          updatedAt: new Date(),
+        })
+        .where(eq(issues.id, issue.id));
+      
+      movedIssues.push({
+        id: issue.id,
+        oldKey: issue.key,
+        newKey,
+      });
+
+      // Add history
+      await this.issueRepository.addHistory(issue.id, userId, [
+        { field: 'project', oldValue: issue.project?.name, newValue: targetProject.name },
+        { field: 'key', oldValue: issue.key, newValue: newKey },
+      ]);
+
+      // Emit event
+      emitIssueUpdated({
+        issueId: issue.id,
+        issueKey: newKey,
+        projectId: targetProjectId,
+        actorId: userId,
+        changes: {
+          project: { from: issue.projectId, to: targetProjectId },
+          key: { from: issue.key, to: newKey },
+        },
+      });
+    }
+
+    return {
+      success: true,
+      movedCount: movedIssues.length,
+      issues: movedIssues,
+    };
   }
 }

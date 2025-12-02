@@ -73,7 +73,7 @@ class Container {
   // Service instances (cached for singleton behavior)
   private _userService: ReturnType<typeof userService> | null = null;
   private _fieldService: ReturnType<typeof fieldService> | null = null;
-  private _fieldTypeService: ReturnType<typeof fieldTypeService> | null = null;
+  private _fieldTypeService: typeof fieldTypeService | null = null;
   private _ticketTypeService: ReturnType<typeof ticketTypeService> | null =
     null;
   private _statusService: ReturnType<typeof statusService> | null = null;
@@ -182,7 +182,7 @@ class Container {
   }
 
   get fieldType() {
-    this._fieldTypeService ??= fieldTypeService(this._db);
+    this._fieldTypeService ??= fieldTypeService;
     return this._fieldTypeService;
   }
 
@@ -283,6 +283,41 @@ class Container {
   get sprint(): SprintService {
     this._sprintService ??= new SprintService();
     return this._sprintService;
+  }
+
+  // ===========================================================================
+  // TRANSACTION & UNIT OF WORK
+  // ===========================================================================
+
+  /**
+   * Execute operations within a transaction using Unit of Work pattern
+   * All repository operations share the same transaction context
+   * 
+   * @example
+   * ```typescript
+   * const result = await container.executeInTransaction(async (uow) => {
+   *   const issue = await uow.issues.create({ ... });
+   *   await uow.comments.create({ issueId: issue.id, ... });
+   *   return issue;
+   * });
+   * ```
+   */
+  async executeInTransaction<T>(
+    callback: (uow: import('./unit-of-work').UnitOfWork) => Promise<T>,
+  ): Promise<T> {
+    const { UnitOfWork } = await import('./unit-of-work');
+    return UnitOfWork.execute(callback);
+  }
+
+  /**
+   * Execute operations within a serializable transaction
+   * Use for operations requiring highest isolation level
+   */
+  async executeSerializable<T>(
+    callback: (uow: import('./unit-of-work').UnitOfWork) => Promise<T>,
+  ): Promise<T> {
+    const { UnitOfWork } = await import('./unit-of-work');
+    return UnitOfWork.executeSerializable(callback);
   }
 
   // ===========================================================================

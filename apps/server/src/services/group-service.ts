@@ -46,7 +46,11 @@ export interface PaginatedGroups {
 // GROUPS SERVICE
 // ============================================================================
 
-export const groupService = {
+/**
+ * Group management service
+ * Handles group CRUD and membership operations
+ */
+export class GroupService {
   // =========================================================================
   // GROUP OPERATIONS
   // =========================================================================
@@ -72,7 +76,7 @@ export const groupService = {
     ]);
 
     return { groups, total, limit, offset };
-  },
+  }
 
   /**
    * Get group by ID
@@ -86,7 +90,7 @@ export const groupService = {
       });
     }
     return group;
-  },
+  }
 
   /**
    * Get group by name
@@ -100,7 +104,7 @@ export const groupService = {
       });
     }
     return group;
-  },
+  }
 
   /**
    * Get group with members
@@ -114,7 +118,7 @@ export const groupService = {
       });
     }
     return group;
-  },
+  }
 
   /**
    * Create a new group
@@ -144,7 +148,7 @@ export const groupService = {
       displayName: input.displayName || input.name,
       description: input.description,
     });
-  },
+  }
 
   /**
    * Update a group
@@ -188,7 +192,7 @@ export const groupService = {
       });
     }
     return updated;
-  },
+  }
 
   /**
    * Delete a group
@@ -210,28 +214,28 @@ export const groupService = {
         message: 'Failed to delete group',
       });
     }
-  },
+  }
 
   /**
    * Get groups a user belongs to
    */
   async getUserGroups(userId: string): Promise<Group[]> {
     return groupRepository.findByUserId(userId);
-  },
+  }
 
   /**
    * Check if user is in group
    */
   async isUserInGroup(groupId: string, userId: string): Promise<boolean> {
     return groupRepository.isUserMember(groupId, userId);
-  },
+  }
 
   /**
    * Check if user is in any of the groups
    */
   async isUserInAnyGroup(groupIds: string[], userId: string): Promise<boolean> {
     return groupRepository.isUserMemberOfAny(groupIds, userId);
-  },
+  }
 
   // =========================================================================
   // MEMBER OPERATIONS
@@ -250,14 +254,14 @@ export const groupService = {
     // Verify group exists
     await this.getGroupById(groupId);
     return groupMemberRepository.findByGroupId(groupId);
-  },
+  }
 
   /**
    * Get member count
    */
   async getMemberCount(groupId: string): Promise<number> {
     return groupMemberRepository.getMemberCount(groupId);
-  },
+  }
 
   /**
    * Add user to group
@@ -284,7 +288,7 @@ export const groupService = {
       userId,
       addedBy,
     });
-  },
+  }
 
   /**
    * Add multiple users to group
@@ -297,7 +301,7 @@ export const groupService = {
     // Verify group exists
     await this.getGroupById(groupId);
     return groupMemberRepository.addMembers(groupId, userIds, addedBy);
-  },
+  }
 
   /**
    * Remove user from group
@@ -313,7 +317,7 @@ export const groupService = {
         message: 'User is not a member of this group',
       });
     }
-  },
+  }
 
   /**
    * Remove multiple users from group
@@ -322,7 +326,7 @@ export const groupService = {
     // Verify group exists
     await this.getGroupById(groupId);
     return groupMemberRepository.removeMembers(groupId, userIds);
-  },
+  }
 
   /**
    * Set members for a group (replace all)
@@ -335,7 +339,7 @@ export const groupService = {
     // Verify group exists
     await this.getGroupById(groupId);
     return groupMemberRepository.setMembers(groupId, userIds, addedBy);
-  },
+  }
 
   // =========================================================================
   // SYSTEM GROUPS
@@ -372,7 +376,7 @@ export const groupService = {
         });
       }
     }
-  },
+  }
 
   /**
    * Get all system groups
@@ -380,7 +384,10 @@ export const groupService = {
   async getSystemGroups(): Promise<Group[]> {
     const allGroups = await groupRepository.findAll({ includeInactive: true });
     return allGroups.filter((g) => g.isSystem);
-  },
-};
+  }
+}
+
+// Singleton instance for backward compatibility
+export const groupService = new GroupService();
 
 export default groupService;

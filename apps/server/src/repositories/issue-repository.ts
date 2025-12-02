@@ -657,4 +657,135 @@ export class IssueRepository {
       return results;
     });
   }
+
+  // ==========================================================================
+  // BULK OPERATIONS
+  // ==========================================================================
+
+  /**
+   * Find multiple issues by IDs
+   */
+  async findByIds(ids: string[]) {
+    if (ids.length === 0) return [];
+    return db.query.issues.findMany({
+      where: inArray(issues.id, ids),
+      with: {
+        project: true,
+        issueType: true,
+        status: true,
+        resolution: true,
+        reporter: { columns: { id: true, name: true, email: true, image: true } },
+        assignee: { columns: { id: true, name: true, email: true, image: true } },
+        epic: { columns: { id: true, key: true, summary: true } },
+        parent: { columns: { id: true, key: true, summary: true } },
+      },
+    });
+  }
+
+  /**
+   * Bulk update multiple issues with the same data
+   */
+  async bulkUpdate(
+    ids: string[],
+    data: Partial<{
+      assigneeId: string | null;
+      priority: string;
+      labels: string[];
+      dueDate: Date | null;
+      epicId: string | null;
+      updatedAt: Date;
+    }>,
+  ) {
+    if (ids.length === 0) return [];
+    const updateData = { ...data, updatedAt: new Date() };
+    
+    const updated = await db
+      .update(issues)
+      .set(updateData)
+      .where(inArray(issues.id, ids))
+      .returning();
+    
+    return updated;
+  }
+
+  /**
+   * Bulk update status for multiple issues
+   */
+  async bulkUpdateStatus(
+    ids: string[],
+    statusId: string,
+    resolutionId?: string | null,
+    resolvedAt?: Date | null,
+  ) {
+    if (ids.length === 0) return [];
+    
+    const updateData: Record<string, unknown> = {
+      statusId,
+      updatedAt: new Date(),
+    };
+    
+    if (resolutionId !== undefined) {
+      updateData.resolutionId = resolutionId;
+    }
+    if (resolvedAt !== undefined) {
+      updateData.resolvedAt = resolvedAt;
+    }
+    
+    const updated = await db
+      .update(issues)
+      .set(updateData)
+      .where(inArray(issues.id, ids))
+      .returning();
+    
+    return updated;
+  }
+
+  /**
+   * Bulk delete issues (soft delete or hard delete based on your needs)
+   */
+  async bulkDelete(ids: string[]) {
+    if (ids.length === 0) return { deletedCount: 0, deletedIds: [] };
+    
+    // Get issues before deletion for returning info
+    const toDelete = await db.query.issues.findMany({
+      where: inArray(issues.id, ids),
+      columns: { id: true, key: true, projectId: true },
+    });
+    
+    // Hard delete (cascade will handle related records)
+    await db.delete(issues).where(inArray(issues.id, ids));
+    
+    return {
+      deletedCount: toDelete.length,
+      deletedIds: toDelete.map(i => i.id),
+      deletedKeys: toDelete.map(i => i.key),
+      deletedByProject: toDelete.reduce((acc, i) => {
+        acc[i.projectId] = (acc[i.projectId] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>),
+    };
+  }
+
+  /**
+   * Bulk add history for multiple issues
+   */
+  async bulkAddHistory(
+    entries: { issueId: string; userId: string; changes: HistoryChange[] }[],
+  ) {
+    if (entries.length === 0) return [];
+    
+    const historyRecords = entries.map(e => ({
+      issueId: e.issueId,
+      userId: e.userId,
+      changes: e.changes,
+    }));
+    
+    return db.insert(issueHistory).values(historyRecords).returning();
+  }
 }
+
+// =============================================================================
+// SINGLETON INSTANCE
+// =============================================================================
+
+export const issueRepository = new IssueRepository();

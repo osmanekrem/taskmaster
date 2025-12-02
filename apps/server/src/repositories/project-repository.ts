@@ -1,7 +1,7 @@
 import { projects, templates } from '@/db/schema/projects';
 import { projectIssueTypes, templateIssueTypes } from '@/db/schema/issue-type-junctions';
 import { db } from '@/db';
-import { eq, and, asc, or, ilike } from 'drizzle-orm';
+import { eq, and, asc, or, ilike, sql } from 'drizzle-orm';
 import type { DrizzleClientOrTransaction } from '@/lib/types/db';
 import type {
   CreateProjectSchema,
@@ -47,6 +47,24 @@ export class ProjectRepository {
       with: {
         issueType: true,
         workflow: true,
+      },
+    });
+  }
+
+  getProjectIssueTypes(projectId: string) {
+    return this.drizzle.query.projectIssueTypes.findMany({
+      where: eq(projectIssueTypes.projectId, projectId),
+      with: {
+        issueType: true,
+        workflow: {
+          with: {
+            statuses: {
+              with: {
+                status: true,
+              },
+            },
+          },
+        },
       },
     });
   }

@@ -78,6 +78,10 @@ export interface UserContext {
 
 export interface TriggerContext {
   type: string;
+  // Manual trigger context
+  issueKey?: string;
+  // JQL trigger context  
+  jql?: string;
   comment?: {
     id: string;
     body: string;

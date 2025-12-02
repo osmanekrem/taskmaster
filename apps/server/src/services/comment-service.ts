@@ -31,6 +31,7 @@ import {
   MAX_FILE_SIZE,
 } from '@taskmaster/validation';
 import { emitCommentCreated } from '@/lib/events/event-bus';
+import { getContainer } from '@/lib/context';
 
 export class CommentService {
   private readonly notificationService: NotificationService;
@@ -270,12 +271,28 @@ export class CommentService {
       });
     }
 
-    // Check ownership (or admin - TODO: add admin check)
-    if (comment.authorId !== userId) {
-      throw createAppError(ErrorMessages.NOT_COMMENT_AUTHOR, {
-        statusCode: 403,
-        code: 'FORBIDDEN',
-      });
+    // Check ownership or admin permission
+    const isOwner = comment.authorId === userId;
+    
+    if (!isOwner) {
+      // Check if user has admin permission to delete any comment
+      const container = getContainer();
+      const issue = await this.issueRepository.findById(comment.issueId);
+      const projectId = issue?.projectId;
+      
+      const hasDeletePermission = await container.permission.hasPermission(
+        userId, 
+        'comment:delete', 
+        projectId
+      );
+      const isAdmin = await container.permission.hasPermission(userId, 'admin:manage_projects');
+      
+      if (!hasDeletePermission && !isAdmin) {
+        throw createAppError(ErrorMessages.NOT_COMMENT_AUTHOR, {
+          statusCode: 403,
+          code: 'FORBIDDEN',
+        });
+      }
     }
 
     if (comment.isDeleted) {
@@ -417,12 +434,28 @@ export class CommentService {
       });
     }
 
-    // Check ownership (or admin - TODO: add admin check)
-    if (attachment.uploaderId !== userId) {
-      throw createAppError(ErrorMessages.FORBIDDEN, {
-        statusCode: 403,
-        code: 'FORBIDDEN',
-      });
+    // Check ownership or admin permission
+    const isOwner = attachment.uploaderId === userId;
+    
+    if (!isOwner) {
+      // Check if user has admin permission to delete any attachment
+      const container = getContainer();
+      const issue = await this.issueRepository.findById(attachment.issueId);
+      const projectId = issue?.projectId;
+      
+      const hasDeletePermission = await container.permission.hasPermission(
+        userId,
+        'attachment:delete',
+        projectId
+      );
+      const isAdmin = await container.permission.hasPermission(userId, 'admin:manage_projects');
+      
+      if (!hasDeletePermission && !isAdmin) {
+        throw createAppError(ErrorMessages.FORBIDDEN, {
+          statusCode: 403,
+          code: 'FORBIDDEN',
+        });
+      }
     }
 
     // Delete actual file from storage

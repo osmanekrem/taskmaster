@@ -14,8 +14,7 @@ import type {
 import type { Permission } from '@/db/schema/permissions';
 import { getContainer } from '@/lib/context';
 import { db } from '@/db';
-import { issues } from '@/db/schema/issues';
-import { issueHistory } from '@/db/schema/issues';
+import { issues, changeGroups, changeItems } from '@/db/schema/issues';
 import { eq, and, desc } from 'drizzle-orm';
 
 /**
@@ -179,26 +178,59 @@ export const separationOfDutiesHandler: ConditionHandler<SeparationOfDutiesCondi
     type: 'separation_of_duties',
     async evaluate(condition, context): Promise<ConditionResult> {
       // Check if user has performed the specified transition on this issue
-      // Note: issueHistory uses JSONB 'changes' field, not individual 'field' column
-      const history = await db.query.issueHistory.findFirst({
-        where: and(
-          eq(issueHistory.issueId, context.issue.id),
-          eq(issueHistory.userId, context.userId),
-        ),
-        orderBy: [desc(issueHistory.createdAt)],
-      });
+      // We use change_groups and change_items to track status transitions
+      
+      // Find all status transitions for this issue by this user
+      const statusTransitions = await db
+        .select({
+          changeGroupId: changeGroups.id,
+          userId: changeGroups.userId,
+          action: changeGroups.action,
+          createdAt: changeGroups.createdAt,
+          oldValue: changeItems.oldValue,
+          newValue: changeItems.newValue,
+          oldString: changeItems.oldString,
+          newString: changeItems.newString,
+        })
+        .from(changeGroups)
+        .innerJoin(changeItems, eq(changeItems.changeGroupId, changeGroups.id))
+        .where(
+          and(
+            eq(changeGroups.issueId, context.issue.id),
+            eq(changeGroups.userId, context.userId),
+            eq(changeItems.field, 'Status')
+          )
+        )
+        .orderBy(desc(changeGroups.createdAt));
 
       // If user hasn't made any status changes, they pass
-      if (!history) {
+      if (statusTransitions.length === 0) {
         return {
           passed: true,
           conditionType: 'separation_of_duties',
         };
       }
 
-      // Check if the previous transition matches the restricted one
-      // This is a simplified check - in production you'd check against actual transition names
-      const passed = true; // Simplified: allow if last change was different
+      // Check if any of the user's previous transitions match the restricted transition name
+      // The transition name is typically stored as the newString (the status they transitioned TO)
+      // or we can match against a pattern like "To {StatusName}"
+      const restrictedTransitionLower = condition.transitionName.toLowerCase();
+      
+      const hasPerformedRestrictedTransition = statusTransitions.some(t => {
+        // Check if the transition matches by:
+        // 1. Exact match on newString (status name)
+        // 2. Match on transition pattern "To {Status}"
+        const newStatusName = t.newString?.toLowerCase() || '';
+        const transitionPattern = `to ${newStatusName}`;
+        
+        return (
+          newStatusName === restrictedTransitionLower ||
+          transitionPattern === restrictedTransitionLower ||
+          restrictedTransitionLower.includes(newStatusName)
+        );
+      });
+
+      const passed = !hasPerformedRestrictedTransition;
 
       return {
         passed,

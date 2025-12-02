@@ -24,3 +24,4 @@ export * from './audit';
 export * from './automation';
 export * from './security';
 export * from './groups';
+export * from './events';

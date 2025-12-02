@@ -310,10 +310,25 @@ export const automationRouter = router({
         });
       }
 
-      // TODO: Implement manual trigger execution
-      // This would require fetching the issue and building the context
+      // Execute the manual trigger
+      const result = await automationService.triggerManually(
+        input.ruleId,
+        ctx.session?.user?.id!,
+        input.issueId,
+      );
 
-      return { success: true, message: 'Manual trigger execution queued' };
+      if (!result.success) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: result.error || 'Failed to execute manual trigger',
+        });
+      }
+
+      return { 
+        success: true, 
+        message: 'Manual trigger executed successfully',
+        executionId: result.executionId,
+      };
     }),
 
   // =========================================================================

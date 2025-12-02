@@ -259,4 +259,118 @@ export const issuesRouter = router({
       );
       return successResponse(issues, 'Backlog issues retrieved');
     }),
+
+  // ==========================================================================
+  // BULK OPERATIONS
+  // ==========================================================================
+
+  /**
+   * Bulk edit multiple issues at once
+   */
+  bulkEdit: protectedProcedure
+    .input(
+      z.object({
+        issueIds: z.array(z.string().uuid()).min(1).max(100),
+        updates: z.object({
+          assigneeId: z.string().uuid().nullable().optional(),
+          priority: z.string().optional(),
+          labels: z.array(z.string()).optional(),
+          dueDate: z.string().datetime().nullable().optional(),
+          epicId: z.string().uuid().nullable().optional(),
+        }),
+      }),
+    )
+    .use(requirePermission('issue:edit'))
+    .mutation(async ({ ctx, input }) => {
+      const result = await ctx.services.issue.bulkEdit(
+        input.issueIds,
+        {
+          ...input.updates,
+          dueDate: input.updates.dueDate
+            ? new Date(input.updates.dueDate)
+            : input.updates.dueDate === null
+              ? null
+              : undefined,
+        },
+        ctx.session!.user.id,
+      );
+      return successResponse(result, `${result.updatedCount} issues updated`);
+    }),
+
+  /**
+   * Bulk transition multiple issues to a new status
+   */
+  bulkTransition: protectedProcedure
+    .input(
+      z.object({
+        issueIds: z.array(z.string().uuid()).min(1).max(100),
+        toStatusId: z.string().uuid(),
+        resolutionId: z.string().uuid().optional(),
+        comment: z.string().optional(),
+        skipValidation: z.boolean().optional().default(false),
+      }),
+    )
+    .use(requirePermission('issue:transition'))
+    .mutation(async ({ ctx, input }) => {
+      const result = await ctx.services.issue.bulkTransition(
+        input.issueIds,
+        input.toStatusId,
+        ctx.session!.user.id,
+        {
+          resolutionId: input.resolutionId,
+          comment: input.comment,
+          skipValidation: input.skipValidation,
+        },
+      );
+      return successResponse(
+        result,
+        `${result.transitionedCount} issues transitioned`,
+      );
+    }),
+
+  /**
+   * Bulk delete multiple issues
+   */
+  bulkDelete: protectedProcedure
+    .input(
+      z.object({
+        issueIds: z.array(z.string().uuid()).min(1).max(100),
+        deleteSubtasks: z.boolean().optional().default(true),
+      }),
+    )
+    .use(requirePermission('issue:delete'))
+    .mutation(async ({ ctx, input }) => {
+      const result = await ctx.services.issue.bulkDelete(
+        input.issueIds,
+        ctx.session!.user.id,
+        { deleteSubtasks: input.deleteSubtasks },
+      );
+      return successResponse(result, `${result.deletedCount} issues deleted`);
+    }),
+
+  /**
+   * Bulk move issues to another project
+   */
+  bulkMove: protectedProcedure
+    .input(
+      z.object({
+        issueIds: z.array(z.string().uuid()).min(1).max(100),
+        targetProjectId: z.string().uuid(),
+        targetIssueTypeId: z.string().uuid().optional(),
+        targetStatusId: z.string().uuid().optional(),
+      }),
+    )
+    .use(requirePermission('issue:move'))
+    .mutation(async ({ ctx, input }) => {
+      const result = await ctx.services.issue.bulkMove(
+        input.issueIds,
+        input.targetProjectId,
+        ctx.session!.user.id,
+        {
+          targetIssueTypeId: input.targetIssueTypeId,
+          targetStatusId: input.targetStatusId,
+        },
+      );
+      return successResponse(result, `${result.movedCount} issues moved`);
+    }),
 });

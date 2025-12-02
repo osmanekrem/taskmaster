@@ -1161,7 +1161,7 @@ async function executeIfElse(
   context: ActionExecutorContext,
 ): Promise<ActionResult> {
   const conditions = action.conditions || [];
-  const conditionResult = evaluateConditions(conditions, context);
+  const conditionResult = await evaluateConditions(conditions, context);
 
   if (conditionResult.matched) {
     // Execute then actions
@@ -1276,7 +1276,7 @@ async function executeBranchRule(
     }>) || [];
 
   for (const branch of branches) {
-    const conditionResult = evaluateConditions(branch.conditions, context);
+    const conditionResult = await evaluateConditions(branch.conditions, context);
     if (conditionResult.matched) {
       return executeActions(branch.actions, context);
     }

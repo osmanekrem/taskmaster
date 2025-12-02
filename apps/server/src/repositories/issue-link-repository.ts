@@ -12,11 +12,10 @@ import {
   type IssueLinkType,
   type NewIssueLinkType,
 } from '../db/schema';
-
-type DbType = typeof db;
+import type { DbOrTx } from '../lib/transaction';
 
 export class IssueLinkRepository {
-  constructor(private db: DbType) {}
+  constructor(private db: DbOrTx = db) {}
 
   // ===========================================================================
   // LINK TYPES

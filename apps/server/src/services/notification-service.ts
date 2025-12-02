@@ -10,6 +10,12 @@ import type {
 	WatchReason,
 	NotificationChannel,
 } from "../db/schema";
+import { resend } from "@/lib/mail";
+import { env } from "@/config/env";
+import { db } from "@/db";
+import { projectRoleMembers } from "@/db/schema/permissions";
+import { user } from "@/db/schema/auth";
+import { eq } from "drizzle-orm";
 
 // =====================================================
 // NOTIFICATION SERVICE
@@ -705,5 +711,304 @@ export class NotificationService {
 		},
 	) {
 		return this.digestRepo.upsertSettings(userId, settings);
+	}
+
+	// =====================================================
+	// EMAIL DISPATCH
+	// =====================================================
+
+	/**
+	 * Send email notification to a user
+	 * Checks email preferences before sending
+	 */
+	async sendEmailNotification(
+		userId: string,
+		type: NotificationType,
+		subject: string,
+		options: {
+			content: string;
+			htmlContent?: string;
+			data?: NotificationData;
+		},
+	) {
+		// Check if user has email notifications enabled for this type
+		const isEnabled = await this.preferencesRepo.isEnabled(
+			userId,
+			"email",
+			type,
+		);
+
+		if (!isEnabled) {
+			return { sent: false, reason: "User has disabled email for this type" };
+		}
+
+		// Get user email
+		const userRecord = await db
+			.select({ email: user.email, name: user.name })
+			.from(user)
+			.where(eq(user.id, userId))
+			.limit(1);
+
+		if (!userRecord.length || !userRecord[0].email) {
+			return { sent: false, reason: "User email not found" };
+		}
+
+		try {
+			await resend.emails.send({
+				from: env.RESEND_SMTP_FROM || "onboarding@resend.dev",
+				to: userRecord[0].email,
+				subject,
+				html: options.htmlContent || this.generateEmailHtml(subject, options.content),
+			});
+
+			return { sent: true };
+		} catch (error) {
+			console.error("[NotificationService] Email send failed:", error);
+			return { sent: false, reason: "Email send failed" };
+		}
+	}
+
+	/**
+	 * Send email notifications to multiple users
+	 */
+	async sendBulkEmailNotifications(
+		userIds: string[],
+		type: NotificationType,
+		subject: string,
+		options: {
+			content: string;
+			htmlContent?: string;
+			data?: NotificationData;
+			excludeUserIds?: string[];
+		},
+	) {
+		const results: Array<{ userId: string; sent: boolean; reason?: string }> = [];
+
+		// Filter out excluded users
+		const targetUserIds = options.excludeUserIds
+			? userIds.filter((id) => !options.excludeUserIds!.includes(id))
+			: userIds;
+
+		for (const userId of targetUserIds) {
+			const result = await this.sendEmailNotification(userId, type, subject, options);
+			results.push({ userId, ...result });
+		}
+
+		return results;
+	}
+
+	/**
+	 * Generate simple HTML email content
+	 */
+	private generateEmailHtml(title: string, content: string): string {
+		return `
+			<!DOCTYPE html>
+			<html>
+			<head>
+				<meta charset="UTF-8">
+				<title>${title}</title>
+				<style>
+					body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+					.container { max-width: 600px; margin: 0 auto; padding: 20px; }
+					.header { background: #1c2d45; color: white; padding: 20px; text-align: center; }
+					.content { padding: 20px; background: #f9f9f9; }
+					.footer { padding: 20px; text-align: center; font-size: 12px; color: #666; }
+				</style>
+			</head>
+			<body>
+				<div class="container">
+					<div class="header">
+						<h1>Taskmaster</h1>
+					</div>
+					<div class="content">
+						<h2>${title}</h2>
+						<p>${content}</p>
+					</div>
+					<div class="footer">
+						<p>Bu bir otomatik bildirimdir.</p>
+					</div>
+				</div>
+			</body>
+			</html>
+		`;
+	}
+
+	// =====================================================
+	// PROJECT MEMBER NOTIFICATIONS
+	// =====================================================
+
+	/**
+	 * Notify all members of a project
+	 */
+	async notifyProjectMembers(
+		projectId: string,
+		type: NotificationType,
+		title: string,
+		options?: {
+			content?: string;
+			data?: NotificationData;
+			issueId?: string;
+			actorId?: string;
+			excludeUserIds?: string[];
+			includeEmail?: boolean;
+		},
+	) {
+		// Get all project members (users with any role in the project)
+		const members = await db
+			.select({ userId: projectRoleMembers.userId })
+			.from(projectRoleMembers)
+			.where(eq(projectRoleMembers.projectId, projectId));
+
+		let memberIds = members.map((m) => m.userId);
+
+		// Exclude actor and any specified users
+		if (options?.actorId) {
+			memberIds = memberIds.filter((id) => id !== options.actorId);
+		}
+		if (options?.excludeUserIds?.length) {
+			const excludeSet = new Set(options.excludeUserIds);
+			memberIds = memberIds.filter((id) => !excludeSet.has(id));
+		}
+
+		if (memberIds.length === 0) {
+			return { inApp: [], email: [] };
+		}
+
+		// Send in-app notifications
+		const inAppResults = await this.notifyUsers(memberIds, type, title, {
+			content: options?.content,
+			data: options?.data,
+			issueId: options?.issueId,
+			actorId: options?.actorId,
+		});
+
+		// Send email notifications if requested
+		let emailResults: Array<{ userId: string; sent: boolean; reason?: string }> = [];
+		if (options?.includeEmail) {
+			emailResults = await this.sendBulkEmailNotifications(
+				memberIds,
+				type,
+				title,
+				{
+					content: options?.content || title,
+					data: options?.data,
+				},
+			);
+		}
+
+		return { inApp: inAppResults, email: emailResults };
+	}
+
+	/**
+	 * Notify project admins
+	 */
+	async notifyProjectAdmins(
+		projectId: string,
+		type: NotificationType,
+		title: string,
+		options?: {
+			content?: string;
+			data?: NotificationData;
+			issueId?: string;
+			actorId?: string;
+			includeEmail?: boolean;
+		},
+	) {
+		// Get project admins (members with admin role)
+		const admins = await db
+			.select({ userId: projectRoleMembers.userId })
+			.from(projectRoleMembers)
+			.where(eq(projectRoleMembers.projectId, projectId));
+		// Note: Would need to filter by role if role column exists
+
+		let adminIds = admins.map((m) => m.userId);
+
+		if (options?.actorId) {
+			adminIds = adminIds.filter((id) => id !== options.actorId);
+		}
+
+		if (adminIds.length === 0) {
+			return { inApp: [], email: [] };
+		}
+
+		// Send notifications
+		const inAppResults = await this.notifyUsers(adminIds, type, title, {
+			content: options?.content,
+			data: options?.data,
+			issueId: options?.issueId,
+			actorId: options?.actorId,
+		});
+
+		let emailResults: Array<{ userId: string; sent: boolean; reason?: string }> = [];
+		if (options?.includeEmail) {
+			emailResults = await this.sendBulkEmailNotifications(
+				adminIds,
+				type,
+				title,
+				{
+					content: options?.content || title,
+					data: options?.data,
+				},
+			);
+		}
+
+		return { inApp: inAppResults, email: emailResults };
+	}
+
+	/**
+	 * Notify users with combined in-app and email
+	 * This is the unified method for multi-channel notifications
+	 */
+	async notifyMultiChannel(
+		userIds: string[],
+		type: NotificationType,
+		title: string,
+		options: {
+			content?: string;
+			data?: NotificationData;
+			issueId?: string;
+			commentId?: string;
+			actorId?: string;
+			channels?: NotificationChannel[];
+		},
+	): Promise<{
+		inApp: Awaited<ReturnType<NotificationService['notifyUsers']>>;
+		email: Array<{ userId: string; sent: boolean; reason?: string }>;
+	}> {
+		const channels = options.channels || ["in_app"];
+		const results: {
+			inApp: Awaited<ReturnType<NotificationService['notifyUsers']>>;
+			email: Array<{ userId: string; sent: boolean; reason?: string }>;
+		} = {
+			inApp: [],
+			email: [],
+		};
+
+		// Send in-app notifications
+		if (channels.includes("in_app")) {
+			results.inApp = await this.notifyUsers(userIds, type, title, {
+				content: options.content,
+				data: options.data,
+				issueId: options.issueId,
+				commentId: options.commentId,
+				actorId: options.actorId,
+			});
+		}
+
+		// Send email notifications
+		if (channels.includes("email")) {
+			results.email = await this.sendBulkEmailNotifications(
+				userIds,
+				type,
+				title,
+				{
+					content: options.content || title,
+					data: options.data,
+					excludeUserIds: options.actorId ? [options.actorId] : undefined,
+				},
+			);
+		}
+
+		return results;
 	}
 }

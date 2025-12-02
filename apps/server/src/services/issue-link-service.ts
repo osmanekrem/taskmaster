@@ -11,6 +11,9 @@ import {
   type NewIssueLinkType,
 } from '../db/schema';
 import { TRPCError } from '@trpc/server';
+import { getContainer } from '@/lib/context';
+import { withTransaction } from '@/lib/transaction';
+import { db } from '@/db';
 
 export interface LinkWithDetails {
   id: string;
@@ -223,7 +226,7 @@ export class IssueLinkService {
     }
 
     // Validate link type exists
-    await this.getLinkTypeById(data.linkTypeId);
+    const linkType = await this.getLinkTypeById(data.linkTypeId);
 
     // Cannot link to self
     if (data.sourceIssueId === data.targetIssueId) {
@@ -261,30 +264,34 @@ export class IssueLinkService {
       });
     }
 
-    const link = await this.issueLinkRepository.createLink(data);
+    // Use transaction for atomic link creation + history entries
+    return withTransaction(async (tx) => {
+      // Create repository instances with transaction
+      const txLinkRepo = new IssueLinkRepository(tx);
+      const txIssueRepo = new IssueRepository();
 
-    // Get link type for history
-    const linkType = await this.getLinkTypeById(data.linkTypeId);
+      const link = await txLinkRepo.createLink(data);
 
-    // Add history to source issue (outward direction)
-    await this.issueRepository.addHistory(data.sourceIssueId, data.createdBy, [
-      {
-        field: 'link',
-        oldValue: null,
-        newValue: `${linkType.outwardName} ${targetIssue.key}`,
-      },
-    ]);
+      // Add history to source issue (outward direction)
+      await txIssueRepo.addHistory(data.sourceIssueId, data.createdBy, [
+        {
+          field: 'link',
+          oldValue: null,
+          newValue: `${linkType.outwardName} ${targetIssue.key}`,
+        },
+      ]);
 
-    // Add history to target issue (inward direction)
-    await this.issueRepository.addHistory(data.targetIssueId, data.createdBy, [
-      {
-        field: 'link',
-        oldValue: null,
-        newValue: `${linkType.inwardName} ${sourceIssue.key}`,
-      },
-    ]);
+      // Add history to target issue (inward direction)
+      await txIssueRepo.addHistory(data.targetIssueId, data.createdBy, [
+        {
+          field: 'link',
+          oldValue: null,
+          newValue: `${linkType.inwardName} ${sourceIssue.key}`,
+        },
+      ]);
 
-    return link;
+      return link;
+    });
   }
 
   /**
@@ -304,35 +311,63 @@ export class IssueLinkService {
     const sourceIssue = await this.issueRepository.findById(link.sourceIssueId);
     const targetIssue = await this.issueRepository.findById(link.targetIssueId);
 
-    // TODO: Check permissions (project member, admin, or creator)
-
-    const deleted = await this.issueLinkRepository.deleteLink(id);
-    if (!deleted) {
+    // Check permissions: user must have issue:link permission on at least one of the projects
+    // OR be the creator of the link (if we tracked that) OR be an admin
+    const container = getContainer();
+    
+    // Check if user has issue:link permission on source issue's project
+    const hasSourcePermission = sourceIssue 
+      ? await container.permission.hasPermission(userId, 'issue:link', sourceIssue.projectId)
+      : false;
+    
+    // Check if user has issue:link permission on target issue's project
+    const hasTargetPermission = targetIssue
+      ? await container.permission.hasPermission(userId, 'issue:link', targetIssue.projectId)
+      : false;
+    
+    // Check if user is a system admin
+    const isAdmin = await container.permission.hasPermission(userId, 'admin:manage_projects');
+    
+    if (!hasSourcePermission && !hasTargetPermission && !isAdmin) {
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to delete link',
+        code: 'FORBIDDEN',
+        message: 'You do not have permission to delete this link',
       });
     }
 
-    // Add history to source issue (link removed)
-    if (sourceIssue && targetIssue) {
-      await this.issueRepository.addHistory(link.sourceIssueId, userId, [
-        {
-          field: 'link',
-          oldValue: `${linkType.outwardName} ${targetIssue.key}`,
-          newValue: null,
-        },
-      ]);
+    // Wrap delete and history in transaction for atomicity
+    await withTransaction(async (tx) => {
+      // Create repository with transaction context
+      const txIssueLinkRepository = new IssueLinkRepository(tx);
+      
+      const deleted = await txIssueLinkRepository.deleteLink(id);
+      if (!deleted) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to delete link',
+        });
+      }
 
-      // Add history to target issue (link removed)
-      await this.issueRepository.addHistory(link.targetIssueId, userId, [
-        {
-          field: 'link',
-          oldValue: `${linkType.inwardName} ${sourceIssue.key}`,
-          newValue: null,
-        },
-      ]);
-    }
+      // Add history to source issue (link removed)
+      if (sourceIssue && targetIssue) {
+        await this.issueRepository.addHistory(link.sourceIssueId, userId, [
+          {
+            field: 'link',
+            oldValue: `${linkType.outwardName} ${targetIssue.key}`,
+            newValue: null,
+          },
+        ]);
+
+        // Add history to target issue (link removed)
+        await this.issueRepository.addHistory(link.targetIssueId, userId, [
+          {
+            field: 'link',
+            oldValue: `${linkType.inwardName} ${sourceIssue.key}`,
+            newValue: null,
+          },
+        ]);
+      }
+    });
   }
 
   /**

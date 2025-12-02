@@ -1,6 +1,14 @@
 import { boardRepository } from '@/repositories/board-repository';
 import { projectRepository } from '@/repositories/project-repository';
-import { IssueRepository } from '@/repositories/issue-repository';
+import { IssueRepository, issueRepository } from '@/repositories/issue-repository';
+import { jqlService } from '@/services/jql-service';
+import { db } from '@/db';
+import { issues } from '@/db/schema/issues';
+import { issueTypes } from '@/db/schema/issue-types';
+import { statuses } from '@/db/schema/statuses';
+import { user } from '@/db/schema/auth';
+import { sprintIssues, sprints } from '@/db/schema/sprints';
+import { eq, and, inArray, sql, isNull } from 'drizzle-orm';
 import type {
   Board,
   NewBoard,
@@ -475,26 +483,253 @@ export class BoardService {
     // Record board view
     await boardRepository.recordBoardView(boardId, userId);
 
-    // TODO: Fetch actual issues based on board filter, sprint, and quick filters
-    // This will be implemented when JQL engine is ready
-    // For now, return empty data structure
+    // Build JQL for fetching issues
+    let jqlParts: string[] = [];
+    
+    // 1. Board's base filter
+    if (board.filterJql) {
+      jqlParts.push(`(${board.filterJql})`);
+    } else {
+      // Default: filter by project
+      jqlParts.push(`project = "${board.projectId}"`);
+    }
 
-    const columnsWithStats: BoardColumnWithStats[] = columns.map((col) => ({
-      ...col,
-      issueCount: 0,
-      isOverWipLimit: false,
-      isUnderWipLimit: col.minIssues ? true : false,
-    }));
+    // 2. Sprint filter
+    if (options.sprintId) {
+      jqlParts.push(`sprint = "${options.sprintId}"`);
+    } else if (board.type === 'scrum') {
+      // For scrum boards without sprint, show active sprint
+      jqlParts.push(`sprint IN openSprints()`);
+    }
+
+    // 3. Quick filters
+    if (options.quickFilterIds && options.quickFilterIds.length > 0) {
+      const activeFilters = quickFilters.filter(f => 
+        options.quickFilterIds!.includes(f.id)
+      );
+      for (const filter of activeFilters) {
+        if (filter.jql) {
+          jqlParts.push(`(${filter.jql})`);
+        }
+      }
+    }
+
+    const combinedJql = jqlParts.join(' AND ');
+    
+    // Fetch issues using JQL
+    let boardIssues: BoardIssueCard[] = [];
+    try {
+      const jqlResult = await jqlService.executeSearch(combinedJql, {
+        userId,
+        projectId: board.projectId,
+        limit: 500, // Board reasonable limit
+      });
+
+      boardIssues = jqlResult.items.map(issue => ({
+        id: issue.id,
+        key: issue.key,
+        summary: issue.summary,
+        statusId: issue.statusId,
+        issueTypeId: issue.issueTypeId,
+        issueTypeName: issue.issueTypeName,
+        issueTypeIcon: issue.issueTypeIcon,
+        priority: issue.priority,
+        assigneeId: issue.assigneeId,
+        assigneeName: issue.assigneeName,
+        assigneeAvatar: issue.assigneeAvatar,
+        labels: [], // Not included in JQL result currently
+        dueDate: issue.dueDate,
+        storyPoints: null, // Would need to be added to JQL result
+        rank: null, // Would need to be added to JQL result
+        parentId: null,
+        parentKey: null,
+        sprintId: null,
+      }));
+    } catch (error) {
+      console.error('[BoardService] Error executing board JQL:', error);
+      // Return empty board on JQL error
+    }
+
+    // Build columns with issue counts and WIP stats
+    const columnsWithStats: BoardColumnWithStats[] = columns.map((col) => {
+      const statusIds = (col.statusIds as string[]) || [];
+      const columnIssues = boardIssues.filter(issue => 
+        statusIds.includes(issue.statusId)
+      );
+      const issueCount = columnIssues.length;
+      
+      return {
+        ...col,
+        issueCount,
+        isOverWipLimit: col.maxIssues ? issueCount > col.maxIssues : false,
+        isUnderWipLimit: col.minIssues ? issueCount < col.minIssues : false,
+      };
+    });
+
+    // Build swimlane groups
+    let swimlaneGroups: SwimlaneGroup[] = [];
+    
+    if (swimlane) {
+      swimlaneGroups = this.groupIssuesBySwimlane(
+        boardIssues, 
+        swimlane.type as SwimlaneType
+      );
+    } else {
+      // No swimlane - single group with all issues
+      swimlaneGroups = [{
+        id: 'default',
+        name: 'All Issues',
+        issueCount: boardIssues.length,
+        issues: boardIssues,
+      }];
+    }
+
+    // Get backlog for scrum boards (issues not in active sprint)
+    let backlog: BoardIssueCard[] | undefined;
+    if (board.type === 'scrum' && !options.sprintId) {
+      try {
+        const backlogJql = board.filterJql 
+          ? `(${board.filterJql}) AND sprint IS EMPTY`
+          : `project = "${board.projectId}" AND sprint IS EMPTY`;
+        
+        const backlogResult = await jqlService.executeSearch(backlogJql, {
+          userId,
+          projectId: board.projectId,
+          limit: 200,
+        });
+
+        backlog = backlogResult.items.map(issue => ({
+          id: issue.id,
+          key: issue.key,
+          summary: issue.summary,
+          statusId: issue.statusId,
+          issueTypeId: issue.issueTypeId,
+          issueTypeName: issue.issueTypeName,
+          issueTypeIcon: issue.issueTypeIcon,
+          priority: issue.priority,
+          assigneeId: issue.assigneeId,
+          assigneeName: issue.assigneeName,
+          assigneeAvatar: issue.assigneeAvatar,
+          labels: [],
+          dueDate: issue.dueDate,
+          storyPoints: null,
+          rank: null,
+          parentId: null,
+          parentKey: null,
+          sprintId: null,
+        }));
+      } catch (error) {
+        console.error('[BoardService] Error fetching backlog:', error);
+      }
+    }
 
     return {
       board,
       columns: columnsWithStats,
       swimlane,
-      swimlaneGroups: [],
+      swimlaneGroups,
       quickFilters,
       cardLayout,
       userSettings,
+      backlog,
     };
+  }
+
+  /**
+   * Group issues by swimlane type
+   */
+  private groupIssuesBySwimlane(
+    issues: BoardIssueCard[],
+    swimlaneType: SwimlaneType,
+  ): SwimlaneGroup[] {
+    const groups = new Map<string, SwimlaneGroup>();
+
+    switch (swimlaneType) {
+      case 'assignee':
+        for (const issue of issues) {
+          const key = issue.assigneeId || 'unassigned';
+          const name = issue.assigneeName || 'Unassigned';
+          
+          if (!groups.has(key)) {
+            groups.set(key, {
+              id: key,
+              name,
+              avatarUrl: issue.assigneeAvatar || undefined,
+              issueCount: 0,
+              issues: [],
+            });
+          }
+          
+          const group = groups.get(key)!;
+          group.issueCount++;
+          group.issues.push(issue);
+        }
+        break;
+
+      case 'priority':
+        const priorityOrder = ['highest', 'high', 'medium', 'low', 'lowest', 'none'];
+        for (const issue of issues) {
+          const key = issue.priority || 'none';
+          const name = issue.priority 
+            ? issue.priority.charAt(0).toUpperCase() + issue.priority.slice(1)
+            : 'No Priority';
+          
+          if (!groups.has(key)) {
+            groups.set(key, {
+              id: key,
+              name,
+              issueCount: 0,
+              issues: [],
+            });
+          }
+          
+          const group = groups.get(key)!;
+          group.issueCount++;
+          group.issues.push(issue);
+        }
+        // Sort by priority order
+        return priorityOrder
+          .filter(p => groups.has(p))
+          .map(p => groups.get(p)!);
+
+      case 'epic':
+      case 'parent':
+        // Group by parent/epic
+        for (const issue of issues) {
+          const key = issue.parentId || 'no-epic';
+          const name = issue.parentKey || 'No Epic';
+          
+          if (!groups.has(key)) {
+            groups.set(key, {
+              id: key,
+              name,
+              issueCount: 0,
+              issues: [],
+            });
+          }
+          
+          const group = groups.get(key)!;
+          group.issueCount++;
+          group.issues.push(issue);
+        }
+        break;
+
+      case 'custom_field':
+        // Would require custom field value in issue data
+        // For now, fall through to none
+        
+      case 'none':
+      default:
+        // Single group with all issues
+        return [{
+          id: 'all',
+          name: 'All Issues',
+          issueCount: issues.length,
+          issues,
+        }];
+    }
+
+    return Array.from(groups.values());
   }
 }
 

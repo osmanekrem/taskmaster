@@ -63,10 +63,10 @@ export interface SetProjectSchemeInput {
 }
 
 // ============================================================================
-// SECURITY SERVICE
+// SECURITY SERVICE CLASS
 // ============================================================================
 
-export const securityService = {
+export class SecurityService {
   // =========================================================================
   // SCHEME OPERATIONS
   // =========================================================================
@@ -76,7 +76,7 @@ export const securityService = {
    */
   async getAllSchemes(): Promise<IssueSecurityScheme[]> {
     return securitySchemeRepository.findAll();
-  },
+  }
 
   /**
    * Get scheme by ID
@@ -90,7 +90,7 @@ export const securityService = {
       });
     }
     return scheme;
-  },
+  }
 
   /**
    * Get scheme with all levels and members
@@ -104,7 +104,7 @@ export const securityService = {
       });
     }
     return scheme;
-  },
+  }
 
   /**
    * Create a new security scheme
@@ -126,7 +126,7 @@ export const securityService = {
       description: input.description,
       isDefault: input.isDefault ?? false,
     });
-  },
+  }
 
   /**
    * Update a security scheme
@@ -162,7 +162,7 @@ export const securityService = {
       });
     }
     return updated;
-  },
+  }
 
   /**
    * Delete a security scheme
@@ -187,7 +187,7 @@ export const securityService = {
         message: 'Failed to delete security scheme',
       });
     }
-  },
+  }
 
   /**
    * Clone a security scheme
@@ -204,7 +204,7 @@ export const securityService = {
       });
     }
     return cloned;
-  },
+  }
 
   // =========================================================================
   // LEVEL OPERATIONS
@@ -222,7 +222,7 @@ export const securityService = {
       });
     }
     return level;
-  },
+  }
 
   /**
    * Get level with members
@@ -236,7 +236,7 @@ export const securityService = {
       });
     }
     return level;
-  },
+  }
 
   /**
    * Get levels by scheme
@@ -245,7 +245,7 @@ export const securityService = {
     // Verify scheme exists
     await this.getSchemeById(schemeId);
     return securityLevelRepository.findBySchemeId(schemeId);
-  },
+  }
 
   /**
    * Create a new security level
@@ -274,7 +274,7 @@ export const securityService = {
       sortOrder: input.sortOrder,
       isDefault: input.isDefault ?? false,
     });
-  },
+  }
 
   /**
    * Update a security level
@@ -311,7 +311,7 @@ export const securityService = {
       });
     }
     return updated;
-  },
+  }
 
   /**
    * Delete a security level
@@ -327,7 +327,7 @@ export const securityService = {
         message: 'Failed to delete security level',
       });
     }
-  },
+  }
 
   /**
    * Reorder levels in a scheme
@@ -350,7 +350,7 @@ export const securityService = {
     }
 
     await securityLevelRepository.reorder(schemeId, levelIds);
-  },
+  }
 
   // =========================================================================
   // MEMBER OPERATIONS
@@ -363,7 +363,7 @@ export const securityService = {
     // Verify level exists
     await this.getLevelById(levelId);
     return securityLevelMemberRepository.findByLevelId(levelId);
-  },
+  }
 
   /**
    * Add member to a level
@@ -381,7 +381,7 @@ export const securityService = {
       memberId: input.memberId,
       customFieldId: input.customFieldId,
     });
-  },
+  }
 
   /**
    * Remove member from a level
@@ -394,7 +394,7 @@ export const securityService = {
         message: `Security level member not found: ${memberId}`,
       });
     }
-  },
+  }
 
   /**
    * Set all members for a level (replace)
@@ -412,7 +412,7 @@ export const securityService = {
     }
 
     return securityLevelMemberRepository.setMembers(levelId, members);
-  },
+  }
 
   /**
    * Validate member input
@@ -450,7 +450,7 @@ export const securityService = {
         message: `Member type "${input.memberType}" should not have a memberId`,
       });
     }
-  },
+  }
 
   // =========================================================================
   // PROJECT SCHEME OPERATIONS
@@ -465,7 +465,7 @@ export const securityService = {
     return projectSecuritySchemeRepository.getProjectSchemeWithLevels(
       projectId,
     );
-  },
+  }
 
   /**
    * Assign security scheme to project
@@ -490,7 +490,7 @@ export const securityService = {
       schemeId: input.schemeId,
       defaultLevelId: input.defaultLevelId,
     });
-  },
+  }
 
   /**
    * Remove security scheme from project
@@ -505,7 +505,7 @@ export const securityService = {
         message: 'Project does not have a security scheme assigned',
       });
     }
-  },
+  }
 
   // =========================================================================
   // ACCESS CHECK OPERATIONS
@@ -516,7 +516,7 @@ export const securityService = {
    */
   async canAccessIssue(userId: string, issueId: string): Promise<boolean> {
     return securityAccessChecker.canUserAccessIssue(userId, issueId);
-  },
+  }
 
   /**
    * Get accessible security levels for a user in a project
@@ -526,11 +526,10 @@ export const securityService = {
     projectId: string,
   ): Promise<string[]> {
     return securityAccessChecker.getAccessibleLevels(userId, projectId);
-  },
+  }
 
   /**
    * Get available security levels for issue creation/edit
-   * These are levels the user can set on issues (settable levels)
    */
   async getSettableLevels(
     userId: string,
@@ -544,7 +543,10 @@ export const securityService = {
     return projectScheme.levels.filter((level) =>
       accessibleIds.includes(level.id),
     );
-  },
-};
+  }
+}
+
+// Singleton instance for backward compatibility
+export const securityService = new SecurityService();
 
 export default securityService;

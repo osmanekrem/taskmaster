@@ -195,8 +195,8 @@ export class AutomationEngine {
       // Build context
       const context = this.buildContext(event, execution.id);
 
-      // Evaluate conditions
-      const conditionResult = evaluateConditions(
+      // Evaluate conditions (async to support JQL matching)
+      const conditionResult = await evaluateConditions(
         rule.conditions || [],
         context,
       );

@@ -253,6 +253,13 @@
       "when": 1764594220900,
       "tag": "0035_groups",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1764613169688,
+      "tag": "0036_add-domain-events",
+      "breakpoints": true
     }
   ]
 }

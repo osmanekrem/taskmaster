@@ -359,6 +359,104 @@ const futureSprintsFunction: JQLFunctionHandler = () => {
 };
 
 // =============================================================================
+// ISSUE RELATIONSHIP FUNCTIONS
+// =============================================================================
+
+/**
+ * linkedIssues(issueKey?, linkType?) - Returns issues linked to given issue
+ * Usage: issue IN linkedIssues()
+ *        issue IN linkedIssues("PROJ-123")
+ *        issue IN linkedIssues("PROJ-123", "blocks")
+ */
+const linkedIssuesFunction: JQLFunctionHandler = (args, context) => {
+  return {
+    type: 'FunctionCall',
+    name: 'linkedIssues',
+    arguments: args,
+  } as FunctionCall;
+};
+
+/**
+ * votedIssues() - Returns issues voted by current user
+ * Usage: issue IN votedIssues()
+ */
+const votedIssuesFunction: JQLFunctionHandler = (args, context) => {
+  return {
+    type: 'FunctionCall',
+    name: 'votedIssues',
+    arguments:
+      args.length > 0
+        ? args
+        : [
+            {
+              type: 'Literal',
+              valueType: 'string',
+              value: context.currentUserId || '',
+              raw: 'currentUser()',
+            } as Literal,
+          ],
+  } as FunctionCall;
+};
+
+/**
+ * watchedIssues() - Returns issues watched by current user
+ * Usage: issue IN watchedIssues()
+ */
+const watchedIssuesFunction: JQLFunctionHandler = (args, context) => {
+  return {
+    type: 'FunctionCall',
+    name: 'watchedIssues',
+    arguments:
+      args.length > 0
+        ? args
+        : [
+            {
+              type: 'Literal',
+              valueType: 'string',
+              value: context.currentUserId || '',
+              raw: 'currentUser()',
+            } as Literal,
+          ],
+  } as FunctionCall;
+};
+
+/**
+ * subtasksOf(issueKey) - Returns subtasks of given issue
+ * Usage: issue IN subtasksOf("PROJ-123")
+ */
+const subtasksOfFunction: JQLFunctionHandler = (args) => {
+  return {
+    type: 'FunctionCall',
+    name: 'subtasksOf',
+    arguments: args,
+  } as FunctionCall;
+};
+
+/**
+ * parentOf(issueKey) - Returns parent of given issue
+ * Usage: issue IN parentOf("PROJ-123")
+ */
+const parentOfFunction: JQLFunctionHandler = (args) => {
+  return {
+    type: 'FunctionCall',
+    name: 'parentOf',
+    arguments: args,
+  } as FunctionCall;
+};
+
+/**
+ * epicIssues(epicKey) - Returns issues in given epic
+ * Usage: issue IN epicIssues("PROJ-100")
+ */
+const epicIssuesFunction: JQLFunctionHandler = (args) => {
+  return {
+    type: 'FunctionCall',
+    name: 'epicIssues',
+    arguments: args,
+  } as FunctionCall;
+};
+
+// =============================================================================
 // VERSION FUNCTIONS
 // =============================================================================
 
@@ -559,6 +657,50 @@ export const FUNCTIONS: Record<string, JQLFunctionDefinition> = {
     minArgs: 1,
     maxArgs: 1,
     handler: earliestUnreleasedVersionFunction,
+  },
+
+  // Issue relationship functions
+  linkedIssues: {
+    name: 'linkedIssues',
+    description: 'Returns issues linked to given issue',
+    minArgs: 0,
+    maxArgs: 2,
+    handler: linkedIssuesFunction,
+  },
+  votedIssues: {
+    name: 'votedIssues',
+    description: 'Returns issues voted by current user',
+    minArgs: 0,
+    maxArgs: 1,
+    handler: votedIssuesFunction,
+  },
+  watchedIssues: {
+    name: 'watchedIssues',
+    description: 'Returns issues watched by current user',
+    minArgs: 0,
+    maxArgs: 1,
+    handler: watchedIssuesFunction,
+  },
+  subtasksOf: {
+    name: 'subtasksOf',
+    description: 'Returns subtasks of given issue',
+    minArgs: 1,
+    maxArgs: 1,
+    handler: subtasksOfFunction,
+  },
+  parentOf: {
+    name: 'parentOf',
+    description: 'Returns parent of given issue',
+    minArgs: 1,
+    maxArgs: 1,
+    handler: parentOfFunction,
+  },
+  epicIssues: {
+    name: 'epicIssues',
+    description: 'Returns issues in given epic',
+    minArgs: 1,
+    maxArgs: 1,
+    handler: epicIssuesFunction,
   },
 };
 

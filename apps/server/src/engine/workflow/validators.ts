@@ -2,6 +2,11 @@
 // VALIDATOR HANDLERS
 // =============================================================================
 
+import { db } from '@/db';
+import { issues, changeGroups, changeItems } from '@/db/schema/issues';
+import { issueLinks, issueLinkTypes } from '@/db/schema';
+import { statuses } from '@/db/schema/statuses';
+import { eq, and, desc, isNotNull, inArray } from 'drizzle-orm';
 import type {
   Validator,
   ValidatorResult,
@@ -348,9 +353,39 @@ export const numericRangeHandler: ValidatorHandler<NumericRangeValidator> = {
 export const previousStatusHandler: ValidatorHandler<PreviousStatusValidator> = {
   type: 'previous_status',
   async validate(validator, context): Promise<ValidatorResult> {
-    // TODO: Check change history for previous statuses
-    // For now, check current status
-    const valid = validator.statusIds.includes(context.fromStatusId || '');
+    // Check change history for previous statuses
+    // Find all status transitions for this issue
+    const statusChanges = await db
+      .select({
+        oldValue: changeItems.oldValue,
+        newValue: changeItems.newValue,
+      })
+      .from(changeItems)
+      .innerJoin(changeGroups, eq(changeItems.changeGroupId, changeGroups.id))
+      .where(
+        and(
+          eq(changeGroups.issueId, context.issue.id),
+          eq(changeItems.field, 'Status')
+        )
+      )
+      .orderBy(desc(changeGroups.createdAt));
+
+    // Collect all statuses the issue has been in
+    const previousStatuses = new Set<string>();
+    
+    // Add current status
+    if (context.fromStatusId) {
+      previousStatuses.add(context.fromStatusId);
+    }
+    
+    // Add all historical statuses
+    for (const change of statusChanges) {
+      if (change.oldValue) previousStatuses.add(change.oldValue);
+      if (change.newValue) previousStatuses.add(change.newValue);
+    }
+
+    // Check if any of the required statuses are in history
+    const valid = validator.statusIds.some(statusId => previousStatuses.has(statusId));
     
     return {
       valid,
@@ -365,12 +400,36 @@ export const previousStatusHandler: ValidatorHandler<PreviousStatusValidator> = 
 export const allSubtasksResolvedHandler: ValidatorHandler<AllSubtasksResolvedValidator> = {
   type: 'all_subtasks_resolved',
   async validate(validator, context): Promise<ValidatorResult> {
-    // TODO: Check subtasks via IssueRepository
-    // This requires injecting the repository
+    // Find all subtasks of this issue
+    const subtasks = await db
+      .select({
+        id: issues.id,
+        key: issues.key,
+        statusId: issues.statusId,
+        resolutionId: issues.resolutionId,
+      })
+      .from(issues)
+      .where(eq(issues.parentId, context.issue.id));
+
+    // If no subtasks, validation passes
+    if (subtasks.length === 0) {
+      return {
+        valid: true,
+        validatorType: 'all_subtasks_resolved',
+      };
+    }
+
+    // Check if all subtasks have a resolution (resolved)
+    const unresolvedSubtasks = subtasks.filter(s => !s.resolutionId);
+    const valid = unresolvedSubtasks.length === 0;
+
     return {
-      valid: true, // Placeholder - will be implemented with actual query
+      valid,
       validatorType: 'all_subtasks_resolved',
-      errorMessage: validator.errorMessage || 'All subtasks must be resolved',
+      errorMessage: valid 
+        ? undefined 
+        : validator.errorMessage || 
+          `${unresolvedSubtasks.length} subtask(s) must be resolved: ${unresolvedSubtasks.map(s => s.key).join(', ')}`,
     };
   },
 };
@@ -385,11 +444,35 @@ export const parentStatusCheckHandler: ValidatorHandler<ParentStatusCheckValidat
       };
     }
     
-    // TODO: Lookup parent issue status via repository
+    // Lookup parent issue status
+    const parent = await db
+      .select({
+        id: issues.id,
+        key: issues.key,
+        statusId: issues.statusId,
+        statusName: statuses.name,
+      })
+      .from(issues)
+      .innerJoin(statuses, eq(issues.statusId, statuses.id))
+      .where(eq(issues.id, context.issue.parentId))
+      .limit(1);
+
+    if (!parent[0]) {
+      return {
+        valid: true, // Parent not found (edge case, shouldn't happen)
+        validatorType: 'parent_status_check',
+      };
+    }
+
+    const valid = validator.allowedStatuses.includes(parent[0].statusId);
+
     return {
-      valid: true, // Placeholder
+      valid,
       validatorType: 'parent_status_check',
-      errorMessage: validator.errorMessage || 'Parent issue must be in an allowed status',
+      errorMessage: valid 
+        ? undefined 
+        : validator.errorMessage || 
+          `Parent issue ${parent[0].key} must be in an allowed status (current: ${parent[0].statusName})`,
     };
   },
 };
@@ -397,11 +480,86 @@ export const parentStatusCheckHandler: ValidatorHandler<ParentStatusCheckValidat
 export const linkedIssuesResolvedHandler: ValidatorHandler<LinkedIssuesResolvedValidator> = {
   type: 'linked_issues_resolved',
   async validate(validator, context): Promise<ValidatorResult> {
-    // TODO: Check linked issues via repository
+    // Get link type IDs to check
+    // If no specific types provided, use "Blocks" type
+    let linkTypeIds: string[] = validator.linkTypes || [];
+    
+    if (linkTypeIds.length === 0) {
+      // Find "Blocks" link type by name
+      const blocksType = await db
+        .select({ id: issueLinkTypes.id })
+        .from(issueLinkTypes)
+        .where(eq(issueLinkTypes.name, 'Blocks'))
+        .limit(1);
+      
+      if (blocksType[0]) {
+        linkTypeIds = [blocksType[0].id];
+      }
+    }
+
+    if (linkTypeIds.length === 0) {
+      // No link types to check
+      return {
+        valid: true,
+        validatorType: 'linked_issues_resolved',
+      };
+    }
+
+    // Find issues that block this issue (this issue is the target)
+    const blockingLinks = await db
+      .select({
+        sourceIssueId: issueLinks.sourceIssueId,
+      })
+      .from(issueLinks)
+      .where(
+        and(
+          eq(issueLinks.targetIssueId, context.issue.id),
+          inArray(issueLinks.linkTypeId, linkTypeIds)
+        )
+      );
+
+    if (blockingLinks.length === 0) {
+      return {
+        valid: true,
+        validatorType: 'linked_issues_resolved',
+      };
+    }
+
+    // Check if all blocking issues are resolved
+    const blockingIssueIds = blockingLinks.map(l => l.sourceIssueId);
+    const unresolvedBlockers = await db
+      .select({
+        id: issues.id,
+        key: issues.key,
+      })
+      .from(issues)
+      .where(
+        and(
+          inArray(issues.id, blockingIssueIds),
+          eq(issues.resolutionId, null as any) // Not resolved
+        )
+      );
+
+    // Actually check for null resolutionId properly
+    const unresolvedBlockersQuery = await db
+      .select({
+        id: issues.id,
+        key: issues.key,
+        resolutionId: issues.resolutionId,
+      })
+      .from(issues)
+      .where(inArray(issues.id, blockingIssueIds));
+
+    const unresolved = unresolvedBlockersQuery.filter(i => !i.resolutionId);
+    const valid = unresolved.length === 0;
+
     return {
-      valid: true, // Placeholder
+      valid,
       validatorType: 'linked_issues_resolved',
-      errorMessage: validator.errorMessage || 'All blocking issues must be resolved',
+      errorMessage: valid 
+        ? undefined 
+        : validator.errorMessage || 
+          `Blocking issue(s) must be resolved: ${unresolved.map(i => i.key).join(', ')}`,
     };
   },
 };

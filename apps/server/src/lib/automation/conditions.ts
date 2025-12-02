@@ -2,6 +2,7 @@
  * Automation Condition Evaluator
  *
  * Evaluates automation rule conditions against issue/trigger context.
+ * Supports async conditions like JQL matching.
  */
 
 import type {
@@ -10,6 +11,7 @@ import type {
 } from '@/db/schema/automation';
 import type { SmartValueContext } from './smart-values';
 import { resolveSmartValues, resolveSmartValue } from './smart-values';
+import { jqlService, type JQLExecutionOptions } from '@/services/jql-service';
 
 // ============================================================================
 // TYPES
@@ -24,6 +26,8 @@ export interface ConditionEvaluatorContext extends SmartValueContext {
   userId?: string;
   userGroups?: string[];
   userProjectRoles?: string[];
+  // User email for JQL context
+  userEmail?: string;
 }
 
 export interface ConditionResult {
@@ -37,12 +41,13 @@ export interface ConditionResult {
 // ============================================================================
 
 /**
- * Evaluate a condition or array of conditions
+ * Evaluate a condition or array of conditions (async version)
+ * Supports JQL matching and other async conditions
  */
-export function evaluateConditions(
+export async function evaluateConditions(
   conditions: AutomationCondition[] | undefined,
   context: ConditionEvaluatorContext,
-): ConditionResult {
+): Promise<ConditionResult> {
   if (!conditions || conditions.length === 0) {
     return { matched: true, reason: 'No conditions defined' };
   }
@@ -51,7 +56,7 @@ export function evaluateConditions(
   const results: ConditionResult[] = [];
 
   for (const condition of conditions) {
-    const result = evaluateCondition(condition, context);
+    const result = await evaluateCondition(condition, context);
     results.push(result);
 
     if (!result.matched) {
@@ -71,12 +76,12 @@ export function evaluateConditions(
 }
 
 /**
- * Evaluate a single condition
+ * Evaluate a single condition (async version)
  */
-export function evaluateCondition(
+export async function evaluateCondition(
   condition: AutomationCondition,
   context: ConditionEvaluatorContext,
-): ConditionResult {
+): Promise<ConditionResult> {
   const config = condition.config || {};
 
   switch (condition.type) {
@@ -150,7 +155,7 @@ export function evaluateCondition(
     // =========================================================================
 
     case 'jql_match':
-      return evaluateJqlMatch(config, context);
+      return await evaluateJqlMatchAsync(config, context);
 
     // =========================================================================
     // USER CONDITIONS
@@ -189,13 +194,13 @@ export function evaluateCondition(
     // =========================================================================
 
     case 'and':
-      return evaluateAnd(condition, context);
+      return await evaluateAndAsync(condition, context);
 
     case 'or':
-      return evaluateOr(condition, context);
+      return await evaluateOrAsync(condition, context);
 
     case 'not':
-      return evaluateNot(condition, context);
+      return await evaluateNotAsync(condition, context);
 
     default:
       return {
@@ -594,20 +599,56 @@ function evaluateIssueHasParent(
 // JQL CONDITION IMPLEMENTATION
 // ============================================================================
 
-function evaluateJqlMatch(
+/**
+ * Evaluate JQL match condition - checks if current issue matches a JQL query
+ */
+async function evaluateJqlMatchAsync(
   config: Record<string, unknown>,
-  _context: ConditionEvaluatorContext,
-): ConditionResult {
-  // JQL matching is complex and requires database queries
-  // This is a placeholder - actual implementation would call JQL service
-  const _jql = String(config.jql || '');
+  context: ConditionEvaluatorContext,
+): Promise<ConditionResult> {
+  const jql = String(config.jql || '');
+  
+  if (!jql) {
+    return { matched: false, reason: 'No JQL query specified' };
+  }
 
-  // TODO: Implement JQL matching via JQL service
-  // For now, return true as placeholder
-  return {
-    matched: true,
-    reason: 'JQL matching not fully implemented (placeholder)',
-  };
+  const issueId = context.issue?.id;
+  if (!issueId) {
+    return { matched: false, reason: 'No issue context available for JQL matching' };
+  }
+
+  try {
+    // Build JQL with issue key filter to check only this issue
+    const issueKey = context.issue?.key;
+    const combinedJql = issueKey 
+      ? `key = "${issueKey}" AND (${jql})`
+      : `(${jql})`;
+
+    const jqlOptions: JQLExecutionOptions = {
+      userId: context.userId || null,
+      userEmail: context.userEmail || null,
+      userGroups: context.userGroups || [],
+      projectId: context.projectId,
+      limit: 1,
+    };
+
+    // Execute JQL and check if our issue is in results
+    const result = await jqlService.executeSearchIds(combinedJql, jqlOptions);
+    const matched = result.includes(issueId);
+
+    return {
+      matched,
+      reason: matched 
+        ? `Issue matches JQL: ${jql}` 
+        : `Issue does not match JQL: ${jql}`,
+    };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return {
+      matched: false,
+      reason: `JQL evaluation error: ${errorMessage}`,
+    };
+  }
 }
 
 // ============================================================================
@@ -767,18 +808,18 @@ function evaluateDueDateApproaching(
 }
 
 // ============================================================================
-// LOGICAL CONDITION IMPLEMENTATIONS
+// LOGICAL CONDITION IMPLEMENTATIONS (ASYNC)
 // ============================================================================
 
-function evaluateAnd(
+async function evaluateAndAsync(
   condition: AutomationCondition,
   context: ConditionEvaluatorContext,
-): ConditionResult {
+): Promise<ConditionResult> {
   const conditions = condition.conditions || [];
   const results: ConditionResult[] = [];
 
   for (const subCondition of conditions) {
-    const result = evaluateCondition(subCondition, context);
+    const result = await evaluateCondition(subCondition, context);
     results.push(result);
 
     if (!result.matched) {
@@ -797,15 +838,15 @@ function evaluateAnd(
   };
 }
 
-function evaluateOr(
+async function evaluateOrAsync(
   condition: AutomationCondition,
   context: ConditionEvaluatorContext,
-): ConditionResult {
+): Promise<ConditionResult> {
   const conditions = condition.conditions || [];
   const results: ConditionResult[] = [];
 
   for (const subCondition of conditions) {
-    const result = evaluateCondition(subCondition, context);
+    const result = await evaluateCondition(subCondition, context);
     results.push(result);
 
     if (result.matched) {
@@ -824,17 +865,17 @@ function evaluateOr(
   };
 }
 
-function evaluateNot(
+async function evaluateNotAsync(
   condition: AutomationCondition,
   context: ConditionEvaluatorContext,
-): ConditionResult {
+): Promise<ConditionResult> {
   const innerCondition = condition.conditions?.[0];
 
   if (!innerCondition) {
     return { matched: true, reason: 'No inner condition for NOT' };
   }
 
-  const result = evaluateCondition(innerCondition, context);
+  const result = await evaluateCondition(innerCondition, context);
 
   return {
     matched: !result.matched,

@@ -4,6 +4,7 @@
  * Business logic for managing automation rules.
  */
 
+import crypto from 'crypto';
 import {
   automationRuleRepository,
   automationExecutionRepository,
@@ -26,6 +27,71 @@ import {
   type UserData,
 } from '@/lib/automation/engine';
 import { parseCronExpression, getNextCronDate } from '@/lib/automation/cron';
+
+import { jqlService } from '@/services/jql-service';
+import { issueRepository } from '@/repositories/issue-repository';
+
+// ============================================================================
+// HMAC Validation
+// ============================================================================
+
+/**
+ * Validate HMAC signature for incoming webhook
+ * Supports multiple signature header formats:
+ * - X-Hub-Signature-256: sha256=<signature> (GitHub style)
+ * - X-Signature: <signature>
+ * - X-Webhook-Signature: <signature>
+ */
+function validateWebhookSignature(
+  payload: unknown,
+  secret: string,
+  headers: Record<string, string>
+): { valid: boolean; error?: string } {
+  // Get signature from headers (case-insensitive)
+  const headerKeys = Object.keys(headers);
+  const signatureHeader = headerKeys.find(
+    (k) =>
+      k.toLowerCase() === 'x-hub-signature-256' ||
+      k.toLowerCase() === 'x-signature' ||
+      k.toLowerCase() === 'x-webhook-signature'
+  );
+
+  if (!signatureHeader) {
+    return { valid: false, error: 'Missing signature header' };
+  }
+
+  const receivedSignature = headers[signatureHeader];
+  if (!receivedSignature) {
+    return { valid: false, error: 'Empty signature header' };
+  }
+
+  // Parse signature (handle "sha256=<sig>" format)
+  let signature = receivedSignature;
+  let algorithm = 'sha256';
+
+  if (receivedSignature.includes('=')) {
+    const [algo, sig] = receivedSignature.split('=');
+    algorithm = algo;
+    signature = sig;
+  }
+
+  // Calculate expected signature
+  const payloadString = typeof payload === 'string' 
+    ? payload 
+    : JSON.stringify(payload);
+  
+  const hmac = crypto.createHmac(algorithm, secret);
+  hmac.update(payloadString);
+  const expectedSignature = hmac.digest('hex');
+
+  // Constant-time comparison to prevent timing attacks
+  const valid = crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expectedSignature)
+  );
+
+  return { valid, error: valid ? undefined : 'Invalid signature' };
+}
 
 // ============================================================================
 // TYPES
@@ -465,15 +531,19 @@ export class AutomationService {
     path: string,
     payload: unknown,
     headers: Record<string, string>,
-  ): Promise<{ success: boolean; executionId?: string }> {
+  ): Promise<{ success: boolean; executionId?: string; error?: string }> {
     const webhook = await automationWebhookRepository.findByPath(path);
     if (!webhook || !webhook.isActive) {
-      return { success: false };
+      return { success: false, error: 'Webhook not found or inactive' };
     }
 
-    // Validate secret if configured
+    // Validate HMAC signature if secret is configured
     if (webhook.secret) {
-      // TODO: Implement HMAC validation
+      const validation = validateWebhookSignature(payload, webhook.secret, headers);
+      if (!validation.valid) {
+        console.warn(`[Webhook] HMAC validation failed for path ${path}: ${validation.error}`);
+        return { success: false, error: validation.error };
+      }
     }
 
     const rule = await automationRuleRepository.findById(webhook.ruleId);
@@ -501,6 +571,103 @@ export class AutomationService {
       success: results.length > 0 && results.some((r) => r.success),
       executionId: results[0]?.executionId,
     };
+  }
+
+  /**
+   * Manually trigger an automation rule
+   * @param ruleId - The rule to trigger
+   * @param issueId - Optional issue ID to run the rule against
+   * @param userId - The user triggering the rule
+   */
+  async triggerManually(
+    ruleId: string,
+    userId: string,
+    issueId?: string,
+  ): Promise<{ success: boolean; executionId?: string; error?: string }> {
+    const rule = await automationRuleRepository.findById(ruleId);
+    
+    if (!rule) {
+      return { success: false, error: 'Rule not found' };
+    }
+
+    if (rule.trigger.type !== 'manual') {
+      return { success: false, error: 'Rule does not have a manual trigger' };
+    }
+
+    if (!rule.isEnabled) {
+      return { success: false, error: 'Rule is disabled' };
+    }
+
+    const engine = getAutomationEngine();
+
+    // Build the trigger event
+    let event: TriggerEvent = {
+      type: 'manual',
+      userId,
+      metadata: {
+        triggeredBy: userId,
+        triggeredAt: new Date().toISOString(),
+      },
+    };
+
+    // If issue ID is provided, fetch the issue and include in context
+    if (issueId) {
+      const issue = await issueRepository.findById(issueId);
+      
+      if (!issue) {
+        return { success: false, error: 'Issue not found' };
+      }
+
+      event = {
+        ...event,
+        projectId: issue.projectId,
+        issueId: issue.id,
+        issue: {
+          id: issue.id,
+          issueKey: issue.key,
+          summary: issue.summary || '',
+          description: issue.description,
+          status: issue.status
+            ? { id: issue.status.id, name: issue.status.name, category: issue.status.category || 'TODO' }
+            : undefined,
+          priority: issue.priority
+            ? { id: issue.priority, name: issue.priority }
+            : undefined,
+          issueType: issue.issueType
+            ? { id: issue.issueType.id, name: issue.issueType.name, iconUrl: issue.issueType.icon || undefined }
+            : undefined,
+          assignee: issue.assignee
+            ? { id: issue.assignee.id, name: issue.assignee.name || '', email: issue.assignee.email }
+            : null,
+          reporter: issue.reporter
+            ? { id: issue.reporter.id, name: issue.reporter.name || '', email: issue.reporter.email }
+            : undefined,
+          project: issue.project
+            ? { id: issue.project.id, key: issue.project.key, name: issue.project.name }
+            : undefined,
+          createdAt: issue.createdAt,
+          updatedAt: issue.updatedAt,
+          dueDate: issue.dueDate,
+        },
+        trigger: {
+          type: 'manual',
+          issueKey: issue.key,
+        },
+      };
+    }
+
+    try {
+      const results = await engine.processTrigger(event);
+      
+      return {
+        success: results.length > 0 && results.some((r) => r.success),
+        executionId: results[0]?.executionId,
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error(`[AutomationService] Error executing manual trigger:`, error);
+      return { success: false, error: errorMessage };
+    }
   }
 
   // =========================================================================
@@ -580,18 +747,19 @@ export class AutomationService {
 
         // Execute the rule
         const engine = getAutomationEngine();
-        const event: TriggerEvent = {
-          type: rule.trigger.type as any,
-          metadata: {
-            scheduledJobId: job.id,
-            cronExpression: job.cronExpression,
-          },
-        };
 
-        // For scheduled_jql, execute JQL and trigger for each issue
+        // For scheduled_jql, execute JQL and trigger for each matching issue
         if (rule.trigger.type === 'scheduled_jql' && job.jqlFilter) {
-          // TODO: Execute JQL and trigger for each issue
+          await this.processScheduledJql(engine, rule, job);
         } else {
+          // Regular scheduled trigger - no issue context
+          const event: TriggerEvent = {
+            type: rule.trigger.type as any,
+            metadata: {
+              scheduledJobId: job.id,
+              cronExpression: job.cronExpression,
+            },
+          };
           await engine.processTrigger(event);
         }
 
@@ -604,6 +772,91 @@ export class AutomationService {
           error,
         );
       }
+    }
+  }
+
+  /**
+   * Process scheduled_jql trigger - executes JQL and triggers for each matching issue
+   */
+  private async processScheduledJql(
+    engine: ReturnType<typeof getAutomationEngine>,
+    rule: AutomationRule,
+    job: { id: string; jqlFilter: string | null; cronExpression: string },
+  ): Promise<void> {
+    if (!job.jqlFilter) {
+      console.warn(`[AutomationService] scheduled_jql job ${job.id} has no JQL filter`);
+      return;
+    }
+
+    try {
+      // Execute JQL to get matching issues
+      const result = await jqlService.executeSearch(job.jqlFilter, {
+        userId: null, // Scheduled jobs run as system
+        limit: 1000, // Process up to 1000 issues per scheduled run
+      });
+
+      console.log(
+        `[AutomationService] scheduled_jql job ${job.id} found ${result.total} matching issues`,
+      );
+
+      // Trigger automation for each matching issue
+      for (const issue of result.items) {
+        const event: TriggerEvent = {
+          type: 'scheduled_jql',
+          projectId: issue.projectId,
+          issueId: issue.id,
+          issue: {
+            id: issue.id,
+            issueKey: issue.key,
+            summary: issue.summary,
+            description: issue.description,
+            status: {
+              id: issue.statusId,
+              name: issue.statusName,
+              category: issue.statusCategory,
+            },
+            priority: issue.priority ? { id: issue.priority, name: issue.priority } : undefined,
+            issueType: {
+              id: issue.issueTypeId,
+              name: issue.issueTypeName,
+              iconUrl: issue.issueTypeIcon || undefined,
+            },
+            assignee: issue.assigneeId
+              ? { id: issue.assigneeId, name: issue.assigneeName || '', email: '' }
+              : null,
+            reporter: { id: issue.reporterId, name: issue.reporterName || '', email: '' },
+            project: { id: issue.projectId, key: issue.projectKey, name: issue.projectName },
+            createdAt: issue.createdAt,
+            updatedAt: issue.updatedAt,
+            dueDate: issue.dueDate,
+          },
+          trigger: {
+            type: 'scheduled_jql',
+            jql: job.jqlFilter,
+          },
+          metadata: {
+            scheduledJobId: job.id,
+            cronExpression: job.cronExpression,
+            jqlFilter: job.jqlFilter,
+          },
+        };
+
+        // Process each issue - don't fail on individual issues
+        try {
+          await engine.processTrigger(event);
+        } catch (issueError) {
+          console.error(
+            `[AutomationService] Error processing scheduled_jql for issue ${issue.key}:`,
+            issueError,
+          );
+        }
+      }
+    } catch (error) {
+      console.error(
+        `[AutomationService] Error executing JQL for scheduled job ${job.id}:`,
+        error,
+      );
+      throw error;
     }
   }
 

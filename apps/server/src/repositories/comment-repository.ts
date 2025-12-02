@@ -2,14 +2,17 @@ import { db } from '@/db';
 import { issueComments, issueAttachments, commentMentions, commentReactions } from '@/db/schema/comments';
 import { eq, and, desc, asc, sql, isNull } from 'drizzle-orm';
 import type { CommentFilters, AttachmentFilters } from '@taskmaster/validation';
+import type { DbOrTx } from '@/lib/transaction';
 
 export class CommentRepository {
+  constructor(private drizzle: DbOrTx = db) {}
+
   // ==========================================================================
   // COMMENTS
   // ==========================================================================
 
   async findCommentById(id: string) {
-    return db.query.issueComments.findFirst({
+    return this.drizzle.query.issueComments.findFirst({
       where: eq(issueComments.id, id),
       with: {
         author: {
@@ -55,7 +58,7 @@ export class CommentRepository {
         );
 
     const [data, countResult] = await Promise.all([
-      db.query.issueComments.findMany({
+      this.drizzle.query.issueComments.findMany({
         where: whereClause,
         orderBy: asc(issueComments.createdAt),
         limit,
@@ -174,11 +177,11 @@ export class CommentRepository {
       mentionedUserId: userId,
     }));
 
-    return db.insert(commentMentions).values(values).returning();
+    return this.drizzle.insert(commentMentions).values(values).returning();
   }
 
   async deleteMentions(commentId: string) {
-    return db.delete(commentMentions).where(eq(commentMentions.commentId, commentId));
+    return this.drizzle.delete(commentMentions).where(eq(commentMentions.commentId, commentId));
   }
 
   // ==========================================================================
@@ -186,7 +189,7 @@ export class CommentRepository {
   // ==========================================================================
 
   async findReaction(commentId: string, userId: string, emoji: string) {
-    return db.query.commentReactions.findFirst({
+    return this.drizzle.query.commentReactions.findFirst({
       where: and(
         eq(commentReactions.commentId, commentId),
         eq(commentReactions.userId, userId),
@@ -218,7 +221,7 @@ export class CommentRepository {
   }
 
   async getReactionCounts(commentId: string) {
-    const reactions = await db.query.commentReactions.findMany({
+    const reactions = await this.drizzle.query.commentReactions.findMany({
       where: eq(commentReactions.commentId, commentId),
     });
 
@@ -236,8 +239,10 @@ export class CommentRepository {
 // =============================================================================
 
 export class AttachmentRepository {
+  constructor(private drizzle: DbOrTx = db) {}
+
   async findById(id: string) {
-    return db.query.issueAttachments.findFirst({
+    return this.drizzle.query.issueAttachments.findFirst({
       where: eq(issueAttachments.id, id),
       with: {
         uploader: {
@@ -252,7 +257,7 @@ export class AttachmentRepository {
     const offset = (page - 1) * limit;
 
     const [data, countResult] = await Promise.all([
-      db.query.issueAttachments.findMany({
+      this.drizzle.query.issueAttachments.findMany({
         where: eq(issueAttachments.issueId, issueId),
         orderBy: desc(issueAttachments.createdAt),
         limit,
@@ -263,7 +268,7 @@ export class AttachmentRepository {
           },
         },
       }),
-      db
+      this.drizzle
         .select({ count: sql<number>`count(*)` })
         .from(issueAttachments)
         .where(eq(issueAttachments.issueId, issueId)),
