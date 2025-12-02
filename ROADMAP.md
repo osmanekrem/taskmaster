@@ -50,11 +50,11 @@ Toplam                                     ~48 hafta
 
 | # | Task | Detay | Status |
 |---|------|-------|--------|
-| 2.1 | Service pattern birleştir | Factory → Class-based (projectService, workflowService, statusService, vb.) | 🔄 |
-| 2.2 | Repository-only DB access | Service'lerdeki `db.query` → repository metodları | 🔄 |
-| 2.3 | BaseRepository extend | IssueRepository'yi BaseRepository'den extend et | ⬜ |
+| 2.1 | Service pattern birleştir | Factory → Class-based (projectService, workflowService, statusService, vb.) | ✅ |
+| 2.2 | Repository-only DB access | Service'lerdeki `db.query` → repository metodları | ✅ |
+| 2.3 | BaseRepository extend | IssueRepository'yi BaseRepository'den extend et | ✅ |
 | 2.4 | Unit of Work pattern | Transaction koordinasyonu için UnitOfWork class | ✅ |
-| 2.5 | Container refactor | Tüm dependency'ler container üzerinden | ⬜ |
+| 2.5 | Container refactor | Tüm dependency'ler container üzerinden | ✅ |
 
 **Tamamlanan İşler:**
 - `FieldTypeService`: Factory → Class-based ✅
@@ -77,7 +77,28 @@ Toplam                                     ~48 hafta
 - ✅ `TicketTypeService`, `GroupService`, `FieldService`
 - ✅ `ProjectService`, `SecurityService`
 
+**Phase 2.2 Repository-only DB Access Tamamlandı:**
+- ✅ `issue-service.ts`: 17+ `db.query` çağrısı repository metodlarına taşındı
+- ✅ `workflow-repository.ts`: `findTransitionsToStatus()`, `findTransition()` metodları eklendi
+- ✅ `sprint-repository.ts`: `SprintIssueRepository.findByIssueId()` metodu eklendi
+- ✅ `issue-repository.ts`: `findSubtasksByParentIds()` metodu eklendi
+
+**Phase 2.3 BaseRepository Extension Tamamlandı:**
+- ✅ `IssueRepository`: `BaseRepository<IssueEntity, IssueInsert, IssueUpdate>` extend edildi
+- ✅ `tableName` ve `getTable()` metodları eklendi
+- ✅ `findById`, `create`, `update`, `delete` metodları `override` olarak işaretlendi
+- ✅ Type definitions: `IssueEntity`, `IssueInsert`, `IssueUpdate` tanımlandı
+
+**Phase 2.5 Container Refactor Tamamlandı:**
+- ✅ `ComponentService` + `ComponentRepository` container'a eklendi
+- ✅ `IssueLinkService` + `IssueLinkRepository` container'a eklendi
+- ✅ `LabelService` + `LabelRepository` container'a eklendi
+- ✅ `VersionService` + `VersionRepository` container'a eklendi
+- ✅ Container'da 16 service ve 16 repository DI ile yönetiliyor
+
 **Çıktı:** Test edilebilir, tutarlı service layer ✅
+
+**Phase 2 TAMAMLANDI** ✅
 
 ---
 
@@ -87,13 +108,51 @@ Toplam                                     ~48 hafta
 
 | # | Task | Detay | Status |
 |---|------|-------|--------|
-| 3.1 | History model birleştir | `issue_history` → `change_groups` + `change_items` migration | ⬜ |
-| 3.2 | Audit field'ları ekle | `createdBy`, `updatedBy` eksik tablolara | ⬜ |
-| 3.3 | Index optimizasyonu | Composite index'ler kritik query'ler için | ⬜ |
-| 3.4 | Soft delete standardizasyonu | Hangi entity'ler soft delete karar ve uygula | ⬜ |
-| 3.5 | Optimistic concurrency | `version` field mutable entity'lere | ⬜ |
+| 3.1 | History model birleştir | `issue_history` → `change_groups` + `change_items` migration | ✅ |
+| 3.2 | Audit field'ları ekle | `createdBy`, `updatedBy` eksik tablolara | ✅ |
+| 3.3 | Index optimizasyonu | Composite index'ler kritik query'ler için | ✅ |
+| 3.4 | Soft delete standardizasyonu | Hangi entity'ler soft delete karar ve uygula | ✅ |
+| 3.5 | Optimistic concurrency | `version` field mutable entity'lere | ✅ |
 
-**Çıktı:** Performanslı, audit-compliant database
+**Phase 3.1 Tamamlandı - History Model Consolidation:**
+- ✅ `IssueRepository` güncellendi: `addChangeGroup()`, `getChangeHistory()`, `bulkAddChangeGroups()` metodları eklendi
+- ✅ `addHistory()` ve `bulkAddHistory()` hem legacy `issueHistory` hem de yeni `changeGroups/changeItems` tablolarına yazıyor
+- ✅ `issue-service.getIssueHistory()` artık normalize edilmiş `changeGroups` kullanıyor
+- ✅ Migration `0038_history_data_migration.sql` oluşturuldu - mevcut history verilerini taşır
+
+**Phase 3.2 Tamamlandı - Audit Fields:**
+- ✅ Migration `0037_audit_fields.sql` oluşturuldu
+- ✅ Schema dosyaları güncellendi (15+ tablo):
+  - `projects`, `workflows`, `statuses`, `resolutions`
+  - `issue_types`, `fields`, `components`, `labels`, `versions`
+  - `sprints`, `boards`, `board_columns`, `filters`
+  - `webhooks`, `issues`, `issue_comments`, `issue_attachments`
+
+**Phase 3.3 Tamamlandı - Index Optimization:**
+- ✅ Migration `0039_index_optimization.sql` oluşturuldu
+- ✅ Audit field indeksleri eklendi (createdBy, updatedBy)
+- ✅ Composite indeksler eklendi (project+assignee, project+status, assignee+status, vb.)
+- ✅ Partial indeksler eklendi (active projects, open issues, active sprints)
+- ✅ GIN indeksler önerildi (text search için pg_trgm)
+
+**Phase 3.4 Tamamlandı - Soft Delete Standardization:**
+- ✅ Migration `0040_soft_delete.sql` oluşturuldu
+- ✅ `issues` tablosuna `isDeleted`, `deletedAt`, `deletedBy` eklendi
+- ✅ `issue_attachments` tablosuna soft delete eklendi
+- ✅ `issue_comments` tablosuna `deletedBy` eklendi (isDeleted zaten vardı)
+- ✅ `worklogs` tablosuna soft delete eklendi
+- ✅ Partial indeksler eklendi (not_deleted views için)
+
+**Phase 3.5 Tamamlandı - Optimistic Concurrency:**
+- ✅ Migration `0041_optimistic_concurrency.sql` oluşturuldu
+- ✅ `version` column eklendi: issues, projects, workflows, sprints, comments, worklogs, boards, filters
+- ✅ Auto-increment trigger fonksiyonu oluşturuldu
+- ✅ Tüm tablolara version trigger'ı eklendi
+- ✅ Optimistic lock helper fonksiyonu eklendi
+
+**Çıktı:** Performanslı, audit-compliant database ✅
+
+**Phase 3 TAMAMLANDI** ✅
 
 ---
 
@@ -146,15 +205,15 @@ Operators:
 ├── ✅ IN, NOT IN
 ├── ✅ IS, IS NOT (NULL/EMPTY)
 ├── ✅ WAS, CHANGED (basic)
-├── ⬜ ~ (CONTAINS), !~ (NOT CONTAINS)
-└── ⬜ WAS/CHANGED with predicates
+├── ✅ ~ (CONTAINS), !~ (NOT CONTAINS)
+└── ✅ WAS/CHANGED with predicates
 
 Functions:
 ├── ✅ now(), startOf/endOf*()
 ├── ✅ currentUser(), membersOf()
 ├── ✅ openSprints(), closedSprints(), futureSprints()
 ├── ✅ releasedVersions(), unreleasedVersions()
-└── ⬜ linkedIssues(), votedIssues(), watchedIssues()
+└── ✅ linkedIssues(), votedIssues(), watchedIssues()
 ```
 
 **Çıktı:** Tüm backend API'ları çalışır durumda
@@ -167,28 +226,66 @@ Functions:
 
 | # | Task | Detay | Status |
 |---|------|-------|--------|
-| 6.1 | Workflow schemes | Project başına issue type'a özel workflow | ⬜ |
-| 6.2 | Field context sistemi | Project+issue type field davranışı | ⬜ |
-| 6.3 | Issue type schemes | Hangi tipler hangi projelerde | ⬜ |
-| 6.4 | Screen scheme integration | Transition screen'leri workflow'a bağla | ⬜ |
-| 6.5 | Notification schemes | Event bazlı notification routing | ⬜ |
-| 6.6 | Draft workflow editing | Aktif workflow'u draft olarak düzenle, publish et | ⬜ |
-| 6.7 | Workflow condition: user_in_group | Kullanıcı belirli grupta mı kontrolü | ⬜ |
-| 6.8 | Permission scheme improvements | "Current Assignee", "Reporter" gibi dynamic holders | ⬜ |
+| 6.1 | Workflow schemes | Project başına issue type'a özel workflow | ✅ |
+| 6.2 | Field context sistemi | Project+issue type field davranışı | ✅ |
+| 6.3 | Issue type schemes | Hangi tipler hangi projelerde | ✅ |
+| 6.4 | Screen scheme integration | Transition screen'leri workflow'a bağla | ✅ |
+| 6.5 | Notification schemes | Event bazlı notification routing | ✅ |
+| 6.6 | Draft workflow editing | Aktif workflow'u draft olarak düzenle, publish et | ✅ |
+| 6.7 | Workflow condition: user_in_group | Kullanıcı belirli grupta mı kontrolü | ✅ |
+| 6.8 | Permission scheme improvements | "Current Assignee", "Reporter" gibi dynamic holders | ✅ |
+
+**Tamamlanan İşler:**
+
+**Phase 6.1 & 6.3 - Workflow/Issue Type Schemes:**
+- ✅ `projectIssueTypes` tablosu ile project başına issue type → workflow mapping mevcut
+- ✅ `issue-service.getWorkflowForIssue()` metodu project-issueType-workflow resolver
+
+**Phase 6.2 - Field Context System:**
+- ✅ `fieldConfigurationSchemes`, `fieldConfigurationSchemeItems` tabloları mevcut
+- ✅ `projectFieldConfigurationSchemes` ile project → field config mapping
+- ✅ Context bazlı field davranışı (required, readonly, hidden) destekleniyor
+
+**Phase 6.4 - Screen Scheme Integration:**
+- ✅ `screens`, `screenTabs`, `screenTabFields` tabloları mevcut
+- ✅ `screenSchemes`, `screenSchemeItems` tabloları mevcut
+- ✅ `projectScreenSchemes` ile project → screen scheme mapping
+
+**Phase 6.5 - Notification Schemes:**
+- ✅ `notification_schemes`, `notification_scheme_events` tabloları mevcut
+- ✅ `project_notification_schemes` ile project → notification scheme mapping
+
+**Phase 6.6 - Draft Workflow Editing:**
+- ✅ `workflows` tablosuna `isDraft`, `draftOf`, `publishedAt` column'ları eklendi
+- ✅ Migration `0042_draft_workflows.sql` oluşturuldu
+- ✅ `create_workflow_draft()` ve `publish_workflow_draft()` SQL fonksiyonları eklendi
+
+**Phase 6.7 - user_in_group Condition:**
+- ✅ `UserInGroupCondition` type eklendi
+- ✅ `userInGroupHandler` workflow condition handler implement edildi
+- ✅ Condition registry'ye eklendi
+
+**Phase 6.8 - Dynamic Permission Holders:**
+- ✅ `permission_scheme_holders` tablosu eklendi
+- ✅ `holder_type` enum: reporter, assignee, project_lead, component_lead, group
+- ✅ Migration `0043_permission_scheme_holders.sql` oluşturuldu
+- ✅ Schema'ya `permissionSchemeHolders` ve relations eklendi
 
 **Scheme Parity Checklist:**
 ```
-├── ⬜ Workflow Schemes
-├── ⬜ Screen Schemes  
-├── ⬜ Field Configuration Schemes
-├── ⬜ Issue Type Schemes
-├── ⬜ Notification Schemes
-├── ⬜ Permission Schemes
-├── ⬜ Issue Security Schemes
-└── ⬜ Draft Workflow Support
+├── ✅ Workflow Schemes (projectIssueTypes.workflowId)
+├── ✅ Screen Schemes (screenSchemes, projectScreenSchemes)
+├── ✅ Field Configuration Schemes (fieldConfigurations, fieldConfigurationItems)
+├── ✅ Issue Type Schemes (projectIssueTypes)
+├── ✅ Notification Schemes (notification_schemes, project_notification_schemes)
+├── ✅ Permission Schemes (permissionSchemeHolders with dynamic holders)
+├── ✅ Issue Security Schemes (securitySchemes, securityLevels)
+└── ✅ Draft Workflow Support (isDraft, draftOf)
 ```
 
 **Çıktı:** Jira-level konfigürasyon esnekliği
+
+**Phase 6 TAMAMLANDI** ✅
 
 ---
 

@@ -54,6 +54,17 @@ export const boards = pgTable(
 
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
+
+    // Optimistic concurrency control
+    version: integer('version').notNull().default(1),
+
+    // Audit fields (ownerId serves as original creator, these are for tracking)
+    createdBy: text('created_by').references(() => user.id, {
+      onDelete: 'set null',
+    }),
+    updatedBy: text('updated_by').references(() => user.id, {
+      onDelete: 'set null',
+    }),
   },
   (table) => ({
     projectIdIdx: index('boards_project_id_idx').on(table.projectId),
@@ -98,6 +109,11 @@ export const boardColumns = pgTable(
     color: text('color'),
 
     createdAt: timestamp('created_at').defaultNow().notNull(),
+
+    // Audit field
+    updatedBy: text('updated_by').references(() => user.id, {
+      onDelete: 'set null',
+    }),
   },
   (table) => ({
     boardIdIdx: index('board_columns_board_id_idx').on(table.boardId),

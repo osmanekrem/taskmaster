@@ -13,29 +13,29 @@ type Issue = typeof issues.$inferSelect;
 export interface WorkflowContext {
   // Current user executing the transition
   userId: string;
-  
+
   // Issue being transitioned
   issue: Issue;
-  
+
   // Project ID
   projectId: string;
-  
+
   // Transition being executed
   transitionId: string;
-  
+
   // From/To status IDs
   fromStatusId: string | null;
   toStatusId: string;
-  
+
   // Additional data from transition screen (if any)
   screenData?: Record<string, unknown>;
-  
+
   // Field values submitted with transition
   fieldValues?: Record<string, unknown>;
-  
+
   // Resolution ID (if setting resolution)
   resolutionId?: string | null;
-  
+
   // Comment to add with transition
   comment?: string;
 }
@@ -49,14 +49,15 @@ export interface WorkflowContext {
  * All conditions must pass for transition to be available
  */
 export type ConditionType =
-  | 'user_in_project_role'    // User must have specific project role
-  | 'user_is_assignee'        // User must be the assignee
-  | 'user_is_reporter'        // User must be the reporter
-  | 'user_has_permission'     // User must have specific permission
-  | 'only_subtasks'           // Only for subtask issue types
-  | 'only_standard_issues'    // Not for subtasks
-  | 'parent_status'           // Parent issue must be in specific status
-  | 'separation_of_duties';   // User cannot have performed another transition
+  | 'user_in_project_role' // User must have specific project role
+  | 'user_in_group' // User must be member of specific group
+  | 'user_is_assignee' // User must be the assignee
+  | 'user_is_reporter' // User must be the reporter
+  | 'user_has_permission' // User must have specific permission
+  | 'only_subtasks' // Only for subtask issue types
+  | 'only_standard_issues' // Not for subtasks
+  | 'parent_status' // Parent issue must be in specific status
+  | 'separation_of_duties'; // User cannot have performed another transition
 
 export interface BaseCondition {
   type: ConditionType;
@@ -66,6 +67,12 @@ export interface UserInProjectRoleCondition extends BaseCondition {
   type: 'user_in_project_role';
   roleId: string;
   roleName?: string; // For display
+}
+
+export interface UserInGroupCondition extends BaseCondition {
+  type: 'user_in_group';
+  groupId: string;
+  groupName?: string; // For display
 }
 
 export interface UserIsAssigneeCondition extends BaseCondition {
@@ -101,6 +108,7 @@ export interface SeparationOfDutiesCondition extends BaseCondition {
 
 export type Condition =
   | UserInProjectRoleCondition
+  | UserInGroupCondition
   | UserIsAssigneeCondition
   | UserIsReporterCondition
   | UserHasPermissionCondition
@@ -118,17 +126,17 @@ export type Condition =
  * All validators must pass for transition to proceed
  */
 export type ValidatorType =
-  | 'field_required'          // Field must have a value
-  | 'field_is_empty'          // Field must be empty
-  | 'field_has_value'         // Field must have specific value
-  | 'field_changed'           // Field must have been changed in this transition
-  | 'resolution_set'          // Resolution must be selected
-  | 'date_comparison'         // Date field comparison
-  | 'regex_check'             // Field value must match regex
-  | 'numeric_range'           // Number field must be in range
-  | 'previous_status'         // Issue must have been in specific status
-  | 'all_subtasks_resolved'   // All subtasks must be resolved
-  | 'parent_status_check'     // Parent must be in allowed status
+  | 'field_required' // Field must have a value
+  | 'field_is_empty' // Field must be empty
+  | 'field_has_value' // Field must have specific value
+  | 'field_changed' // Field must have been changed in this transition
+  | 'resolution_set' // Resolution must be selected
+  | 'date_comparison' // Date field comparison
+  | 'regex_check' // Field value must match regex
+  | 'numeric_range' // Number field must be in range
+  | 'previous_status' // Issue must have been in specific status
+  | 'all_subtasks_resolved' // All subtasks must be resolved
+  | 'parent_status_check' // Parent must be in allowed status
   | 'linked_issues_resolved'; // Linked blocking issues must be resolved
 
 export interface BaseValidator {
@@ -233,23 +241,23 @@ export type Validator =
  * Post-functions execute AFTER transition completes
  */
 export type PostFunctionType =
-  | 'set_field'               // Set a field to a value
-  | 'clear_field'             // Clear a field value
-  | 'copy_field_value'        // Copy value from one field to another
-  | 'assign_to_reporter'      // Assign issue to reporter
-  | 'assign_to_lead'          // Assign issue to project lead
-  | 'assign_to_current_user'  // Assign issue to transition executor
-  | 'unassign'                // Remove assignee
-  | 'set_resolution'          // Set resolution
-  | 'clear_resolution'        // Clear resolution
-  | 'add_comment'             // Add an automatic comment
-  | 'add_watcher'             // Add user as watcher
-  | 'remove_watcher'          // Remove user from watchers
-  | 'trigger_notification'    // Send notification
-  | 'fire_event'              // Fire custom event (for integrations)
-  | 'update_change_history'   // Record change in history (usually automatic)
-  | 'set_due_date'            // Set due date based on rules
-  | 'move_to_sprint';         // Move issue to specific sprint
+  | 'set_field' // Set a field to a value
+  | 'clear_field' // Clear a field value
+  | 'copy_field_value' // Copy value from one field to another
+  | 'assign_to_reporter' // Assign issue to reporter
+  | 'assign_to_lead' // Assign issue to project lead
+  | 'assign_to_current_user' // Assign issue to transition executor
+  | 'unassign' // Remove assignee
+  | 'set_resolution' // Set resolution
+  | 'clear_resolution' // Clear resolution
+  | 'add_comment' // Add an automatic comment
+  | 'add_watcher' // Add user as watcher
+  | 'remove_watcher' // Remove user from watchers
+  | 'trigger_notification' // Send notification
+  | 'fire_event' // Fire custom event (for integrations)
+  | 'update_change_history' // Record change in history (usually automatic)
+  | 'set_due_date' // Set due date based on rules
+  | 'move_to_sprint'; // Move issue to specific sprint
 
 export interface BasePostFunction {
   type: PostFunctionType;
@@ -319,7 +327,13 @@ export interface RemoveWatcherPostFunction extends BasePostFunction {
 export interface TriggerNotificationPostFunction extends BasePostFunction {
   type: 'trigger_notification';
   notificationType: string;
-  recipients: ('assignee' | 'reporter' | 'watchers' | 'project_lead' | 'role')[];
+  recipients: (
+    | 'assignee'
+    | 'reporter'
+    | 'watchers'
+    | 'project_lead'
+    | 'role'
+  )[];
   roleId?: string; // If recipients includes 'role'
 }
 

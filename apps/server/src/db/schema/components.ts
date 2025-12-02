@@ -55,6 +55,14 @@ export const components = pgTable(
     updatedAt: timestamp('updated_at', { withTimezone: true })
       .defaultNow()
       .notNull(),
+
+    // Audit fields
+    createdBy: text('created_by').references(() => user.id, {
+      onDelete: 'set null',
+    }),
+    updatedBy: text('updated_by').references(() => user.id, {
+      onDelete: 'set null',
+    }),
   },
   (table) => [
     // Index for project queries

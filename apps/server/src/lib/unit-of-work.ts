@@ -4,14 +4,17 @@
 // =============================================================================
 
 import { db } from '@/db';
-import type { DbOrTx, Transaction } from './transaction';
+import type { DbOrTx } from './transaction';
 import { withTransaction } from './transaction';
 
 // Repository imports
 import { IssueRepository } from '@/repositories/issue-repository';
 import { IssueLinkRepository } from '@/repositories/issue-link-repository';
 import { ProjectRepository } from '@/repositories/project-repository';
-import { CommentRepository, AttachmentRepository } from '@/repositories/comment-repository';
+import {
+  CommentRepository,
+  AttachmentRepository,
+} from '@/repositories/comment-repository';
 
 // =============================================================================
 // TYPES
@@ -19,7 +22,7 @@ import { CommentRepository, AttachmentRepository } from '@/repositories/comment-
 
 /**
  * Unit of Work provides a single transaction context for multiple repository operations
- * 
+ *
  * Usage:
  * ```typescript
  * const result = await UnitOfWork.execute(async (uow) => {
@@ -85,10 +88,10 @@ export class UnitOfWork {
   /**
    * Execute operations within a transaction using Unit of Work pattern
    * All repository operations share the same transaction context
-   * 
+   *
    * @param callback - Function receiving the Unit of Work instance
    * @returns Result of the callback
-   * 
+   *
    * @example
    * ```typescript
    * const result = await UnitOfWork.execute(async (uow) => {
@@ -111,7 +114,7 @@ export class UnitOfWork {
   /**
    * Create a Unit of Work instance without automatic transaction
    * Use this when you need to control the transaction manually
-   * 
+   *
    * @param dbOrTx - Database instance or existing transaction
    * @returns Unit of Work instance
    */

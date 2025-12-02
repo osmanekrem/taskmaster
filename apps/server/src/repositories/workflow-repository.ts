@@ -3,9 +3,13 @@
 // Repository for workflow, workflow statuses, and transitions
 // =============================================================================
 
-import { workflows, workflowStatuses, workflowTransitions } from '@/db/schema/workflows';
+import {
+  workflows,
+  workflowStatuses,
+  workflowTransitions,
+} from '@/db/schema/workflows';
 import { db } from '@/db';
-import { eq, and, asc, isNull, or, sql, count } from 'drizzle-orm';
+import { eq, and, asc, isNull, or, sql } from 'drizzle-orm';
 import type { DrizzleClientOrTransaction } from '@/lib/types/db';
 import type {
   CreateWorkflowSchema,
@@ -15,14 +19,25 @@ import type {
   CreateTransitionSchema,
   UpdateTransitionSchema,
 } from '@taskmaster/validation';
-import type { Workflow, WorkflowStatus, WorkflowTransition, NewWorkflow, NewWorkflowStatus, NewWorkflowTransition } from '@/db/schema/workflows';
+import type {
+  Workflow,
+  WorkflowStatus,
+  WorkflowTransition,
+} from '@/db/schema/workflows';
 
 // =============================================================================
 // TYPES
 // =============================================================================
 
 export interface WorkflowWithDetails extends Workflow {
-  statuses: (WorkflowStatus & { status: { id: string; name: string; category: string; color: string | null } })[];
+  statuses: (WorkflowStatus & {
+    status: {
+      id: string;
+      name: string;
+      category: string;
+      color: string | null;
+    };
+  })[];
   transitions: (WorkflowTransition & {
     fromStatus: { id: string; name: string; category: string } | null;
     toStatus: { id: string; name: string; category: string };
@@ -47,10 +62,7 @@ export class WorkflowRepository {
   // ===========================================================================
 
   async findAll(): Promise<Workflow[]> {
-    return this.drizzle
-      .select()
-      .from(workflows)
-      .orderBy(asc(workflows.name));
+    return this.drizzle.select().from(workflows).orderBy(asc(workflows.name));
   }
 
   async findById(id: string): Promise<WorkflowWithDetails | undefined> {
@@ -115,7 +127,8 @@ export class WorkflowRepository {
     };
 
     if (input.name !== undefined) updateData.name = input.name;
-    if (input.description !== undefined) updateData.description = input.description;
+    if (input.description !== undefined)
+      updateData.description = input.description;
     if (input.isDefault !== undefined) updateData.isDefault = input.isDefault;
 
     const [result] = await this.drizzle
@@ -176,7 +189,9 @@ export class WorkflowRepository {
     });
   }
 
-  async addStatusToWorkflow(input: AddStatusToWorkflowSchema): Promise<WorkflowStatus> {
+  async addStatusToWorkflow(
+    input: AddStatusToWorkflowSchema,
+  ): Promise<WorkflowStatus> {
     const [result] = await this.drizzle
       .insert(workflowStatuses)
       .values({
@@ -189,7 +204,9 @@ export class WorkflowRepository {
     return result;
   }
 
-  async updateWorkflowStatus(input: UpdateWorkflowStatusSchema): Promise<WorkflowStatus> {
+  async updateWorkflowStatus(
+    input: UpdateWorkflowStatusSchema,
+  ): Promise<WorkflowStatus> {
     const updateData: Record<string, unknown> = {};
 
     if (input.isInitial !== undefined) updateData.isInitial = input.isInitial;
@@ -208,7 +225,10 @@ export class WorkflowRepository {
     return result;
   }
 
-  async removeStatusFromWorkflow(workflowId: string, statusId: string): Promise<WorkflowStatus | undefined> {
+  async removeStatusFromWorkflow(
+    workflowId: string,
+    statusId: string,
+  ): Promise<WorkflowStatus | undefined> {
     const [result] = await this.drizzle
       .delete(workflowStatuses)
       .where(
@@ -233,7 +253,11 @@ export class WorkflowRepository {
       );
   }
 
-  async updateWorkflowStatusOrder(workflowId: string, statusId: string, sortOrder: number): Promise<void> {
+  async updateWorkflowStatusOrder(
+    workflowId: string,
+    statusId: string,
+    sortOrder: number,
+  ): Promise<void> {
     await this.drizzle
       .update(workflowStatuses)
       .set({ sortOrder })
@@ -289,7 +313,49 @@ export class WorkflowRepository {
     });
   }
 
-  async createTransition(input: CreateTransitionSchema): Promise<WorkflowTransition> {
+  /**
+   * Find transitions from a specific status to a target status
+   */
+  async findTransitionsToStatus(
+    workflowId: string,
+    fromStatusId: string,
+    toStatusId: string,
+  ) {
+    return this.drizzle.query.workflowTransitions.findMany({
+      where: and(
+        eq(workflowTransitions.workflowId, workflowId),
+        eq(workflowTransitions.toStatusId, toStatusId),
+        or(
+          eq(workflowTransitions.fromStatusId, fromStatusId),
+          isNull(workflowTransitions.fromStatusId), // Global transition
+        ),
+      ),
+    });
+  }
+
+  /**
+   * Find a specific transition by from/to status pair
+   */
+  async findTransition(
+    workflowId: string,
+    fromStatusId: string,
+    toStatusId: string,
+  ) {
+    return this.drizzle.query.workflowTransitions.findFirst({
+      where: and(
+        eq(workflowTransitions.workflowId, workflowId),
+        eq(workflowTransitions.toStatusId, toStatusId),
+        or(
+          eq(workflowTransitions.fromStatusId, fromStatusId),
+          isNull(workflowTransitions.fromStatusId),
+        ),
+      ),
+    });
+  }
+
+  async createTransition(
+    input: CreateTransitionSchema,
+  ): Promise<WorkflowTransition> {
     const [result] = await this.drizzle
       .insert(workflowTransitions)
       .values({
@@ -308,16 +374,24 @@ export class WorkflowRepository {
     return result;
   }
 
-  async updateTransition(input: UpdateTransitionSchema): Promise<WorkflowTransition> {
+  async updateTransition(
+    input: UpdateTransitionSchema,
+  ): Promise<WorkflowTransition> {
     const updateData: Record<string, unknown> = {};
 
     if (input.name !== undefined) updateData.name = input.name;
-    if (input.description !== undefined) updateData.description = input.description;
-    if (input.fromStatusId !== undefined) updateData.fromStatusId = input.fromStatusId;
-    if (input.toStatusId !== undefined) updateData.toStatusId = input.toStatusId;
-    if (input.conditions !== undefined) updateData.conditions = input.conditions;
-    if (input.validators !== undefined) updateData.validators = input.validators;
-    if (input.postFunctions !== undefined) updateData.postFunctions = input.postFunctions;
+    if (input.description !== undefined)
+      updateData.description = input.description;
+    if (input.fromStatusId !== undefined)
+      updateData.fromStatusId = input.fromStatusId;
+    if (input.toStatusId !== undefined)
+      updateData.toStatusId = input.toStatusId;
+    if (input.conditions !== undefined)
+      updateData.conditions = input.conditions;
+    if (input.validators !== undefined)
+      updateData.validators = input.validators;
+    if (input.postFunctions !== undefined)
+      updateData.postFunctions = input.postFunctions;
     if (input.screenId !== undefined) updateData.screenId = input.screenId;
     if (input.sortOrder !== undefined) updateData.sortOrder = input.sortOrder;
 
@@ -337,7 +411,10 @@ export class WorkflowRepository {
     return result;
   }
 
-  async deleteTransitionsByStatus(workflowId: string, statusId: string): Promise<void> {
+  async deleteTransitionsByStatus(
+    workflowId: string,
+    statusId: string,
+  ): Promise<void> {
     await this.drizzle
       .delete(workflowTransitions)
       .where(
@@ -357,7 +434,9 @@ export class WorkflowRepository {
 
   async countWorkflowUsage(workflowId: string): Promise<WorkflowUsageCount> {
     const { projects: projectsTable } = await import('@/db/schema/projects');
-    const { projectIssueTypes } = await import('@/db/schema/issue-type-junctions');
+    const { projectIssueTypes } = await import(
+      '@/db/schema/issue-type-junctions'
+    );
 
     // Check projects using this workflow as default
     const [projectCount] = await this.drizzle
@@ -374,7 +453,8 @@ export class WorkflowRepository {
     return {
       projectCount: Number(projectCount?.count || 0),
       issueTypeCount: Number(issueTypeCount?.count || 0),
-      total: Number(projectCount?.count || 0) + Number(issueTypeCount?.count || 0),
+      total:
+        Number(projectCount?.count || 0) + Number(issueTypeCount?.count || 0),
     };
   }
 
@@ -406,9 +486,11 @@ export class WorkflowRepository {
 /**
  * @deprecated Use `new WorkflowRepository()` instead
  */
-export const workflowRepository = (drizzle: DrizzleClientOrTransaction = db) => {
+export const workflowRepository = (
+  drizzle: DrizzleClientOrTransaction = db,
+) => {
   const repo = new WorkflowRepository(drizzle);
-  
+
   return {
     // Workflows
     findAllWorkflows: () => repo.findAll(),
@@ -419,28 +501,56 @@ export const workflowRepository = (drizzle: DrizzleClientOrTransaction = db) => 
     updateWorkflow: (input: UpdateWorkflowSchema) => repo.update(input),
     deleteWorkflow: (id: string) => repo.delete(id),
     clearDefaultWorkflow: () => repo.clearDefault(),
-    
+
     // Workflow Statuses
-    findWorkflowStatuses: (workflowId: string) => repo.findWorkflowStatuses(workflowId),
-    findWorkflowStatus: (workflowId: string, statusId: string) => repo.findWorkflowStatus(workflowId, statusId),
-    findInitialStatus: (workflowId: string) => repo.findInitialStatus(workflowId),
-    addStatusToWorkflow: (input: AddStatusToWorkflowSchema) => repo.addStatusToWorkflow(input),
-    updateWorkflowStatus: (input: UpdateWorkflowStatusSchema) => repo.updateWorkflowStatus(input),
-    removeStatusFromWorkflow: (workflowId: string, statusId: string) => repo.removeStatusFromWorkflow(workflowId, statusId),
-    clearInitialStatus: (workflowId: string) => repo.clearInitialStatus(workflowId),
-    updateWorkflowStatusOrder: (workflowId: string, statusId: string, sortOrder: number) => repo.updateWorkflowStatusOrder(workflowId, statusId, sortOrder),
-    
+    findWorkflowStatuses: (workflowId: string) =>
+      repo.findWorkflowStatuses(workflowId),
+    findWorkflowStatus: (workflowId: string, statusId: string) =>
+      repo.findWorkflowStatus(workflowId, statusId),
+    findInitialStatus: (workflowId: string) =>
+      repo.findInitialStatus(workflowId),
+    addStatusToWorkflow: (input: AddStatusToWorkflowSchema) =>
+      repo.addStatusToWorkflow(input),
+    updateWorkflowStatus: (input: UpdateWorkflowStatusSchema) =>
+      repo.updateWorkflowStatus(input),
+    removeStatusFromWorkflow: (workflowId: string, statusId: string) =>
+      repo.removeStatusFromWorkflow(workflowId, statusId),
+    clearInitialStatus: (workflowId: string) =>
+      repo.clearInitialStatus(workflowId),
+    updateWorkflowStatusOrder: (
+      workflowId: string,
+      statusId: string,
+      sortOrder: number,
+    ) => repo.updateWorkflowStatusOrder(workflowId, statusId, sortOrder),
+
     // Workflow Transitions
-    findTransitionsByWorkflow: (workflowId: string) => repo.findTransitionsByWorkflow(workflowId),
+    findTransitionsByWorkflow: (workflowId: string) =>
+      repo.findTransitionsByWorkflow(workflowId),
     findTransitionById: (id: string) => repo.findTransitionById(id),
-    findAvailableTransitions: (workflowId: string, fromStatusId?: string) => repo.findAvailableTransitions(workflowId, fromStatusId),
-    createTransition: (input: CreateTransitionSchema) => repo.createTransition(input),
-    updateTransition: (input: UpdateTransitionSchema) => repo.updateTransition(input),
+    findAvailableTransitions: (workflowId: string, fromStatusId?: string) =>
+      repo.findAvailableTransitions(workflowId, fromStatusId),
+    findTransitionsToStatus: (
+      workflowId: string,
+      fromStatusId: string,
+      toStatusId: string,
+    ) => repo.findTransitionsToStatus(workflowId, fromStatusId, toStatusId),
+    findTransition: (
+      workflowId: string,
+      fromStatusId: string,
+      toStatusId: string,
+    ) => repo.findTransition(workflowId, fromStatusId, toStatusId),
+    createTransition: (input: CreateTransitionSchema) =>
+      repo.createTransition(input),
+    updateTransition: (input: UpdateTransitionSchema) =>
+      repo.updateTransition(input),
     deleteTransition: (id: string) => repo.deleteTransition(id),
-    deleteTransitionsByStatus: (workflowId: string, statusId: string) => repo.deleteTransitionsByStatus(workflowId, statusId),
-    
+    deleteTransitionsByStatus: (workflowId: string, statusId: string) =>
+      repo.deleteTransitionsByStatus(workflowId, statusId),
+
     // In-Use Checks
-    countWorkflowUsage: (workflowId: string) => repo.countWorkflowUsage(workflowId),
-    countStatusUsageInWorkflows: (statusId: string) => repo.countStatusUsageInWorkflows(statusId),
+    countWorkflowUsage: (workflowId: string) =>
+      repo.countWorkflowUsage(workflowId),
+    countStatusUsageInWorkflows: (statusId: string) =>
+      repo.countStatusUsageInWorkflows(statusId),
   };
 };

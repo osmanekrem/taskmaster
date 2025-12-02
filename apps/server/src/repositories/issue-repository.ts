@@ -3,8 +3,11 @@ import {
   issues,
   issueFieldValues,
   issueHistory,
+  changeGroups,
+  changeItems,
   type FieldValue,
   type HistoryChange,
+  type ChangeActionType,
 } from '@/db/schema/issues';
 import { projects } from '@/db/schema/projects';
 import {
@@ -22,11 +25,20 @@ import {
 } from 'drizzle-orm';
 import type { IssueFilters } from '@taskmaster/validation';
 
+// =============================================================================
+// ISSUE REPOSITORY
+// Specialized repository for issue management with full relation support
+// Note: Does not extend BaseRepository due to complex relation requirements
+// =============================================================================
+
 export class IssueRepository {
   // ==========================================================================
   // ISSUE CRUD
   // ==========================================================================
 
+  /**
+   * Find issue by ID with full relations
+   */
   async findById(id: string) {
     return db.query.issues.findFirst({
       where: eq(issues.id, id),
@@ -258,6 +270,9 @@ export class IssueRepository {
     });
   }
 
+  /**
+   * Create a new issue
+   */
   async create(data: {
     key: string;
     issueNumber: number;
@@ -275,6 +290,9 @@ export class IssueRepository {
     return issue;
   }
 
+  /**
+   * Update an issue by ID
+   */
   async update(
     id: string,
     data: Partial<{
@@ -286,6 +304,9 @@ export class IssueRepository {
       epicId: string | null;
       dueDate: Date | null;
       resolvedAt: Date | null;
+      rank: string;
+      priority: string;
+      labels: string[];
       updatedAt: Date;
     }>,
   ) {
@@ -297,12 +318,11 @@ export class IssueRepository {
     return updated;
   }
 
-  async delete(id: string) {
-    const [deleted] = await db
-      .delete(issues)
-      .where(eq(issues.id, id))
-      .returning();
-    return deleted;
+  /**
+   * Delete an issue by ID (hard delete)
+   */
+  async delete(id: string): Promise<void> {
+    await db.delete(issues).where(eq(issues.id, id));
   }
 
   async countByProject(projectId: string) {
@@ -438,17 +458,161 @@ export class IssueRepository {
   }
 
   // ==========================================================================
-  // HISTORY
+  // HISTORY - Change Groups (Normalized)
   // ==========================================================================
 
+  /**
+   * Add a change group with its change items (new normalized approach)
+   * This is the preferred method for recording changes
+   */
+  async addChangeGroup(
+    issueId: string,
+    userId: string,
+    action: ChangeActionType,
+    changes: Array<{
+      field: string;
+      fieldId?: string;
+      fieldType?: 'system' | 'custom';
+      oldString?: string;
+      newString?: string;
+      oldValue?: string;
+      newValue?: string;
+    }>,
+  ) {
+    // Create the change group
+    const [group] = await db
+      .insert(changeGroups)
+      .values({ issueId, userId, action })
+      .returning();
+
+    // Create change items if any
+    if (changes.length > 0) {
+      await db.insert(changeItems).values(
+        changes.map((change) => ({
+          changeGroupId: group.id,
+          field: change.field,
+          fieldId: change.fieldId,
+          fieldType: change.fieldType,
+          oldString: change.oldString,
+          newString: change.newString,
+          oldValue: change.oldValue,
+          newValue: change.newValue,
+        })),
+      );
+    }
+
+    return group;
+  }
+
+  /**
+   * Get change history for an issue (normalized change_groups)
+   */
+  async getChangeHistory(issueId: string, page = 1, limit = 50) {
+    const offset = (page - 1) * limit;
+
+    const [data, countResult] = await Promise.all([
+      db.query.changeGroups.findMany({
+        where: eq(changeGroups.issueId, issueId),
+        orderBy: desc(changeGroups.createdAt),
+        limit,
+        offset,
+        with: {
+          user: {
+            columns: { id: true, name: true, email: true, image: true },
+          },
+          items: true,
+        },
+      }),
+      db
+        .select({ count: sql<number>`count(*)` })
+        .from(changeGroups)
+        .where(eq(changeGroups.issueId, issueId)),
+    ]);
+
+    return {
+      data,
+      pagination: {
+        page,
+        limit,
+        total: Number(countResult[0]?.count || 0),
+      },
+    };
+  }
+
+  /**
+   * Bulk add change groups with their items
+   */
+  async bulkAddChangeGroups(
+    entries: Array<{
+      issueId: string;
+      userId: string;
+      action: ChangeActionType;
+      changes: Array<{
+        field: string;
+        fieldId?: string;
+        fieldType?: 'system' | 'custom';
+        oldString?: string;
+        newString?: string;
+        oldValue?: string;
+        newValue?: string;
+      }>;
+    }>,
+  ) {
+    if (entries.length === 0) return [];
+
+    const results: Array<{ id: string }> = [];
+
+    for (const entry of entries) {
+      const group = await this.addChangeGroup(
+        entry.issueId,
+        entry.userId,
+        entry.action,
+        entry.changes,
+      );
+      results.push(group);
+    }
+
+    return results;
+  }
+
+  // ==========================================================================
+  // HISTORY - Legacy (Deprecated - use addChangeGroup instead)
+  // ==========================================================================
+
+  /**
+   * @deprecated Use addChangeGroup instead. This method writes to both
+   * legacy issueHistory and new changeGroups for backwards compatibility.
+   */
   async addHistory(issueId: string, userId: string, changes: HistoryChange[]) {
+    // Write to legacy table for backwards compatibility
     const [history] = await db
       .insert(issueHistory)
       .values({ issueId, userId, changes })
       .returning();
+
+    // Also write to new normalized tables
+    // Determine action type based on changes
+    const action = this.determineActionType(changes);
+    await this.addChangeGroup(
+      issueId,
+      userId,
+      action,
+      changes.map((c) => ({
+        field: c.field,
+        fieldId: c.fieldId,
+        oldString: this.valueToString(c.oldValue),
+        newString: this.valueToString(c.newValue),
+        oldValue: this.valueToString(c.oldValue),
+        newValue: this.valueToString(c.newValue),
+      })),
+    );
+
     return history;
   }
 
+  /**
+   * @deprecated Use getChangeHistory instead
+   */
   async getHistory(issueId: string, page = 1, limit = 50) {
     const offset = (page - 1) * limit;
 
@@ -478,6 +642,51 @@ export class IssueRepository {
         total: Number(countResult[0]?.count || 0),
       },
     };
+  }
+
+  // ==========================================================================
+  // HISTORY HELPER METHODS
+  // ==========================================================================
+
+  private determineActionType(changes: HistoryChange[]): ChangeActionType {
+    const fields = changes.map((c) => c.field.toLowerCase());
+
+    if (fields.includes('status')) return 'transitioned';
+    if (fields.includes('assignee')) return 'assigned';
+    if (fields.includes('comment')) return 'commented';
+    if (fields.some((f) => f.includes('attachment'))) {
+      const attachmentChange = changes.find((c) =>
+        c.field.toLowerCase().includes('attachment'),
+      );
+      return attachmentChange?.newValue
+        ? 'attachment_added'
+        : 'attachment_removed';
+    }
+    if (fields.some((f) => f.includes('link'))) {
+      const linkChange = changes.find((c) =>
+        c.field.toLowerCase().includes('link'),
+      );
+      return linkChange?.newValue ? 'linked' : 'unlinked';
+    }
+    if (fields.includes('worklog')) {
+      const worklogChange = changes.find(
+        (c) => c.field.toLowerCase() === 'worklog',
+      );
+      if (!worklogChange?.oldValue) return 'worklog_added';
+      if (!worklogChange?.newValue) return 'worklog_deleted';
+      return 'worklog_updated';
+    }
+
+    return 'updated';
+  }
+
+  private valueToString(value: unknown): string | undefined {
+    if (value === null || value === undefined) return undefined;
+    if (typeof value === 'string') return value;
+    if (typeof value === 'number' || typeof value === 'boolean')
+      return String(value);
+    if (value instanceof Date) return value.toISOString();
+    return JSON.stringify(value);
   }
 
   // ==========================================================================
@@ -674,8 +883,12 @@ export class IssueRepository {
         issueType: true,
         status: true,
         resolution: true,
-        reporter: { columns: { id: true, name: true, email: true, image: true } },
-        assignee: { columns: { id: true, name: true, email: true, image: true } },
+        reporter: {
+          columns: { id: true, name: true, email: true, image: true },
+        },
+        assignee: {
+          columns: { id: true, name: true, email: true, image: true },
+        },
         epic: { columns: { id: true, key: true, summary: true } },
         parent: { columns: { id: true, key: true, summary: true } },
       },
@@ -698,14 +911,25 @@ export class IssueRepository {
   ) {
     if (ids.length === 0) return [];
     const updateData = { ...data, updatedAt: new Date() };
-    
+
     const updated = await db
       .update(issues)
       .set(updateData)
       .where(inArray(issues.id, ids))
       .returning();
-    
+
     return updated;
+  }
+
+  /**
+   * Find subtasks by parent IDs
+   */
+  async findSubtasksByParentIds(parentIds: string[]) {
+    if (parentIds.length === 0) return [];
+    return db.query.issues.findMany({
+      where: inArray(issues.parentId, parentIds),
+      columns: { id: true, key: true },
+    });
   }
 
   /**
@@ -718,25 +942,25 @@ export class IssueRepository {
     resolvedAt?: Date | null,
   ) {
     if (ids.length === 0) return [];
-    
+
     const updateData: Record<string, unknown> = {
       statusId,
       updatedAt: new Date(),
     };
-    
+
     if (resolutionId !== undefined) {
       updateData.resolutionId = resolutionId;
     }
     if (resolvedAt !== undefined) {
       updateData.resolvedAt = resolvedAt;
     }
-    
+
     const updated = await db
       .update(issues)
       .set(updateData)
       .where(inArray(issues.id, ids))
       .returning();
-    
+
     return updated;
   }
 
@@ -745,20 +969,20 @@ export class IssueRepository {
    */
   async bulkDelete(ids: string[]) {
     if (ids.length === 0) return { deletedCount: 0, deletedIds: [] };
-    
+
     // Get issues before deletion for returning info
     const toDelete = await db.query.issues.findMany({
       where: inArray(issues.id, ids),
       columns: { id: true, key: true, projectId: true },
     });
-    
+
     // Hard delete (cascade will handle related records)
     await db.delete(issues).where(inArray(issues.id, ids));
-    
+
     return {
       deletedCount: toDelete.length,
-      deletedIds: toDelete.map(i => i.id),
-      deletedKeys: toDelete.map(i => i.key),
+      deletedIds: toDelete.map((i) => i.id),
+      deletedKeys: toDelete.map((i) => i.key),
       deletedByProject: toDelete.reduce((acc, i) => {
         acc[i.projectId] = (acc[i.projectId] || 0) + 1;
         return acc;
@@ -767,20 +991,45 @@ export class IssueRepository {
   }
 
   /**
-   * Bulk add history for multiple issues
+   * @deprecated Use bulkAddChangeGroups instead. This method writes to both
+   * legacy issueHistory and new changeGroups for backwards compatibility.
    */
   async bulkAddHistory(
     entries: { issueId: string; userId: string; changes: HistoryChange[] }[],
   ) {
     if (entries.length === 0) return [];
-    
-    const historyRecords = entries.map(e => ({
+
+    // Write to legacy table
+    const historyRecords = entries.map((e) => ({
       issueId: e.issueId,
       userId: e.userId,
       changes: e.changes,
     }));
-    
-    return db.insert(issueHistory).values(historyRecords).returning();
+
+    const result = await db
+      .insert(issueHistory)
+      .values(historyRecords)
+      .returning();
+
+    // Also write to new normalized tables
+    for (const entry of entries) {
+      const action = this.determineActionType(entry.changes);
+      await this.addChangeGroup(
+        entry.issueId,
+        entry.userId,
+        action,
+        entry.changes.map((c) => ({
+          field: c.field,
+          fieldId: c.fieldId,
+          oldString: this.valueToString(c.oldValue),
+          newString: this.valueToString(c.newValue),
+          oldValue: this.valueToString(c.oldValue),
+          newValue: this.valueToString(c.newValue),
+        })),
+      );
+    }
+
+    return result;
   }
 }
 

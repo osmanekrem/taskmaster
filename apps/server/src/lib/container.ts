@@ -46,6 +46,15 @@ import {
   PermissionSchemeRepository,
 } from '@/repositories/permission-repository';
 import { SprintService } from '@/services/sprint-service';
+// New imports for DI container expansion
+import { ComponentService } from '@/services/component-service';
+import { ComponentRepository } from '@/repositories/component-repository';
+import { IssueLinkService } from '@/services/issue-link-service';
+import { IssueLinkRepository } from '@/repositories/issue-link-repository';
+import { LabelService } from '@/services/label-service';
+import { LabelRepository } from '@/repositories/label-repository';
+import { VersionService } from '@/services/version-service';
+import { VersionRepository } from '@/repositories/version-repository';
 import type { DrizzleClient } from '@/lib/types/db';
 
 class Container {
@@ -69,6 +78,11 @@ class Container {
   private _rolePermissionRepository: RolePermissionRepository | null = null;
   private _roleMemberRepository: RoleMemberRepository | null = null;
   private _permissionSchemeRepository: PermissionSchemeRepository | null = null;
+  // New repositories for expanded DI
+  private _componentRepository: ComponentRepository | null = null;
+  private _issueLinkRepository: IssueLinkRepository | null = null;
+  private _labelRepository: LabelRepository | null = null;
+  private _versionRepository: VersionRepository | null = null;
 
   // Service instances (cached for singleton behavior)
   private _userService: ReturnType<typeof userService> | null = null;
@@ -84,6 +98,11 @@ class Container {
   private _notificationService: NotificationService | null = null;
   private _permissionService: PermissionService | null = null;
   private _sprintService: SprintService | null = null;
+  // New services for expanded DI
+  private _componentService: ComponentService | null = null;
+  private _issueLinkService: IssueLinkService | null = null;
+  private _labelService: LabelService | null = null;
+  private _versionService: VersionService | null = null;
 
   // ===========================================================================
   // CONSTRUCTOR
@@ -158,6 +177,26 @@ class Container {
     return this._permissionSchemeRepository;
   }
 
+  private get componentRepository(): ComponentRepository {
+    this._componentRepository ??= new ComponentRepository(this._db);
+    return this._componentRepository;
+  }
+
+  private get issueLinkRepository(): IssueLinkRepository {
+    this._issueLinkRepository ??= new IssueLinkRepository();
+    return this._issueLinkRepository;
+  }
+
+  private get labelRepository(): LabelRepository {
+    this._labelRepository ??= new LabelRepository(this._db);
+    return this._labelRepository;
+  }
+
+  private get versionRepository(): VersionRepository {
+    this._versionRepository ??= new VersionRepository(this._db);
+    return this._versionRepository;
+  }
+
   // ===========================================================================
   // PUBLIC ACCESSORS
   // ===========================================================================
@@ -217,13 +256,11 @@ class Container {
    * Dependencies: IssueRepository, ProjectRepository, NotificationService
    */
   get issue(): IssueService {
-    if (!this._issueService) {
-      this._issueService = new IssueService(
-        this.issueRepository,
-        this.projectRepository,
-        this.notification, // ✅ Injected from container
-      );
-    }
+    this._issueService ??= new IssueService(
+      this.issueRepository,
+      this.projectRepository,
+      this.notification, // ✅ Injected from container
+    );
     return this._issueService;
   }
 
@@ -232,13 +269,11 @@ class Container {
    * Dependencies: CommentRepository, AttachmentRepository, IssueRepository
    */
   get comment(): CommentService {
-    if (!this._commentService) {
-      this._commentService = new CommentService(
-        this.commentRepository,
-        this.attachmentRepository,
-        this.issueRepository,
-      );
-    }
+    this._commentService ??= new CommentService(
+      this.commentRepository,
+      this.attachmentRepository,
+      this.issueRepository,
+    );
     return this._commentService;
   }
 
@@ -248,14 +283,12 @@ class Container {
    *               NotificationPreferencesRepository, DigestSettingsRepository
    */
   get notification(): NotificationService {
-    if (!this._notificationService) {
-      this._notificationService = new NotificationService(
-        this.notificationRepository,
-        this.watcherRepository,
-        this.notificationPreferencesRepository,
-        this.digestSettingsRepository,
-      );
-    }
+    this._notificationService ??= new NotificationService(
+      this.notificationRepository,
+      this.watcherRepository,
+      this.notificationPreferencesRepository,
+      this.digestSettingsRepository,
+    );
     return this._notificationService;
   }
 
@@ -265,14 +298,12 @@ class Container {
    *               RoleMemberRepository, PermissionSchemeRepository
    */
   get permission(): PermissionService {
-    if (!this._permissionService) {
-      this._permissionService = new PermissionService(
-        this.roleRepository,
-        this.rolePermissionRepository,
-        this.roleMemberRepository,
-        this.permissionSchemeRepository,
-      );
-    }
+    this._permissionService ??= new PermissionService(
+      this.roleRepository,
+      this.rolePermissionRepository,
+      this.roleMemberRepository,
+      this.permissionSchemeRepository,
+    );
     return this._permissionService;
   }
 
@@ -285,6 +316,54 @@ class Container {
     return this._sprintService;
   }
 
+  /**
+   * Component Service
+   * Dependencies: ComponentRepository, ProjectRepository
+   */
+  get component(): ComponentService {
+    this._componentService ??= new ComponentService(
+      this.componentRepository,
+      this.projectRepository,
+    );
+    return this._componentService;
+  }
+
+  /**
+   * Issue Link Service
+   * Dependencies: IssueLinkRepository, IssueRepository
+   */
+  get issueLink(): IssueLinkService {
+    this._issueLinkService ??= new IssueLinkService(
+      this.issueLinkRepository,
+      this.issueRepository,
+    );
+    return this._issueLinkService;
+  }
+
+  /**
+   * Label Service
+   * Dependencies: LabelRepository, ProjectRepository
+   */
+  get label(): LabelService {
+    this._labelService ??= new LabelService(
+      this.labelRepository,
+      this.projectRepository,
+    );
+    return this._labelService;
+  }
+
+  /**
+   * Version Service
+   * Dependencies: VersionRepository, ProjectRepository
+   */
+  get version(): VersionService {
+    this._versionService ??= new VersionService(
+      this.versionRepository,
+      this.projectRepository,
+    );
+    return this._versionService;
+  }
+
   // ===========================================================================
   // TRANSACTION & UNIT OF WORK
   // ===========================================================================
@@ -292,7 +371,7 @@ class Container {
   /**
    * Execute operations within a transaction using Unit of Work pattern
    * All repository operations share the same transaction context
-   * 
+   *
    * @example
    * ```typescript
    * const result = await container.executeInTransaction(async (uow) => {
@@ -350,6 +429,10 @@ class Container {
     this._rolePermissionRepository = null;
     this._roleMemberRepository = null;
     this._permissionSchemeRepository = null;
+    this._componentRepository = null;
+    this._issueLinkRepository = null;
+    this._labelRepository = null;
+    this._versionRepository = null;
 
     // Reset services
     this._userService = null;
@@ -364,6 +447,10 @@ class Container {
     this._notificationService = null;
     this._permissionService = null;
     this._sprintService = null;
+    this._componentService = null;
+    this._issueLinkService = null;
+    this._labelService = null;
+    this._versionService = null;
   }
 }
 

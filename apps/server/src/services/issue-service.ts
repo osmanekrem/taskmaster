@@ -1,14 +1,14 @@
 import { IssueRepository } from '@/repositories/issue-repository';
 import { ProjectRepository } from '@/repositories/project-repository';
+import { TicketTypeRepository } from '@/repositories/ticket-type-repository';
+import { WorkflowRepository } from '@/repositories/workflow-repository';
+import { StatusRepository } from '@/repositories/status-repository';
+import { FieldRepository } from '@/repositories/field-repository';
+import { SprintIssueRepository } from '@/repositories/sprint-repository';
 import type { NotificationService } from '@/services/notification-service';
 import { db } from '@/db';
-import { statuses } from '@/db/schema/statuses';
-import { workflowStatuses, workflowTransitions } from '@/db/schema/workflows';
-import { issueTypes } from '@/db/schema/issue-types';
-import { issueTypeFields } from '@/db/schema/issue-type-fields';
-import { fields } from '@/db/schema/field';
 import { sprintIssues } from '@/db/schema/sprints';
-import { eq, and, isNull, or, inArray, asc } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { ErrorMessages, ISSUE_TYPE_HIERARCHY } from '@taskmaster/constants';
 import { createAppError } from '@/lib/errors';
 import type {
@@ -54,11 +54,24 @@ import {
  * Dependencies are injected through constructor for testability.
  */
 export class IssueService {
+  private readonly ticketTypeRepository: TicketTypeRepository;
+  private readonly workflowRepository: WorkflowRepository;
+  private readonly statusRepository: StatusRepository;
+  private readonly fieldRepository: FieldRepository;
+  private readonly sprintIssueRepository: SprintIssueRepository;
+
   constructor(
     private readonly issueRepository: IssueRepository,
     private readonly projectRepository: ProjectRepository,
     private readonly notificationService: NotificationService,
-  ) {}
+  ) {
+    // Initialize helper repositories
+    this.ticketTypeRepository = new TicketTypeRepository();
+    this.workflowRepository = new WorkflowRepository();
+    this.statusRepository = new StatusRepository();
+    this.fieldRepository = new FieldRepository();
+    this.sprintIssueRepository = new SprintIssueRepository();
+  }
 
   // ==========================================================================
   // ISSUE RETRIEVAL
@@ -125,9 +138,9 @@ export class IssueService {
     }
 
     // 3. Get issue type for hierarchy validation
-    const issueType = await db.query.issueTypes.findFirst({
-      where: eq(issueTypes.id, input.issueTypeId),
-    });
+    const issueType = await this.ticketTypeRepository.findById(
+      input.issueTypeId,
+    );
     if (!issueType) {
       throw createAppError(ErrorMessages.TICKET_TYPE_NOT_FOUND, {
         statusCode: 404,
@@ -148,17 +161,17 @@ export class IssueService {
 
     // 5. Get initial status from workflow
     let statusId = input.statusId;
-    if (!statusId) {
-      statusId = await this.getInitialStatus(
-        input.projectId,
-        input.issueTypeId,
-      );
-    } else {
+    if (statusId) {
       // Validate the provided status is in the workflow
       await this.validateStatusInWorkflow(
         input.projectId,
         input.issueTypeId,
         statusId,
+      );
+    } else {
+      statusId = await this.getInitialStatus(
+        input.projectId,
+        input.issueTypeId,
       );
     }
 
@@ -263,11 +276,8 @@ export class IssueService {
       changes.push({
         field: 'issueType',
         oldValue: issue.issueType?.name,
-        newValue: (
-          await db.query.issueTypes.findFirst({
-            where: eq(issueTypes.id, input.issueTypeId),
-          })
-        )?.name,
+        newValue: (await this.ticketTypeRepository.findById(input.issueTypeId))
+          ?.name,
       });
     }
 
@@ -284,9 +294,9 @@ export class IssueService {
 
     if (input.parentId !== undefined && input.parentId !== issue.parentId) {
       if (input.parentId) {
-        const issueType = await db.query.issueTypes.findFirst({
-          where: eq(issueTypes.id, issue.issueTypeId),
-        });
+        const issueType = await this.ticketTypeRepository.findById(
+          issue.issueTypeId,
+        );
         await this.validateParentHierarchy(
           input.parentId,
           issueType?.hierarchyLevel || ISSUE_TYPE_HIERARCHY.STANDARD,
@@ -405,8 +415,7 @@ export class IssueService {
     for (const fv of fieldValues) {
       const current = currentValueMap.get(fv.fieldId);
       const field =
-        current?.field ||
-        (await db.query.fields.findFirst({ where: eq(fields.id, fv.fieldId) }));
+        current?.field || (await this.fieldRepository.findById(fv.fieldId));
 
       if (JSON.stringify(current?.value) !== JSON.stringify(fv.value)) {
         changes.push({
@@ -456,16 +465,11 @@ export class IssueService {
     );
 
     // Find the transition that leads to the target status
-    const transitions = await db.query.workflowTransitions.findMany({
-      where: and(
-        eq(workflowTransitions.workflowId, workflowId),
-        eq(workflowTransitions.toStatusId, input.toStatusId),
-        or(
-          eq(workflowTransitions.fromStatusId, issue.statusId),
-          isNull(workflowTransitions.fromStatusId), // Global transition
-        ),
-      ),
-    });
+    const transitions = await this.workflowRepository.findTransitionsToStatus(
+      workflowId,
+      issue.statusId,
+      input.toStatusId,
+    );
 
     if (transitions.length === 0) {
       throw createAppError(ErrorMessages.INVALID_STATUS_TRANSITION, {
@@ -478,9 +482,9 @@ export class IssueService {
     const transitionId = transitions[0].id;
 
     // Get the target status for validation
-    const targetStatus = await db.query.statuses.findFirst({
-      where: eq(statuses.id, input.toStatusId),
-    });
+    const targetStatus = await this.statusRepository.findStatusById(
+      input.toStatusId,
+    );
     if (!targetStatus) {
       throw createAppError(ErrorMessages.STATUS_NOT_FOUND, {
         statusCode: 404,
@@ -685,12 +689,9 @@ export class IssueService {
       (async () => {
         try {
           // Check if issue is in a sprint
-          const sprintIssue = await db.query.sprintIssues.findFirst({
-            where: eq(sprintIssues.issueId, id),
-            with: {
-              sprint: { columns: { id: true, status: true } },
-            },
-          });
+          const sprintIssue = await this.sprintIssueRepository.findByIssueId(
+            id,
+          );
 
           if (sprintIssue?.sprint?.status === 'active') {
             const { SprintService } = await import('@/services/sprint-service');
@@ -721,18 +722,10 @@ export class IssueService {
     );
 
     // Get transitions from current status
-    const transitions = await db.query.workflowTransitions.findMany({
-      where: and(
-        eq(workflowTransitions.workflowId, workflowId),
-        or(
-          eq(workflowTransitions.fromStatusId, issue.statusId),
-          isNull(workflowTransitions.fromStatusId), // Global transitions
-        ),
-      ),
-      with: {
-        toStatus: true,
-      },
-    });
+    const transitions = await this.workflowRepository.findAvailableTransitions(
+      workflowId,
+      issue.statusId,
+    );
 
     return transitions;
   }
@@ -766,7 +759,25 @@ export class IssueService {
   // HISTORY
   // ==========================================================================
 
+  /**
+   * Get issue history using the new normalized change_groups/change_items
+   */
   async getIssueHistory(issueId: string, page = 1, limit = 50) {
+    const issue = await this.issueRepository.findById(issueId);
+    if (!issue) {
+      throw createAppError(ErrorMessages.ISSUE_NOT_FOUND, {
+        statusCode: 404,
+        code: 'NOT_FOUND',
+      });
+    }
+    // Use new normalized change history
+    return this.issueRepository.getChangeHistory(issueId, page, limit);
+  }
+
+  /**
+   * @deprecated Use getIssueHistory which now uses the normalized change_groups
+   */
+  async getIssueHistoryLegacy(issueId: string, page = 1, limit = 50) {
     const issue = await this.issueRepository.findById(issueId);
     if (!issue) {
       throw createAppError(ErrorMessages.ISSUE_NOT_FOUND, {
@@ -801,14 +812,7 @@ export class IssueService {
     }
 
     // 3. Get system default workflow
-    const defaultWorkflow = await db.query.workflows.findFirst({
-      where: eq(
-        (
-          await import('@/db/schema/workflows')
-        ).workflows.isDefault,
-        true,
-      ),
-    });
+    const defaultWorkflow = await this.workflowRepository.findDefault();
     if (!defaultWorkflow) {
       throw new Error('No default workflow found');
     }
@@ -821,12 +825,9 @@ export class IssueService {
   ): Promise<string> {
     const workflowId = await this.getWorkflowForIssue(projectId, issueTypeId);
 
-    const initialStatus = await db.query.workflowStatuses.findFirst({
-      where: and(
-        eq(workflowStatuses.workflowId, workflowId),
-        eq(workflowStatuses.isInitial, true),
-      ),
-    });
+    const initialStatus = await this.workflowRepository.findInitialStatus(
+      workflowId,
+    );
 
     if (!initialStatus) {
       throw new Error('No initial status found in workflow');
@@ -842,12 +843,10 @@ export class IssueService {
   ) {
     const workflowId = await this.getWorkflowForIssue(projectId, issueTypeId);
 
-    const workflowStatus = await db.query.workflowStatuses.findFirst({
-      where: and(
-        eq(workflowStatuses.workflowId, workflowId),
-        eq(workflowStatuses.statusId, statusId),
-      ),
-    });
+    const workflowStatus = await this.workflowRepository.findWorkflowStatus(
+      workflowId,
+      statusId,
+    );
 
     if (!workflowStatus) {
       throw createAppError(ErrorMessages.STATUS_NOT_IN_WORKFLOW, {
@@ -866,16 +865,11 @@ export class IssueService {
     const workflowId = await this.getWorkflowForIssue(projectId, issueTypeId);
 
     // Check for valid transition
-    const transition = await db.query.workflowTransitions.findFirst({
-      where: and(
-        eq(workflowTransitions.workflowId, workflowId),
-        eq(workflowTransitions.toStatusId, toStatusId),
-        or(
-          eq(workflowTransitions.fromStatusId, fromStatusId),
-          isNull(workflowTransitions.fromStatusId), // Global transition
-        ),
-      ),
-    });
+    const transition = await this.workflowRepository.findTransition(
+      workflowId,
+      fromStatusId,
+      toStatusId,
+    );
 
     return !!transition;
   }
@@ -892,9 +886,9 @@ export class IssueService {
       });
     }
 
-    const parentIssueType = await db.query.issueTypes.findFirst({
-      where: eq(issueTypes.id, parent.issueTypeId),
-    });
+    const parentIssueType = await this.ticketTypeRepository.findById(
+      parent.issueTypeId,
+    );
 
     // Subtasks can only be children of standard or epic issues
     if (childHierarchyLevel === ISSUE_TYPE_HIERARCHY.SUBTASK) {
@@ -921,9 +915,9 @@ export class IssueService {
       });
     }
 
-    const epicIssueType = await db.query.issueTypes.findFirst({
-      where: eq(issueTypes.id, epic.issueTypeId),
-    });
+    const epicIssueType = await this.ticketTypeRepository.findById(
+      epic.issueTypeId,
+    );
 
     if (epicIssueType?.hierarchyLevel !== ISSUE_TYPE_HIERARCHY.EPIC) {
       throw createAppError(ErrorMessages.INVALID_EPIC_HIERARCHY, {
@@ -942,18 +936,15 @@ export class IssueService {
     // Get projectId if not provided (needed for entity validation)
     let resolvedProjectId = projectId;
     if (!resolvedProjectId) {
-      const issue = await db.query.issues.findFirst({
-        where: eq(issues.id, issueId),
-        columns: { projectId: true },
-      });
+      const issue = await this.issueRepository.findById(issueId);
       resolvedProjectId = issue?.projectId;
     }
 
     // Get fields configured for this issue type
-    const configuredFields = await db.query.issueTypeFields.findMany({
-      where: eq(issueTypeFields.issueTypeId, issueTypeId),
-      with: { field: true },
-    });
+    const configuredFields =
+      await this.fieldRepository.findIssueTypeFieldsWithFieldByIssueTypeId(
+        issueTypeId,
+      );
 
     const configuredFieldIds = new Set(
       configuredFields.map((cf) => cf.fieldId),
@@ -1211,7 +1202,7 @@ export class IssueService {
 
     // Get all issues to validate they exist and gather old values
     const existingIssues = await this.issueRepository.findByIds(issueIds);
-    
+
     if (existingIssues.length === 0) {
       throw createAppError('No valid issues found', {
         statusCode: 404,
@@ -1220,8 +1211,8 @@ export class IssueService {
     }
 
     // Filter to only found issues
-    const foundIds = existingIssues.map(i => i.id);
-    const notFoundIds = issueIds.filter(id => !foundIds.includes(id));
+    const foundIds = existingIssues.map((i) => i.id);
+    const notFoundIds = issueIds.filter((id) => !foundIds.includes(id));
 
     // Validate epic if provided
     if (updates.epicId) {
@@ -1229,30 +1220,43 @@ export class IssueService {
     }
 
     // Prepare history entries for each issue
-    const historyEntries: { issueId: string; userId: string; changes: HistoryChange[] }[] = [];
-    
+    const historyEntries: {
+      issueId: string;
+      userId: string;
+      changes: HistoryChange[];
+    }[] = [];
+
     for (const issue of existingIssues) {
       const changes: HistoryChange[] = [];
-      
-      if (updates.assigneeId !== undefined && updates.assigneeId !== issue.assigneeId) {
+
+      if (
+        updates.assigneeId !== undefined &&
+        updates.assigneeId !== issue.assigneeId
+      ) {
         changes.push({
           field: 'assignee',
           oldValue: issue.assignee?.name || null,
           newValue: updates.assigneeId,
         });
       }
-      
-      if (updates.priority !== undefined && updates.priority !== issue.priority) {
+
+      if (
+        updates.priority !== undefined &&
+        updates.priority !== issue.priority
+      ) {
         changes.push({
           field: 'priority',
           oldValue: issue.priority,
           newValue: updates.priority,
         });
       }
-      
+
       if (updates.labels !== undefined) {
         const oldLabels = (issue.labels as string[]) || [];
-        if (JSON.stringify(oldLabels.sort()) !== JSON.stringify(updates.labels.sort())) {
+        if (
+          JSON.stringify(oldLabels.sort()) !==
+          JSON.stringify(updates.labels.sort())
+        ) {
           changes.push({
             field: 'labels',
             oldValue: oldLabels.join(', '),
@@ -1260,7 +1264,7 @@ export class IssueService {
           });
         }
       }
-      
+
       if (updates.dueDate !== undefined) {
         const oldDate = issue.dueDate?.toISOString().split('T')[0] || null;
         const newDate = updates.dueDate?.toISOString().split('T')[0] || null;
@@ -1272,7 +1276,7 @@ export class IssueService {
           });
         }
       }
-      
+
       if (updates.epicId !== undefined && updates.epicId !== issue.epicId) {
         changes.push({
           field: 'epic',
@@ -1280,7 +1284,7 @@ export class IssueService {
           newValue: updates.epicId,
         });
       }
-      
+
       if (changes.length > 0) {
         historyEntries.push({ issueId: issue.id, userId, changes });
       }
@@ -1296,7 +1300,7 @@ export class IssueService {
 
     // Emit events for each updated issue
     for (const issue of existingIssues) {
-      const historyEntry = historyEntries.find(h => h.issueId === issue.id);
+      const historyEntry = historyEntries.find((h) => h.issueId === issue.id);
       if (historyEntry && historyEntry.changes.length > 0) {
         const eventChanges: Record<string, { from: unknown; to: unknown }> = {};
         for (const change of historyEntry.changes) {
@@ -1343,7 +1347,7 @@ export class IssueService {
 
     // Get all issues with their current status
     const existingIssues = await this.issueRepository.findByIds(issueIds);
-    
+
     if (existingIssues.length === 0) {
       throw createAppError('No valid issues found', {
         statusCode: 404,
@@ -1352,10 +1356,8 @@ export class IssueService {
     }
 
     // Get target status
-    const targetStatus = await db.query.statuses.findFirst({
-      where: eq(statuses.id, toStatusId),
-    });
-    
+    const targetStatus = await this.statusRepository.findStatusById(toStatusId);
+
     if (!targetStatus) {
       throw createAppError(ErrorMessages.STATUS_NOT_FOUND, {
         statusCode: 404,
@@ -1376,7 +1378,7 @@ export class IssueService {
 
     // Group issues by project/issueType to batch workflow validation
     const issuesByWorkflow = new Map<string, typeof existingIssues>();
-    
+
     for (const issue of existingIssues) {
       const workflowKey = `${issue.projectId}:${issue.issueTypeId}`;
       if (!issuesByWorkflow.has(workflowKey)) {
@@ -1387,27 +1389,23 @@ export class IssueService {
 
     // Validate and collect transitionable issues
     const validIssueIds: string[] = [];
-    
+
     for (const [workflowKey, issueGroup] of issuesByWorkflow) {
       const [projectId, issueTypeId] = workflowKey.split(':');
-      
+
       // Get workflow for this project/issueType combination
       const workflowId = await this.getWorkflowForIssue(projectId, issueTypeId);
-      
+
       for (const issue of issueGroup) {
         // Check if transition is valid from current status
         if (!options?.skipValidation) {
-          const transitions = await db.query.workflowTransitions.findMany({
-            where: and(
-              eq(workflowTransitions.workflowId, workflowId),
-              eq(workflowTransitions.toStatusId, toStatusId),
-              or(
-                eq(workflowTransitions.fromStatusId, issue.statusId),
-                isNull(workflowTransitions.fromStatusId), // Global transition
-              ),
-            ),
-          });
-          
+          const transitions =
+            await this.workflowRepository.findTransitionsToStatus(
+              workflowId,
+              issue.statusId,
+              toStatusId,
+            );
+
           if (transitions.length === 0) {
             failed.push({
               issueId: issue.id,
@@ -1417,7 +1415,7 @@ export class IssueService {
             continue;
           }
         }
-        
+
         validIssueIds.push(issue.id);
         transitioned.push(issue);
       }
@@ -1435,8 +1433,9 @@ export class IssueService {
 
     // Execute bulk status update
     const resolvedAt = targetStatus.category === 'done' ? new Date() : null;
-    const resolutionId = targetStatus.category === 'done' ? options?.resolutionId : null;
-    
+    const resolutionId =
+      targetStatus.category === 'done' ? options?.resolutionId : null;
+
     await this.issueRepository.bulkUpdateStatus(
       validIssueIds,
       toStatusId,
@@ -1445,7 +1444,7 @@ export class IssueService {
     );
 
     // Prepare and add history entries
-    const historyEntries = transitioned.map(issue => ({
+    const historyEntries = transitioned.map((issue) => ({
       issueId: issue.id,
       userId,
       changes: [
@@ -1454,14 +1453,18 @@ export class IssueService {
           oldValue: issue.status?.name,
           newValue: targetStatus.name,
         },
-        ...(resolutionId ? [{
-          field: 'resolution',
-          oldValue: issue.resolution?.name || null,
-          newValue: resolutionId,
-        }] : []),
+        ...(resolutionId
+          ? [
+              {
+                field: 'resolution',
+                oldValue: issue.resolution?.name || null,
+                newValue: resolutionId,
+              },
+            ]
+          : []),
       ],
     }));
-    
+
     await this.issueRepository.bulkAddHistory(historyEntries);
 
     // Emit events for each transitioned issue
@@ -1475,7 +1478,9 @@ export class IssueService {
         statusId: toStatusId,
         changes: {
           status: { from: issue.statusId, to: toStatusId },
-          ...(resolutionId ? { resolution: { from: issue.resolutionId, to: resolutionId } } : {}),
+          ...(resolutionId
+            ? { resolution: { from: issue.resolutionId, to: resolutionId } }
+            : {}),
         },
       });
     }
@@ -1504,7 +1509,7 @@ export class IssueService {
 
     // Get all issues to validate they exist
     const existingIssues = await this.issueRepository.findByIds(issueIds);
-    
+
     if (existingIssues.length === 0) {
       throw createAppError('No valid issues found', {
         statusCode: 404,
@@ -1512,18 +1517,17 @@ export class IssueService {
       });
     }
 
-    const foundIds = existingIssues.map(i => i.id);
-    
+    const foundIds = existingIssues.map((i) => i.id);
+
     // If deleteSubtasks is true, also delete child issues
     let allIdsToDelete = [...foundIds];
-    
+
     if (options?.deleteSubtasks) {
       // Find all subtasks of these issues
-      const subtasks = await db.query.issues.findMany({
-        where: inArray(issues.parentId, foundIds),
-        columns: { id: true, key: true },
-      });
-      allIdsToDelete = [...allIdsToDelete, ...subtasks.map(s => s.id)];
+      const subtasks = await this.issueRepository.findSubtasksByParentIds(
+        foundIds,
+      );
+      allIdsToDelete = [...allIdsToDelete, ...subtasks.map((s) => s.id)];
     }
 
     // Emit delete events before actually deleting
@@ -1564,7 +1568,9 @@ export class IssueService {
     }
 
     // Validate target project exists
-    const targetProject = await this.projectRepository.findById(targetProjectId);
+    const targetProject = await this.projectRepository.findById(
+      targetProjectId,
+    );
     if (!targetProject) {
       throw createAppError(ErrorMessages.PROJECT_NOT_FOUND, {
         statusCode: 404,
@@ -1574,7 +1580,7 @@ export class IssueService {
 
     // Get all issues
     const existingIssues = await this.issueRepository.findByIds(issueIds);
-    
+
     if (existingIssues.length === 0) {
       throw createAppError('No valid issues found', {
         statusCode: 404,
@@ -1585,9 +1591,10 @@ export class IssueService {
     // Get default issue type and status for target project if not specified
     let targetIssueTypeId = options?.targetIssueTypeId;
     let targetStatusId = options?.targetStatusId;
-    
+
     if (!targetIssueTypeId) {
-      const projectIssueTypes = await this.projectRepository.getProjectIssueTypes(targetProjectId);
+      const projectIssueTypes =
+        await this.projectRepository.getProjectIssueTypes(targetProjectId);
       targetIssueTypeId = projectIssueTypes[0]?.issueType.id;
       if (!targetIssueTypeId) {
         throw createAppError('Target project has no issue types', {
@@ -1596,15 +1603,15 @@ export class IssueService {
         });
       }
     }
-    
+
     if (!targetStatusId) {
       // Get default status from workflow
-      const workflowId = await this.getWorkflowForIssue(targetProjectId, targetIssueTypeId);
-      const workflowStatusList = await db.query.workflowStatuses.findMany({
-        where: eq(workflowStatuses.workflowId, workflowId),
-        with: { status: true },
-        orderBy: asc(workflowStatuses.sortOrder),
-      });
+      const workflowId = await this.getWorkflowForIssue(
+        targetProjectId,
+        targetIssueTypeId,
+      );
+      const workflowStatusList =
+        await this.workflowRepository.findWorkflowStatuses(workflowId);
       targetStatusId = workflowStatusList[0]?.statusId;
       if (!targetStatusId) {
         throw createAppError('Could not determine target status', {
@@ -1619,8 +1626,9 @@ export class IssueService {
     // Move each issue (need to update keys)
     for (const issue of existingIssues) {
       // Generate new key for target project using existing method
-      const { key: newKey, issueNumber: nextNumber } = await this.issueRepository.getNextIssueNumber(targetProjectId);
-      
+      const { key: newKey, issueNumber: nextNumber } =
+        await this.issueRepository.getNextIssueNumber(targetProjectId);
+
       // Update issue
       await db
         .update(issues)
@@ -1633,7 +1641,7 @@ export class IssueService {
           updatedAt: new Date(),
         })
         .where(eq(issues.id, issue.id));
-      
+
       movedIssues.push({
         id: issue.id,
         oldKey: issue.key,
@@ -1642,7 +1650,11 @@ export class IssueService {
 
       // Add history
       await this.issueRepository.addHistory(issue.id, userId, [
-        { field: 'project', oldValue: issue.project?.name, newValue: targetProject.name },
+        {
+          field: 'project',
+          oldValue: issue.project?.name,
+          newValue: targetProject.name,
+        },
         { field: 'key', oldValue: issue.key, newValue: newKey },
       ]);
 

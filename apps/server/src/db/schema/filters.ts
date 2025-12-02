@@ -81,6 +81,14 @@ export const filters = pgTable(
     // Timestamps
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
+
+    // Optimistic concurrency control
+    version: integer('version').notNull().default(1),
+
+    // Audit field (ownerId serves as createdBy)
+    updatedBy: text('updated_by').references(() => user.id, {
+      onDelete: 'set null',
+    }),
   },
   (table) => [
     index('filters_owner_idx').on(table.ownerId),

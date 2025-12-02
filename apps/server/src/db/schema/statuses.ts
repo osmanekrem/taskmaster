@@ -1,5 +1,6 @@
 import { pgTable, text, boolean, timestamp, unique } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
+import { user } from './auth';
 
 // =============================================================================
 // STATUS CATEGORIES (for reporting and board columns)
@@ -47,6 +48,14 @@ export const statuses = pgTable('statuses', {
 
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
+
+  // Audit fields
+  createdBy: text('created_by').references(() => user.id, {
+    onDelete: 'set null',
+  }),
+  updatedBy: text('updated_by').references(() => user.id, {
+    onDelete: 'set null',
+  }),
 });
 
 // =============================================================================
@@ -79,6 +88,14 @@ export const resolutions = pgTable('resolutions', {
 
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
+
+  // Audit fields
+  createdBy: text('created_by').references(() => user.id, {
+    onDelete: 'set null',
+  }),
+  updatedBy: text('updated_by').references(() => user.id, {
+    onDelete: 'set null',
+  }),
 });
 
 // =============================================================================

@@ -6,8 +6,9 @@ import {
   integer,
   index,
   unique,
+  boolean,
 } from 'drizzle-orm/pg-core';
-import { relations, sql } from 'drizzle-orm';
+import { relations } from 'drizzle-orm';
 import { user } from './auth';
 import { projects } from './projects';
 import { issueTypes } from './issue-types';
@@ -94,6 +95,21 @@ export const issues = pgTable(
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
     resolvedAt: timestamp('resolved_at'),
     dueDate: timestamp('due_date'),
+
+    // Soft delete (for trash/recovery)
+    isDeleted: boolean('is_deleted').default(false),
+    deletedAt: timestamp('deleted_at'),
+    deletedBy: text('deleted_by').references(() => user.id, {
+      onDelete: 'set null',
+    }),
+
+    // Optimistic concurrency control
+    version: integer('version').notNull().default(1),
+
+    // Audit field (reporterId serves as createdBy)
+    updatedBy: text('updated_by').references(() => user.id, {
+      onDelete: 'set null',
+    }),
   },
   (table) => ({
     // Performance indexes

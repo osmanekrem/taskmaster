@@ -119,6 +119,13 @@ export const webhooks = pgTable(
       onDelete: 'set null',
     }),
 
+    /**
+     * User who last updated this webhook
+     */
+    updatedBy: text('updated_by').references(() => user.id, {
+      onDelete: 'set null',
+    }),
+
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
   },

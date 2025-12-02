@@ -14,6 +14,7 @@ import {
 import { relations } from 'drizzle-orm';
 import { projects } from './projects';
 import { issues } from './issues';
+import { user } from './auth';
 
 // =============================================================================
 // LABELS
@@ -51,6 +52,14 @@ export const labels = pgTable(
     updatedAt: timestamp('updated_at', { withTimezone: true })
       .defaultNow()
       .notNull(),
+
+    // Audit fields
+    createdBy: text('created_by').references(() => user.id, {
+      onDelete: 'set null',
+    }),
+    updatedBy: text('updated_by').references(() => user.id, {
+      onDelete: 'set null',
+    }),
   },
   (table) => [
     // Index for project queries

@@ -10,6 +10,7 @@ import {
 } from 'drizzle-orm/pg-core';
 
 import { user } from './auth';
+import { groups } from './groups';
 import { projects } from './projects';
 
 // =====================================================
@@ -369,6 +370,7 @@ export const permissionSchemesRelations = relations(
   permissionSchemes,
   ({ many }) => ({
     roleTemplates: many(permissionSchemeRoles),
+    holders: many(permissionSchemeHolders),
   }),
 );
 
@@ -427,6 +429,94 @@ export const permissionSchemeRolesRelations = relations(
     scheme: one(permissionSchemes, {
       fields: [permissionSchemeRoles.schemeId],
       references: [permissionSchemes.id],
+    }),
+  }),
+);
+
+// =====================================================
+// PERMISSION SCHEME HOLDERS (Dynamic Issue-Level Permissions)
+// =====================================================
+
+/**
+ * Holder types for dynamic permission assignment
+ * Matches Jira's permission scheme holder concept
+ */
+export const holderTypeEnum = pgEnum('holder_type', [
+  'reporter', // Issue reporter
+  'assignee', // Current assignee
+  'project_lead', // Project lead
+  'component_lead', // Component lead(s)
+  'group', // Specific user group
+]);
+
+export type HolderType =
+  | 'reporter'
+  | 'assignee'
+  | 'project_lead'
+  | 'component_lead'
+  | 'group';
+
+/**
+ * Permission scheme holders
+ * Maps permissions to dynamic holders (reporter, assignee, etc.) within a scheme
+ */
+export const permissionSchemeHolders = pgTable(
+  'permission_scheme_holders',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+
+    /**
+     * The scheme this holder belongs to
+     */
+    schemeId: text('scheme_id')
+      .notNull()
+      .references(() => permissionSchemes.id, { onDelete: 'cascade' }),
+
+    /**
+     * The permission being granted
+     */
+    permission: text('permission').notNull().$type<Permission>(),
+
+    /**
+     * The holder type (reporter, assignee, project_lead, component_lead, group)
+     */
+    holderType: holderTypeEnum('holder_type').notNull(),
+
+    /**
+     * For 'group' holder type - the group ID
+     * NULL for other holder types
+     */
+    groupId: text('group_id').references(() => groups.id, {
+      onDelete: 'cascade',
+    }),
+
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (table) => [
+    index('permission_scheme_holders_scheme_id_idx').on(table.schemeId),
+    index('permission_scheme_holders_permission_idx').on(table.permission),
+    index('permission_scheme_holders_holder_type_idx').on(table.holderType),
+    unique('permission_scheme_holders_unique').on(
+      table.schemeId,
+      table.permission,
+      table.holderType,
+      table.groupId,
+    ),
+  ],
+);
+
+export const permissionSchemeHoldersRelations = relations(
+  permissionSchemeHolders,
+  ({ one }) => ({
+    scheme: one(permissionSchemes, {
+      fields: [permissionSchemeHolders.schemeId],
+      references: [permissionSchemes.id],
+    }),
+    group: one(groups, {
+      fields: [permissionSchemeHolders.groupId],
+      references: [groups.id],
     }),
   }),
 );

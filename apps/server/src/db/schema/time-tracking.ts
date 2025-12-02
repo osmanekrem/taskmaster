@@ -95,9 +95,19 @@ export const worklogs = pgTable(
     // Activity type (development, review, testing, etc.)
     activityType: text('activity_type'),
 
+    // Soft delete
+    isDeleted: boolean('is_deleted').default(false),
+    deletedAt: timestamp('deleted_at'),
+    deletedBy: text('deleted_by').references(() => user.id, {
+      onDelete: 'set null',
+    }),
+
     // Timestamps
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
+
+    // Optimistic concurrency control
+    version: integer('version').notNull().default(1),
   },
   (table) => [
     index('worklogs_issue_idx').on(table.issueId),

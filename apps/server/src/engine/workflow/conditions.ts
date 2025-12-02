@@ -7,6 +7,7 @@ import type {
   ConditionResult,
   WorkflowContext,
   UserInProjectRoleCondition,
+  UserInGroupCondition,
   UserHasPermissionCondition,
   ParentStatusCondition,
   SeparationOfDutiesCondition,
@@ -55,6 +56,31 @@ export const userInProjectRoleHandler: ConditionHandler<UserInProjectRoleConditi
       };
     },
   };
+
+export const userInGroupHandler: ConditionHandler<UserInGroupCondition> = {
+  type: 'user_in_group',
+  async evaluate(condition, context): Promise<ConditionResult> {
+    const container = getContainer();
+
+    // Get user's groups
+    const userGroups = await container.group.getUserGroups(context.userId);
+
+    const inGroup = userGroups.some(
+      (g) =>
+        g.groupId === condition.groupId || g.group.name === condition.groupName,
+    );
+
+    return {
+      passed: inGroup,
+      conditionType: 'user_in_group',
+      message: inGroup
+        ? undefined
+        : `User must be a member of group: ${
+            condition.groupName || condition.groupId
+          }`,
+    };
+  },
+};
 
 export const userIsAssigneeHandler: ConditionHandler = {
   type: 'user_is_assignee',
@@ -179,7 +205,7 @@ export const separationOfDutiesHandler: ConditionHandler<SeparationOfDutiesCondi
     async evaluate(condition, context): Promise<ConditionResult> {
       // Check if user has performed the specified transition on this issue
       // We use change_groups and change_items to track status transitions
-      
+
       // Find all status transitions for this issue by this user
       const statusTransitions = await db
         .select({
@@ -198,8 +224,8 @@ export const separationOfDutiesHandler: ConditionHandler<SeparationOfDutiesCondi
           and(
             eq(changeGroups.issueId, context.issue.id),
             eq(changeGroups.userId, context.userId),
-            eq(changeItems.field, 'Status')
-          )
+            eq(changeItems.field, 'Status'),
+          ),
         )
         .orderBy(desc(changeGroups.createdAt));
 
@@ -215,14 +241,14 @@ export const separationOfDutiesHandler: ConditionHandler<SeparationOfDutiesCondi
       // The transition name is typically stored as the newString (the status they transitioned TO)
       // or we can match against a pattern like "To {StatusName}"
       const restrictedTransitionLower = condition.transitionName.toLowerCase();
-      
-      const hasPerformedRestrictedTransition = statusTransitions.some(t => {
+
+      const hasPerformedRestrictedTransition = statusTransitions.some((t) => {
         // Check if the transition matches by:
         // 1. Exact match on newString (status name)
         // 2. Match on transition pattern "To {Status}"
         const newStatusName = t.newString?.toLowerCase() || '';
         const transitionPattern = `to ${newStatusName}`;
-        
+
         return (
           newStatusName === restrictedTransitionLower ||
           transitionPattern === restrictedTransitionLower ||
@@ -250,6 +276,7 @@ const conditionHandlers = new Map<string, ConditionHandler>();
 
 // Register built-in handlers
 conditionHandlers.set('user_in_project_role', userInProjectRoleHandler);
+conditionHandlers.set('user_in_group', userInGroupHandler);
 conditionHandlers.set('user_is_assignee', userIsAssigneeHandler);
 conditionHandlers.set('user_is_reporter', userIsReporterHandler);
 conditionHandlers.set('user_has_permission', userHasPermissionHandler);

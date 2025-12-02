@@ -11,6 +11,7 @@ import {
 import { relations } from 'drizzle-orm';
 import { projects, templates } from './projects';
 import { statuses } from './statuses';
+import { user } from './auth';
 
 // =============================================================================
 // WORKFLOWS
@@ -23,8 +24,28 @@ export const workflows = pgTable('workflows', {
   name: text('name').notNull(),
   description: text('description'),
   isDefault: boolean('is_default').default(false),
+
+  // Draft workflow support
+  // When isDraft=true, this is a working copy that can be edited without affecting active issues
+  // draftOf points to the active workflow this is a draft of
+  isDraft: boolean('is_draft').default(false),
+  draftOf: text('draft_of').references((): any => workflows.id, {
+    onDelete: 'cascade',
+  }),
+  // When a draft is published, the publishedAt timestamp is set
+  publishedAt: timestamp('published_at'),
+
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  // Optimistic concurrency control
+  version: integer('version').notNull().default(1),
+  // Audit fields
+  createdBy: text('created_by').references(() => user.id, {
+    onDelete: 'set null',
+  }),
+  updatedBy: text('updated_by').references(() => user.id, {
+    onDelete: 'set null',
+  }),
 });
 
 // =============================================================================
