@@ -58,24 +58,16 @@ import {
  * Dependencies are injected through constructor for testability.
  */
 export class IssueService {
-  private readonly ticketTypeRepository: TicketTypeRepository;
-  private readonly workflowRepository: WorkflowRepository;
-  private readonly statusRepository: StatusRepository;
-  private readonly fieldRepository: FieldRepository;
-  private readonly sprintIssueRepository: SprintIssueRepository;
-
   constructor(
     private readonly issueRepository: IssueRepository,
     private readonly projectRepository: ProjectRepository,
     private readonly notificationService: NotificationService,
-  ) {
-    // Initialize helper repositories
-    this.ticketTypeRepository = new TicketTypeRepository();
-    this.workflowRepository = new WorkflowRepository();
-    this.statusRepository = new StatusRepository();
-    this.fieldRepository = new FieldRepository();
-    this.sprintIssueRepository = new SprintIssueRepository();
-  }
+    private readonly ticketTypeRepository: TicketTypeRepository,
+    private readonly workflowRepository: WorkflowRepository,
+    private readonly statusRepository: StatusRepository,
+    private readonly fieldRepository: FieldRepository,
+    private readonly sprintIssueRepository: SprintIssueRepository,
+  ) {}
 
   // ==========================================================================
   // ISSUE RETRIEVAL
@@ -713,9 +705,8 @@ export class IssueService {
           );
 
           if (sprintIssue?.sprint?.status === 'active') {
-            const { SprintService } = await import('@/services/sprint-service');
-            const sprintService = new SprintService();
-            await sprintService.recordBurndownData(sprintIssue.sprint.id);
+            const { container } = await import('@/lib/container');
+            await container.sprint.recordBurndownData(sprintIssue.sprint.id);
           }
         } catch (err) {
           console.error('[Burndown] Failed to update burndown:', err);

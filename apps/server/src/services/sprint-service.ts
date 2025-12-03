@@ -6,6 +6,13 @@ import {
 } from "@/repositories/sprint-repository";
 import {throwNotFoundError, createAppError} from "@/lib/errors";
 import type {SprintStatus, SprintHistoryAction} from "@/db/schema/sprints";
+import {
+	emitSprintCreated,
+	emitSprintStarted,
+	emitSprintCompleted,
+	emitSprintIssueAdded,
+	emitSprintIssueRemoved,
+} from "@/lib/events/event-bus";
 
 // Types inline to avoid import issues
 type CreateSprint = {
@@ -94,17 +101,12 @@ function throwBusinessLogicError(message: string): never {
 }
 
 export class SprintService {
-	private sprintRepo: SprintRepository;
-	private sprintIssueRepo: SprintIssueRepository;
-	private historyRepo: SprintHistoryRepository;
-	private burndownRepo: BurndownRepository;
-
-	constructor() {
-		this.sprintRepo = new SprintRepository();
-		this.sprintIssueRepo = new SprintIssueRepository();
-		this.historyRepo = new SprintHistoryRepository();
-		this.burndownRepo = new BurndownRepository();
-	}
+	constructor(
+		private sprintRepo: SprintRepository,
+		private sprintIssueRepo: SprintIssueRepository,
+		private historyRepo: SprintHistoryRepository,
+		private burndownRepo: BurndownRepository,
+	) {}
 
 	// =====================================================
 	// SPRINT CRUD
@@ -118,6 +120,13 @@ export class SprintService {
 
 		// Add history entry
 		await this.historyRepo.addEntry(sprint.id, 'sprint_created', userId);
+
+		// Emit event
+		emitSprintCreated({
+			sprintId: sprint.id,
+			projectId: data.projectId,
+			actorId: userId,
+		});
 
 		return sprint;
 	}
@@ -274,6 +283,13 @@ export class SprintService {
 		// Initialize burndown data
 		await this.recordBurndownData(data.id);
 
+		// Emit event
+		emitSprintStarted({
+			sprintId: data.id,
+			projectId: sprint.projectId,
+			actorId: userId,
+		});
+
 		return updated;
 	}
 
@@ -324,6 +340,14 @@ export class SprintService {
 				movedIssues: movedIssueIds.length,
 				moveTo: data.moveIncompleteIssuesTo,
 			},
+		});
+
+		// Emit event
+		emitSprintCompleted({
+			sprintId: data.id,
+			projectId: sprint.projectId,
+			actorId: userId,
+			issueIds: movedIssueIds,
 		});
 
 		return {
@@ -424,6 +448,14 @@ export class SprintService {
 			});
 		}
 
+		// Emit event
+		emitSprintIssueAdded({
+			sprintId: data.sprintId,
+			projectId: sprint.projectId,
+			issueId: data.issueId,
+			actorId: userId,
+		});
+
 		return sprintIssue;
 	}
 
@@ -476,6 +508,16 @@ export class SprintService {
 				...currentMetrics,
 				removedPoints: (currentMetrics.removedPoints || 0) + (removed.storyPointsSnapshot || 0),
 				removedIssueCount: (currentMetrics.removedIssueCount || 0) + 1,
+			});
+		}
+
+		// Emit event
+		if (sprint) {
+			emitSprintIssueRemoved({
+				sprintId: removed.sprintId,
+				projectId: sprint.projectId,
+				issueId,
+				actorId: userId,
 			});
 		}
 

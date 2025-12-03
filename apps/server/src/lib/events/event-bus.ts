@@ -62,13 +62,19 @@ export type UserEventType =
   | 'user:role_assigned'
   | 'user:role_removed';
 
+export type WorklogEventType =
+  | 'worklog:created'
+  | 'worklog:updated'
+  | 'worklog:deleted';
+
 export type EventType = 
   | IssueEventType 
   | SprintEventType 
   | ProjectEventType 
   | CommentEventType
   | WorkflowEventType
-  | UserEventType;
+  | UserEventType
+  | WorklogEventType;
 
 // =============================================================================
 // EVENT PAYLOADS
@@ -134,13 +140,23 @@ export interface UserEventPayload extends BaseEventPayload {
   changes?: Record<string, { from: unknown; to: unknown }>;
 }
 
+export interface WorklogEventPayload extends BaseEventPayload {
+  worklogId: string;
+  issueId: string;
+  issueKey: string;
+  projectId: string;
+  timeSpent: number;
+  changes?: Record<string, { from: unknown; to: unknown }>;
+}
+
 export type EventPayload = 
   | IssueEventPayload 
   | SprintEventPayload 
   | ProjectEventPayload 
   | CommentEventPayload
   | WorkflowEventPayload
-  | UserEventPayload;
+  | UserEventPayload
+  | WorklogEventPayload;
 
 // =============================================================================
 // EVENT HANDLER TYPE
@@ -331,3 +347,13 @@ export const emitProjectUpdated = (payload: Omit<ProjectEventPayload, 'timestamp
 
 export const emitProjectArchived = (payload: Omit<ProjectEventPayload, 'timestamp'>) => 
   eventBus.emit('project:archived', { ...payload, timestamp: new Date() });
+
+// Worklog events
+export const emitWorklogCreated = (payload: Omit<WorklogEventPayload, 'timestamp'>) => 
+  eventBus.emit('worklog:created', { ...payload, timestamp: new Date() });
+
+export const emitWorklogUpdated = (payload: Omit<WorklogEventPayload, 'timestamp'>) => 
+  eventBus.emit('worklog:updated', { ...payload, timestamp: new Date() });
+
+export const emitWorklogDeleted = (payload: Omit<WorklogEventPayload, 'timestamp'>) => 
+  eventBus.emit('worklog:deleted', { ...payload, timestamp: new Date() });

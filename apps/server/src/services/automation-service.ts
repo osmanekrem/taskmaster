@@ -23,6 +23,7 @@ import type {
 import {
   getAutomationEngine,
   type TriggerEvent,
+  type TriggerType,
   type IssueData,
   type UserData,
 } from '@/lib/automation/engine';
@@ -379,6 +380,35 @@ export class AutomationService {
   // =========================================================================
   // TRIGGER EVENTS
   // =========================================================================
+
+  /**
+   * Process a generic trigger from outbox events
+   * Routes to appropriate trigger method based on event type
+   */
+  async processTrigger(
+    triggerType: string,
+    projectId: string,
+    payload: Record<string, unknown>,
+  ): Promise<void> {
+    const engine = getAutomationEngine();
+
+    // Build a generic trigger event
+    const event: TriggerEvent = {
+      type: triggerType as TriggerType,
+      projectId,
+      issueId: payload.issueId as string | undefined,
+      userId: payload.userId as string | undefined,
+      trigger: {
+        type: triggerType,
+      },
+      metadata: payload, // Store payload in metadata for action execution
+    };
+
+    // Fire and forget - don't block the main operation
+    engine.processTrigger(event).catch((error) => {
+      console.error(`[AutomationService] Error processing trigger ${triggerType}:`, error);
+    });
+  }
 
   /**
    * Trigger an issue event

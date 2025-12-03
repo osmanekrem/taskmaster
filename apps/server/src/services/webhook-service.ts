@@ -24,9 +24,6 @@ import {
 } from '@/db/schema/webhooks';
 import crypto from 'crypto';
 
-// Project repository instance
-const projectRepo = new ProjectRepository();
-
 // =============================================================================
 // TYPES
 // =============================================================================
@@ -73,6 +70,8 @@ export interface WebhookContext {
 // =============================================================================
 
 export class WebhookService {
+  constructor(private readonly projectRepo: ProjectRepository = new ProjectRepository()) {}
+
   // ---------------------------------------------------------------------------
   // WEBHOOK MANAGEMENT
   // ---------------------------------------------------------------------------
@@ -113,7 +112,7 @@ export class WebhookService {
 
     // Validate project exists if provided
     if (input.projectId) {
-      const project = await projectRepo.findById(input.projectId);
+      const project = await this.projectRepo.findById(input.projectId);
       if (!project) {
         throwNotFoundError('NOT_FOUND', {
           resource: 'project',

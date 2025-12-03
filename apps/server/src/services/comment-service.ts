@@ -3,13 +3,7 @@ import {
   AttachmentRepository,
 } from '@/repositories/comment-repository';
 import { IssueRepository } from '@/repositories/issue-repository';
-import { NotificationService } from '@/services/notification-service';
-import {
-  NotificationRepository,
-  WatcherRepository,
-  NotificationPreferencesRepository,
-  DigestSettingsRepository,
-} from '@/repositories/notification-repository';
+import type { NotificationService } from '@/services/notification-service';
 import { db } from '@/db';
 import { user } from '@/db/schema/auth';
 import { eq, inArray } from 'drizzle-orm';
@@ -30,25 +24,20 @@ import {
   ALLOWED_MIME_TYPES,
   MAX_FILE_SIZE,
 } from '@taskmaster/validation';
-import { emitCommentCreated } from '@/lib/events/event-bus';
+import { 
+  emitCommentCreated,
+  emitCommentUpdated,
+  emitCommentDeleted,
+} from '@/lib/events/event-bus';
 import { getContainer } from '@/lib/context';
 
 export class CommentService {
-  private readonly notificationService: NotificationService;
-
   constructor(
     private commentRepository: CommentRepository,
     private attachmentRepository: AttachmentRepository,
     private issueRepository: IssueRepository,
-  ) {
-    const watcherRepo = new WatcherRepository();
-    this.notificationService = new NotificationService(
-      new NotificationRepository(),
-      watcherRepo,
-      new NotificationPreferencesRepository(),
-      new DigestSettingsRepository(),
-    );
-  }
+    private notificationService: NotificationService,
+  ) {}
 
   // ==========================================================================
   // COMMENTS
@@ -259,6 +248,20 @@ export class CommentService {
       }
     }
 
+    // Get issue for event
+    const issue = await this.issueRepository.findById(comment.issueId);
+    
+    // Emit event
+    if (issue) {
+      emitCommentUpdated({
+        commentId,
+        issueId: comment.issueId,
+        issueKey: issue.key,
+        projectId: issue.projectId,
+        actorId: userId,
+      });
+    }
+
     return this.commentRepository.findCommentById(commentId);
   }
 
@@ -302,11 +305,28 @@ export class CommentService {
       });
     }
 
+    // Get issue for event before deletion
+    const issue = await this.issueRepository.findById(comment.issueId);
+
+    let result;
     if (hardDelete) {
-      return this.commentRepository.hardDeleteComment(commentId);
+      result = await this.commentRepository.hardDeleteComment(commentId);
+    } else {
+      result = await this.commentRepository.softDeleteComment(commentId);
     }
 
-    return this.commentRepository.softDeleteComment(commentId);
+    // Emit event
+    if (issue) {
+      emitCommentDeleted({
+        commentId,
+        issueId: comment.issueId,
+        issueKey: issue.key,
+        projectId: issue.projectId,
+        actorId: userId,
+      });
+    }
+
+    return result;
   }
 
   // ==========================================================================

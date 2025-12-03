@@ -8,7 +8,11 @@ import { startEmailWorker } from './email-worker';
 import { startBurndownWorker } from './burndown-worker';
 import { startWebhookWorker } from './webhook-worker';
 import { scheduleOutboxJobs } from './outbox-worker';
+import { dlqWorker } from './dlq-worker';
 import { isRedisAvailable } from '@/lib/redis';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('workers');
 
 /**
  * Start all workers
@@ -19,12 +23,12 @@ export async function startWorkers(): Promise<void> {
   const redisAvailable = await isRedisAvailable();
 
   if (!redisAvailable) {
-    console.warn('[Workers] Redis is not available, workers will not start');
-    console.warn('[Workers] Notifications and emails will not be processed');
+    logger.warn('Redis is not available, workers will not start');
+    logger.warn('Notifications and emails will not be processed');
     return;
   }
 
-  console.log('[Workers] Starting background workers...');
+  logger.info('Starting background workers...');
 
   // Start workers
   startNotificationWorker();
@@ -32,8 +36,18 @@ export async function startWorkers(): Promise<void> {
   await startBurndownWorker();
   startWebhookWorker();
   await scheduleOutboxJobs();
+  dlqWorker.start();
 
-  console.log('[Workers] All workers started');
+  logger.info('All workers started');
+}
+
+/**
+ * Stop all workers
+ */
+export function stopWorkers(): void {
+  logger.info('Stopping background workers...');
+  dlqWorker.stop();
+  logger.info('Workers stopped');
 }
 
 /**
@@ -57,3 +71,4 @@ export {
   triggerProcessing, 
   triggerRetry 
 } from './outbox-worker';
+export { dlqWorker } from './dlq-worker';

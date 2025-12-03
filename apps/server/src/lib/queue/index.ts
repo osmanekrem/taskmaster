@@ -6,6 +6,11 @@ import { Queue, Worker, Job, QueueEvents, type JobsOptions } from 'bullmq';
 import { createRedisConnection, getRedisOptions } from '@/lib/redis';
 import { env } from '@/config/env';
 import { QUEUE_NAMES } from '@taskmaster/constants';
+import { dlqRepository } from '@/repositories/dlq-repository';
+import { type DLQStatus } from '@/db/schema/dead-letter-queue';
+import { logger } from '@/lib/logger';
+
+const log = logger.queue;
 
 // Re-export for backwards compatibility
 export { QUEUE_NAMES };
@@ -135,24 +140,34 @@ export function getQueueEvents(name: QueueName): QueueEvents {
 
 export type JobProcessor<T = JobData> = (job: Job<T>) => Promise<void>;
 
+export interface WorkerOptions {
+  concurrency?: number;
+  limiter?: {
+    max: number;
+    duration: number;
+  };
+  /** Enable Dead Letter Queue for permanently failed jobs */
+  enableDLQ?: boolean;
+  /** Max attempts before sending to DLQ (default: 3) */
+  maxAttempts?: number;
+}
+
 /**
- * Register a worker for a queue
+ * Register a worker for a queue with DLQ support
  */
 export function registerWorker<T = JobData>(
   name: QueueName,
   processor: JobProcessor<T>,
-  options?: {
-    concurrency?: number;
-    limiter?: {
-      max: number;
-      duration: number;
-    };
-  }
+  options?: WorkerOptions
 ): Worker<T> {
   if (workers.has(name)) {
-    console.warn(`[Queue] Worker for ${name} already registered, replacing...`);
+    log.warn({ queue: name }, 'Worker already registered, replacing...');
     workers.get(name)?.close();
   }
+
+  const dlqRepo = dlqRepository;
+  const maxAttempts = options?.maxAttempts ?? 3;
+  const enableDLQ = options?.enableDLQ ?? true;
   
   const worker = new Worker<T>(name, processor, {
     connection: createRedisConnection(),
@@ -162,19 +177,61 @@ export function registerWorker<T = JobData>(
   
   // Event handlers
   worker.on('completed', (job) => {
-    console.log(`[Queue:${name}] Job ${job.id} completed`);
+    log.debug({ queue: name, jobId: job.id, jobName: job.name }, 'Job completed');
   });
   
-  worker.on('failed', (job, err) => {
-    console.error(`[Queue:${name}] Job ${job?.id} failed:`, err.message);
+  worker.on('failed', async (job, err) => {
+    if (!job) return;
+    
+    const attemptsMade = job.attemptsMade;
+    const isLastAttempt = attemptsMade >= maxAttempts;
+    
+    log.error(
+      { 
+        queue: name, 
+        jobId: job.id, 
+        jobName: job.name, 
+        attempt: attemptsMade, 
+        maxAttempts,
+        isLastAttempt,
+        error: err.message 
+      }, 
+      'Job failed'
+    );
+    
+    // Move to DLQ after all retries exhausted
+    if (isLastAttempt && enableDLQ) {
+      try {
+        await dlqRepo.add({
+          queueName: name,
+          jobId: job.id || `unknown-${Date.now()}`,
+          jobName: job.name,
+          payload: job.data as Record<string, unknown>,
+          errorMessage: err.message,
+          errorStack: err.stack,
+          attemptsMade,
+          maxAttempts,
+        });
+        
+        log.warn(
+          { queue: name, jobId: job.id, jobName: job.name },
+          'Job moved to Dead Letter Queue'
+        );
+      } catch (dlqError) {
+        log.error(
+          { queue: name, jobId: job.id, error: dlqError },
+          'Failed to add job to DLQ'
+        );
+      }
+    }
   });
   
   worker.on('error', (err) => {
-    console.error(`[Queue:${name}] Worker error:`, err.message);
+    log.error({ queue: name, error: err.message }, 'Worker error');
   });
   
   workers.set(name, worker as Worker);
-  console.log(`[Queue] Worker registered for ${name}`);
+  log.info({ queue: name, concurrency: options?.concurrency ?? 5, dlqEnabled: enableDLQ }, 'Worker registered');
   
   return worker;
 }
@@ -284,12 +341,12 @@ function getPriorityForNotificationType(type: NotificationJobData['type']): numb
  * Close all queues and workers
  */
 export async function closeAllQueues(): Promise<void> {
-  console.log('[Queue] Closing all queues and workers...');
+  log.info('Closing all queues and workers...');
   
   // Close workers first
   for (const [name, worker] of workers) {
     await worker.close();
-    console.log(`[Queue] Worker ${name} closed`);
+    log.debug({ queue: name }, 'Worker closed');
   }
   workers.clear();
   
@@ -302,11 +359,11 @@ export async function closeAllQueues(): Promise<void> {
   // Close queues
   for (const [name, queue] of queues) {
     await queue.close();
-    console.log(`[Queue] Queue ${name} closed`);
+    log.debug({ queue: name }, 'Queue closed');
   }
   queues.clear();
   
-  console.log('[Queue] All queues closed');
+  log.info('All queues closed');
 }
 
 // =============================================================================
@@ -379,4 +436,139 @@ export async function getQueueStats(name: QueueName): Promise<QueueStats> {
     delayed,
     paused: isPaused,
   };
+}
+
+// =============================================================================
+// DEAD LETTER QUEUE PROCESSING
+// =============================================================================
+
+export interface DLQRetryResult {
+  id: string;
+  success: boolean;
+  error?: string;
+}
+
+/**
+ * Retry a specific entry from the DLQ
+ */
+export async function retryDLQEntry(entryId: string): Promise<DLQRetryResult> {
+  try {
+    const entry = await dlqRepository.findById(entryId);
+    
+    if (!entry) {
+      return { id: entryId, success: false, error: 'Entry not found' };
+    }
+    
+    if (entry.status !== 'pending') {
+      return { id: entryId, success: false, error: `Entry is ${entry.status}, not pending` };
+    }
+    
+    // Re-add to original queue
+    const queue = getQueue(entry.queueName as QueueName);
+    await queue.add(entry.jobName || 'retry', entry.payload as JobData, {
+      jobId: `dlq-retry-${entry.id}-${Date.now()}`,
+      attempts: entry.maxAttempts,
+    });
+    
+    // Mark as retried in DLQ
+    await dlqRepository.markRetried(entryId);
+    
+    log.info(
+      { dlqEntryId: entryId, queue: entry.queueName, jobName: entry.jobName },
+      'DLQ entry retried successfully'
+    );
+    
+    return { id: entryId, success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    log.error({ dlqEntryId: entryId, error: errorMessage }, 'Failed to retry DLQ entry');
+    return { id: entryId, success: false, error: errorMessage };
+  }
+}
+
+/**
+ * Process pending DLQ retries (pending entries)
+ */
+export async function processPendingDLQRetries(): Promise<DLQRetryResult[]> {
+  const results: DLQRetryResult[] = [];
+  
+  const pendingEntries = await dlqRepository.findMany({ status: 'pending', limit: 100 });
+  
+  if (pendingEntries.length === 0) {
+    return results;
+  }
+  
+  log.info({ count: pendingEntries.length }, 'Processing pending DLQ retries');
+  
+  for (const entry of pendingEntries) {
+    const result = await retryDLQEntry(entry.id);
+    results.push(result);
+  }
+  
+  const successCount = results.filter(r => r.success).length;
+  const failCount = results.filter(r => !r.success).length;
+  
+  log.info({ successCount, failCount, total: results.length }, 'DLQ retry processing complete');
+  
+  return results;
+}
+
+/**
+ * Get aggregated DLQ stats
+ */
+export async function getDLQStats(): Promise<{
+  pending: number;
+  retried: number;
+  resolved: number;
+  ignored: number;
+  byQueue: Record<string, { pending: number; retried: number; resolved: number; ignored: number }>;
+}> {
+  const counts = await dlqRepository.getCounts();
+  
+  type StatusCounts = { pending: number; retried: number; resolved: number; ignored: number };
+  
+  const stats = {
+    pending: 0,
+    retried: 0,
+    resolved: 0,
+    ignored: 0,
+    byQueue: {} as Record<string, StatusCounts>,
+  };
+  
+  for (const row of counts) {
+    const status = row.status;
+    const count = row.count;
+    
+    // Aggregate totals
+    if (status === 'pending') stats.pending += count;
+    else if (status === 'retried') stats.retried += count;
+    else if (status === 'resolved') stats.resolved += count;
+    else if (status === 'ignored') stats.ignored += count;
+    
+    // Aggregate by queue
+    if (!stats.byQueue[row.queueName]) {
+      stats.byQueue[row.queueName] = { pending: 0, retried: 0, resolved: 0, ignored: 0 };
+    }
+    
+    // Update specific status count for queue
+    if (status === 'pending') stats.byQueue[row.queueName].pending = count;
+    else if (status === 'retried') stats.byQueue[row.queueName].retried = count;
+    else if (status === 'resolved') stats.byQueue[row.queueName].resolved = count;
+    else if (status === 'ignored') stats.byQueue[row.queueName].ignored = count;
+  }
+  
+  return stats;
+}
+
+/**
+ * Cleanup old DLQ entries
+ */
+export async function cleanupDLQ(olderThanDays: number = 30): Promise<number> {
+  const deleted = await dlqRepository.cleanupOldEntries(olderThanDays);
+  
+  if (deleted > 0) {
+    log.info({ deleted, olderThanDays }, 'Cleaned up old DLQ entries');
+  }
+  
+  return deleted;
 }

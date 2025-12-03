@@ -8,7 +8,10 @@ import { getRedisConnection, isRedisAvailable } from '@/lib/redis';
 import { db } from '@/db';
 import { sprints } from '@/db/schema/sprints';
 import { eq } from 'drizzle-orm';
-import { SprintService } from '@/services/sprint-service';
+import { container } from '@/lib/container';
+import { logger, formatError } from '@/lib/logger';
+
+const log = logger.burndown;
 
 const QUEUE_NAME = 'burndown';
 const JOB_NAME = 'record-burndown';
@@ -36,7 +39,7 @@ function getBurndownQueue(): Queue {
 async function recordAllActiveBurndowns(): Promise<void> {
   console.log('[BurndownWorker] Recording burndown data for active sprints...');
 
-  const sprintService = new SprintService();
+  const sprintService = container.sprint;
 
   // Get all active sprints
   const activeSprints = await db.query.sprints.findMany({
@@ -98,11 +101,11 @@ export async function startBurndownWorker(): Promise<void> {
   );
 
   burndownWorker.on('completed', (job) => {
-    console.log(`[BurndownWorker] Job ${job.id} completed`);
+    log.info({ jobId: job.id }, 'Job completed');
   });
 
   burndownWorker.on('failed', (job, err) => {
-    console.error(`[BurndownWorker] Job ${job?.id} failed:`, err);
+    log.error({ jobId: job?.id, err: formatError(err) }, 'Job failed');
   });
 
   // Schedule daily job at midnight (00:00)

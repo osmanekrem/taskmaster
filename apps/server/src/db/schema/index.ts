@@ -25,3 +25,4 @@ export * from './automation';
 export * from './security';
 export * from './groups';
 export * from './events';
+export * from './dead-letter-queue';

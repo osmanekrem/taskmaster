@@ -21,12 +21,13 @@ import { resolveFieldsForIssueType, type ResolvedField } from './field-config-re
 export class TicketTypeService {
   private repository: ReturnType<typeof ticketTypeRepository>;
   private fieldRepo: ReturnType<typeof fieldRepository>;
-  private issueRepository: IssueRepository;
 
-  constructor(private drizzle: DrizzleClient = db) {
+  constructor(
+    private drizzle: DrizzleClient = db,
+    private issueRepository: IssueRepository = new IssueRepository(),
+  ) {
     this.repository = ticketTypeRepository(drizzle);
     this.fieldRepo = fieldRepository(drizzle);
-    this.issueRepository = new IssueRepository();
   }
 
   getAllTicketTypes() {

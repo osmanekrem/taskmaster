@@ -19,9 +19,11 @@ import {
 } from '@/lib/time-format';
 import { db } from '@/db';
 import type { Worklog, IssueTimeTracking } from '@/db/schema/time-tracking';
-
-// Issue repository instance
-const issueRepo = new IssueRepository();
+import {
+  emitWorklogCreated,
+  emitWorklogUpdated,
+  emitWorklogDeleted,
+} from '@/lib/events/event-bus';
 
 // =============================================================================
 // TYPES
@@ -73,6 +75,8 @@ export class WorklogService {
     workingDaysPerWeek: 5,
   };
 
+  constructor(private readonly issueRepo: IssueRepository = new IssueRepository()) {}
+
   // ---------------------------------------------------------------------------
   // WORKLOGS CRUD
   // ---------------------------------------------------------------------------
@@ -81,7 +85,7 @@ export class WorklogService {
    * Get worklogs for an issue
    */
   async getWorklogsForIssue(issueId: string): Promise<Worklog[]> {
-    const issue = await issueRepo.findById(issueId);
+    const issue = await this.issueRepo.findById(issueId);
     if (!issue) {
       throwNotFoundError('NOT_FOUND', { resource: 'issue', id: issueId });
     }
@@ -133,7 +137,7 @@ export class WorklogService {
     ctx: TimeTrackingContext,
   ): Promise<Worklog> {
     // Validate issue exists
-    const issue = await issueRepo.findById(input.issueId);
+    const issue = await this.issueRepo.findById(input.issueId);
     if (!issue) {
       throwNotFoundError('NOT_FOUND', { resource: 'issue', id: input.issueId });
     }
@@ -207,6 +211,16 @@ export class WorklogService {
         await repo.updateRemainingEstimate(input.issueId, newRemaining);
       }
 
+      // Emit event
+      emitWorklogCreated({
+        worklogId: worklog.id,
+        issueId: input.issueId,
+        issueKey: issue.key,
+        projectId: issue.projectId,
+        timeSpent: timeSpentSeconds,
+        actorId: ctx.userId,
+      });
+
       return worklog;
     });
   }
@@ -275,6 +289,20 @@ export class WorklogService {
         }
       }
 
+      // Emit event
+      const issue = await this.issueRepo.findById(worklog.issueId);
+      if (issue) {
+        emitWorklogUpdated({
+          worklogId: id,
+          issueId: worklog.issueId,
+          issueKey: issue.key,
+          projectId: issue.projectId,
+          timeSpent: newTimeSpent,
+          actorId: ctx.userId,
+          changes: { timeSpent: { from: oldTimeSpent, to: newTimeSpent } },
+        });
+      }
+
       return updated;
     });
   }
@@ -295,6 +323,9 @@ export class WorklogService {
       });
     }
 
+    // Get issue info before deletion for event
+    const issue = await this.issueRepo.findById(worklog.issueId);
+
     await db.transaction(async (tx) => {
       const repo = worklogRepository(tx);
 
@@ -304,6 +335,18 @@ export class WorklogService {
       // Decrease time spent
       await repo.decrementTimeSpent(worklog.issueId, worklog.timeSpentSeconds);
     });
+
+    // Emit event
+    if (issue) {
+      emitWorklogDeleted({
+        worklogId: id,
+        issueId: worklog.issueId,
+        issueKey: issue.key,
+        projectId: issue.projectId,
+        timeSpent: worklog.timeSpentSeconds,
+        actorId: ctx.userId,
+      });
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -314,7 +357,7 @@ export class WorklogService {
    * Get time tracking for an issue
    */
   async getTimeTracking(issueId: string): Promise<IssueTimeTracking | null> {
-    const issue = await issueRepo.findById(issueId);
+    const issue = await this.issueRepo.findById(issueId);
     if (!issue) {
       throwNotFoundError('NOT_FOUND', { resource: 'issue', id: issueId });
     }
@@ -360,7 +403,7 @@ export class WorklogService {
     estimate: string,
     ctx: TimeTrackingContext,
   ): Promise<IssueTimeTracking> {
-    const issue = await issueRepo.findById(issueId);
+    const issue = await this.issueRepo.findById(issueId);
     if (!issue) {
       throwNotFoundError('NOT_FOUND', { resource: 'issue', id: issueId });
     }
@@ -402,7 +445,7 @@ export class WorklogService {
     estimate: string,
     ctx: TimeTrackingContext,
   ): Promise<void> {
-    const issue = await issueRepo.findById(issueId);
+    const issue = await this.issueRepo.findById(issueId);
     if (!issue) {
       throwNotFoundError('NOT_FOUND', { resource: 'issue', id: issueId });
     }

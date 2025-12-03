@@ -14,6 +14,9 @@ import {
 } from '@/lib/events/domain-event-service';
 import { WebhookService } from '@/services/webhook-service';
 import { container } from '@/lib/container';
+import { logger, formatError } from '@/lib/logger';
+
+const log = logger.outbox;
 
 // =============================================================================
 // QUEUE CONFIGURATION
@@ -133,8 +136,13 @@ const automationProcessor: EventProcessor = async (event) => {
     return;
   }
 
-  // TODO: Call automation service when added to container
-  console.log(`[OutboxWorker] Automation trigger: ${trigger} for project ${projectId}`);
+  // Process automation rules for this trigger
+  try {
+    const automationService = container.automation;
+    await automationService.processTrigger(trigger, projectId, payload as Record<string, unknown>);
+  } catch (err) {
+    console.error(`[OutboxWorker] Automation processing failed for ${trigger}:`, err);
+  }
 };
 
 const notificationProcessor: EventProcessor = async (event) => {
@@ -200,7 +208,7 @@ const auditProcessor: EventProcessor = async (event) => {
         }),
       });
     } catch (error) {
-      console.error('[OutboxWorker] Failed to send audit event to external system:', error);
+      log.error({ err: formatError(error) }, 'Failed to send audit event to external system');
       throw error; // Will trigger retry
     }
   }
@@ -284,15 +292,15 @@ export const outboxWorker = new Worker<OutboxJobData, OutboxJobResult>(
 // =============================================================================
 
 outboxWorker.on('completed', (job, result) => {
-  console.log(`[OutboxWorker] Job ${job.id} completed:`, result);
+  log.info({ jobId: job.id, result }, 'Job completed');
 });
 
 outboxWorker.on('failed', (job, error) => {
-  console.error(`[OutboxWorker] Job ${job?.id} failed:`, error);
+  log.error({ jobId: job?.id, err: formatError(error) }, 'Job failed');
 });
 
 outboxWorker.on('error', (error) => {
-  console.error('[OutboxWorker] Worker error:', error);
+  log.error({ err: formatError(error) }, 'Worker error');
 });
 
 // =============================================================================
@@ -344,7 +352,7 @@ export async function scheduleOutboxJobs(): Promise<void> {
     }
   );
 
-  console.log('[OutboxWorker] Scheduled outbox processing jobs');
+  log.info(' Scheduled outbox processing jobs');
 }
 
 // =============================================================================
@@ -386,5 +394,5 @@ export async function triggerRetry() {
 export async function shutdownOutboxWorker(): Promise<void> {
   await outboxWorker.close();
   await outboxQueue.close();
-  console.log('[OutboxWorker] Shutdown complete');
+  log.info(' Shutdown complete');
 }

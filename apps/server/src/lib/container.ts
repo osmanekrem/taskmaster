@@ -56,6 +56,31 @@ import { LabelRepository } from '@/repositories/label-repository';
 import { VersionService } from '@/services/version-service';
 import { VersionRepository } from '@/repositories/version-repository';
 import { GroupService } from '@/services/group-service';
+// Phase 0: Additional imports for complete DI coverage
+import { AuditService } from '@/services/audit-service';
+import { auditRepository } from '@/repositories/audit-repository';
+import { WebhookService } from '@/services/webhook-service';
+import { webhookRepository } from '@/repositories/webhook-repository';
+import { FilterService } from '@/services/filter-service';
+import { filterRepository } from '@/repositories/filter-repository';
+import { WorklogService } from '@/services/worklog-service';
+import { worklogRepository } from '@/repositories/worklog-repository';
+import { ScreenService } from '@/services/screen-service';
+import { screenRepository } from '@/repositories/screen-repository';
+import { BoardService } from '@/services/board-service';
+import { boardRepository } from '@/repositories/board-repository';
+import { AutomationService } from '@/services/automation-service';
+import { SecurityService } from '@/services/security-service';
+import { TicketTypeRepository } from '@/repositories/ticket-type-repository';
+import { WorkflowRepository } from '@/repositories/workflow-repository';
+import { StatusRepository } from '@/repositories/status-repository';
+import { FieldRepository } from '@/repositories/field-repository';
+import { 
+  SprintRepository, 
+  SprintIssueRepository, 
+  SprintHistoryRepository, 
+  BurndownRepository 
+} from '@/repositories/sprint-repository';
 import type { DrizzleClient } from '@/lib/types/db';
 
 class Container {
@@ -84,6 +109,15 @@ class Container {
   private _issueLinkRepository: IssueLinkRepository | null = null;
   private _labelRepository: LabelRepository | null = null;
   private _versionRepository: VersionRepository | null = null;
+  // Phase 0: Additional repositories
+  private _ticketTypeRepository: TicketTypeRepository | null = null;
+  private _workflowRepository: WorkflowRepository | null = null;
+  private _statusRepository: StatusRepository | null = null;
+  private _fieldRepository: FieldRepository | null = null;
+  private _sprintRepository: SprintRepository | null = null;
+  private _sprintIssueRepository: SprintIssueRepository | null = null;
+  private _sprintHistoryRepository: SprintHistoryRepository | null = null;
+  private _burndownRepository: BurndownRepository | null = null;
 
   // Service instances (cached for singleton behavior)
   private _userService: ReturnType<typeof userService> | null = null;
@@ -105,6 +139,15 @@ class Container {
   private _labelService: LabelService | null = null;
   private _versionService: VersionService | null = null;
   private _groupService: GroupService | null = null;
+  // Phase 0: Additional services
+  private _auditService: AuditService | null = null;
+  private _webhookService: WebhookService | null = null;
+  private _filterService: FilterService | null = null;
+  private _worklogService: WorklogService | null = null;
+  private _screenService: ScreenService | null = null;
+  private _boardService: BoardService | null = null;
+  private _automationService: AutomationService | null = null;
+  private _securityService: SecurityService | null = null;
 
   // ===========================================================================
   // CONSTRUCTOR
@@ -199,6 +242,47 @@ class Container {
     return this._versionRepository;
   }
 
+  // Phase 0: Additional repository accessors
+  private get ticketTypeRepository(): TicketTypeRepository {
+    this._ticketTypeRepository ??= new TicketTypeRepository(this._db);
+    return this._ticketTypeRepository;
+  }
+
+  private get workflowRepository(): WorkflowRepository {
+    this._workflowRepository ??= new WorkflowRepository(this._db);
+    return this._workflowRepository;
+  }
+
+  private get statusRepository(): StatusRepository {
+    this._statusRepository ??= new StatusRepository(this._db);
+    return this._statusRepository;
+  }
+
+  private get fieldRepository(): FieldRepository {
+    this._fieldRepository ??= new FieldRepository(this._db);
+    return this._fieldRepository;
+  }
+
+  private get sprintRepository(): SprintRepository {
+    this._sprintRepository ??= new SprintRepository();
+    return this._sprintRepository;
+  }
+
+  private get sprintIssueRepository(): SprintIssueRepository {
+    this._sprintIssueRepository ??= new SprintIssueRepository();
+    return this._sprintIssueRepository;
+  }
+
+  private get sprintHistoryRepository(): SprintHistoryRepository {
+    this._sprintHistoryRepository ??= new SprintHistoryRepository();
+    return this._sprintHistoryRepository;
+  }
+
+  private get burndownRepository(): BurndownRepository {
+    this._burndownRepository ??= new BurndownRepository();
+    return this._burndownRepository;
+  }
+
   // ===========================================================================
   // PUBLIC ACCESSORS
   // ===========================================================================
@@ -255,26 +339,34 @@ class Container {
 
   /**
    * Issue Service
-   * Dependencies: IssueRepository, ProjectRepository, NotificationService
+   * Dependencies: IssueRepository, ProjectRepository, NotificationService,
+   *               TicketTypeRepository, WorkflowRepository, StatusRepository,
+   *               FieldRepository, SprintIssueRepository
    */
   get issue(): IssueService {
     this._issueService ??= new IssueService(
       this.issueRepository,
       this.projectRepository,
       this.notification, // ✅ Injected from container
+      this.ticketTypeRepository,
+      this.workflowRepository,
+      this.statusRepository,
+      this.fieldRepository,
+      this.sprintIssueRepository,
     );
     return this._issueService;
   }
 
   /**
    * Comment Service
-   * Dependencies: CommentRepository, AttachmentRepository, IssueRepository
+   * Dependencies: CommentRepository, AttachmentRepository, IssueRepository, NotificationService
    */
   get comment(): CommentService {
     this._commentService ??= new CommentService(
       this.commentRepository,
       this.attachmentRepository,
       this.issueRepository,
+      this.notification,
     );
     return this._commentService;
   }
@@ -311,10 +403,16 @@ class Container {
 
   /**
    * Sprint Service
-   * No dependencies (uses db directly internally)
+   * Dependencies: SprintRepository, SprintIssueRepository, 
+   *               SprintHistoryRepository, BurndownRepository
    */
   get sprint(): SprintService {
-    this._sprintService ??= new SprintService();
+    this._sprintService ??= new SprintService(
+      this.sprintRepository,
+      this.sprintIssueRepository,
+      this.sprintHistoryRepository,
+      this.burndownRepository,
+    );
     return this._sprintService;
   }
 
@@ -373,6 +471,82 @@ class Container {
   get group(): GroupService {
     this._groupService ??= new GroupService();
     return this._groupService;
+  }
+
+  // ===========================================================================
+  // PHASE 0: ADDITIONAL SERVICES
+  // ===========================================================================
+
+  /**
+   * Audit Service
+   * For audit logging and compliance tracking
+   */
+  get audit(): AuditService {
+    this._auditService ??= new AuditService();
+    return this._auditService;
+  }
+
+  /**
+   * Webhook Service
+   * For webhook management and delivery
+   */
+  get webhook(): WebhookService {
+    this._webhookService ??= new WebhookService();
+    return this._webhookService;
+  }
+
+  /**
+   * Filter Service
+   * For saved JQL filters
+   */
+  get filter(): FilterService {
+    this._filterService ??= new FilterService();
+    return this._filterService;
+  }
+
+  /**
+   * Worklog Service
+   * For time tracking
+   */
+  get worklog(): WorklogService {
+    this._worklogService ??= new WorklogService();
+    return this._worklogService;
+  }
+
+  /**
+   * Screen Service
+   * For screen and field configuration management
+   */
+  get screen(): ScreenService {
+    this._screenService ??= new ScreenService();
+    return this._screenService;
+  }
+
+  /**
+   * Board Service
+   * For Kanban/Scrum boards
+   */
+  get board(): BoardService {
+    this._boardService ??= new BoardService();
+    return this._boardService;
+  }
+
+  /**
+   * Automation Service
+   * For automation rules
+   */
+  get automation(): AutomationService {
+    this._automationService ??= new AutomationService();
+    return this._automationService;
+  }
+
+  /**
+   * Security Service
+   * For issue security schemes and levels
+   */
+  get security(): SecurityService {
+    this._securityService ??= new SecurityService();
+    return this._securityService;
   }
 
   // ===========================================================================
@@ -444,6 +618,13 @@ class Container {
     this._issueLinkRepository = null;
     this._labelRepository = null;
     this._versionRepository = null;
+    // Phase 0: Additional repositories
+    this._ticketTypeRepository = null;
+    this._workflowRepository = null;
+    this._statusRepository = null;
+    this._fieldRepository = null;
+    this._sprintRepository = null;
+    this._sprintIssueRepository = null;
 
     // Reset services
     this._userService = null;
@@ -463,6 +644,15 @@ class Container {
     this._labelService = null;
     this._versionService = null;
     this._groupService = null;
+    // Phase 0: Additional services
+    this._auditService = null;
+    this._webhookService = null;
+    this._filterService = null;
+    this._worklogService = null;
+    this._screenService = null;
+    this._boardService = null;
+    this._automationService = null;
+    this._securityService = null;
   }
 }
 

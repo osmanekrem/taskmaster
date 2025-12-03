@@ -10,6 +10,8 @@ export const QUEUE_NAMES = {
   EMAIL: 'email',
   WEBHOOK: 'webhook',
   AUTOMATION: 'automation',
+  OUTBOX: 'outbox',
+  BURNDOWN: 'burndown',
 } as const;
 
 export type QueueName = (typeof QUEUE_NAMES)[keyof typeof QUEUE_NAMES];

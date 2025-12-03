@@ -22,12 +22,13 @@ import type { DrizzleClientOrTransaction } from '@/lib/types/db';
 export class StatusService {
   private repository: ReturnType<typeof statusRepository>;
   private workflowRepo: ReturnType<typeof workflowRepository>;
-  private issueRepository: IssueRepository;
 
-  constructor(private drizzle: DrizzleClientOrTransaction = db) {
+  constructor(
+    private drizzle: DrizzleClientOrTransaction = db,
+    private issueRepository: IssueRepository = new IssueRepository(),
+  ) {
     this.repository = statusRepository(drizzle);
     this.workflowRepo = workflowRepository(drizzle);
-    this.issueRepository = new IssueRepository();
   }
 
   // =============================================================================

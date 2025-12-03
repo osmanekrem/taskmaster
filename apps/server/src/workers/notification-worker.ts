@@ -14,6 +14,10 @@ import { db } from '@/db';
 import { notifications } from '@/db/schema/notifications';
 import { user } from '@/db/schema/auth';
 import { eq, inArray } from 'drizzle-orm';
+import { container } from '@/lib/container';
+import { logger } from '@/lib/logger';
+
+const log = logger.notification;
 
 /**
  * Notification templates for different event types
@@ -121,7 +125,7 @@ const NOTIFICATION_TEMPLATES: Record<NotificationJobData['type'], {
 async function processNotification(job: Job<NotificationJobData>): Promise<void> {
   const { type, projectId, userId, recipients, data, issueId } = job.data;
   
-  console.log(`[NotificationWorker] Processing ${type} for ${recipients.length} recipients`);
+  log.info(` Processing ${type} for ${recipients.length} recipients`);
   
   // Get template
   const template = NOTIFICATION_TEMPLATES[type];
@@ -138,7 +142,7 @@ async function processNotification(job: Job<NotificationJobData>): Promise<void>
   const filteredRecipients = recipients.filter(r => r !== userId);
   
   if (filteredRecipients.length === 0) {
-    console.log(`[NotificationWorker] No recipients after filtering`);
+    log.info(` No recipients after filtering`);
     return;
   }
   
@@ -157,7 +161,7 @@ async function processNotification(job: Job<NotificationJobData>): Promise<void>
   // Batch insert notifications
   await db.insert(notifications).values(notificationData);
   
-  console.log(`[NotificationWorker] Created ${notificationData.length} in-app notifications`);
+  log.info(` Created ${notificationData.length} in-app notifications`);
   
   // Queue email notifications if needed
   if (template.shouldEmail) {
@@ -167,22 +171,32 @@ async function processNotification(job: Job<NotificationJobData>): Promise<void>
       .from(user)
       .where(inArray(user.id, filteredRecipients));
     
-    // TODO: Check user email preferences before sending
-    for (const user of userList) {
-      if (user.email) {
-        await addEmailJob({
-          to: user.email,
-          subject: title,
-          template: `notification_${type}`,
-          context: {
-            userName: user.name,
-            ...data,
-          },
-        });
+    // Check user email preferences before sending
+    const notificationService = container.notification;
+    let emailsSent = 0;
+    for (const userData of userList) {
+      if (userData.email) {
+        // Check if user has email notifications enabled for this type
+        const preferences = await notificationService.getPreferences(userData.id, 'email');
+        const typePreference = preferences.find(p => p.eventType === type);
+        const shouldSendEmail = typePreference?.isEnabled ?? true; // Default to true if no preference set
+        
+        if (shouldSendEmail) {
+          await addEmailJob({
+            to: userData.email,
+            subject: title,
+            template: `notification_${type}`,
+            context: {
+              userName: userData.name,
+              ...data,
+            },
+          });
+          emailsSent++;
+        }
       }
     }
     
-    console.log(`[NotificationWorker] Queued ${userList.length} email notifications`);
+    log.info(` Queued ${emailsSent} email notifications`);
   }
 }
 
